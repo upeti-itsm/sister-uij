@@ -1,0 +1,127 @@
+@extends('sidebar')
+@section('head-css')
+    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
+    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
+    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+@endsection
+@section('content-header')
+    <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
+        <ol class="breadcrumb d-inline-flex font-weight-600 fs-13 bg-white mb-0 float-sm-right">
+            <li class="breadcrumb-item">Siakad</li>
+            <li class="breadcrumb-item active">Tanggungan Mahasiswa</li>
+        </ol>
+    </nav>
+    <div class="col-sm-8 header-title p-0">
+        <div class="media">
+            <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
+            <div class="media-body">
+                <h1 class="font-weight-bold">Tanggungan Mahasiswa</h1>
+                <small>Halaman ini digunakan monitoring Tanggungan Mahasiswa di siakad yang berkaitan dengan
+                    moodle</small>
+            </div>
+        </div>
+    </div>
+@endsection
+@section('body-content')
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fs-17 font-weight-600 mb-0">Tanggungan Mahasiswa</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 collapse show" id="filter-collapse">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Pencarian</label>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control"
+                                                   placeholder="Cari Nama/NIM Mahasiswa"
+                                                   id="cari-data">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-block btn-primary" id="btn-cari-data"><i
+                                                    class="fas fa-search mr-2"></i>Cari
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Filtering</label>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <select class="select2 form-control" id="batas_tanggungan">
+                                                <option value="-10000000000000">-- Semua (Rp. -1.000.000.000) --</option>
+                                                <option value="0">-- Rp. 0 --</option>
+                                                <option value="1000000">-- Rp. 1.000.000 --</option>
+                                                <option value="2500000">-- Rp. 2.500.000 --</option>
+                                                <option value="5000000">-- Rp. 5.000.000 --</option>
+                                                <option value="7500000">-- Rp. 7.500.000 --</option>
+                                                <option value="10000000">-- Rp. 10.000.000 --</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="checkbox checkbox-danger">
+                                                <input id="reg" type="checkbox" checked>
+                                                <label for="reg">REG</label>
+                                            </div>
+                                            <div class="checkbox checkbox-danger">
+                                                <input id="regm" type="checkbox" checked>
+                                                <label for="regm">REG-M</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="checkbox checkbox-danger">
+                                                <input id="trf" type="checkbox" checked>
+                                                <label for="trf">TRF</label>
+                                            </div>
+                                            <div class="checkbox checkbox-danger">
+                                                <input id="trfm" type="checkbox" checked>
+                                                <label for="trfm">TRF-M</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button class="btn btn-block btn-success" id="btn-export"><i
+                                                    class="fas fa-file-excel mr-2"></i>Export To Excel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="table">
+                            <thead>
+                            <tr>
+                                <th>Mahasiswa</th>
+                                <th>Tanggungan</th>
+                                <th><i class="fas fa-th"></i></th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+@section('modal')
+
+@endsection
+@push('scripts')
+    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
+    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
+    <script src="{{asset('adminpage/own-js/super_admin/siakad/tanggungan_mahasiswa.js')}}"></script>
+@endpush
