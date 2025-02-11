@@ -191,9 +191,9 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label class="text-muted">IP Absensi <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" placeholder="IP untuk absensi" name="ip_absensi"
-                                               value="{{old('ip_absensi')}}" required>
+                                        <label class="text-muted">IP Absensi</label>
+                                        <input type="text" class="form-control" placeholder="IP untuk absensi" name="ip_absensi"
+                                               value="{{old('ip_absensi')}}">
                                     </div>
                                 </div>
                             </div>
