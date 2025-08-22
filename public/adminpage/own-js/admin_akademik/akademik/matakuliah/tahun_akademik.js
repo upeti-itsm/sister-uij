@@ -179,7 +179,6 @@ jQuery.tahun_akademik = {
             var tahun_akademik = $(this).data("p_tahun_akademik");
             var nama_tahun_akademik = $(this).data("p_nama_semester");
             var id_semester = $(this).data("p_id_semester");
-            alert(id_semester);
             $.confirm({
                 title: 'Konfirmasi !',
                 type: 'orange',
