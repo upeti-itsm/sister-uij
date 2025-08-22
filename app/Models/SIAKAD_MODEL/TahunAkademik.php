@@ -13,12 +13,12 @@ class TahunAkademik extends Model
 
     protected $connection = "siakad";
 
-    public static function getTahunAkademik($id_semester = 'all')
+    public static function getTahunAkademik($tahun_akademik = 'all', $id_semester = 'all')
     {
-        if ($id_semester === 'all') {
+        if ($tahun_akademik === 'all') {
             return DB::connection('siakad')->select("SELECT kdsemester AS p_id_semester, thnakademik AS p_nama_semester, stsaktif AS p_is_periode_aktif, tglmulai AS p_tgl_awal_perkuliahan, tglakhirrencanastudi AS p_tgl_akhir_perkuliahan, thnakademik AS p_tahun_akademik, tglmulairencanastudi AS p_tgl_mulai_krs, tglakhirrencanastudi AS p_tgl_akhir_krs, tglmulaipenilaian AS p_tgl_mulai_input_nilai, tglakhirpenilaian AS p_tgl_akhir_input_nilai, CASE kdsemester WHEN '1' THEN 'Gasal' WHEN '2' THEN 'Genap' WHEN '3' THEN 'Pendek' END AS p_nama_semester_teks FROM akademik.kalender;");
         } else {
-            return DB::connection('siakad')->select("SELECT kdsemester AS p_id_semester, thnakademik AS p_nama_semester, stsaktif AS p_is_periode_aktif, tglmulai AS p_tgl_awal_perkuliahan, tglakhirrencanastudi AS p_tgl_akhir_perkuliahan, thnakademik AS p_tahun_akademik, 	tglmulairencanastudi AS p_tgl_mulai_krs, tglakhirrencanastudi AS p_tgl_akhir_krs, tglmulaipenilaian AS p_tgl_mulai_input_nilai, tglakhirpenilaian AS p_tgl_akhir_input_nilai, CASE kdsemester WHEN '1' THEN 'Gasal' WHEN '2' THEN 'Genap' WHEN '3' THEN 'Pendek' END AS p_nama_semester_teks FROM akademik.kalender where thnakademik = ?;", [$id_semester]);
+            return DB::connection('siakad')->select("SELECT kdsemester AS p_id_semester, thnakademik AS p_nama_semester, stsaktif AS p_is_periode_aktif, tglmulai AS p_tgl_awal_perkuliahan, tglakhirrencanastudi AS p_tgl_akhir_perkuliahan, thnakademik AS p_tahun_akademik, 	tglmulairencanastudi AS p_tgl_mulai_krs, tglakhirrencanastudi AS p_tgl_akhir_krs, tglmulaipenilaian AS p_tgl_mulai_input_nilai, tglakhirpenilaian AS p_tgl_akhir_input_nilai, CASE kdsemester WHEN '1' THEN 'Gasal' WHEN '2' THEN 'Genap' WHEN '3' THEN 'Pendek' END AS p_nama_semester_teks FROM akademik.kalender where thnakademik = ? and kdsemester = ?;", [$tahun_akademik, $id_semester]);
         }
     }
 

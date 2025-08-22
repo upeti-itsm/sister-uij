@@ -40,9 +40,10 @@ class SemesterController extends Controller
     public function json_get_tahun_akademik_by_tahun_akademik(Request $request)
     {
         $request->validate([
-            'tahun_akademik' => 'required'
+            'tahun_akademik' => 'required',
+            'id_semester' => 'required'
         ]);
-        $data = TahunAkademik::getTahunAkademik($request->tahun_akademik);
+        $data = TahunAkademik::getTahunAkademik($request->tahun_akademik, $request->id_semester);
         return response()->json($data);
     }
 

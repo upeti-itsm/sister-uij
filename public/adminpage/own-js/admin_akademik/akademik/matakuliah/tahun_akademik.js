@@ -77,7 +77,7 @@ jQuery.tahun_akademik = {
                     render: function (data) {
                         var html = "<button class='btn btn-danger-soft btn-block mb-2'>Tidak Memiliki Akses</button>";
                         if ($("#hak_akses").val() === "1") {
-                            html = "<button class='btn btn-success btn-block btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-p_tahun_akademik='" + data.tahun_akademik + "' data-p_nama_semester='" + data.nama_tahun_akademik + "' data-p_id_semester='" + data.id_semester + "'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.tahun_akademik + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>";
+                            html = "<button class='btn btn-success btn-block btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-p_tahun_akademik='" + data.tahun_akademik + "' data-p_nama_semester='" + data.nama_tahun_akademik + "' data-p_id_semester='" + data.id_semester_uij + "'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.tahun_akademik + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>";
                         }
                         return html;
                     }
@@ -194,27 +194,28 @@ jQuery.tahun_akademik = {
                                 url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/json-by-tahun-akademik',
                                 method: 'POST',
                                 data: {
-                                    tahun_akademik: tahun_akademik
+                                    tahun_akademik: tahun_akademik,
+                                    id_semester: id_semester
                                 },
                                 beforeSend: function () {
                                     $("#sync-siakad-loading-spin-" + tahun_akademik).show();
                                 },
                                 success: function (response) {
-                                    if (response.tahun_akademik) {
+                                    if (response[0].p_tahun_akademik) {
                                         $.ajax({
                                             url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/synchron',
                                             method: 'post',
                                             data: {
-                                                'p_id_semester': response.p_id_semester,
-                                                'p_nama_semester': response.p_nama_semester_teks,
-                                                'p_is_periode_aktif': response.p_is_periode_aktif,
-                                                'p_tgl_awal_perkuliahan': response.p_tgl_awal_perkuliahan,
-                                                'p_tgl_akhir_perkuliahan': response.p_tgl_akhir_perkuliahan,
-                                                'p_tahun_akademik': response.p_tahun_akademik,
-                                                'p_tgl_mulai_krs': response.p_tgl_mulai_krs,
-                                                'p_tgl_akhir_krs': response.p_tgl_akhir_krs,
-                                                'p_tgl_mulai_input_nilai': response.p_tgl_mulai_input_nilai,
-                                                'p_tgl_akhir_input_nilai': response.p_tgl_akhir_input_nilai
+                                                'p_id_semester': response[0].p_id_semester,
+                                                'p_nama_semester': response[0].p_nama_semester_teks,
+                                                'p_is_periode_aktif': response[0].p_is_periode_aktif,
+                                                'p_tgl_awal_perkuliahan': response[0].p_tgl_awal_perkuliahan,
+                                                'p_tgl_akhir_perkuliahan': response[0].p_tgl_akhir_perkuliahan,
+                                                'p_tahun_akademik': response[0].p_tahun_akademik,
+                                                'p_tgl_mulai_krs': response[0].p_tgl_mulai_krs,
+                                                'p_tgl_akhir_krs': response[0].p_tgl_akhir_krs,
+                                                'p_tgl_mulai_input_nilai': response[0].p_tgl_mulai_input_nilai,
+                                                'p_tgl_akhir_input_nilai': response[0].p_tgl_akhir_input_nilai
                                             },
                                             success: function (result) {
                                                 if (result.status) {
