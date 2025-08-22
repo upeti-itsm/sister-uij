@@ -77,7 +77,7 @@ jQuery.tahun_akademik = {
                     render: function (data) {
                         var html = "<button class='btn btn-danger-soft btn-block mb-2'>Tidak Memiliki Akses</button>";
                         if ($("#hak_akses").val() === "1") {
-                            html = "<button class='btn btn-success btn-block btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-tahun_akademik='" + data.tahun_akademik + "' data-nama_tahun_akademik='" + data.nama_tahun_akademik + "'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.tahun_akademik + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>";
+                            html = "<button class='btn btn-success btn-block btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-p_tahun_akademik='" + data.tahun_akademik + "' data-p_nama_semester='" + data.nama_tahun_akademik + "' data-p_id_semester='"+data.id_semester+"'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.tahun_akademik + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>";
                         }
                         return html;
                     }
@@ -176,8 +176,10 @@ jQuery.tahun_akademik = {
             })
         });
         $("#table").on('click', 'button.btn-sync-siakad', function () {
-            var tahun_akademik = $(this).data("tahun_akademik");
-            var nama_tahun_akademik = $(this).data("nama_tahun_akademik");
+            var tahun_akademik = $(this).data("p_tahun_akademik");
+            var nama_tahun_akademik = $(this).data("p_nama_semester");
+            var id_semester = $(this).data("p_id_semester");
+            alert(id_semester);
             $.confirm({
                 title: 'Konfirmasi !',
                 type: 'orange',
@@ -190,7 +192,7 @@ jQuery.tahun_akademik = {
                         keys: ['enter'],
                         action: function () {
                             $.ajax({
-                                url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/json-by-tahun-akademik',
+                                url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/json-by-tahun-akademik',
                                 method: 'POST',
                                 data: {
                                     tahun_akademik: tahun_akademik
@@ -204,16 +206,16 @@ jQuery.tahun_akademik = {
                                             url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/synchron',
                                             method: 'post',
                                             data: {
-                                                'fd_id_smt': response.fd_id_smt,
-                                                'nama_tahun_akademik': response.nama_tahun_akademik,
-                                                'status_aktif': response.status_aktif,
-                                                'tanggal_awal_perkuliahan': response.tanggal_awal_perkuliahan,
-                                                'tanggal_akhir_perkuliahan': response.tanggal_akhir_perkuliahan,
-                                                'tahun_akademik': response.tahun_akademik,
-                                                'tgl_mulai_krs': response.tgl_mulai_krs,
-                                                'tgl_selesai_krs': response.tgl_selesai_krs,
-                                                'tgl_mulai_input_nilai': response.tgl_mulai_input_nilai,
-                                                'tgl_selesai_input_nilai': response.tgl_selesai_input_nilai
+                                                'p_id_semester': response.p_id_semester,
+                                                'p_nama_semester': response.p_nama_semester_teks,
+                                                'p_is_periode_aktif': response.p_is_periode_aktif,
+                                                'p_tgl_awal_perkuliahan': response.p_tgl_awal_perkuliahan,
+                                                'p_tgl_akhir_perkuliahan': response.p_tgl_akhir_perkuliahan,
+                                                'p_tahun_akademik': response.p_tahun_akademik,
+                                                'p_tgl_mulai_krs': response.p_tgl_mulai_krs,
+                                                'p_tgl_akhir_krs': response.p_tgl_akhir_krs,
+                                                'p_tgl_mulai_input_nilai': response.p_tgl_mulai_input_nilai,
+                                                'p_tgl_akhir_input_nilai': response.p_tgl_akhir_input_nilai
                                             },
                                             success: function (result) {
                                                 if (result.status) {
@@ -261,34 +263,34 @@ jQuery.tahun_akademik = {
             url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/synchron',
             method: 'post',
             data: {
-                'fd_id_smt': data[index].fd_id_smt,
-                'nama_tahun_akademik': data[index].nama_tahun_akademik,
-                'status_aktif': data[index].status_aktif,
-                'tanggal_awal_perkuliahan': data[index].tanggal_awal_perkuliahan,
-                'tanggal_akhir_perkuliahan': data[index].tanggal_akhir_perkuliahan,
-                'tahun_akademik': data[index].tahun_akademik,
-                'tgl_mulai_krs': data[index].tgl_mulai_krs,
-                'tgl_selesai_krs': data[index].tgl_selesai_krs,
-                'tgl_mulai_input_nilai': data[index].tgl_mulai_input_nilai,
-                'tgl_selesai_input_nilai': data[index].tgl_selesai_input_nilai
+                'p_id_semester': data[index].p_id_semester,
+                'p_nama_semester': data[index].p_nama_semester_teks,
+                'p_is_periode_aktif': data[index].p_is_periode_aktif,
+                'p_tgl_awal_perkuliahan': data[index].p_tgl_awal_perkuliahan,
+                'p_tgl_akhir_perkuliahan': data[index].p_tgl_akhir_perkuliahan,
+                'p_tahun_akademik': data[index].p_tahun_akademik,
+                'p_tgl_mulai_krs': data[index].p_tgl_mulai_krs,
+                'p_tgl_akhir_krs': data[index].p_tgl_akhir_krs,
+                'p_tgl_mulai_input_nilai': data[index].p_tgl_mulai_input_nilai,
+                'p_tgl_akhir_input_nilai': data[index].p_tgl_akhir_input_nilai
             },
             success: function (result) {
                 if (result.status) {
                     if (result.jenis_aksi === 1) {
                         self.data.log_table.row.add([
                             (index + 1),
-                            data[index].nama_tahun_akademik + " (" + data[index].tahun_akademik + ")",
+                            data[index].p_nama_semester + " (" + data[index].p_tahun_akademik + ")",
                             "<i class='fas fa-check-circle text-success p-1'></i> " + result.keterangan,
-                            data[index].nama_tahun_akademik,
+                            data[index].p_nama_semester,
                             "inserted"
                         ]).draw();
                         inserted++;
                     } else {
                         self.data.log_table.row.add([
                             (index + 1),
-                            data[index].nama_tahun_akademik + " (" + data[index].tahun_akademik + ")",
+                            data[index].p_nama_semester + " (" + data[index].p_tahun_akademik + ")",
                             "<i class='fas fa-check-circle text-success p-1'></i> " + result.keterangan,
-                            data[index].nama_tahun_akademik,
+                            data[index].p_nama_semester,
                             "updated"
                         ]).draw();
                         updated++;
@@ -296,16 +298,16 @@ jQuery.tahun_akademik = {
                 } else {
                     self.data.log_table.row.add([
                         (index + 1),
-                        data[index].nama_tahun_akademik + " (" + data[index].tahun_akademik + ")",
+                        data[index].p_nama_semester + " (" + data[index].p_tahun_akademik + ")",
                         "<i class='fas fa-check-circle text-danger p-1'></i> " + result.keterangan,
-                        data[index].nama_tahun_akademik,
+                        data[index].p_nama_semester,
                         "gagal"
                     ]).draw();
                     failed++;
                 }
-                progres++;
             },
             complete: function () {
+                progres++;
                 $("#progress-bar").width((progres / n * 100).toFixed(2) + '%');
                 $("#progress-text").text((progres / n * 100).toFixed(2) + '% Complete');
                 $("#btn-failed-log").text("Failed : " + failed);

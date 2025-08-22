@@ -49,21 +49,21 @@ class SemesterController extends Controller
     public function json_syncron_data(Request $request)
     {
         $request->validate([
-            'fd_id_smt' => 'required',
-            'nama_tahun_akademik' => 'required',
-            'status_aktif' => 'required',
-            'tanggal_awal_perkuliahan' => 'required',
-            'tanggal_akhir_perkuliahan' => 'required',
-            'tahun_akademik' => 'required',
-            'tgl_mulai_krs' => 'required',
-            'tgl_selesai_krs' => 'required',
-            'tgl_mulai_input_nilai' => 'required',
-            'tgl_selesai_input_nilai' => 'required'
+            'p_id_semester' => 'required',
+            'p_nama_semester' => 'required',
+            'p_is_periode_aktif' => 'required',
+            'p_tgl_awal_perkuliahan' => 'required',
+            'p_tgl_akhir_perkuliahan' => 'required',
+            'p_tahun_akademik' => 'required',
+            'p_tgl_mulai_krs' => 'required',
+            'p_tgl_akhir_krs' => 'required',
+            'p_tgl_mulai_input_nilai' => 'required',
+            'p_tgl_akhir_input_nilai' => 'required'
         ]);
 
-        $data = Semester::sync_semester_with_siakad($request->fd_id_smt, $request->nama_tahun_akademik, $request->status_aktif,
-            $request->tanggal_awal_perkuliahan, $request->tanggal_akhir_perkuliahan, $request->tahun_akademik, $request->tgl_mulai_krs,
-            $request->tgl_selesai_krs, $request->tgl_mulai_input_nilai, $request->tgl_selesai_input_nilai);
+        $data = Semester::sync_semester_with_siakad($request->p_id_semester, $request->p_nama_semester, $request->p_is_periode_aktif,
+            $request->p_tgl_awal_perkuliahan, $request->p_tgl_akhir_perkuliahan, $request->p_tahun_akademik, $request->p_tgl_mulai_krs,
+            $request->p_tgl_akhir_krs, $request->p_tgl_mulai_input_nilai, $request->p_tgl_akhir_input_nilai);
         if ($data->status)
             return response()->json($data);
         else
