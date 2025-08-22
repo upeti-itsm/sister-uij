@@ -369,7 +369,7 @@
         <tr>
             <td class="center" style="width: 5%"><small>5</small></td>
             <td style="width: 50%" colspan="2">
-                <small>Potongan Paguyuban Cooper</small>
+                <small>Potongan Paguyuban</small>
             </td>
             <td style="width: 45%; text-align: right">
                 <small>{{"Rp. " . number_format($data['rekap']->nominal_dplk,0,',','.').',-'}}</small>

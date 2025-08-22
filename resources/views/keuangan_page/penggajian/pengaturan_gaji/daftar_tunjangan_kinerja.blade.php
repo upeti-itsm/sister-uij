@@ -47,6 +47,7 @@
                                     <a href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index')}}" class="dropdown-item">Pengaturan BPJS</a>
                                     <a style="display: none" href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_fungsional.index')}}" class="dropdown-item">Tunjangan Fungsional</a>
                                     <a href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_struktural.index')}}" class="dropdown-item">Tunjangan Jabatan</a>
+                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.insentif_lainnya.index')}}" class="dropdown-item">Insentif Lainnya</a>
                                     <a href="{{route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index')}}"
                                        class="dropdown-item">Pengaturan UMR</a>
                                     <a style="display: none" href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index')}}"

@@ -395,7 +395,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Potongan Paguyuban dan Cooper</label>
+                                            <label>Potongan Paguyuban</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">Rp.</div>

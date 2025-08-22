@@ -8,11 +8,10 @@
 	"noarg": true,
 	"undef": true,
 	"unused": true,
-	"es3": true,
-
+	"es3": false,
+	"esversion": 6,
 	"jquery": true,
 	"browser": true,
-
 	"globals": {
 		"console": true
 	}
