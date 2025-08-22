@@ -4,11 +4,11 @@ jQuery.tahun_akademik = {
         log_table: $("#log-table").DataTable({
             scrollY: '300px',
             columns: [
-                {width: "5%", sClass: 'text-center', searchable: false},
-                {width: "50%", searchable: false},
-                {width: "45%", sClass: 'text-center', searchable: false},
-                {searchable: true, visible: false},
-                {searchable: true, visible: false},
+                { width: "5%", sClass: 'text-center', searchable: false },
+                { width: "50%", searchable: false },
+                { width: "45%", sClass: 'text-center', searchable: false },
+                { searchable: true, visible: false },
+                { searchable: true, visible: false },
             ],
             scrollCollapse: true,
             paging: true,
@@ -55,7 +55,7 @@ jQuery.tahun_akademik = {
                     width: "35%",
                     render: function (data) {
                         return "<b>" + data.nama_tahun_akademik + " (" + data.tahun_akademik + ")</b><br/>" +
-                            "KRS: <br/><small>" + data.tgl_mulai_krs + ' s/d ' + data.tgl_selesai_krs +"</small>";
+                            "KRS: <br/><small>" + data.tgl_mulai_krs + ' s/d ' + data.tgl_selesai_krs + "</small>";
                     }
                 },
                 {
@@ -65,8 +65,8 @@ jQuery.tahun_akademik = {
                     width: "50%",
                     render: function (data) {
                         return "" +
-                        "Perkuliahan: <br/><small>" + data.tgl_awal_perkuliahan + ' s/d ' + data.tgl_akhir_perkuliahan +"</small><br/>" +
-                        "Input Nilai: <br/><small>" + data.tgl_mulai_input_nilai + ' s/d ' + data.tgl_selesai_input_nilai +"</small>";
+                            "Perkuliahan: <br/><small>" + data.tgl_awal_perkuliahan + ' s/d ' + data.tgl_akhir_perkuliahan + "</small><br/>" +
+                            "Input Nilai: <br/><small>" + data.tgl_mulai_input_nilai + ' s/d ' + data.tgl_selesai_input_nilai + "</small>";
                     }
                 },
                 {
@@ -77,7 +77,7 @@ jQuery.tahun_akademik = {
                     render: function (data) {
                         var html = "<button class='btn btn-danger-soft btn-block mb-2'>Tidak Memiliki Akses</button>";
                         if ($("#hak_akses").val() === "1") {
-                            html = "<button class='btn btn-success btn-block btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-p_tahun_akademik='" + data.tahun_akademik + "' data-p_nama_semester='" + data.nama_tahun_akademik + "' data-p_id_semester='"+data.id_semester+"'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.tahun_akademik + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>";
+                            html = "<button class='btn btn-success btn-block btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-p_tahun_akademik='" + data.tahun_akademik + "' data-p_nama_semester='" + data.nama_tahun_akademik + "' data-p_id_semester='" + data.id_semester + "'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.tahun_akademik + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>";
                         }
                         return html;
                     }

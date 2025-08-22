@@ -61,9 +61,18 @@ class SemesterController extends Controller
             'p_tgl_akhir_input_nilai' => 'required'
         ]);
 
-        $data = Semester::sync_semester_with_siakad($request->p_id_semester, $request->p_nama_semester, $request->p_is_periode_aktif,
-            $request->p_tgl_awal_perkuliahan, $request->p_tgl_akhir_perkuliahan, $request->p_tahun_akademik, $request->p_tgl_mulai_krs,
-            $request->p_tgl_akhir_krs, $request->p_tgl_mulai_input_nilai, $request->p_tgl_akhir_input_nilai);
+        $data = Semester::sync_semester_with_siakad(
+            $request->p_id_semester,
+            $request->p_nama_semester,
+            $request->p_is_periode_aktif,
+            $request->p_tgl_awal_perkuliahan,
+            $request->p_tgl_akhir_perkuliahan,
+            $request->p_tahun_akademik,
+            $request->p_tgl_mulai_krs,
+            $request->p_tgl_akhir_krs,
+            $request->p_tgl_mulai_input_nilai,
+            $request->p_tgl_akhir_input_nilai
+        );
         if ($data->status)
             return response()->json($data);
         else
