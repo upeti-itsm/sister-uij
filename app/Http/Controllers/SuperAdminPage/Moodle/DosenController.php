@@ -78,11 +78,11 @@ class DosenController extends Controller
             'jenjang_pendidikan_akhir' => 'required',
             'nama_ibu' => 'required',
         ]);
-        $data = Dosen::sync_dosen($request->username, $request->password, $request->nidn, $request->nama_lengkap, $request->email, $request->kota_asal, $request->nama_prodi, $request->nomor_hp, $request->alamat_rumah, $request->status_dosen);
+        // $data = Dosen::sync_dosen($request->username, $request->password, $request->nidn, $request->nama_lengkap, $request->email, $request->kota_asal, $request->nama_prodi, $request->nomor_hp, $request->alamat_rumah, $request->status_dosen);
         $dosen = \App\Models\Akademik\Dosen::sync_dosen_with_siakad($request->karyawan_id, $request->username, $request->password, $request->nip, $request->npwp, $request->bank_account, $request->masa_pensiun, $request->status_aktif, $request->tgl_masuk, $request->asal_sekolah, $request->nidn, $request->nama, $request->gelar_awal, $request->gelar_akhir, $request->no_ktp, $request->tempat_lahir, $request->tgl_lahir, $request->alamat_rumah, $request->kode_pos_rumah, $request->telepon_rumah, $request->nomor_hp, $request->agama, $request->jenis_kelamin, $request->status_menikah, $request->jenjang_pendidikan_akhir, $request->nama_ibu, $request->email, $request->kd_prodi);
-        if ($data->is_success)
-            return response()->json($data, 200);
+        if ($dosen->is_success)
+            return response()->json($dosen, 200);
         else
-            return response()->json($data, 500);
+            return response()->json($dosen, 500);
     }
 }
