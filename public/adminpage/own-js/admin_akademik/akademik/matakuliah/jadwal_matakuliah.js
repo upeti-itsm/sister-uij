@@ -65,7 +65,7 @@ jQuery.jadwal_matakuliah = {
                     sClass: 'text-left',
                     width: "25%",
                     render: function (data) {
-                        return "<b>" + data.nama_mata_kuliah + " (" + data.kelas_id + " - " + data.jenis_kelas + ")</b><br/>" +
+                        return "<b>" + data.nama_mata_kuliah + " (" + data.nama_kelas + ")</b><br/>" +
                             "TA : " + data.tahun_akademik + " | SKS : " + data.jml_sks;
                     }
                 },
@@ -270,7 +270,7 @@ jQuery.jadwal_matakuliah = {
                                     $("#sync-siakad-loading-spin-" + id).show();
                                 },
                                 success: function (response) {
-                                    if (response.jadwal_kuliah_id) {
+                                    if (response.p_jadwal_kuliah_id) {
                                         $.ajax({
                                             url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/synchron',
                                             method: 'post',
@@ -373,7 +373,7 @@ jQuery.jadwal_matakuliah = {
                     if (result.jenis_aksi === 1) {
                         self.data.log_table_jadwal_kuliah.row.add([
                             (index + 1),
-                            data[index].p_nama_mata_kuliah + " (" + data[index].p_kelas_id + ")",
+                            data[index].p_nama_mata_kuliah + " (" + data[index].p_nama_kelas + ")",
                             "<i class='fas fa-check-circle text-success p-1'></i> " + result.keterangan,
                             data[index].p_nama_mata_kuliah,
                             "inserted"
@@ -382,7 +382,7 @@ jQuery.jadwal_matakuliah = {
                     } else {
                         self.data.log_table_jadwal_kuliah.row.add([
                             (index + 1),
-                            data[index].p_nama_mata_kuliah + " (" + data[index].p_kelas_id + ")",
+                            data[index].p_nama_mata_kuliah + " (" + data[index].p_nama_kelas + ")",
                             "<i class='fas fa-check-circle text-success p-1'></i> " + result.keterangan,
                             data[index].p_nama_mata_kuliah,
                             "updated"
@@ -392,7 +392,7 @@ jQuery.jadwal_matakuliah = {
                 } else {
                     self.data.log_table_jadwal_kuliah.row.add([
                         (index + 1),
-                        data[index].p_nama_mata_kuliah + " (" + data[index].p_kelas_id + ")",
+                        data[index].p_nama_mata_kuliah + " (" + data[index].p_nama_kelas + ")",
                         "<i class='fas fa-check-circle text-danger p-1'></i> " + result.keterangan,
                         data[index].p_nama_mata_kuliah,
                         "gagal"

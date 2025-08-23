@@ -16,7 +16,7 @@
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
                 <h1 class="font-weight-bold">Sinkronisasi Jadwal Kuliah</h1>
-                <small>Halaman ini digunakan untuk mengelola sinkronisasi jadwal kuliah antara sipadu dan siakad</small>
+                <small>Halaman ini digunakan untuk mengelola sinkronisasi jadwal kuliah antara sister dan siakad</small>
             </div>
         </div>
     </div>
@@ -217,7 +217,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Jika dilakukan proses sinkronisasi, jadwal kuliah yang ada di siakad akan di import ke sipadu.stie-mandala.ac.id, silahkan pilih tahun akademik untuk proses sinkronisasi
+                    <p>Jika dilakukan proses sinkronisasi, jadwal kuliah yang ada di siakad akan di import ke sister.uij.ac.id, silahkan pilih tahun akademik untuk proses sinkronisasi
                         jadwal kuliah</p>
                     <div class="form-group">
                         <select class="select2 form-control" id="tahun_akademik_sync-jadwal-kuliah">
