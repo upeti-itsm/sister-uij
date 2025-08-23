@@ -56,6 +56,8 @@
                                         class="dropdown-item">Tunjangan Jabatan</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index') }}"
                                         class="dropdown-item">Tunjangan Kinerja</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.insentif_lainnya.index') }}"
+                                        class="dropdown-item">Insentif Lainnya</a>
                                     <a style="display: none"
                                         href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index') }}"
                                         class="dropdown-item">Pengaturan Arisan</a>

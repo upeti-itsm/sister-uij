@@ -1,8 +1,8 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -36,26 +36,31 @@
                                 <a href="#" class="action-item">Tunjangan Struktural <i
                                         class="fas fa-bars fa-fw"></i></a>
                                 <div class="dropdown-menu dropdown-menu-right" id="sub-menu">
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.gaji_umum.index')}}"
-                                       class="dropdown-item">Pengaturan Gaji Umum</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index')}}"
-                                       class="dropdown-item">Pengaturan Gaji Individu</a>
-                                    <a style="display: none" href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_qurban.index')}}"
-                                       class="dropdown-item">Potongan Qurban</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_koperasi.index')}}"
-                                       class="dropdown-item">Potongan Pinjaman</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_lainnya.index')}}"
-                                       class="dropdown-item">Potongan Lainnya</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index')}}"
-                                       class="dropdown-item">Pengaturan BPJS</a>
-                                    <a style="display: none" href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_fungsional.index')}}"
-                                       class="dropdown-item">Tunjangan Fungsional</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index')}}"
-                                       class="dropdown-item">Tunjangan Kinerja</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index')}}"
-                                       class="dropdown-item">Pengaturan UMR</a>
-                                    <a style="display: none" href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index')}}"
-                                       class="dropdown-item">Pengaturan Arisan</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.gaji_umum.index') }}"
+                                        class="dropdown-item">Pengaturan Gaji Umum</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index') }}"
+                                        class="dropdown-item">Pengaturan Gaji Individu</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_qurban.index') }}"
+                                        class="dropdown-item">Potongan Qurban</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_koperasi.index') }}"
+                                        class="dropdown-item">Potongan Pinjaman</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_lainnya.index') }}"
+                                        class="dropdown-item">Potongan Lainnya</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index') }}"
+                                        class="dropdown-item">Pengaturan BPJS</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_fungsional.index') }}"
+                                        class="dropdown-item">Tunjangan Fungsional</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index') }}"
+                                        class="dropdown-item">Tunjangan Kinerja</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index') }}"
+                                        class="dropdown-item">Pengaturan UMR</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.insentif_lainnya.index') }}"
+                                        class="dropdown-item">Insentif Lainnya</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index') }}"
+                                        class="dropdown-item">Pengaturan Arisan</a>
                                 </div>
                             </div>
                         </div>
@@ -71,7 +76,7 @@
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Cari Nama Karyawan"
-                                               id="cari-data">
+                                            id="cari-data">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="button" id="btn-cari-data"><i
                                                     class="fas fa-search mr-2"></i>Cari
@@ -82,10 +87,10 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="form-group">
-                                    <label class="font-weight-bold">&nbsp;</label><br/>
+                                    <label class="font-weight-bold">&nbsp;</label><br />
                                     <div class="float-right">
                                         <button class="btn btn-primary" title="Tambah Data Tunjangan Struktural"
-                                                id="btn_add_data_struktural"><i class="fas fa-plus-square"></i> Tambah
+                                            id="btn_add_data_struktural"><i class="fas fa-plus-square"></i> Tambah
                                             Data
                                             Tunjangan Struktural
                                         </button>
@@ -99,12 +104,12 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="table">
                             <thead>
-                            <tr>
-                                <th class="text-center align-middle">Nomor</th>
-                                <th class="text-left align-middle">Jabatan Struktural</th>
-                                <th class="text-left align-middle">Nominal Tunjangan</th>
-                                <th class="text-center"><i class="fas fa-th"></i></th>
-                            </tr>
+                                <tr>
+                                    <th class="text-center align-middle">Nomor</th>
+                                    <th class="text-left align-middle">Jabatan Struktural</th>
+                                    <th class="text-left align-middle">Nominal Tunjangan</th>
+                                    <th class="text-center"><i class="fas fa-th"></i></th>
+                                </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -115,8 +120,7 @@
     </div>
 @endsection
 @section('modal')
-    <div class="modal modal-primary fade" id="modal-insup-data-struktural" tabindex="-1" role="dialog"
-         aria-hidden="true">
+    <div class="modal modal-primary fade" id="modal-insup-data-struktural" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -131,7 +135,7 @@
                             <div class="col-md-5">
                                 <label class="font-weight-bold">Jabatan Struktural</label>
                                 <input type="text" class="form-control" placeholder="Masukkan Jabatan Struktural"
-                                       id="add_jabatan_struktural">
+                                    id="add_jabatan_struktural">
                             </div>
                             <div class="col-md-7">
                                 <label class="font-weight-bold">Nominal Tunjangan</label>
@@ -140,19 +144,19 @@
                                         <div class="input-group-text">Rp.</div>
                                     </div>
                                     <input type="text" class="form-control number" id="add_nominal_tunjangan"
-                                           placeholder="Masukkan Nominal Tunjangan">
+                                        placeholder="Masukkan Nominal Tunjangan">
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <label class="font-weight-bold">Ekivalen SKS</label>
                                 <input type="text" class="form-control number" id="add_sks_wajib"
-                                       placeholder="Masukkan Jumlah Ekivalen SKS">
+                                    placeholder="Masukkan Jumlah Ekivalen SKS">
                             </div>
                         </div>
                     </div>
                     <form id="add_form" style="display: none"
-                          action="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_struktural.insup_jabatan_struktural')}}"
-                          method="POST">
+                        action="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_struktural.insup_jabatan_struktural') }}"
+                        method="POST">
                         @csrf
                         <input type="hidden" name="id_jabatan_struktural" id="id_jabatan_struktural">
                         <input type="hidden" name="jabatan_struktural" id="jabatan_struktural">
@@ -170,9 +174,9 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/numeral/numeral.min.js')}}"></script>
-    <script
-        src="{{asset('adminpage/own-js/keuangan_page/penggajian/pengaturan_gaji/daftar_tunjangan_struktural.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/numeral/numeral.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/keuangan_page/penggajian/pengaturan_gaji/daftar_tunjangan_struktural.js') }}">
+    </script>
 @endpush

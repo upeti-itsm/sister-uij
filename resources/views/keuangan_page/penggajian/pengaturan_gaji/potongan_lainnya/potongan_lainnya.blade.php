@@ -56,6 +56,8 @@
                                         class="dropdown-item">Tunjangan Jabatan</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index') }}"
                                         class="dropdown-item">Tunjangan Kinerja</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.insentif_lainnya.index') }}"
+                                        class="dropdown-item">Insentif Lainnya</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index') }}"
                                         class="dropdown-item">Pengaturan UMR</a>
                                 </div>
