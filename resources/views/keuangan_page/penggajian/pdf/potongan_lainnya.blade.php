@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Potongan Lainnya</title>
@@ -50,7 +51,7 @@
             font-weight: normal;
             text-align: center;
             margin: 0 0 5px 0;
-            background: url("{{asset('image/dimension.png')}}");
+            background: url("{{ asset('image/dimension.png') }}");
         }
 
         #project {
@@ -127,7 +128,8 @@
         }
 
         table td.grand {
-            border-top: 1px solid #5D6975;;
+            border-top: 1px solid #5D6975;
+            ;
         }
 
         #notices .notice {
@@ -152,75 +154,77 @@
         }
     </style>
 </head>
+
 <body>
-<header class="clearfix">
-    <table>
-        <tr>
-            <td style="width: 20%; background-color: white">
-                <div id="logo" style="text-align: center">
-                    <img src="{{asset('image/logo-uij.png')}}">
-                </div>
-            </td>
-            <td style="width: 80%; background-color: white">
-                <div id="company" style="text-align: center; margin-bottom: 0px; padding-bottom: 0px">
-                    <div style="font-size: large; font-weight: bold; text-align: left">UNIVERSITAS ISLAM JEMBER
-                    </div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="text-align: center; margin: 0; padding: 0;" colspan="2">
-                <hr/>
-            </td>
-        </tr>
-    </table>
-</header>
-<main>
-    <table style="margin-top: 0">
-        <thead>
-        <tr>
-            <th colspan="4" style="text-align: center">
-                <b>{{strtoupper($data['rekap'][0]->nama_potongan)}}</b>
-            </th>
-        </tr>
-        <tr>
-            <th style="text-align: center; font-weight: bold; width: 5%">
-                NO
-            </th>
-            <th style="text-align: center; font-weight: bold; width: 35%">
-                NAMA
-            </th>
-            <th style="text-align: center; font-weight: bold; width: 25%">
-                POTONGAN
-            </th>
-            <th style="text-align: center; font-weight: bold; width: 35%">
-                KETERANGAN
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php $no = 0; ?>
-        @foreach($data['rekap'] as $item)
-            <?php $no++; ?>
+    <header class="clearfix">
+        <table>
             <tr>
-                <td style="text-align: center;">{{$no}}</td>
-                <td style="text-align: left;">{{strtoupper($item->nama)}}</td>
-                <td style="text-align: right;">{{$item->total_potongan_lainnya}}</td>
-                <td style="text-align: right;">{{$item->keterangan}}</td>
+                <td style="width: 20%; background-color: white">
+                    <div id="logo" style="text-align: center">
+                        <img src="{{ asset('image/logo-uij.png') }}">
+                    </div>
+                </td>
+                <td style="width: 80%; background-color: white">
+                    <div id="company" style="text-align: center; margin-bottom: 0px; padding-bottom: 0px">
+                        <div style="font-size: large; font-weight: bold; text-align: left">UNIVERSITAS ISLAM JEMBER
+                        </div>
+                    </div>
+                </td>
             </tr>
-        @endforeach
-        </tbody>
-    </table>
-    <hr/>
-    <div id="company" style="text-align: right; margin-top: 50px">
-        <div>Jember, {{$data['tgl']['ttd']}}</div>
-        <div>
-            Kabag Keuangan
+            <tr>
+                <td style="text-align: center; margin: 0; padding: 0;" colspan="2">
+                    <hr />
+                </td>
+            </tr>
+        </table>
+    </header>
+    <main>
+        <table style="margin-top: 0">
+            <thead>
+                <tr>
+                    <th colspan="4" style="text-align: center">
+                        <b>{{ strtoupper($data['rekap'][0]->nama_potongan) }}</b>
+                    </th>
+                </tr>
+                <tr>
+                    <th style="text-align: center; font-weight: bold; width: 5%">
+                        NO
+                    </th>
+                    <th style="text-align: center; font-weight: bold; width: 35%">
+                        NAMA
+                    </th>
+                    <th style="text-align: center; font-weight: bold; width: 25%">
+                        POTONGAN
+                    </th>
+                    <th style="text-align: center; font-weight: bold; width: 35%">
+                        KETERANGAN
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $no = 0; ?>
+                @foreach ($data['rekap'] as $item)
+                    <?php $no++; ?>
+                    <tr>
+                        <td style="text-align: center;">{{ $no }}</td>
+                        <td style="text-align: left;">{{ strtoupper($item->nama) }}</td>
+                        <td style="text-align: right;">{{ $item->total_potongan_lainnya }}</td>
+                        <td style="text-align: right;">{{ $item->keterangan }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <hr />
+        <div id="company" style="text-align: right; margin-top: 50px">
+            <div>Jember, {{ $data['tgl']['ttd'] }}</div>
+            <div>
+                Kepala Bagian Keuangan
+            </div>
+            <div style="margin-top: 75px">
+                Nurul Lailatul Vitryah, S.E., M.Si
+            </div>
         </div>
-        <div style="margin-top: 75px">
-            Mika Nurjanah, S.E., M.Ak
-        </div>
-    </div>
-</main>
+    </main>
 </body>
+
 </html>
