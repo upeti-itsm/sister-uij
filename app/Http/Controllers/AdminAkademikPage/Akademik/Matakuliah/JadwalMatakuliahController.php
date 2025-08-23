@@ -67,6 +67,7 @@ class JadwalMatakuliahController extends Controller
             'jadwal_kuliah_id' => 'required',
             'tahun_akademik' => 'required',
             'kelas_id' => 'required',
+            'nama_kelas' => 'required',
             'ruang_id' => 'required',
             'hari' => 'required',
             'jam_mulai' => 'required',
@@ -83,7 +84,7 @@ class JadwalMatakuliahController extends Controller
 
 //        $moodle = JadwalDosen::sync_jadwal_siakad($request->jadwal_kuliah_id, $request->nama_mata_kuliah, $request->kelas_id, $request->kd_prodi, $request->tahun_akademik, $request->nik_pengampu, $request->nama_dosen, $request->nik_asisten, $request->nama_asisten);
 
-        $data = JadwalMataKuliah::sync_jadwal_matakuliah_with_siakad($request->jadwal_kuliah_id, $request->tahun_akademik, $request->kelas_id,
+        $data = JadwalMataKuliah::sync_jadwal_matakuliah_with_siakad($request->jadwal_kuliah_id, $request->tahun_akademik, $request->kelas_id.';'.$request->nama_kelas,
             $request->ruang_id, $request->hari, $request->jam_mulai, $request->jam_selesai, $request->matakuliah_id,
             $request->nama_mata_kuliah, $request->kapasitas, $request->dosen_id, $request->asisten_id,
             $request->kd_prodi, $request->jumlah_sks, $request->is_lab, $request->jenis_kelas);

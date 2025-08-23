@@ -158,37 +158,18 @@
         <tr>
             <td style="width: 20%; background-color: white">
                 <div id="logo" style="text-align: center">
-                    <img src="{{asset('image/logo-mandala.png')}}">
+                    <img src="{{asset('image/logo-uij.png')}}">
                 </div>
             </td>
             <td style="width: 80%; background-color: white">
                 <div id="company" style="text-align: center; margin-bottom: 0px; padding-bottom: 0px">
-                    <div style="font-size: large; font-weight: bold; text-align: left">SEKOLAH TINGGI ILMU EKONOMI
-                        (STIE) MANDALA JEMBER
+                    <div style="font-size: large; font-weight: bold; text-align: left">UNIVERSITAS ISLAM JEMBER
                     </div>
-                    <div style="font-size: large; font-weight: bold">( TERAKREDITASI )</div>
-                    <table style="margin: 0; padding: 0;">
-                        <tr>
-                            <td style="vertical-align: top; background-color: white;">Program Studi:</td>
-                            <td style="vertical-align: top; background-color: white">
-                                <ol style="padding: 0; margin: 0">
-                                    <li>Manajemen</li>
-                                    <li>Ekonomi Pembangunan</li>
-                                    <li>Akuntansi</li>
-                                    <li>Program D-3 Manajemen Keuangan dan Perbankan</li>
-                                    <li>Magister Manajemen (M.M.)</li>
-                                </ol>
-                            </td>
-                        </tr>
-                    </table>
                 </div>
             </td>
         </tr>
         <tr>
             <td style="text-align: center; margin: 0; padding: 0;" colspan="2">
-                <hr/>
-                <small>Alamat : Jln. Sumatera No.118 – 120 (0331) 334324, Fax (0331) 330941 JEMBER 68121 e-mail:
-                    stie-mj@stie-mandala.ac.id; www.stie-mandala.ac.id</small>
                 <hr/>
             </td>
         </tr>
