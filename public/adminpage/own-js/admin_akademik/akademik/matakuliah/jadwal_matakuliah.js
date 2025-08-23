@@ -275,26 +275,26 @@ jQuery.jadwal_matakuliah = {
                                             url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/synchron',
                                             method: 'post',
                                             data: {
-                                                'jadwal_kuliah_id': response.jadwal_kuliah_id,
-                                                'tahun_akademik': response.tahun_akademik,
-                                                'kelas_id': response.kelas_id,
-                                                'ruang_id': response.ruang_id,
-                                                'hari': response.hari,
-                                                'jam_mulai': response.jam_mulai,
-                                                'jam_selesai': response.jam_selesai,
-                                                'matakuliah_id': response.matakuliah_id,
-                                                'nama_mata_kuliah': response.nama_mata_kuliah,
-                                                'kapasitas': response.kapasitas,
-                                                'dosen_id': response.dosen_id,
-                                                'asisten_id': response.asisten_id,
-                                                'kd_prodi': response.kd_prodi,
-                                                'jumlah_sks': response.jumlah_sks,
-                                                'is_lab': response.is_lab,
-                                                'jenis_kelas': response.jenis_kelas,
-                                                'nama_dosen': response.nama_dosen,
-                                                'nama_asisten': response.nama_asisten,
-                                                'nik_pengampu': response.nik_pengampu,
-                                                'nik_asisten': response.nik_asisten,
+                                                'jadwal_kuliah_id': response.p_jadwal_kuliah_id,
+                                                'tahun_akademik': response.p_tahun_akademik,
+                                                'kelas_id': response.p_kelas_id,
+                                                'ruang_id': response.p_ruang_id,
+                                                'hari': response.p_hari,
+                                                'jam_mulai': response.p_jam_mulai,
+                                                'jam_selesai': response.p_jam_selesai,
+                                                'matakuliah_id': response.p_matakuliah_id,
+                                                'nama_mata_kuliah': response.p_nama_mata_kuliah,
+                                                'kapasitas': response.p_kapasitas,
+                                                'dosen_id': response.p_dosen_id,
+                                                'asisten_id': response.p_asisten_id,
+                                                'kd_prodi': response.p_kd_prodi,
+                                                'jumlah_sks': response.p_sks,
+                                                'is_lab': response.p_is_lab,
+                                                'jenis_kelas': response.p_id_jenis_kelas_matakuliah,
+                                                'nama_dosen': response.p_nama_dosen,
+                                                'nama_asisten': response.p_nama_asisten,
+                                                'nik_pengampu': response.p_nik_pengampu,
+                                                'nik_asisten': response.p_nik_asisten,
                                             },
                                             success: function (result) {
                                                 if (result.status) {
@@ -345,44 +345,44 @@ jQuery.jadwal_matakuliah = {
             url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/synchron',
             method: 'post',
             data: {
-                'jadwal_kuliah_id': data[index].jadwal_kuliah_id,
-                'tahun_akademik': data[index].tahun_akademik,
-                'kelas_id': data[index].kelas_id,
-                'ruang_id': data[index].ruang_id,
-                'hari': data[index].hari,
-                'jam_mulai': data[index].jam_mulai,
-                'jam_selesai': data[index].jam_selesai,
-                'matakuliah_id': data[index].matakuliah_id,
-                'nama_mata_kuliah': data[index].nama_mata_kuliah,
-                'kapasitas': data[index].kapasitas,
-                'dosen_id': data[index].dosen_id,
-                'asisten_id': data[index].asisten_id,
-                'kd_prodi': data[index].kd_prodi,
-                'jumlah_sks': data[index].jumlah_sks,
-                'is_lab': data[index].is_lab,
-                'jenis_kelas': data[index].jenis_kelas,
-                'nama_dosen': data[index].nama_dosen,
-                'nama_asisten': data[index].nama_asisten,
-                'nik_pengampu': data[index].nik_pengampu,
-                'nik_asisten': data[index].nik_asisten,
+                'jadwal_kuliah_id': data[index].p_jadwal_kuliah_id,
+                'tahun_akademik': data[index].p_tahun_akademik,
+                'kelas_id': data[index].p_kelas_id,
+                'ruang_id': data[index].p_ruang_id,
+                'hari': data[index].p_hari,
+                'jam_mulai': data[index].p_jam_mulai,
+                'jam_selesai': data[index].p_jam_selesai,
+                'matakuliah_id': data[index].p_matakuliah_id,
+                'nama_mata_kuliah': data[index].p_nama_mata_kuliah,
+                'kapasitas': data[index].p_kapasitas,
+                'dosen_id': data[index].p_dosen_id,
+                'asisten_id': data[index].p_asisten_id,
+                'kd_prodi': data[index].p_kd_prodi,
+                'jumlah_sks': data[index].p_sks,
+                'is_lab': data[index].p_is_lab,
+                'jenis_kelas': data[index].p_id_jenis_kelas_matakuliah,
+                'nama_dosen': data[index].p_nama_dosen,
+                'nama_asisten': data[index].p_nama_asisten,
+                'nik_pengampu': data[index].p_nik_pengampu,
+                'nik_asisten': data[index].p_nik_asisten,
             },
             success: function (result) {
                 if (result.status) {
                     if (result.jenis_aksi === 1) {
                         self.data.log_table_jadwal_kuliah.row.add([
                             (index + 1),
-                            data[index].nama_mata_kuliah + " (" + data[index].kelas_id + ")",
+                            data[index].p_nama_mata_kuliah + " (" + data[index].p_kelas_id + ")",
                             "<i class='fas fa-check-circle text-success p-1'></i> " + result.keterangan,
-                            data[index].nama_mata_kuliah,
+                            data[index].p_nama_mata_kuliah,
                             "inserted"
                         ]).draw();
                         inserted++;
                     } else {
                         self.data.log_table_jadwal_kuliah.row.add([
                             (index + 1),
-                            data[index].nama_mata_kuliah + " (" + data[index].kelas_id + ")",
+                            data[index].p_nama_mata_kuliah + " (" + data[index].p_kelas_id + ")",
                             "<i class='fas fa-check-circle text-success p-1'></i> " + result.keterangan,
-                            data[index].nama_mata_kuliah,
+                            data[index].p_nama_mata_kuliah,
                             "updated"
                         ]).draw();
                         updated++;
@@ -390,16 +390,17 @@ jQuery.jadwal_matakuliah = {
                 } else {
                     self.data.log_table_jadwal_kuliah.row.add([
                         (index + 1),
-                        data[index].nama_mata_kuliah + " (" + data[index].kelas_id + ")",
+                        data[index].p_nama_mata_kuliah + " (" + data[index].p_kelas_id + ")",
                         "<i class='fas fa-check-circle text-danger p-1'></i> " + result.keterangan,
-                        data[index].nama_mata_kuliah,
+                        data[index].p_nama_mata_kuliah,
                         "gagal"
                     ]).draw();
                     failed++;
                 }
-                progres++;
+
             },
             complete: function () {
+                progres++;
                 $("#progress-bar-jadwal-kuliah").width((progres / n * 100).toFixed(2) + '%');
                 $("#progress-text-jadwal-kuliah").text((progres / n * 100).toFixed(2) + '% Complete');
                 $("#btn-failed-log-jadwal-kuliah").text("Failed : " + failed);
