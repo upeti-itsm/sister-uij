@@ -107,6 +107,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <select class="select2 form-control" id="filter_tahun">
+                                                <option value="2027">2027</option>
+                                                <option value="2026">2026</option>
                                                 <option value="2025">2025</option>
                                                 <option value="2024">2024</option>
                                                 <option value="2023">2023</option>
@@ -163,4 +165,9 @@
     <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('adminpage/own-js/keuangan_page/penggajian/honorarium/honorarium_koreksi/daftar.js') }}"></script>
+
+    <script>
+        const tahunSaatIni = new Date().getFullYear();
+        document.getElementById('filter_tahun').value = tahunSaatIni;
+    </script>
 @endpush

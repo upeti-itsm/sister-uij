@@ -1,8 +1,8 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -35,19 +35,31 @@
                             <div class="dropdown action-item" data-toggle="dropdown" aria-expanded="true">
                                 <a href="#" class="action-item">Insentif Lainnya <i class="fas fa-bars fa-fw"></i></a>
                                 <div class="dropdown-menu dropdown-menu-right" id="sub-menu">
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.gaji_umum.index')}}"
-                                       class="dropdown-item">Pengaturan Gaji Umum</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index')}}"
-                                       class="dropdown-item">Pengaturan Gaji Individu</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_lainnya.index')}}" class="dropdown-item">Potongan Lainnya</a>
-                                    <a style="display: none" href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_qurban.index')}}" class="dropdown-item">Potongan Qurban</a>
-                                    <a style="display: none" href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index')}}" class="dropdown-item">Potongan Arisan</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_koperasi.index')}}" class="dropdown-item">Potongan Pinjaman</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index')}}" class="dropdown-item">Pengaturan BPJS</a>
-                                    <a style="display: none" href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_fungsional.index')}}" class="dropdown-item">Tunjangan Fungsional</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_struktural.index')}}" class="dropdown-item">Tunjangan Jabatan</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index')}}" class="dropdown-item">Tunjangan Kinerja</a>
-                                    <a href="{{route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index')}}" class="dropdown-item">Pengaturan UMR</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.gaji_umum.index') }}"
+                                        class="dropdown-item">Pengaturan Gaji Umum</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index') }}"
+                                        class="dropdown-item">Pengaturan Gaji Individu</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_lainnya.index') }}"
+                                        class="dropdown-item">Potongan Lainnya</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_qurban.index') }}"
+                                        class="dropdown-item">Potongan Qurban</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index') }}"
+                                        class="dropdown-item">Potongan Arisan</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_koperasi.index') }}"
+                                        class="dropdown-item">Potongan Pinjaman</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index') }}"
+                                        class="dropdown-item">Pengaturan BPJS</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_fungsional.index') }}"
+                                        class="dropdown-item">Tunjangan Fungsional</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_struktural.index') }}"
+                                        class="dropdown-item">Tunjangan Jabatan</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index') }}"
+                                        class="dropdown-item">Tunjangan Kinerja</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index') }}"
+                                        class="dropdown-item">Pengaturan UMR</a>
                                 </div>
                             </div>
                         </div>
@@ -59,17 +71,15 @@
                     <div class="col-md-12 mt-3" id="progress-bar-syncron-ulang" style="display: none">
                         <button class="btn btn-primary mr-1 mb-2" type="button" disabled="">
                             <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"
-                                  id="loading-progress"></span>
+                                id="loading-progress"></span>
                             <span id="keterangan-progress">Mohon menunggu hingga proses upload selesai ...</span>
                         </button>
                         <button class="btn btn-danger-soft mr-1 mb-2" id="btn-cancel-syncron-ulang"><i
                                 class="fas fa-window-close mr-2"></i>Batal
                         </button>
                         <div class="progress progress-lg mb-3">
-                            <div
-                                class="progress-bar progress-bar-violet progress-bar-striped progress-bar-animated"
-                                role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                                style="width: 0" id="progress-bar">
+                            <div class="progress-bar progress-bar-violet progress-bar-striped progress-bar-animated"
+                                role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0" id="progress-bar">
                                 <span id="progress-text"></span>
                             </div>
                         </div>
@@ -100,7 +110,7 @@
                                     <div class="col-md-8">
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control"
-                                                   placeholder="Masukkan Nama Pegawai" id="cari-log">
+                                                placeholder="Masukkan Nama Pegawai" id="cari-log">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" id="btn-cari-log"><i
                                                         class="fas fa-search mr-2"></i>Cari
@@ -121,12 +131,12 @@
                                 <div class="table-responsive">
                                     <table class="table table-striped table-bordered table-hover" id="log-table">
                                         <thead>
-                                        <tr>
-                                            <th style="width: 5%">Nomor</th>
-                                            <th style="width: 35%">Nama (Insentif)</th>
-                                            <th style="width: 45%">Keterangan</th>
-                                            <th style="width: 15%">Status</th>
-                                        </tr>
+                                            <tr>
+                                                <th style="width: 5%">Nomor</th>
+                                                <th style="width: 35%">Nama (Insentif)</th>
+                                                <th style="width: 45%">Keterangan</th>
+                                                <th style="width: 15%">Status</th>
+                                            </tr>
                                         </thead>
                                         <tbody id="log-table-tbody">
                                         </tbody>
@@ -163,6 +173,9 @@
                                         <div class="col-md-6">
                                             <select class="form-control select2" id="tahun">
                                                 <option value="0">-- Semua Tahun --</option>
+                                                <option value="2027">2027</option>
+                                                <option value="2026">2026</option>
+                                                <option value="2025">2025</option>
                                                 <option value="2024">2024</option>
                                                 <option value="2023">2023</option>
                                                 <option value="2022">2022</option>
@@ -174,10 +187,10 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="form-group">
-                                    <label class="font-weight-bold">&nbsp;</label><br/>
+                                    <label class="font-weight-bold">&nbsp;</label><br />
                                     <div class="float-right">
                                         <button class="btn btn-success mr-2" title="Upload Insentif Lainnya"
-                                                id="btn_upload_insentif"><i class="fas fa-file-excel"></i> Upload
+                                            id="btn_upload_insentif"><i class="fas fa-file-excel"></i> Upload
                                             Insentif
                                         </button>
                                     </div>
@@ -190,12 +203,12 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="table">
                             <thead>
-                            <tr>
-                                <th class="text-center align-middle">Nomor</th>
-                                <th class="text-left align-middle">Nama Data</th>
-                                <th class="text-left align-middle">Keterangan</th>
-                                <th class="text-center"><i class="fas fa-th"></i></th>
-                            </tr>
+                                <tr>
+                                    <th class="text-center align-middle">Nomor</th>
+                                    <th class="text-left align-middle">Nama Data</th>
+                                    <th class="text-left align-middle">Keterangan</th>
+                                    <th class="text-center"><i class="fas fa-th"></i></th>
+                                </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -207,7 +220,7 @@
 @endsection
 @section('modal')
     <div class="modal modal-primary fade" id="modal-upload-insentif-lainnya" tabindex="-1" role="dialog"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -241,6 +254,7 @@
                             <div class="form-group" style="text-align: left">
                                 <label>Pilih Tahun</label>
                                 <select class="form-control select2" id="add-tahun">
+                                    <option value="2027">2027</option>
                                     <option value="2026">2026</option>
                                     <option value="2025">2025</option>
                                     <option value="2024">2024</option>
@@ -254,12 +268,12 @@
                             <div class="form-group" style="text-align: left">
                                 <label>Upload Potongan</label>
                                 <div class="custom-file">
-                                    <input type="file" accept=".xlsx"
-                                           class="custom-file-input"
-                                           required id="customFile" name="dok_pendukung">
+                                    <input type="file" accept=".xlsx" class="custom-file-input" required
+                                        id="customFile" name="dok_pendukung">
                                     <label class="custom-file-label" for="customFile">Choose file</label>
                                 </div>
-                                <small><a href="{{asset('files/penggajian/template/insentif_lainnya_template.xlsx')}}">Download
+                                <small><a
+                                        href="{{ asset('files/penggajian/template/insentif_lainnya_template.xlsx') }}">Download
                                         Template Insentif</a></small>
                             </div>
                         </div>
@@ -275,7 +289,14 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/own-js/keuangan_page/penggajian/pengaturan_gaji/insentif_lainnya/insentif_lainnya.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script
+        src="{{ asset('adminpage/own-js/keuangan_page/penggajian/pengaturan_gaji/insentif_lainnya/insentif_lainnya.js') }}">
+    </script>
+
+    <script>
+        const tahunSaatIni = new Date().getFullYear();
+        document.getElementById('add-tahun').value = tahunSaatIni;
+    </script>
 @endpush

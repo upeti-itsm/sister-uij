@@ -95,6 +95,8 @@
                                         <div class="col-md-6">
                                             <select class="form-control select2" id="tahun">
                                                 <option value="0">-- Semua Tahun --</option>
+                                                <option value="2027">2027</option>
+                                                <option value="2026">2026</option>
                                                 <option value="2025">2025</option>
                                                 <option value="2024">2024</option>
                                                 <option value="2023">2023</option>

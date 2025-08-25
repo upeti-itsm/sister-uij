@@ -173,6 +173,8 @@
                                         <div class="col-md-6">
                                             <select class="form-control select2" id="tahun">
                                                 <option value="0">-- Semua Tahun --</option>
+                                                <option value="2027">2027</option>
+                                                <option value="2026">2026</option>
                                                 <option value="2025">2025</option>
                                                 <option value="2024">2024</option>
                                                 <option value="2023">2023</option>
@@ -252,6 +254,8 @@
                             <div class="form-group" style="text-align: left">
                                 <label>Pilih Tahun</label>
                                 <select class="form-control select2" id="add-tahun">
+                                    <option value="2027">2027</option>
+                                    <option value="2026">2026</option>
                                     <option value="2025">2025</option>
                                     <option value="2024">2024</option>
                                     <option value="2023">2023</option>
@@ -289,5 +293,10 @@
     <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
     <script
         src="{{ asset('adminpage/own-js/keuangan_page/penggajian/pengaturan_gaji/potongan_koperasi/potongan_koperasi.js') }}">
+    </script>
+
+    <script>
+        const tahunSaatIni = new Date().getFullYear();
+        document.getElementById('add-tahun').value = tahunSaatIni;
     </script>
 @endpush
