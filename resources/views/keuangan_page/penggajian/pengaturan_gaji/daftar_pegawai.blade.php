@@ -122,7 +122,7 @@
                                     <th class="text-center align-middle">Nomor</th>
                                     <th class="text-left align-middle">Identitas Pegawai</th>
                                     <th class="text-left align-middle">Keterangan</th>
-                                    <th class="text-center">Asuransi BPJS</th>
+                                    <th class="text-center">Pengaturan</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>

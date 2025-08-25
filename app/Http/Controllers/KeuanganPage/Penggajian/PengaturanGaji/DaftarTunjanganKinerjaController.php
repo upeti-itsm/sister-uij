@@ -42,7 +42,14 @@ class DaftarTunjanganKinerjaController extends Controller
             'keterangan.required' => 'Pastikan Keterangan Terisi',
         ]);
         $result = TunjanganKinerjaDosen::insup_tunjangan_kinerja($request->nilai_kinerja, $request->keterangan, $request->nominal_kinerja);
-        return response()->json($result);
+
+        $data = $result[0];
+        session()->flash($data->status == 1 ? 'success_message' : 'failed_message', $data->keterangan);
+        return redirect()->back();
     }
 
+    public function delete(Request $request)
+    {
+        // ToDo
+    }
 }

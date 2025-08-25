@@ -197,7 +197,7 @@ jQuery.daftar_pegawai = {
                             dplk = 'Rp. ' + numeral(data.nominal_dplk).format('0,-');
                         return "<p><b>" + data.unit_kerja + "</b><br/>" +
                             "<small>Pendidikan Terakhir : " + data.pendidikan_terakhir + "</small><hr/>" +
-                            "<small>Nominal DPLK: " + dplk + "</small></p>";
+                            "<small>Potongan Paguyuban: " + dplk + "</small></p>";
                     }
                 },
                 {
@@ -228,7 +228,7 @@ jQuery.daftar_pegawai = {
                             "</div>" +
                             "<div class='custom-control custom-switch'>" +
                             "<input type='checkbox' class='dplk custom-switch custom-control-input' data-type='dplk' data-dplk='" + data.nominal_dplk + "' data-nama='" + data.nama + "' id='dplk-" + data.id_karyawan + "' data-id='" + data.id_karyawan + "' " + dplk + ">" +
-                            "<label class='custom-control-label' for='dplk-" + data.id_karyawan + "'>Paguyuban Cooper</label>" +
+                            "<label class='custom-control-label' for='dplk-" + data.id_karyawan + "'>Potongan Paguyuban</label>" +
                             "</div>";
                     }
                 },

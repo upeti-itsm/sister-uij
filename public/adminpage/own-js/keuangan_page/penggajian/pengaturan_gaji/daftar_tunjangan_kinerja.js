@@ -125,6 +125,59 @@ jQuery.daftar_tunjangan_kinerja = {
             $("#modal-insup-data-kinerja").modal('show');
             self.setOnSaveButton();
         });
+
+        $("#table").on('click', 'button.btn-delete', function () {
+            var id = $(this).data('id');
+            var kd_kinerja = $(this).data('kd_kinerja');
+            var nominal = $(this).data('nominal');
+
+            $.confirm({
+                title: 'Konfirmasi !',
+                type: 'orange',
+                content: 'Apakah anda yakin menghapus potongan ' + kd_kinerja + ' sebesar ' + nominal + ' ?',
+                buttons: {
+                    confirm: {
+                        text: 'Ya, saya yakin',
+                        btnClass: 'btn-green',
+                        keys: ['enter'],
+                        action: function () {
+                            $.ajax({
+                                url: '/keu/penggajian/pengaturan-gaji/tunjangan-kinerja/delete',
+                                type: 'POST',
+                                data: {
+                                    id: id,
+                                },
+                                success: function (result) {
+                                    if (result.status === 1) {
+                                        $.alert({
+                                            title: "Informasi",
+                                            type: "green",
+                                            content: result.keterangan,
+                                            backgroundDismissAnimation: 'glow',
+                                        });
+                                    } else {
+                                        $.alert({
+                                            title: "Peringatan",
+                                            type: "red",
+                                            content: result.keterangan,
+                                            backgroundDismissAnimation: 'glow',
+                                        });
+                                    }
+                                    self.data.table.ajax.reload();
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Tidak, lain kali',
+                        btnClass: 'btn-red'
+                    }
+                },
+                backgroundDismissAnimation: 'glow',
+                columnClass: 'medium'
+            });
+        });
+
         $("#btn-simpan-data").click(function () {
             if ($("#add_nilai_kinerja").val() && $("#add_nominal_kinerja").val() && $("#add_keterangan").val()) {
                 $("#nilai_kinerja").val($("#add_nilai_kinerja").val());
@@ -164,12 +217,12 @@ jQuery.daftar_tunjangan_kinerja = {
             }
         });
     },
-    setOnSaveButton: function (){
+    setOnSaveButton: function () {
         $("#btn-simpan-data").removeClass('btn-secondary disabled');
         $("#btn-simpan-data").addClass('btn-primary');
         $("#btn-simpan-data").attr('disabled', false);
     },
-    setOffSaveButton: function (){
+    setOffSaveButton: function () {
         $("#btn-simpan-data").removeClass('btn-primary');
         $("#btn-simpan-data").addClass('btn-secondary disabled');
         $("#btn-simpan-data").attr('disabled', true);
