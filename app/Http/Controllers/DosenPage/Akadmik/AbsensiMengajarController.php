@@ -22,7 +22,7 @@ class AbsensiMengajarController extends Controller
         //if (sizeof($dosen) > 0) {
         //  $dosen = $dosen[0];
 //            $course = CourseMoodle::get_course_moodle_by_username_dosen($username);
-        $course = JadwalDosen::getMatkulDosen(Session::get('user')->id_staf_dosen);
+        $course = JadwalDosen::getMatkulDosen(Session::get('user')->nidn);
 //        $course = JadwalDosen::getMatkulDosen();
 //        dd($course);
         return view('dosen_page.akademik.absensi_mengajar', compact('course', 'menu'));
