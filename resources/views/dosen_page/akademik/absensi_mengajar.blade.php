@@ -55,8 +55,8 @@
                                         name="id_matakuliah" required>
                                     @foreach($course AS $item)
                                         <option
-                                            value="{{$item->idkelas}}"
-                                            @if(old('id_matakuliah') == $item->idkelas) selected @endif data-ta="{{$item->thnakademik}}">{{$item->namamatakuliah}}
+                                            value="{{$item->idjadwalperkuliahan}}"
+                                            @if(old('id_matakuliah') == $item->idjadwalperkuliahan) selected @endif data-ta="{{$item->thnakademik}}">{{$item->namamatakuliah}}
                                             ({{$item->namakelas}}) - {{$item->namaprogramstudi}} </option>
                                     @endforeach
                                 </select>
