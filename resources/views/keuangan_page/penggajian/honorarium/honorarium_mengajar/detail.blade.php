@@ -125,7 +125,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label>Honorarium Mengajar Kelas Malam</label>
+                                            <label>Honorarium Mengajar S2</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">Rp.</div>
@@ -139,7 +139,7 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label>Honorarium Mengajar Kelas Pagi</label>
+                                            <label>Honorarium Mengajar S1</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">Rp.</div>

@@ -256,10 +256,10 @@
         <tr>
             <td class="center" style="width: 5%"><small>2</small></td>
             <td style="width: 50%" colspan="2">
-                <small>Insentif Kelebihan Mengajar S1/D3</small>
+                <small>Insentif Kelebihan Mengajar S1</small>
             </td>
             <td style="width: 45%; text-align: right">
-                <small>{{"Rp. " . number_format($data['rekap']->tunjangan_struktural,0,',','.').',-'}}</small>
+                <small>{{"Rp. " . number_format($data['rekap']->insentif_kelebihan_mengajar_s1,0,',','.').',-'}}</small>
             </td>
         </tr>
         <tr>
@@ -268,7 +268,7 @@
                 <small>Insentif Kelebihan Mengajar S2</small>
             </td>
             <td style="width: 45%; text-align: right">
-                <small>{{"Rp. " . number_format($data['rekap']->tunjangan_struktural,0,',','.').',-'}}</small>
+                <small>{{"Rp. " . number_format($data['rekap']->insentif_kelebihan_mengajar_s2,0,',','.').',-'}}</small>
             </td>
         </tr>
         <tr style="display: none">

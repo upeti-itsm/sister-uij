@@ -64,7 +64,9 @@
                         </tr>
                         <tr>
                             <td>
-                                <div>Tunjangan Kinerja</div>
+                                <div>Tunjangan Kinerja
+                                    <small> - {{"Kehadiran: ".$rekap->total_kehadiran." (".$rekap->transport_harian."/Jam)"}}</small>
+                                </div>
                             </td>
                             <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_tunjangan_kinerja,0,',','.').',-'}}</td>
                         </tr>
@@ -78,36 +80,33 @@
                         </tr>
                         <tr>
                             <td>
-                                <div>Tunjangan Pendidikan
-                                    <small> - {{'Pendidikan Terakhir: '.$karyawan->pendidikan_terakhir ?: '-'}}</small>
+                                <div>Insentif Mengajar S1
+                                    <small> - {{$rekap->ket_insentif_kelebihan_mengajar_s1}}</small>
                                 </div>
                             </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_tunjangan_pendidikan,0,',','.').',-'}}</td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->insentif_kelebihan_mengajar_s1,0,',','.').',-'}}</td>
                         </tr>
                         <tr>
                             <td>
-                                <div>Tunjangan Keluarga
-                                    <small> - {{'Jumlah Anak: '.$rekap->jml_anak.' orang'}}</small>
+                                <div>Insentif Mengajar S2
+                                    <small> - {{$rekap->ket_insentif_kelebihan_mengajar_s2}}</small>
                                 </div>
                             </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_tunjangan_keluarga,0,',','.').',-'}}</td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->insentif_kelebihan_mengajar_s2,0,',','.').',-'}}</td>
                         </tr>
                         <tr>
                             <td>
-                                <div>Tunjangan Beras
-                                    <small> - {{'Diberikan dalam bentuk '.$rekap->total_beras.' beras'}}</small>
+                                <div>Insentif Lembur
+                                    <small> - {{$rekap->total_beras}}</small>
                                 </div>
                             </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->total_harga_beras,0,',','.').',-'}}</td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_tunjangan_lembur,0,',','.').',-'}}</td>
                         </tr>
                         <tr>
                             <td>
-                                <div>Tunjangan Transport
-                                    <small>
-                                        - {{$rekap->total_kehadiran.' hari X Rp. '.number_format($rekap->transport_harian,0,',','.')}}</small>
-                                </div>
+                                <div>Insentif Lainnya</div>
                             </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->tunjangan_transport,0,',','.').',-'}}</td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_insentif_lainnya,0,',','.').',-'}}</td>
                         </tr>
                         <tr>
                             <td>
@@ -117,33 +116,13 @@
                         </tr>
                         <tr>
                             <td>
-                                <div>Potongan Infaq
-                                    <small> - 2.5% dari gaji kotor</small>
-                                </div>
-                            </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_infaq,0,',','.').',-'}}</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div>Potongan Koperasi</div>
+                                <div>Potongan Pinjaman</div>
                             </td>
                             <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_koperasi,0,',','.').',-'}}</td>
                         </tr>
                         <tr>
                             <td>
-                                <div>Potongan Arisan</div>
-                            </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_arisan,0,',','.').',-'}}</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div>Potongan Qurban</div>
-                            </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_qurban,0,',','.').',-'}}</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div>Potongan DPLK</div>
+                                <div>Potongan Paguyuban</div>
                             </td>
                             <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_dplk,0,',','.').',-'}}</td>
                         </tr>
@@ -162,14 +141,6 @@
                         <tr>
                             <td>
                                 <div>Potongan BPJS Ketenagakerjaan</div>
-                                <small>Potongan JHT
-                                    - {{"Rp. " . number_format($rekap->nominal_jht,0,',','.').',-'}}</small><br>
-                                <small>Potongan JKM
-                                    - {{"Rp. " . number_format($rekap->nominal_jkm,0,',','.').',-'}}</small><br>
-                                <small>Potongan JKK
-                                    - {{"Rp. " . number_format($rekap->nominal_jkk,0,',','.').',-'}}</small><br>
-                                <small>Potongan JKP
-                                    - {{"Rp. " . number_format($rekap->nominal_jp,0,',','.').',-'}}</small><br>
                             </td>
                             <td style="text-align: left; vertical-align: center">{{"Rp. " . number_format($rekap->nominal_ketenagakerjaan,0,',','.').',-'}}</td>
                         </tr>
@@ -183,7 +154,7 @@
                             <td>
                                 <div>Potongan Lainnya</div>
                             </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_lainnya,0,',','.').',-'}}</td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->potongan_nominal_lainnya,0,',','.').',-'}}</td>
                         </tr>
                         <tr>
                             <td>

@@ -264,7 +264,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Insentif Kelebihan Mengajar S1/D3</label>
+                                            <label>Insentif Kelebihan Mengajar S1</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">Rp.</div>
@@ -272,9 +272,9 @@
                                                 <input readonly type="text"
                                                        class="form-control number"
                                                        id="insentif_kelebihan_mengajar"
-                                                       value="{{$rekap->nominal_tunjangan_pendidikan}}">
+                                                       value="{{$rekap->insentif_kelebihan_mengajar_s1}}">
                                             </div>
-                                            <small class="text-danger">{{$rekap->pendidikan_terakhir}}</small>
+                                            <small class="text-danger" style="display: none">{{$rekap->pendidikan_terakhir}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -287,9 +287,9 @@
                                                 <input readonly type="text"
                                                        class="form-control number"
                                                        id="insentif_kelebihan_mengajar_2"
-                                                       value="{{$rekap->nominal_tunjangan_pendidikan}}">
+                                                       value="{{$rekap->insentif_kelebihan_mengajar_s2}}">
                                             </div>
-                                            <small class="text-danger">{{$rekap->pendidikan_terakhir}}</small>
+                                            <small class="text-danger" style="display: none">{{$rekap->pendidikan_terakhir}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
