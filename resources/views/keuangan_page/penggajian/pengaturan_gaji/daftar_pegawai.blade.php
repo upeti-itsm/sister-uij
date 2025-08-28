@@ -153,7 +153,7 @@
                             <option value="x">-- Tidak Mendapat Tunjangan Kinerja --</option>
                             @foreach ($tunjangan_kinerja as $item)
                                 <option value="{{ $item->kd_kinerja }}">
-                                    {{ $item->kd_kinerja . ' (' . $item->nominal_kinerja . ')' }}</option>
+                                    {{ $item->kd_kinerja . ' (' . $item->nominal_kinerja . ' - '.$item->keterangan.')' }}</option>
                             @endforeach
                         </select>
                     </div>

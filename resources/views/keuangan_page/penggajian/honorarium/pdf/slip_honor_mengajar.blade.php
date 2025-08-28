@@ -154,29 +154,22 @@
 </head>
 <body>
 <header class="clearfix">
-    <table style="margin-top: 100px">
+    <table>
         <tr>
-            <td style="width: 100%; background-color: white">
-                <div id="company" style="text-align: center; margin-bottom: 0px; padding-bottom: 0px">
-                    <img src="{{asset('image/logo-mandala.png')}}" style="height: 80px; width: 80px">
+            <td style="width: 20%; background-color: white">
+                <div id="logo" style="text-align: center">
+                    <img src="{{asset('image/logo-uij.png')}}">
                 </div>
             </td>
-        </tr>
-        <tr>
             <td style="width: 80%; background-color: white">
                 <div id="company" style="text-align: center; margin-bottom: 0px; padding-bottom: 0px">
-                    <div style="font-size: large; font-weight: bold; text-align: center">INSTITUT TEKNOLOGI DAN SAINS
-                        (ITS) MANDALA
+                    <div style="font-size: large; font-weight: bold; text-align: left">UNIVERSITAS ISLAM JEMBER
                     </div>
-                    <div style="font-size: large; font-weight: bold">( TERAKREDITASI )</div>
                 </div>
             </td>
         </tr>
         <tr>
-            <td style="text-align: center; margin: 0; padding: 0;">
-                <hr/>
-                <small>Alamat : Jln. Sumatera No.118 – 120 (0331) 334324, Fax (0331) 330941 JEMBER 68121 e-mail:
-                    stie-mj@stie-mandala.ac.id; www.stie-mandala.ac.id</small>
+            <td style="text-align: center; margin: 0; padding: 0;" colspan="2">
                 <hr/>
             </td>
         </tr>

@@ -39,9 +39,9 @@
                                             <a href="#" class="action-item">Honorarium Mengajar <i
                                                     class="fas fa-bars fa-fw"></i></a>
                                             <div class="dropdown-menu dropdown-menu-right" id="sub-menu">
-                                                <a href="{{ route('keuangan.penggajian.honorarium.honorarium_koreksi.index') }}"
+                                                <a style="display: none" href="{{ route('keuangan.penggajian.honorarium.honorarium_koreksi.index') }}"
                                                     class="dropdown-item">Honorarium Koreksi</a>
-                                                <a href="{{ route('keuangan.penggajian.honorarium.honorarium_pengawas.index') }}"
+                                                <a style="display: none" href="{{ route('keuangan.penggajian.honorarium.honorarium_pengawas.index') }}"
                                                     class="dropdown-item">Honorarium Pengawas</a>
                                             </div>
                                         </div>
@@ -121,8 +121,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="font-weight-bold">&nbsp;</label><br />
-                                    <div class="float-right">
-                                        <button class="btn btn-primary mr-2" id="btn_buat_honor"
+                                    <div class="float-right" >
+                                        <button style="display: none" class="btn btn-primary mr-2" id="btn_buat_honor"
                                             title="Buat Honor Mengajar Bulan Ini">
                                             <span class='spinner-border spinner-border-sm mr-2' id='loading-spin-buat-honor'
                                                 style='display: none' role='status' aria-hidden='true'></span><i

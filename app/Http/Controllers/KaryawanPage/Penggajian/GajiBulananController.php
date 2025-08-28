@@ -54,6 +54,7 @@ class GajiBulananController extends Controller
     public function detail($id_rekap)
     {
         $rekap = RekapitulasiGajiBulanan::get_detail_gaji_bulanan_karyawan($id_rekap);
+//        dd($rekap);
         $karyawan = Karyawan::get_detail_karyawan_by_id_personal(Session::get('user')->id_personal);
         $menu = "Melihat Gaji Bulanan";
         return view('karyawan_page.penggajian.detail_gaji_bulanan', compact('menu', 'rekap', 'karyawan', 'id_rekap'));

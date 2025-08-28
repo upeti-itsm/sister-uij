@@ -62,9 +62,16 @@
                                         </div>
                                         <div class="col-md-6">
                                             <select class="select2 form-control" id="filter_tahun">
-                                                <option value="2024">2024</option>
-                                                <option value="2023">2023</option>
-                                                <option value="2022">2022</option>
+                                                @php
+                                                    $currentYear = \Carbon\Carbon::now()->year;
+                                                @endphp
+
+                                                @for ($year = $currentYear + 5; $year >= $currentYear - 5; $year--)
+                                                    <option value="{{ $year }}"
+                                                            @if($currentYear == $year) selected @endif>
+                                                        {{ $year }}
+                                                    </option>
+                                                @endfor
                                             </select>
                                         </div>
                                     </div>

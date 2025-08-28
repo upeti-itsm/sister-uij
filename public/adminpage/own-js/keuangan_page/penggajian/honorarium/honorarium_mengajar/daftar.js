@@ -304,10 +304,10 @@ jQuery.daftar = {
                     sClass: 'text-center',
                     width: "20%",
                     render: function (data) {
-                        if (data.is_repair === false)
-                            return "<a href='/keu/penggajian/honorarium/honorarium-mengajar/detail/" + data.id_rekapitulasi_honorarium_dosen_mengajar + "' title='Lihat Detail Gaji' class='btn btn-sm btn-primary btn-edit mr-2' data-id='" + data.id_rekapitulasi_honorarium_dosen_mengajar + "'><i class='fas fa-search'></i></a>" +
-                                "<a href='/keu/penggajian/honorarium/honorarium-mengajar/slip-gaji/" + data.id_rekapitulasi_honorarium_dosen_mengajar + "' title='Print Slip Gaji' class='btn btn-sm btn-info btn-print mr-2' data-id='" + data.id_rekapitulasi_honorarium_dosen_mengajar + "'><i class='fas fa-print'></i></a>";
-                        else
+                        // if (data.is_repair === false)
+                        //     return "<a href='/keu/penggajian/honorarium/honorarium-mengajar/detail/" + data.id_rekapitulasi_honorarium_dosen_mengajar + "' title='Lihat Detail Gaji' class='btn btn-sm btn-primary btn-edit mr-2' data-id='" + data.id_rekapitulasi_honorarium_dosen_mengajar + "'><i class='fas fa-search'></i></a>" +
+                        //         "<a href='/keu/penggajian/honorarium/honorarium-mengajar/slip-gaji/" + data.id_rekapitulasi_honorarium_dosen_mengajar + "' title='Print Slip Gaji' class='btn btn-sm btn-info btn-print mr-2' data-id='" + data.id_rekapitulasi_honorarium_dosen_mengajar + "'><i class='fas fa-print'></i></a>";
+                        // else
                             return "<a href='/keu/penggajian/honorarium/honorarium-mengajar/detail/" + data.id_rekapitulasi_honorarium_dosen_mengajar + "' title='Lihat Detail Gaji' class='btn btn-sm btn-danger btn-edit mr-2' data-id='" + data.id_rekapitulasi_honorarium_dosen_mengajar + "'><i class='fas fa-exclamation-triangle mr-2'></i>Butuh Perbaikan</a>"
                     }
                 },
