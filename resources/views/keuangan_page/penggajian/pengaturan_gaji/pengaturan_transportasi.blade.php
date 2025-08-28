@@ -8,16 +8,15 @@
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
         <ol class="breadcrumb d-inline-flex font-weight-600 fs-13 bg-white mb-0 float-sm-right">
             <li class="breadcrumb-item">Penggajian</li>
-            <li class="breadcrumb-item active">Pengaturan Gaji</li>
+            <li class="breadcrumb-item active">Pengaturan Transportasi S2</li>
         </ol>
     </nav>
     <div class="col-sm-8 header-title p-0">
         <div class="media">
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
-                <h1 class="font-weight-bold">Tunjangan Fungsional</h1>
-                <small>Halama ini digunakan untuk melakukan konfigurasi Tunjangan Fungsional yang berlaku saat
-                    ini</small>
+                <h1 class="font-weight-bold">{{ $menu }}</h1>
+                <small>Halaman ini digunakan untuk melakukan pengaturan transportasi S2</small>
             </div>
         </div>
     </div>
@@ -28,81 +27,59 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="fs-17 font-weight-600 mb-0">Tunjangan Fungsional</h6>
+                        <h6 class="fs-17 font-weight-600 mb-0">Pengaturan Transportasi S2</h6>
                     </div>
                     <div class="text-right">
                         <div class="actions">
                             <div class="dropdown action-item" data-toggle="dropdown" aria-expanded="true">
-                                <a href="#" class="action-item">Tunjangan Fungsional <i
-                                        class="fas fa-bars fa-fw"></i></a>
+                                <a href="#" class="action-item">
+                                    Pengaturan Transportasi S2<i class="fas fa-bars fa-fw"></i>
+                                </a>
                                 <div class="dropdown-menu dropdown-menu-right" id="sub-menu">
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.gaji_umum.index') }}"
                                         class="dropdown-item">Pengaturan Gaji Umum</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index') }}"
-                                        class="dropdown-item">Pengaturan Gaji Individu</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_qurban.index') }}"
-                                        class="dropdown-item">Potongan Qurban</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_koperasi.index') }}"
-                                        class="dropdown-item">Potongan Koperasi</a>
+                                        class="dropdown-item">Potongan Pinjaman</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_qurban.index') }}"
+                                        class="dropdown-item">Potongan Qurban</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index') }}"
+                                        class="dropdown-item">Potongan Arisan</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_lainnya.index') }}"
                                         class="dropdown-item">Potongan Lainnya</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index') }}"
                                         class="dropdown-item">Pengaturan BPJS</a>
+                                    <a style="display: none"
+                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_fungsional.index') }}"
+                                        class="dropdown-item">Tunjangan Fungsional</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_struktural.index') }}"
-                                        class="dropdown-item">Tunjangan Struktural</a>
+                                        class="dropdown-item">Tunjangan Jabatan</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index') }}"
                                         class="dropdown-item">Tunjangan Kinerja</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.insentif_lainnya.index') }}"
+                                        class="dropdown-item">Insentif Lainnya</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index') }}"
                                         class="dropdown-item">Pengaturan UMR</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index') }}"
-                                        class="dropdown-item">Pengaturan Arisan</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_transportasi.index') }}"
+                                        class="dropdown-item">Pengaturan Transportasi S2</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12 collapse show" id="filter-collapse">
-                        <div class="row" id="main-display">
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">Pencarian</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Cari Nama Karyawan"
-                                            id="cari-data">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button" id="btn-cari-data"><i
-                                                    class="fas fa-search mr-2"></i>Cari
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-7">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">&nbsp;</label><br />
-                                    <div class="float-right">
-                                        <button class="btn btn-primary" title="Tambah Data Tunjangan Struktural"
-                                            id="btn_add_data_struktural"><i class="fas fa-plus-square"></i> Tambah Data
-                                            Tunjangan Struktural
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-12">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="table">
                             <thead>
                                 <tr>
                                     <th class="text-center align-middle">Nomor</th>
                                     <th class="text-left align-middle">Jabatan Fungsional</th>
-                                    <th class="text-left align-middle">Nominal Tunjangan</th>
-                                    <th class="text-center"><i class="fas fa-th"></i></th>
+                                    <th class="text-left align-middle">Nominal</th>
+                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -114,11 +91,11 @@
     </div>
 @endsection
 @section('modal')
-    <div class="modal modal-primary fade" id="modal-insup-data-fungsional" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal modal-primary fade" id="modal-edit-data-fungsional" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title font-weight-600" id="insupLabel"></h5>
+                    <h5 class="modal-title font-weight-600" id="editLabel"></h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -132,21 +109,22 @@
                                     id="add_jabatan_fungsional">
                             </div>
                             <div class="col-md-7">
-                                <label class="font-weight-bold">Nominal Tunjangan</label>
+                                <label class="font-weight-bold">Nominal Transportasi S2</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <div class="input-group-text">Rp.</div>
                                     </div>
                                     <input type="text" class="form-control number" id="add_nominal_tunjangan"
-                                        placeholder="Masukkan Nominal Tunjangan">
+                                        placeholder="Masukkan Nominal Transportasi S2">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <form id="add_form" style="display: none"
-                        action="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.insup_kinerja') }}"
+                        action="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_transportasi.edit') }}"
                         method="POST">
                         @csrf
+                        <input type="hidden" name="id_jabatan_fungsional" id="id_jabatan_fungsional">
                         <input type="hidden" name="jabatan_fungsional" id="jabatan_fungsional">
                         <input type="hidden" name="nominal_tunjangan" id="nominal_tunjangan">
                     </form>
@@ -164,6 +142,15 @@
     <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/numeral/numeral.min.js') }}"></script>
-    <script src="{{ asset('adminpage/own-js/keuangan_page/penggajian/pengaturan_gaji/daftar_tunjangan_fungsional.js') }}">
+    <script src="{{ asset('adminpage/own-js/keuangan_page/penggajian/pengaturan_gaji/pengaturan_transportasi_s2.js') }}">
+    </script>
+    <script>
+        function keyUpNumber(id) {
+            var $this = document.getElementById(id);
+            var input = $this.value;
+            input = input.replace(/[\D\s\\._\-]+/g, "");
+            input = input ? parseInt(input, 10) : 0;
+            $this.value = input.toLocaleString("id-ID");
+        }
     </script>
 @endpush

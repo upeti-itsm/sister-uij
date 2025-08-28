@@ -60,12 +60,15 @@
                                         class="dropdown-item">Insentif Lainnya</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index') }}"
                                         class="dropdown-item">Pengaturan UMR</a>
+                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_transportasi.index') }}"
+                                        class="dropdown-item">Pengaturan Transportasi S2</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 collapse show" id="filter-collapse">
