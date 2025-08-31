@@ -50,6 +50,13 @@ class DaftarTunjanganKinerjaController extends Controller
 
     public function delete(Request $request)
     {
-        // ToDo
+        $request->validate([
+            'id' => 'required',
+        ], [
+            'id.required' => 'ID Kinerja Tidak Valid',
+        ]);
+        $result = TunjanganKinerjaDosen::delete_kinerja($request->id);
+        session()->flash($result->status == 1 ? 'success_message' : 'failed_message', $result->keterangan);
+        return redirect()->back();
     }
 }

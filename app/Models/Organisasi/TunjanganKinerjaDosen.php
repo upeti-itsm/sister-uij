@@ -23,4 +23,9 @@ class TunjanganKinerjaDosen extends Model
             'kd_kinerja' => $kd_kinerja, 'nominal_tunjangan' => $nominal_tunjangan, 'keterangan' => $keterangan
         ]);
     }
+
+    public static function delete_kinerja($kinerja)
+    {
+        return DB::selectOne("select * from organisasi.delete_kinerja_dosen(?)", [$kinerja]);
+    }
 }
