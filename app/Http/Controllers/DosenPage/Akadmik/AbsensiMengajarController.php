@@ -44,11 +44,12 @@ class AbsensiMengajarController extends Controller
             'materi_pembelajaran' => 'required',
             'jenis_pertemuan' => 'required',
         ]);
-
+        $menu = 'Absensi Mengajar';
         $rekap = RekapitulasiAbsensiMengajarDosen::addAbsensi($request->username, $request->id_matakuliah, $request->nama_mata_kuliah, $request->keterangan, $request->pertemuan_ke, $request->tgl_pelaksanaan, $request->jam_ke, $request->jml_mahasiswa_hadir, $request->jml_mahasiswa_alpha, null, null, $request->materi_pembelajaran, $request->tahun_akademik, $request->jenis_pertemuan);
+//        dd($rekap);
         if ($rekap->status == 1) {
             Session::flash('success_message', "Berhasil Menyimpan Absensi Mengajar");
-            return redirect(route('dosen.akademik.rekapitulasi_absen_mengajar.index'));
+            return view('dosen_page.akademik.qr_mengajar', compact('rekap', 'menu'));
         } else {
             Session::flash('failed_message', $rekap->keterangan);
             return redirect()->back()->withInput();

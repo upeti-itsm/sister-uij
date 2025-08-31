@@ -185,10 +185,10 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number" id="tunjangan_transport"
-                                                       value="{{$rekap->nominal_tunjangan_kinerja}}">
+                                                       value="{{$rekap->tunjangan_transport}}">
                                             </div>
                                             <small
-                                                class="text-danger">{{$rekap->total_kehadiran}}</small>
+                                                class="text-danger">{{$rekap->total_kehadiran}} x {{number_format($rekap->nominal_tunjangan_kinerja,0,',','.')}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6" style="display: none">
