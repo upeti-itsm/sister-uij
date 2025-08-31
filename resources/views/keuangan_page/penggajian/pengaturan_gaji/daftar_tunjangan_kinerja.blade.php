@@ -66,7 +66,7 @@
                                 <div class="form-group">
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Cari Nama Karyawan"
+                                        <input type="text" class="form-control" placeholder="Cari Kode/Keterangan Kinerja"
                                                id="cari-data">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="button" id="btn-cari-data"><i

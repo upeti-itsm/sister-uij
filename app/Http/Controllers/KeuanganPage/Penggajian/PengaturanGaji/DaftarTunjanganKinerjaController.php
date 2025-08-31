@@ -56,7 +56,6 @@ class DaftarTunjanganKinerjaController extends Controller
             'id.required' => 'ID Kinerja Tidak Valid',
         ]);
         $result = TunjanganKinerjaDosen::delete_kinerja($request->id);
-        session()->flash($result->status == 1 ? 'success_message' : 'failed_message', $result->keterangan);
-        return redirect()->back();
+        return response()->json($result);
     }
 }

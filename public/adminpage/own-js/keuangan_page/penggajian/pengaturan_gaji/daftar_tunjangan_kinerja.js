@@ -82,7 +82,7 @@ jQuery.daftar_tunjangan_kinerja = {
                     width: "20%",
                     render: function (data) {
                         return "<button class='btn btn-success btn-edit mr-2' data-id='" + data.kd_kinerja + "' title='Ubah Nominal Tunjangan' data-kd_kinerja='" + data.kd_kinerja + "' data-nominal='" + data.nominal_kinerja_ + "' data-keterangan='" + data.keterangan + "'><i class='fas fa-edit'></i></button>" +
-                            "<button class='btn btn-danger btn-delete' data-id='" + data.kd_kinerja + "' title='Hapus Nilai Kinerja'  data-kd_kinerja='" + data.kd_kinerja + "' data-nominal='" + data.nominal_kinerja + "'><i class='fas fa-trash'></i></button>";
+                            "<button class='btn btn-danger btn-delete' data-id='" + data.id_kinerja_dosen + "' title='Hapus Nilai Kinerja'  data-kd_kinerja='" + data.kd_kinerja + "' data-nominal='" + data.nominal_kinerja + "'><i class='fas fa-trash'></i></button>";
                     }
                 },
                 {

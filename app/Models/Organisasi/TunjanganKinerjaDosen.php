@@ -26,6 +26,6 @@ class TunjanganKinerjaDosen extends Model
 
     public static function delete_kinerja($kinerja)
     {
-        return DB::selectOne("select * from organisasi.delete_kinerja_dosen(?)", [$kinerja]);
+        return DB::selectOne("select * from organisasi.hapus_kinerja_dosen(?)", [$kinerja]);
     }
 }
