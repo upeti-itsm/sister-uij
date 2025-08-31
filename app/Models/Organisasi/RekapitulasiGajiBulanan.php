@@ -27,9 +27,9 @@ class RekapitulasiGajiBulanan extends Model
 
     public static function get_detail_gaji_bulanan_karyawan($id_rekapitulasi_gaji_bulanan)
     {
-        return DB::select('SELECT * FROM organisasi.get_detail_gaji_bulanan_karyawan(:id_rekap)', [
+        return DB::selectOne('SELECT * FROM organisasi.get_detail_gaji_bulanan_karyawan(:id_rekap)', [
             'id_rekap' => $id_rekapitulasi_gaji_bulanan
-        ])[0];
+        ]);
     }
 
     public static function export_gaji_bulanan_for_bank($periode, $tahun, $search = '', $offset = -1, $limit = 10)

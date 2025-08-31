@@ -185,10 +185,10 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number" id="tunjangan_transport"
-                                                       value="{{$rekap->tunjangan_transport}}">
+                                                       value="{{$rekap->nominal_tunjangan_kinerja}}">
                                             </div>
                                             <small
-                                                class="text-danger">{{$rekap->transport_harian.' x '.$rekap->total_kehadiran.' hari' }}</small>
+                                                class="text-danger">{{$rekap->total_kehadiran}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6" style="display: none">
@@ -213,7 +213,7 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number" id="tunjangan_masa_kerja"
-                                                       value="{{$rekap->nominal_tunjangan_kinerja}}">
+                                                       value="{{$rekap->masa_kerja}}">
                                             </div>
                                         </div>
                                     </div>
@@ -264,7 +264,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Insentif Kelebihan Mengajar S1</label>
+                                            <label>Kelebihan Mengajar S1</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">Rp.</div>
@@ -272,14 +272,14 @@
                                                 <input readonly type="text"
                                                        class="form-control number"
                                                        id="insentif_kelebihan_mengajar"
-                                                       value="{{$rekap->insentif_kelebihan_mengajar_s1}}">
+                                                       value="{{number_format($rekap->insentif_kelebihan_mengajar_s1,0,',','.')}}">
                                             </div>
                                             <small class="text-danger" style="display: none">{{$rekap->pendidikan_terakhir}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Insentif Kelebihan Mengajar S2</label>
+                                            <label>Kelebihan Mengajar S2</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">Rp.</div>
@@ -287,7 +287,7 @@
                                                 <input readonly type="text"
                                                        class="form-control number"
                                                        id="insentif_kelebihan_mengajar_2"
-                                                       value="{{$rekap->insentif_kelebihan_mengajar_s2}}">
+                                                       value="{{number_format($rekap->insentif_kelebihan_mengajar_s2,0,',','.')}}">
                                             </div>
                                             <small class="text-danger" style="display: none">{{$rekap->pendidikan_terakhir}}</small>
                                         </div>
@@ -402,33 +402,33 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number"
-                                                       value="{{$rekap->nominal_dplk}}" id="potongan_paguyuban_cooper">
+                                                       value="{{number_format($rekap->nominal_dplk,0,',','.')}}" id="potongan_paguyuban_cooper">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Potongan BPJS Kesehatan</label>
+                                            <label>BPJS Kesehatan</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">Rp.</div>
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number" id="potongan_bpjs"
-                                                       value="{{$rekap->nominal_asuransi}}">
+                                                       value="{{number_format($rekap->nominal_kesehatan,0,',','.')}}">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Potongan BPJS Ketengakerjaan</label>
+                                            <label>BPJS Ketengakerjaan</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">Rp.</div>
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number" id="potongan_bpjs"
-                                                       value="{{$rekap->nominal_asuransi}}">
+                                                       value="{{number_format($rekap->nominal_ketenagakerjaan,0,',','.')}}">
                                             </div>
                                         </div>
                                     </div>
@@ -454,7 +454,7 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number"
-                                                       value="{{$rekap->nominal_lainnya}}" id="potongan_lainnya">
+                                                       value="{{$rekap->potongan_nominal_lainnya}}" id="potongan_lainnya">
                                             </div>
                                         </div>
                                     </div>
