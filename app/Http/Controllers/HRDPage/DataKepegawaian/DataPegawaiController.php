@@ -61,6 +61,7 @@ class DataPegawaiController extends Controller
         $request->validate([
             'file_photo_profile' => 'required|max:10000|mimes:jpg,jpeg,png',
             'no_ktp' => 'required|max:16|min:16',
+            'pangkat' => 'required',
             'jenis_kelamin' => 'required',
             'jenis_bank' => 'required',
             'nama' => 'required',
@@ -88,6 +89,7 @@ class DataPegawaiController extends Controller
             'no_ktp.required' => 'Pastikan anda sudah mengisi Nomor KTP',
             'no_ktp.max' => 'Pastikan Nomor KTP tidak lebih dari 16 karakter',
             'no_ktp.min' => 'Pastikan Nomor KTP tidak kurang dari 16 karakter',
+            'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
             'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
             'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
             'nama.required' => 'Pastikan nama anda sudah terisi',
@@ -157,7 +159,7 @@ class DataPegawaiController extends Controller
             $file_name_sertifikat = 'file_sertifikat_' . date("Y_m_d_h_m_s", $t) . '.' . $file_sertifikat->getClientOriginalExtension();
 
         // Proses insert
-        $karyawan = Karyawan::insert_data_pegawai($request->nama, $request->gelar_depan, $request->gelar_belakang, $request->nip, $request->nidn, $request->jenis_kelamin, $request->tempat_lahir, $request->tgl_lahir, $request->alamat, $request->no_hp, $request->email, $request->id_agama, $request->no_rekening, $request->tgl_aktif, $request->unit_kerja, $request->no_ktp, $request->nik, $file_name_photo, $request->jenis_karyawan, $request->status_menikah, $request->pendidikan_terakhir, $file_name_ijazah, $request->tgl_lulus, $request->golongan, $file_name_golongan, $request->tmt_golongan, $request->jabatan_struktural, $request->tmt_jabatan_struktural, $file_name_struktural, $request->jabatan_fungsional, $file_name_fungsional, $request->tmt_jabatan_fungsional, $file_name_kk, 'BNI', $request->status_sertifikasi == 0 ? null : implode(',', $request->status_sertifikasi), $request->id_sinta, $file_name_sertifikat, $request->home_base, $request->jenis_bank, $request->ip_absensi);
+        $karyawan = Karyawan::insert_data_pegawai($request->nama, $request->gelar_depan, $request->gelar_belakang, $request->nip, $request->nidn, $request->jenis_kelamin, $request->tempat_lahir, $request->tgl_lahir, $request->alamat, $request->no_hp, $request->email, $request->id_agama, $request->no_rekening, $request->tgl_aktif, $request->unit_kerja, $request->no_ktp, $request->nik, $file_name_photo, $request->jenis_karyawan, $request->status_menikah, $request->pendidikan_terakhir, $file_name_ijazah, $request->tgl_lulus, $request->golongan, $file_name_golongan, $request->tmt_golongan, $request->jabatan_struktural, $request->tmt_jabatan_struktural, $file_name_struktural, $request->jabatan_fungsional, $file_name_fungsional, $request->tmt_jabatan_fungsional, $file_name_kk, 'BNI', $request->status_sertifikasi == 0 ? null : implode(',', $request->status_sertifikasi), $request->id_sinta, $file_name_sertifikat, $request->home_base, $request->jenis_bank, $request->ip_absensi, $request->pangkat);
 
         if ($karyawan->status == 1) {
             // Jika sukses maka upload file
@@ -259,6 +261,7 @@ class DataPegawaiController extends Controller
         $request->validate([
             'id' => 'required',
             'no_ktp' => 'required|max:16|min:16',
+            'pangkat' => 'required',
             'jenis_kelamin' => 'required',
             'jenis_bank' => 'required',
             'nama' => 'required',
@@ -278,6 +281,7 @@ class DataPegawaiController extends Controller
             'no_ktp.required' => 'Pastikan anda sudah mengisi Nomor KTP',
             'no_ktp.max' => 'Pastikan Nomor KTP tidak lebih dari 16 karakter',
             'no_ktp.min' => 'Pastikan Nomor KTP tidak kurang dari 16 karakter',
+            'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
             'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
             'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
             'nama.required' => 'Pastikan nama anda sudah terisi',
@@ -386,7 +390,7 @@ class DataPegawaiController extends Controller
             $file_name_sertifikat = 'file_sertifikat_' . date("Y_m_d_h_m_s", $t) . '.' . $file_sertifikat->getClientOriginalExtension();
         }
 
-        $karyawan = Karyawan::update_data_pegawai($request->id, $request->nama, $request->gelar_depan, $request->gelar_belakang, $request->nip, $request->nidn, $request->jenis_kelamin, $request->tempat_lahir, $request->tgl_lahir, $request->alamat, $request->no_hp, $request->email, $request->id_agama, $request->no_rekening, $request->tgl_aktif, $request->unit_kerja, $request->no_ktp, $request->nik, $request->jenis_karyawan, $request->status_menikah, $file_name_kk, $request->golongan, $file_name_golongan, $request->tmt_golongan, $request->jafung, $file_name_jafung, $request->tmt_jafung, $request->jastruk, $file_name_jastruk, $request->tmt_jastruk, $request->pendidikan, $file_name_ijazah, $request->tgl_lulus, 'BNI', $request->status_sertifikasi == 0 ? null : implode(',', $request->status_sertifikasi), $request->id_sinta, $file_name_sertifikat, $request->home_base, $request->jenis_bank, $request->ip_absensi);
+        $karyawan = Karyawan::update_data_pegawai($request->id, $request->nama, $request->gelar_depan, $request->gelar_belakang, $request->nip, $request->nidn, $request->jenis_kelamin, $request->tempat_lahir, $request->tgl_lahir, $request->alamat, $request->no_hp, $request->email, $request->id_agama, $request->no_rekening, $request->tgl_aktif, $request->unit_kerja, $request->no_ktp, $request->nik, $request->jenis_karyawan, $request->status_menikah, $file_name_kk, $request->golongan, $file_name_golongan, $request->tmt_golongan, $request->jafung, $file_name_jafung, $request->tmt_jafung, $request->jastruk, $file_name_jastruk, $request->tmt_jastruk, $request->pendidikan, $file_name_ijazah, $request->tgl_lulus, 'BNI', $request->status_sertifikasi == 0 ? null : implode(',', $request->status_sertifikasi), $request->id_sinta, $file_name_sertifikat, $request->home_base, $request->jenis_bank, $request->ip_absensi, $request->pangkat);
         if ($karyawan->status == 1) {
             if (!is_null($request->file_kk)) {
                 // File KK

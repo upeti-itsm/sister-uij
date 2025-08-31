@@ -232,7 +232,7 @@
                 <small>Tunjangan Jamsos</small>
             </td>
             <td style="width: 45%; text-align: right">
-                <small>{{"Rp. " . number_format($data['rekap']->tunjangan_struktural,0,',','.').',-'}}</small>
+                <small>{{"Rp. " . number_format($data['rekap']->tunjangan_jaminan_sosial,0,',','.').',-'}}</small>
             </td>
         </tr>
         <tr>
@@ -241,7 +241,7 @@
                 <small>Insentif Masa Kerja</small>
             </td>
             <td style="width: 45%; text-align: right">
-                <small>{{"Rp. " . number_format($data['rekap']->tunjangan_struktural,0,',','.').',-'}}</small>
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_insentif_masa_kerja,0,',','.').',-'}}</small>
             </td>
         </tr>
         <tr>
@@ -275,8 +275,8 @@
             <td class="center" style="width: 5%"><small>7</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Tunjangan Kinerja
-                    ( {{$data['rekap']->total_kehadiran.' ('. number_format($data['rekap']->transport_harian,0,',','.').' /Jam)'}}
-                    )</small>
+                    ({{"Kehadiran: ".$data['rekap']->total_kehadiran." (".$data['rekap']->transport_harian."/Jam)"}})
+                </small>
             </td>
             <td style="width: 45%; text-align: right">
                 <small>{{"Rp. " . number_format($data['rekap']->nominal_tunjangan_kinerja,0,',','.').',-'}}</small>
@@ -328,8 +328,7 @@
         </tr>
         <tr>
             <td style="width: 50%" colspan="2">
-                <small>BPJS Ketenagakerjaan (Rincian Potongan Lihat Dibawah)</small>
-                <hr/>
+                <small>BPJS Ketenagakerjaan</small>
             </td>
             <td style="width: 45%; text-align: right">
                 <small>{{"Rp. " . number_format($data['rekap']->nominal_ketenagakerjaan,0,',','.').',-'}}</small>

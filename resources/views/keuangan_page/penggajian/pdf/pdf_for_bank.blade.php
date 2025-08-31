@@ -174,7 +174,7 @@
     <table style="margin-top: 0">
         <thead>
         <tr>
-            <th colspan="4" style="text-align: center">
+            <th colspan="5" style="text-align: center">
                 <b>LIST GAJI DOSEN DAN KARYAWAN TETAP</b><br/>
                 <b>BULAN: {{$data['rekap'][0]->bulan.' '.$data['rekap'][0]->tahun}}</b>
             </th>
@@ -187,7 +187,10 @@
                 NAMA
             </th>
             <th style="text-align: center; font-weight: bold;">
-                NOMOR REKENING BNI
+                NOMOR REKENING
+            </th>
+            <th style="text-align: center; font-weight: bold;">
+                JENIS BANK
             </th>
             <th style="text-align: center; font-weight: bold;">
                 GAJI {{$data['rekap'][0]->bulan.' '.$data['rekap'][0]->tahun}}
@@ -202,11 +205,12 @@
                 <td style="text-align: center;">{{$no}}</td>
                 <td style="text-align: left;">{{strtoupper($item->nama)}}</td>
                 <td style="text-align: center;">{{$item->nomor_rekening}}</td>
+                <td style="text-align: center;">-</td>
                 <td style="text-align: center;">{{$item->total_nominal_gaji}}</td>
             </tr>
         @endforeach
         <tr>
-            <td colspan="3" style="text-align: center; font-weight: bold;">Total Gaji</td>
+            <td colspan="4" style="text-align: center; font-weight: bold;">Total Gaji</td>
             <td style="text-align: center; font-weight: bold;">{{$data['rekap'][0]->total_gaji_karyawan}}</td>
         </tr>
         </tbody>

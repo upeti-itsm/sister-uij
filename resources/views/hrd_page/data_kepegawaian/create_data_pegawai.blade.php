@@ -338,7 +338,18 @@
                                 </div>
                             </div>
                         @endif
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="text-muted">Pangkat</label>
+                                <select class="form-control select2" name="pangkat">
+                                    <option value="0">-- Pilih Pangkat --</option>
+                                    <option value="1" @if(old('pangkat') == 1) selected @endif>Pengatur</option>
+                                    <option value="2" @if(old('pangkat') == 2) selected @endif>Penata</option>
+                                    <option value="3" @if(old('pangkat') == 3) selected @endif>Pembina</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label class="text-muted">Golongan</label>
                                 <select class="form-control select2" name="golongan">
@@ -350,7 +361,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group" style="text-align: left">
                                 <label class="text-muted">Unggah SK Golongan</label>
                                 <div class="custom-file">
@@ -361,7 +372,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label class="text-muted">TMT Golongan <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="tgl_tmt_golongan"

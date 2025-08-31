@@ -11,7 +11,7 @@
             <th colspan="21" style="text-align: center; border: 1px solid #000000;">LIST GAJI DOSEN DAN KARYAWAN TETAP</th>
         </tr>
         <tr>
-            <th colspan="21" style="text-align: center; border: 1px solid #000000;">INSTITUT TEKNOLOGI DAN SAINS MANDALA</th>
+            <th colspan="21" style="text-align: center; border: 1px solid #000000;">UNIVERSITAS ISLAM JEMBER</th>
         </tr>
         <tr>
             <th colspan="12" style="text-align: center; border: 1px solid #000000;">BULAN: {{$bulan.' '.$tahun}}</th>

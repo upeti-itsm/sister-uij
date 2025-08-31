@@ -125,13 +125,16 @@
                                                 <select class="form-control select2" name="jenis_bank" required>
                                                     <option>-- Pilih Jenis Bank --</option>
                                                     <option value="1"
-                                                            @if(old('jenis_bank') == "1" || $karyawan->id_nama_rekening_bank == "1") selected @endif>Bank Rakyat Indonesia
+                                                            @if(old('jenis_bank') == "1" || $karyawan->id_nama_rekening_bank == "1") selected @endif>
+                                                        Bank Rakyat Indonesia
                                                     </option>
                                                     <option value="2"
-                                                            @if(old('jenis_bank') == "2" || $karyawan->id_nama_rekening_bank == "2") selected @endif>Bank Syariah Indonesia
+                                                            @if(old('jenis_bank') == "2" || $karyawan->id_nama_rekening_bank == "2") selected @endif>
+                                                        Bank Syariah Indonesia
                                                     </option>
                                                     <option value="3"
-                                                            @if(old('jenis_bank') == "3" || $karyawan->id_nama_rekening_bank == "3") selected @endif>Bank Jatim Syariah
+                                                            @if(old('jenis_bank') == "3" || $karyawan->id_nama_rekening_bank == "3") selected @endif>
+                                                        Bank Jatim Syariah
                                                     </option>
                                                 </select>
                                             </div>
@@ -199,8 +202,10 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="text-muted">IP Absensi <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" placeholder="IP untuk absensi" name="ip_absensi"
-                                               value="{{old('ip_absensi') ? old('ip_absensi') : $karyawan->ip}}" required>
+                                        <input type="text" class="form-control" placeholder="IP untuk absensi"
+                                               name="ip_absensi"
+                                               value="{{old('ip_absensi') ? old('ip_absensi') : $karyawan->ip}}"
+                                               required>
                                     </div>
                                 </div>
                             </div>
@@ -345,7 +350,18 @@
                                 </div>
                             </div>
                         @endif
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="text-muted">Pangkat</label>
+                                <select class="form-control select2" name="pangkat">
+                                    <option value="0">-- Pilih Pangkat --</option>
+                                    <option value="1" @if(old('pangkat') == 1 || $karyawan->id_pangkat == 1) selected @endif>Pengatur</option>
+                                    <option value="2" @if(old('pangkat') == 2 || $karyawan->id_pangkat == 2) selected @endif>Penata</option>
+                                    <option value="3" @if(old('pangkat') == 3 || $karyawan->id_pangkat == 3) selected @endif>Pembina</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label class="text-muted">Golongan</label>
                                 <select class="form-control select2" name="golongan">
@@ -357,7 +373,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group" style="text-align: left">
                                 <label class="text-muted">Unggah SK Golongan</label>
                                 <div class="custom-file">
@@ -368,7 +384,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label class="text-muted">TMT Golongan <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="tgl_tmt_golongan"

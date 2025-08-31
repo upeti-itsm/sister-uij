@@ -80,6 +80,24 @@
                         </tr>
                         <tr>
                             <td>
+                                <div>Tunjangan Jamsos</div>
+                            </td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->tunjangan_jaminan_sosial,0,',','.').',-'}}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>Insentif Masa Kerja</div>
+                            </td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_insentif_masa_kerja,0,',','.').',-'}}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>Insentif Masa Kerja</div>
+                            </td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_tunjangan_lembur,0,',','.').',-'}}</td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <div>Insentif Mengajar S1
                                     <small> - {{$rekap->ket_insentif_kelebihan_mengajar_s1}}</small>
                                 </div>
@@ -93,14 +111,6 @@
                                 </div>
                             </td>
                             <td style="text-align: left">{{"Rp. " . number_format($rekap->insentif_kelebihan_mengajar_s2,0,',','.').',-'}}</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div>Insentif Lembur
-                                    <small> - {{$rekap->total_beras}}</small>
-                                </div>
-                            </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_tunjangan_lembur,0,',','.').',-'}}</td>
                         </tr>
                         <tr>
                             <td>

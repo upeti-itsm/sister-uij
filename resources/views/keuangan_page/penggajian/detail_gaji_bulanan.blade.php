@@ -159,7 +159,7 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number" id="tunjangan_jamsos"
-                                                       value="{{$rekap->tunjangan_struktural}}">
+                                                       value="{{number_format($rekap->tunjangan_jaminan_sosial,0,',','.')}}">
                                             </div>
                                         </div>
                                     </div>
@@ -213,7 +213,7 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number" id="tunjangan_masa_kerja"
-                                                       value="{{$rekap->masa_kerja}}">
+                                                       value="{{number_format($rekap->nominal_insentif_masa_kerja,0,',','.')}}">
                                             </div>
                                         </div>
                                     </div>
@@ -242,7 +242,7 @@
                                                 <input readonly type="text"
                                                        class="form-control number"
                                                        id="nominal_insentif_lembur"
-                                                       value="{{$rekap->nominal_tunjangan_lembur}}">
+                                                       value="{{number_format($rekap->nominal_tunjangan_lembur,0,',','.')}}">
                                             </div>
 {{--                                            <small class="text-danger">{{$rekap->keterangan_tunjangan_keluarga}}</small>--}}
                                         </div>
@@ -302,9 +302,8 @@
                                                 <input readonly type="text"
                                                        class="form-control number"
                                                        id="insentif_lainnya"
-                                                       value="{{$rekap->nominal_tunjangan_pendidikan}}">
+                                                       value="{{number_format($rekap->nominal_insentif_lainnya,0,',','.')}}">
                                             </div>
-                                            <small class="text-danger">{{$rekap->pendidikan_terakhir}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-12" style="display: none">

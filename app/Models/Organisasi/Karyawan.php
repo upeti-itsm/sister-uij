@@ -55,9 +55,9 @@ class Karyawan extends Model
         ]);
     }
 
-    public static function insert_data_pegawai($nama_lengkap, $gelar_depan, $gelar_belakang, $nip, $nidn, $kd_jenis_kelamin, $tempat_lahir, $tanggal_lahir, $alamat, $nomor_hp, $email, $id_agama, $nomor_rekening, $tgl_masuk, $id_unit_kerja, $no_ktp, $nik_mandala, $path_photo, $id_jenis_karyawan, $status_pernikahan, $kd_pendidikan, $path_ijazah, $tgl_lulus, $id_golongan, $path_sk_golongan, $tmt_golongan, $id_jabatan_struktural, $tmt_jabatan_struktural, $path_sk_struktural, $id_jabatan_fungsional, $path_sk_jabatan_fungsional, $tmt_jabatan_fungsional, $file_kk, $nama_bank = 'BNI', $is_sertifikasi = false, $id_sinta = '', $path_sertifikasi = '-', $homebase = '-', $jenis_bank = '', $ip_absensi)
+    public static function insert_data_pegawai($nama_lengkap, $gelar_depan, $gelar_belakang, $nip, $nidn, $kd_jenis_kelamin, $tempat_lahir, $tanggal_lahir, $alamat, $nomor_hp, $email, $id_agama, $nomor_rekening, $tgl_masuk, $id_unit_kerja, $no_ktp, $nik_mandala, $path_photo, $id_jenis_karyawan, $status_pernikahan, $kd_pendidikan, $path_ijazah, $tgl_lulus, $id_golongan, $path_sk_golongan, $tmt_golongan, $id_jabatan_struktural, $tmt_jabatan_struktural, $path_sk_struktural, $id_jabatan_fungsional, $path_sk_jabatan_fungsional, $tmt_jabatan_fungsional, $file_kk, $nama_bank = 'BNI', $is_sertifikasi = false, $id_sinta = '', $path_sertifikasi = '-', $homebase = '-', $jenis_bank = '', $ip_absensi = '', $pangkat = 0)
     {
-        return DB::select('SELECT * FROM organisasi.insert_data_pegawai(:nama_lengkap, :gelar_depan, :gelar_belakang, :nip, :nidn, :kd_jenis_kelamin, :tempat_lahir, :tanggal_lahir, :alamat, :nomor_hp, :email, :id_agama, :nomor_rekening, :tgl_masuk, :id_unit_kerja, :no_ktp, :nik_mandala, :path_photo, :id_jenis_karyawan, :status_pernikahan, :kd_pendidikan, :path_ijazah, :tgl_lulus, :id_golongan, :path_sk_golongan, :tmt_golongan, :id_jabatan_struktural, :tmt_jabatan_struktural, :path_sk_struktural, :id_jabatan_fungsional, :path_sk_jabatan_fungsional, :tmt_jabatan_fungsional, :file_kk, :nama_bank, :is_sertifikasi, :id_sinta, :path_sertifikasi, :homebase, :jenis_bank, :ip_absensi)', [
+        return DB::selectOne('SELECT * FROM organisasi.insert_data_pegawai(:nama_lengkap, :gelar_depan, :gelar_belakang, :nip, :nidn, :kd_jenis_kelamin, :tempat_lahir, :tanggal_lahir, :alamat, :nomor_hp, :email, :id_agama, :nomor_rekening, :tgl_masuk, :id_unit_kerja, :no_ktp, :nik_mandala, :path_photo, :id_jenis_karyawan, :status_pernikahan, :kd_pendidikan, :path_ijazah, :tgl_lulus, :id_golongan, :path_sk_golongan, :tmt_golongan, :id_jabatan_struktural, :tmt_jabatan_struktural, :path_sk_struktural, :id_jabatan_fungsional, :path_sk_jabatan_fungsional, :tmt_jabatan_fungsional, :file_kk, :nama_bank, :is_sertifikasi, :id_sinta, :path_sertifikasi, :homebase, :jenis_bank, :ip_absensi, :pangkat)', [
             'nama_lengkap' => $nama_lengkap, 'gelar_depan' => $gelar_depan, 'gelar_belakang' => $gelar_belakang,
             'nip' => $nip, 'nidn' => $nidn, 'kd_jenis_kelamin' => $kd_jenis_kelamin, 'tempat_lahir' => $tempat_lahir,
             'tanggal_lahir' => $tanggal_lahir, 'alamat' => $alamat, 'nomor_hp' => $nomor_hp, 'email' => $email, 'id_agama' => $id_agama,
@@ -68,13 +68,13 @@ class Karyawan extends Model
             'id_jabatan_struktural' => $id_jabatan_struktural, 'tmt_jabatan_struktural' => $tmt_jabatan_struktural, 'path_sk_struktural' => $path_sk_struktural,
             'id_jabatan_fungsional' => $id_jabatan_fungsional, 'tmt_jabatan_fungsional' => $tmt_jabatan_fungsional, 'path_sk_jabatan_fungsional' => $path_sk_jabatan_fungsional,
             'file_kk' => $file_kk, 'nama_bank' => $nama_bank,
-            'is_sertifikasi' => $is_sertifikasi, 'id_sinta' => $id_sinta, 'path_sertifikasi' => $path_sertifikasi, 'homebase' => $homebase, 'jenis_bank' => $jenis_bank, 'ip_absensi' => $ip_absensi
-        ])[0];
+            'is_sertifikasi' => $is_sertifikasi, 'id_sinta' => $id_sinta, 'path_sertifikasi' => $path_sertifikasi, 'homebase' => $homebase, 'jenis_bank' => $jenis_bank, 'ip_absensi' => $ip_absensi, 'pangkat' => $pangkat
+        ]);
     }
 
-    public static function update_data_pegawai($id_personal, $nama, $gelar_depan, $gelar_belakang, $nip, $nidn, $kd_jenis_kelamin, $tempat_lahir, $tanggal_lahir, $alamat, $nomor_hp, $email, $id_agama, $nomor_rekening, $tgl_masuk, $id_unit_kerja, $no_ktp, $nik_mandala, $id_jenis_karyawan, $status_pernikahan, $file_kk, $id_golongan, $file_sk_golongan, $tmt_golongan, $id_jafung, $file_sk_jafung, $tmt_jafung, $id_jastruk, $file_sk_jastruk, $tmt_jastruk, $id_pendidikan, $file_ijazah, $tgl_lulus, $nama_bank = 'BNI', $is_sertifikasi = false, $id_sinta = '', $path_sertifikasi = '-', $homebase = '-', $jenis_bank = '', $ip_absensi = '')
+    public static function update_data_pegawai($id_personal, $nama, $gelar_depan, $gelar_belakang, $nip, $nidn, $kd_jenis_kelamin, $tempat_lahir, $tanggal_lahir, $alamat, $nomor_hp, $email, $id_agama, $nomor_rekening, $tgl_masuk, $id_unit_kerja, $no_ktp, $nik_mandala, $id_jenis_karyawan, $status_pernikahan, $file_kk, $id_golongan, $file_sk_golongan, $tmt_golongan, $id_jafung, $file_sk_jafung, $tmt_jafung, $id_jastruk, $file_sk_jastruk, $tmt_jastruk, $id_pendidikan, $file_ijazah, $tgl_lulus, $nama_bank = 'BNI', $is_sertifikasi = false, $id_sinta = '', $path_sertifikasi = '-', $homebase = '-', $jenis_bank = '', $ip_absensi = '', $pangkat = 0)
     {
-        return DB::select('SELECT * FROM organisasi.update_data_pegawai(:id_personal, :nama_lengkap, :gelar_depan, :gelar_belakang, :nip, :nidn, :kd_jenis_kelamin, :tempat_lahir, :tanggal_lahir, :alamat, :nomor_hp, :email, :id_agama, :nomor_rekening, :tgl_masuk, :id_unit_kerja, :no_ktp, :nik_mandala, :id_jenis_karyawan, :status_pernikahan, :file_kk, :id_golongan, :file_sk_golongan, :tmt_golongan, :id_jafung, :file_sk_jafung, :tmt_jafung, :id_jastruk, :file_sk_jastruk, :tmt_jastruk, :id_pendidikan, :file_ijazah, :tgl_lulus, :nama_bank, :is_sertifikasi, :id_sinta, :path_sertifikasi, :homebase, :jenis_bank, :ip_absensi)', [
+        return DB::selectOne('SELECT * FROM organisasi.update_data_pegawai(:id_personal, :nama_lengkap, :gelar_depan, :gelar_belakang, :nip, :nidn, :kd_jenis_kelamin, :tempat_lahir, :tanggal_lahir, :alamat, :nomor_hp, :email, :id_agama, :nomor_rekening, :tgl_masuk, :id_unit_kerja, :no_ktp, :nik_mandala, :id_jenis_karyawan, :status_pernikahan, :file_kk, :id_golongan, :file_sk_golongan, :tmt_golongan, :id_jafung, :file_sk_jafung, :tmt_jafung, :id_jastruk, :file_sk_jastruk, :tmt_jastruk, :id_pendidikan, :file_ijazah, :tgl_lulus, :nama_bank, :is_sertifikasi, :id_sinta, :path_sertifikasi, :homebase, :jenis_bank, :ip_absensi, :pangkat)', [
             'id_personal' => $id_personal, 'nama_lengkap' => $nama, 'gelar_depan' => $gelar_depan, 'gelar_belakang' => $gelar_belakang,
             'nip' => $nip, 'nidn' => $nidn, 'kd_jenis_kelamin' => $kd_jenis_kelamin, 'tempat_lahir' => $tempat_lahir,
             'tanggal_lahir' => $tanggal_lahir, 'alamat' => $alamat, 'nomor_hp' => $nomor_hp, 'email' => $email, 'id_agama' => $id_agama,
@@ -85,8 +85,8 @@ class Karyawan extends Model
             'id_jafung' => $id_jafung, 'file_sk_jafung' => $file_sk_jafung, 'tmt_jafung' => $tmt_jafung,
             'id_jastruk' => $id_jastruk, 'file_sk_jastruk' => $file_sk_jastruk, 'tmt_jastruk' => $tmt_jastruk,
             'id_pendidikan' => $id_pendidikan, 'file_ijazah' => $file_ijazah, 'tgl_lulus' => $tgl_lulus, 'nama_bank' => $nama_bank,
-            'is_sertifikasi' => $is_sertifikasi, 'id_sinta' => $id_sinta, 'path_sertifikasi' => $path_sertifikasi, 'homebase' => $homebase, 'jenis_bank' => $jenis_bank, 'ip_absensi' => $ip_absensi
-        ])[0];
+            'is_sertifikasi' => $is_sertifikasi, 'id_sinta' => $id_sinta, 'path_sertifikasi' => $path_sertifikasi, 'homebase' => $homebase, 'jenis_bank' => $jenis_bank, 'ip_absensi' => $ip_absensi, 'pangkat' => $pangkat
+        ]);
     }
 
     public static function delete_pegawai($id_personal)
@@ -98,9 +98,9 @@ class Karyawan extends Model
 
     public static function update_kesehatan($id_karyawan, $status)
     {
-        return DB::select('SELECT * FROM organisasi.set_potongan_asuransi_kesehatan(:id_karyawan, :status)', [
+        return DB::selectOne('SELECT * FROM organisasi.set_potongan_asuransi_kesehatan(:id_karyawan, :status)', [
             'id_karyawan' => $id_karyawan, 'status' => $status
-        ])[0];
+        ]);
     }
 
     public static function update_ketenagakerjaan($id_karyawan, $status)

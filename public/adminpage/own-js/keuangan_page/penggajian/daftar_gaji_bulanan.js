@@ -8,6 +8,21 @@ jQuery.daftar_gaji_bulanan = {
         self.setEvents();
     },
     setEvents: function () {
+        let currentYear = new Date().getFullYear();
+        let startYear   = currentYear - 4;
+        let endYear     = currentYear + 1;
+
+        let selectHtml = '<select class="form-control tahun">';
+
+        for (let y = endYear; y >= startYear; y--) {
+            if (y === currentYear) {
+                selectHtml += `<option value="${y}" selected>${y}</option>`;
+            } else {
+                selectHtml += `<option value="${y}">${y}</option>`;
+            }
+        }
+
+        selectHtml += '</select>';
         var self = this;
         // Option Data
         $(".select2").select2();
@@ -38,11 +53,7 @@ jQuery.daftar_gaji_bulanan = {
                     '</select>' +
                     '</div>' +
                     '<div class="col-md-6" style="padding: 0px 0px 0px 5px; margin: 0">' +
-                    '<select class="form-control tahun">' +
-                    '<option value="2024">2024</option>' +
-                    '<option value="2023">2023</option>' +
-                    '<option value="2022">2022</option>' +
-                    '</select>' +
+                    selectHtml +
                     '</div>' +
                     '</div>' +
                     '</div>' +
@@ -107,10 +118,7 @@ jQuery.daftar_gaji_bulanan = {
                     '</select>' +
                     '</div>' +
                     '<div class="col-md-6" style="padding: 0px 0px 0px 5px;margin: 0">' +
-                    '<select class="form-control tahun">' +
-                    '<option value="2024">2024</option>' +
-                    '<option value="2023">2023</option>' +
-                    '</select>' +
+                    selectHtml +
                     '</div>' +
                     '</div>' +
                     '</div>' +
