@@ -216,6 +216,10 @@ jQuery.daftar_tunjangan_kinerja = {
                 self.setOffSaveButton();
             }
         });
+
+        $("#btn-cari-data").click(function () {
+            self.data.table.search($("#cari-data").val()).draw();
+        });
     },
     setOnSaveButton: function () {
         $("#btn-simpan-data").removeClass('btn-secondary disabled');

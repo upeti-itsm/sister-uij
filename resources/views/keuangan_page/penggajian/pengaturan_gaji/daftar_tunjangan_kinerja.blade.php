@@ -66,7 +66,7 @@
                                 <div class="form-group">
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Cari Kode/Keterangan Kinerja"
+                                        <input type="text" class="form-control" placeholder="Cari Kode Kinerja"
                                                id="cari-data">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="button" id="btn-cari-data"><i
@@ -124,8 +124,8 @@
                     <div class="form-group" style="width: 100%;">
                         <div class="row" style="padding: 0 0 0 0">
                             <div class="col-md-5">
-                                <label class="font-weight-bold">Nilai Kinerja</label>
-                                <input type="text" class="form-control" placeholder="Masukkan Nilai Kinerja"
+                                <label class="font-weight-bold">Kode Kinerja</label>
+                                <input type="text" class="form-control" placeholder="Masukkan Kode Kinerja"
                                        id="add_nilai_kinerja">
                             </div>
                             <div class="col-md-7">
