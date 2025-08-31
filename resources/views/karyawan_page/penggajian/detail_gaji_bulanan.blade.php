@@ -68,7 +68,7 @@
                                     <small> - {{"Kehadiran: ".$rekap->total_kehadiran." (".$rekap->transport_harian."/Jam)"}}</small>
                                 </div>
                             </td>
-                            <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_tunjangan_kinerja,0,',','.').',-'}}</td>
+                            <td style="text-align: left">{{"Rp. " . number_format($rekap->tunjangan_transport,0,',','.').',-'}}</td>
                         </tr>
                         <tr>
                             <td>

@@ -209,7 +209,7 @@
             </td>
         </tr>
         <tr style="display: none">
-            <td class="center" style="width: 5%"><small>1</small></td>
+            <td class="center" style="width: 5%"><small>2</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Tunjangan Fungsional</small>
             </td>
@@ -227,7 +227,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>2</small></td>
+            <td class="center" style="width: 5%"><small>3</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Tunjangan Jamsos</small>
             </td>
@@ -236,7 +236,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>2</small></td>
+            <td class="center" style="width: 5%"><small>4</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Masa Kerja</small>
             </td>
@@ -245,7 +245,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>2</small></td>
+            <td class="center" style="width: 5%"><small>5</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Lembur</small>
             </td>
@@ -254,7 +254,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>2</small></td>
+            <td class="center" style="width: 5%"><small>6</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Kelebihan Mengajar S1</small>
             </td>
@@ -263,7 +263,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>2</small></td>
+            <td class="center" style="width: 5%"><small>7</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Kelebihan Mengajar S2</small>
             </td>
@@ -272,18 +272,18 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>7</small></td>
+            <td class="center" style="width: 5%"><small>8</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Tunjangan Kinerja
-                    ({{"Kehadiran: ".$data['rekap']->total_kehadiran." (".$data['rekap']->transport_harian."/Jam)"}})
+                    ({{"Kehadiran: ".$data['rekap']->total_kehadiran." - ".$data['rekap']->transport_harian."/Jam"}})
                 </small>
             </td>
             <td style="width: 45%; text-align: right">
-                <small>{{"Rp. " . number_format($data['rekap']->nominal_tunjangan_kinerja,0,',','.').',-'}}</small>
+                <small>{{"Rp. " . number_format($data['rekap']->tunjangan_transport,0,',','.').',-'}}</small>
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>2</small></td>
+            <td class="center" style="width: 5%"><small>9</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Lainnya</small>
             </td>
@@ -300,7 +300,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>2</small></td>
+            <td class="center" style="width: 5%"><small>10</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Potongan Pinjaman</small>
             </td>
@@ -309,7 +309,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>5</small></td>
+            <td class="center" style="width: 5%"><small>11</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Potongan Paguyuban</small>
             </td>
@@ -318,7 +318,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%" rowspan="2"><small>7</small></td>
+            <td class="center" style="width: 5%" rowspan="2"><small>12</small></td>
             <td style="width: 50%" colspan="2">
                 <small>BPJS Kesehatan</small>
             </td>
@@ -343,7 +343,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>8</small></td>
+            <td class="center" style="width: 5%"><small>13</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Potongan Lainnya</small>
             </td>
@@ -373,7 +373,7 @@
                     </div>
                 </div>
             </td>
-            <td style="background-color: white!important;">
+            <td style="background-color: white!important; display: none">
                 <div id="company" style="text-align: right; margin-top: 50px">
                     <div>Jember, {{$data['tgl']['ttd']}}</div>
                     <div>
