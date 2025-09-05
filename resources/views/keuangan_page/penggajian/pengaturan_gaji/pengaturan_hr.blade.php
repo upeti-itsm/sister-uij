@@ -81,8 +81,8 @@
                                     <label class="font-weight-bold">Filtering</label>
                                     <select class="form-control select2" id="jenis_jenjang">
                                         <option></option>
-                                        <option value="s1">HR Mengajar S1</option>
-                                        <option value="s2">HR Mengajar S2</option>
+                                        <option value="S1">HR Mengajar S1</option>
+                                        <option value="S2">HR Mengajar S2</option>
                                     </select>
                                 </div>
                             </div>
