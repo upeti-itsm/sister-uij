@@ -1,6 +1,15 @@
 jQuery.presensi_mahasiswa = {
     data: {
         table: $("#table"),
+        mahasiswa: [],
+        status_absensi: [
+            {id: 1, label: "Hadir"},
+            {id: 2, label: "Ijin"},
+            {id: 3, label: "Sakit"},
+            {id: 4, label: "Alpha"}
+        ],
+        selectedId: 4,
+
     },
     init: function () {
         var self = this;
@@ -22,18 +31,16 @@ jQuery.presensi_mahasiswa = {
                 }
             },
             fnDrawCallback: function () {
-                var rows = this.fnGetData();
-                if (rows.length === 0) {
-                    $("#tot_reg_p").text("0");
-                    $("#tot_reg_m").text("0");
-                    $("#tot_tepat").text("0");
-                    $("#tot_terlambat").text("0");
-                } else {
-                    $("#tot_reg_p").text(rows[0].jml_reg_p);
-                    $("#tot_reg_m").text(rows[0].jml_reg_m);
-                    $("#tot_tepat").text(rows[0].jml_tepat_waktu);
-                    $("#tot_terlambat").text(rows[0].jml_terlambat);
-                }
+                var rows = this.api().rows().data().toArray();
+
+                // isi array mahasiswa
+                self.data.mahasiswa = rows.map(r => ({
+                    id_mhs: r.id_mhs,
+                    nama: r.nama_mahasiswa
+                }));
+
+                // update rekap jumlah
+                self.update_rekap(rows);
             },
             scrollY: '500px',
             scrollCollapse: true,
@@ -68,9 +75,23 @@ jQuery.presensi_mahasiswa = {
                     sClass: 'text-center',
                     width: "20%",
                     render: function (data) {
-                        var btn = "<button class='btn btn-primary btn-sm btn-block btn-delete' data-id='" + data.id_rekapitulasi_absensi_mengajar_dosen + "'><span class='spinner-border spinner-border-sm mr-2' id='delete-loading-spin-" + data.id_rekapitulasi_absensi_mengajar_dosen + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash mr-2'></i>Hapus</button>"
-                        var btn_rekap = "<a href='/dosen/akademik/rekapitulasi-absen-mengajar/presensi/" + data.id_rekapitulasi_absensi_mengajar_dosen + "' class='btn btn-success-soft btn-sm btn-block' title='" + data.total_mhs_presensi + " Mahasiswa Hadir dalam Perkuliahan'><i class='fas fa-user-graduate mr-2'></i>" + data.total_mhs_presensi + " Mahasiswa</a>";
-                        return btn_rekap + btn;
+                        // daftar status
+                        var options = [
+                            {id: 0, text: "Alpha"},
+                            {id: 1, text: "Present"},
+                            {id: 2, text: "Ijin"},
+                            {id: 3, text: "Sakit"}
+                        ];
+
+                        // bangun option dinamis
+                        var select = "<select class='statusSelect form-control'>";
+                        options.forEach(function (opt) {
+                            var selected = (data.id_sts_presensi === opt.id) ? "selected" : "";
+                            select += "<option value='" + opt.id + "' " + selected + ">" + opt.text + "</option>";
+                        });
+                        select += "</select>";
+
+                        return select;
                     }
                 },
                 {
@@ -82,7 +103,7 @@ jQuery.presensi_mahasiswa = {
             ],
             paging: true,
             processing: true,
-            pageLength: 10,
+            pageLength: 250,
             ordering: false,
             lengthChange: false,
             autoWidth: false,
@@ -91,6 +112,7 @@ jQuery.presensi_mahasiswa = {
                 "emptyTable": "Tidak ditemukan data"
             }
         });
+
         $("#btn-cari-data").click(function () {
             self.data.table.search($("#cari-data").val()).draw();
         });
@@ -103,9 +125,50 @@ jQuery.presensi_mahasiswa = {
                 self.data.table.search(this.value).draw();
             }
         });
+
+        // ketika datatable selesai di-draw
+        self.data.table.on("draw.dt", function () {
+            // set warna awal semua select
+            $(".statusSelect").each(function () {
+                self.updateSelector(this); // pakai fungsi pewarnaan
+            });
+        });
+
+        $(document).on("change", ".statusSelect", function () {
+            self.updateSelector(this); // atau fungsi lain yang dipanggil
+        });
+
+        $("#btn-simpan-presensi").click(function () {
+            self.simpanPresensi();
+        });
+
+        $("#btn-hadir-semua").click(function () {
+            $.confirm({
+                title: 'Konfirmasi !',
+                type: 'orange',
+                columnClass: 'small',
+                content: 'Apakah anda yakin, semua mahasiswa akan di anggap hadir, data hanya akan tersimpan setelah menekan tombol <b>Simpan Presensi</b>',
+                buttons: {
+                    confirm: {
+                        text: 'Yakin',
+                        btnClass: 'btn-green',
+                        keys: ['enter'],
+                        action: function () {
+                            self.hadirSemua();
+                        }
+                    },
+                    cancel: {
+                        text: 'Batal',
+                        btnClass: 'btn-red'
+                    }
+                }
+            });
+        });
+
         $("#export-to-pdf").click(function () {
             window.open('/dosen/akademik/rekapitulasi-absen-mengajar/export-pdf/' + moment(self.data.tgl_awal.datepicker('getDate')).format('YYYY-MM-DD') + '/' + moment(self.data.tgl_akhir.datepicker('getDate')).format('YYYY-MM-DD') + '/' + $("#cari-data").val());
         });
+
         $("#table").on('click', 'button.btn-delete', function () {
             var id = $(this).data('id');
             $.confirm({
@@ -158,6 +221,118 @@ jQuery.presensi_mahasiswa = {
             });
         });
     },
+    update_rekap: function (rows) {
+        var self = this;
+        if (rows.length === 0) {
+            $("#tot_mahasiswa").text("0");
+            $("#tot_hadir").text("0");
+            $("#tot_ijin").text("0");
+            $("#tot_sakit").text("0");
+            $("#tot_alpha").text("0");
+        } else {
+            $("#tot_mahasiswa").text(rows[0].jml_total_mahasiswa);
+            $("#tot_hadir").text(rows[0].jml_total_mahasiswa_hadir);
+            $("#tot_sakit").text(rows[0].jml_total_mahasiswa_sakit);
+            $("#tot_ijin").text(rows[0].jml_total_mahasiswa_izin);
+            $("#tot_alpha").text(rows[0].jml_total_mahasiswa_tidak_hadir);
+        }
+    },
+    updateSelector: function (select) {
+        select.classList.remove("bg-success", "bg-warning", "bg-danger", "text-white");
+        if (select.value === "1") {
+            select.classList.add("bg-success", "text-white");
+        } else if (select.value === "2" || select.value === "3") {
+            select.classList.add("bg-warning");
+        } else {
+            select.classList.add("bg-danger", "text-white");
+        }
+    },
+    simpanPresensi: function () {
+        var self = this;
+        let ids = [];
+        let statuses = [];
+        let desc = [];
+
+        $(".statusSelect").each(function (i) {
+            ids.push(self.data.mahasiswa[i].id_mhs);
+            statuses.push($(this).val());
+            desc.push($(this).find("option:selected").text());
+        });
+        let $btn = $("#btn-simpan-presensi");
+        let $spinner = $btn.find(".spinner-border");
+        let $btnText = $btn.find(".btn-text");
+        $.confirm({
+            title: 'Konfirmasi !',
+            type: 'orange',
+            columnClass: 'medium',
+            content: 'Apakah anda yakin akan menyimpan presensi mahasiswa ini ? <b>Seluruh Presensi Mahasiswa akan tersimpan kedalam database</b>',
+            buttons: {
+                confirm: {
+                    text: 'Yakin',
+                    btnClass: 'btn-green',
+                    keys: ['enter'],
+                    action: function () {
+                        $.ajax({
+                            url: '/dosen/akademik/rekapitulasi-absen-mengajar/presensi/store',
+                            method: 'POST',
+                            data: {
+                                id_mhs: ids.join(","),      // gabung dengan koma
+                                status: statuses.join(","), // gabung dengan koma
+                                keterangan: desc.join(","), // gabung dengan koma
+                                id_rekap: $("#id_rekap").val()
+                            },
+                            beforeSend: function () {
+                                // 🔹 Aktifkan loading sebelum request dikirim
+                                $btn.prop("disabled", true);
+                                $btnText.text("Menyimpan...");
+                                $spinner.removeClass("d-none");
+                            },
+                            success: function (response) {
+                                if (response.status === 1) {
+                                    $.alert({
+                                        title: "Informasi",
+                                        type: "green",
+                                        content: response.keterangan
+                                    });
+                                } else {
+                                    $.alert({
+                                        title: "Peringatan",
+                                        type: "red",
+                                        content: response.keterangan
+                                    });
+                                }
+                            },
+                            error: function () {
+                                $.alert({
+                                    title: "Peringatan",
+                                    type: "red",
+                                    content: "Terjadi Kesalahan Sistem, Hubungi Admin"
+                                });
+                            },
+                            complete: function () {
+                                // 🔹 Reset tombol setelah request selesai
+                                $btn.prop("disabled", false);
+                                $btnText.text("Simpan Presensi");
+                                $spinner.addClass("d-none");
+                                self.data.table.ajax.reload();
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: 'Batal',
+                    btnClass: 'btn-red'
+                }
+            }
+        });
+    },
+    hadirSemua: function () {
+        var self = this;
+        $(".statusSelect").each(function () {
+            $(this).val(1);       // set value jadi Hadir
+            self.updateSelector(this);    // panggil fungsi pewarnaan
+        });
+    }
 };
 
 jQuery(document).ready(function () {

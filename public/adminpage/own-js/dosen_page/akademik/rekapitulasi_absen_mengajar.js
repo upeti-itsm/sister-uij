@@ -110,7 +110,7 @@ jQuery.rekapitulasi_absen_mengajar = {
                     width: "20%",
                     render: function (data) {
                         var btn = "<button class='btn btn-primary btn-sm btn-block btn-delete' data-id='" + data.id_rekapitulasi_absensi_mengajar_dosen + "'><span class='spinner-border spinner-border-sm mr-2' id='delete-loading-spin-" + data.id_rekapitulasi_absensi_mengajar_dosen + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash mr-2'></i>Hapus</button>"
-                        var btn_rekap = "<a href='/dosen/akademik/rekapitulasi-absen-mengajar/presensi/" + data.id_rekapitulasi_absensi_mengajar_dosen + "' class='btn btn-success-soft btn-sm btn-block' title='" + data.total_mhs_presensi + " Mahasiswa Hadir dalam Perkuliahan'><i class='fas fa-user-graduate mr-2'></i>" + data.total_mhs_presensi + " Mahasiswa</a>";
+                        var btn_rekap = "<a href='/dosen/akademik/rekapitulasi-absen-mengajar/presensi/" + data.id_rekap + "' class='btn btn-success-soft btn-sm btn-block' title='" + data.total_mhs_presensi + " Mahasiswa Hadir dalam Perkuliahan'><i class='fas fa-user-graduate mr-2'></i>" + data.total_mhs_presensi + " Mahasiswa</a>";
                         return btn_rekap + btn;
                     }
                 },

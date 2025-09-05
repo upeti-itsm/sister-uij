@@ -17,13 +17,14 @@
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
                 <h1 class="font-weight-bold">Rekapitulasi Absen Presensi Mahasiswa</h1>
-                <small>Halaman ini digunakan monitoring data absensi mengajar dan presensi mahasiswa pada masing-masing perkuliahan</small>
+                <small>Halaman ini digunakan monitoring data absensi mengajar dan presensi mahasiswa pada masing-masing
+                    perkuliahan</small>
             </div>
         </div>
     </div>
 @endsection
 @section('body-content')
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card card-stats statistic-box mb-4">
             <div
                 class="card-header card-header-info card-header-icon position-relative border-0 text-right px-3 py-0">
@@ -31,41 +32,58 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Total Mahasiswa</p>
-                <h3 class="card-title fs-21 font-weight-bold" id="tot_reg_p">0</h3>
+                <h3 class="card-title fs-21 font-weight-bold" id="tot_mahasiswa">0</h3>
             </div>
             <div class="card-footer p-1">
                 <div class="stats">
-                    <i class="fas fa-cloud-sun mr-2 ml-2"></i>Mahasiswa Hadir
+                    <i class="fas fa-user-graduate mr-2 ml-2"></i>Keseluruhan Mahasiswa
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card card-stats statistic-box mb-4">
-            <div
-                class="card-header card-header-info card-header-icon position-relative border-0 text-right px-3 py-0">
-                <div class="card-icon d-flex align-items-center justify-content-center">
-                    <i class="fas fa-users"></i>
-                </div>
-                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Mahasiswa Tidak Hadir</p>
-                <h3 class="card-title fs-21 font-weight-bold" id="tot_reg_m">0</h3>
-            </div>
-            <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-cloud-moon mr-2 ml-2"></i>Mahasiswa Alpha
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card card-stats statistic-box mb-4">
             <div
                 class="card-header card-header-success card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Mahasiswa Hadir</p>
+                <h3 class="card-title fs-21 font-weight-bold" id="tot_hadir">0</h3>
+            </div>
+            <div class="card-footer p-1">
+                <div class="stats">
+                    <i class="fas fa-user-check mr-2 ml-2"></i>Hadir Dikelas
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-stats statistic-box mb-4">
+            <div
+                class="card-header card-header-danger card-header-icon position-relative border-0 text-right px-3 py-0">
+                <div class="card-icon d-flex align-items-center justify-content-center">
+                    <i class="typcn typcn-info-outline"></i>
+                </div>
+                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Mahasiswa Alpha</p>
+                <h3 class="card-title fs-21 font-weight-bold" id="tot_alpha">0</h3>
+            </div>
+            <div class="card-footer p-1">
+                <div class="stats">
+                    <i class="fas fa-clock mr-2 ml-2"></i>Mahasiswa Tanpa Keterangan
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-stats statistic-box mb-4">
+            <div
+                class="card-header card-header-warning card-header-icon position-relative border-0 text-right px-3 py-0">
+                <div class="card-icon d-flex align-items-center justify-content-center">
                     <i class="fas fa-clipboard-check"></i>
                 </div>
-                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Total Mahasiswa</p>
-                <h3 class="card-title fs-21 font-weight-bold" id="tot_tepat">0</h3>
+                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Mahasiswa Izin</p>
+                <h3 class="card-title fs-21 font-weight-bold" id="tot_ijin">0</h3>
             </div>
             <div class="card-footer p-1">
                 <div class="stats">
@@ -74,19 +92,19 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-6">
         <div class="card card-stats statistic-box mb-4">
             <div
-                class="card-header card-header-danger card-header-icon position-relative border-0 text-right px-3 py-0">
+                class="card-header card-header-warning card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
-                    <i class="typcn typcn-info-outline"></i>
+                    <i class="fas fa-user-injured"></i>
                 </div>
-                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Total Mahasiswa</p>
-                <h3 class="card-title fs-21 font-weight-bold" id="tot_terlambat">0</h3>
+                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Mahasiswa Sakit</p>
+                <h3 class="card-title fs-21 font-weight-bold" id="tot_sakit">0</h3>
             </div>
             <div class="card-footer p-1">
                 <div class="stats">
-                    <i class="fas fa-clock mr-2 ml-2"></i>Mahasiswa Sakit
+                    <i class="fas fa-user-injured mr-2 ml-2"></i>Mahasiswa Sakit
                 </div>
             </div>
         </div>
@@ -110,21 +128,41 @@
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="row">
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control" placeholder="Cari Nama Mahasiswa"
+                                            <input type="text" class="form-control form-control-sm" placeholder="Cari Nama Mahasiswa"
                                                    id="cari-data">
                                         </div>
                                         <div class="col-md-4">
-                                            <button class="btn btn-block btn-primary" id="btn-cari-data"><i
+                                            <button class="btn btn-block btn-sm btn-primary" id="btn-cari-data"><i
                                                     class="fas fa-search mr-2"></i>Cari Data
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-5">
+                                <label>Pengaturan Absensi</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button id="btn-hadir-semua" class="btn btn-block btn-sm btn-info"><i
+                                                class="fas fa-user-check mr-2"></i>Set Hadir Semua
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button id="btn-simpan-presensi"
+                                                class="btn btn-block btn-sm btn-success"><i class="fas fa-save mr-2"></i>
+                                            <span class="btn-text">Simpan Presensi</span>
+                                            <div class="spinner-border spinner-border-sm text-light ms-2 d-none" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-2">
                                 <label>Exporting</label>
-                                <button id="export-to-pdf" class="btn btn-sm btn-block mb-2 btn-danger"><i class="fas fa-file-pdf mr-2"></i>Export To PDF</button>
-{{--                                <button id="export-to-excel" class="btn btn-sm btn-block btn-success"><i class="fas fa-file-excel mr-2"></i>Export To Excel</button>--}}
+                                <button id="export-to-pdf" class="btn btn-sm btn-block mb-2 btn-danger"><i
+                                        class="fas fa-file-pdf mr-2"></i>Export To PDF
+                                </button>
                             </div>
                         </div>
                     </div>

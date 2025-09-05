@@ -94,4 +94,16 @@ class RekapitulasiAbsenMengajarController extends Controller
         $data['error'] = null;
         return response()->json($data, 200);
     }
+
+    public function update_presensi_mahasiswa(Request $request)
+    {
+        $request->validate([
+            'id_rekap' => 'required',
+            'id_mhs' => 'required',
+            'status' => 'required',
+            'keterangan' => 'required',
+        ]);
+        $result = RekapitulasiAbsensiMengajarDosen::presensi_manual_mahasiswa($request->id_rekap, $request->id_mhs, $request->status, $request->keterangan);
+        return response()->json($result, 200);
+    }
 }
