@@ -1,4 +1,4 @@
-jQuery.rekapitulasi_absen_mengajar = {
+jQuery.presensi_mahasiswa = {
     data: {
         table: $("#table"),
     },
@@ -45,45 +45,27 @@ jQuery.rekapitulasi_absen_mengajar = {
                     width: "5%"
                 },
                 {
-                    data: null,
+                    data: "nim",
                     searchable: false,
                     sClass: 'text-left',
                     width: "25%",
-                    render: function (data) {
-                        var keterangan = "";
-                        if (data.keterangan)
-                            keterangan = "<br/><small>Keterangan : " + data.keterangan + "</small>";
-                        return "<b>" + data.fullname + " </b><br/>" +
-                            "<small>" + data.tanggal_absen + "</small>" + keterangan;
-                    }
+                },
+                {
+                    data: "nama_mahasiswa",
+                    searchable: false,
+                    sClass: 'text-left',
+                    width: "25%",
+                },
+                {
+                    data: "nama_program_studi",
+                    searchable: false,
+                    sClass: 'text-center',
+                    width: "25%",
                 },
                 {
                     data: null,
                     searchable: false,
-                    sClass: 'text-left',
-                    width: "25%",
-                    render: function (data) {
-                        return "<small>Tanggal : " + data.tgl_pelaksanaan_ + "</small><br/>" +
-                            "<small>" + data.waktu_mengajar + "</small>";
-                    }
-                },
-                {
-                    data: null,
-                    searchable: false,
-                    sClass: 'text-left',
-                    width: "25%",
-                    render: function (data) {
-                        var status = "<span class='badge badge-success'>Tepat Waktu</span>";
-                        if (data.status_absen === "Terlambat")
-                            status = "<span class='badge badge-danger'>Terlambat</span>";
-                        return "<small>Pertemuan Ke-" + data.pertemuan_ke + " - " + status + "</small><br/>" +
-                            "<small>Materi : <br/>" + data.materi + "</small>";
-                    }
-                },
-                {
-                    data: null,
-                    searchable: false,
-                    sClass: 'text-left',
+                    sClass: 'text-center',
                     width: "20%",
                     render: function (data) {
                         var btn = "<button class='btn btn-primary btn-sm btn-block btn-delete' data-id='" + data.id_rekapitulasi_absensi_mengajar_dosen + "'><span class='spinner-border spinner-border-sm mr-2' id='delete-loading-spin-" + data.id_rekapitulasi_absensi_mengajar_dosen + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash mr-2'></i>Hapus</button>"
@@ -92,7 +74,7 @@ jQuery.rekapitulasi_absen_mengajar = {
                     }
                 },
                 {
-                    data: 'fullname',
+                    data: 'nama_mahasiswa',
                     searchable: true,
                     sClass: 'text-center',
                     visible: false
@@ -123,9 +105,6 @@ jQuery.rekapitulasi_absen_mengajar = {
         });
         $("#export-to-pdf").click(function () {
             window.open('/dosen/akademik/rekapitulasi-absen-mengajar/export-pdf/' + moment(self.data.tgl_awal.datepicker('getDate')).format('YYYY-MM-DD') + '/' + moment(self.data.tgl_akhir.datepicker('getDate')).format('YYYY-MM-DD') + '/' + $("#cari-data").val());
-        });
-        $("#export-to-excel").click(function () {
-            window.open('/dosen/akademik/rekapitulasi-absen-mengajar/export-excel/' + moment(self.data.tgl_awal.datepicker('getDate')).format('YYYY-MM-DD') + '/' + moment(self.data.tgl_akhir.datepicker('getDate')).format('YYYY-MM-DD'));
         });
         $("#table").on('click', 'button.btn-delete', function () {
             var id = $(this).data('id');
@@ -182,5 +161,5 @@ jQuery.rekapitulasi_absen_mengajar = {
 };
 
 jQuery(document).ready(function () {
-    jQuery.rekapitulasi_absen_mengajar.init();
+    jQuery.presensi_mahasiswa.init();
 });

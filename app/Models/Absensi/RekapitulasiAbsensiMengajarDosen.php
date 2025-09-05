@@ -44,8 +44,8 @@ class RekapitulasiAbsensiMengajarDosen extends Model
     }
 
     public static function getRekapitulasiPresensiMahasiswa($id_rekap, $search = "", $offset = -1, $limit = 10){
-        return DB::select('SELECT * FROM absensi.get_rekapitulasi_absensi_mengajar_dosen_by_personal(:tgl_awal, :tgl_akhir, :id_personal, :search, :offset, :limit, :tahun_akademik)', [
-
+        return DB::select('SELECT * FROM absensi.rekap_presensi_mahasiswa(?,?,?,?)', [
+            $id_rekap, $search, $offset, $limit
         ]);
     }
 
