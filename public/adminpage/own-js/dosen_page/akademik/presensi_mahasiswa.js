@@ -107,7 +107,7 @@ jQuery.presensi_mahasiswa = {
             ordering: false,
             lengthChange: false,
             autoWidth: false,
-            sDom: 'ltipr',
+            sDom: 'ltir',
             language: {
                 "emptyTable": "Tidak ditemukan data"
             }
