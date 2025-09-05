@@ -274,7 +274,7 @@
                                                        id="insentif_kelebihan_mengajar"
                                                        value="{{number_format($rekap->insentif_kelebihan_mengajar_s1,0,',','.')}}">
                                             </div>
-                                            <small class="text-danger" style="display: none">{{$rekap->pendidikan_terakhir}}</small>
+                                            <small class="text-danger">{{$rekap->ket_insentif_kelebihan_mengajar_s1}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -289,7 +289,7 @@
                                                        id="insentif_kelebihan_mengajar_2"
                                                        value="{{number_format($rekap->insentif_kelebihan_mengajar_s2,0,',','.')}}">
                                             </div>
-                                            <small class="text-danger" style="display: none">{{$rekap->pendidikan_terakhir}}</small>
+                                            <small class="text-danger">{{$rekap->ket_insentif_kelebihan_mengajar_s2}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">

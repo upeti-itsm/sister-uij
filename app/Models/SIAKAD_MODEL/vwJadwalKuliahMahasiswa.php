@@ -14,8 +14,8 @@ class vwJadwalKuliahMahasiswa extends Model
 
     public static function getVwJadwalKuliahMahasiswa($tahun_akademik)
     {
-        return DB::connection('siakad')->select('SELECT jadwal_kuliah_id, NPK, nama_mata_kuliah, kelas_id, nama_dosen, tahun_akademik FROM vwJadwalKuliahMahasiswa WHERE tahun_akademik = :tahun_akademik', [
-            'tahun_akademik' => $tahun_akademik
+        return DB::connection('siakad')->select("with krs as ( select t1.*,t2.kdmatakuliah,t2.namamatakuliah from akademik.rencanastudi t1 left join akademik.matakuliah t2 on t1.idmatakuliah=t2.idmatakuliah where t1.thnakademik = ? ) , kelas as ( select * from akademik.kelasperkuliahan t1 where t1.thnakademik= ?) select t1.idkelas, t5.idjadwalperkuliahan ,t1.nim ,t3.idmatakuliah ,t4.namamatakuliah from akademik.pesertakelas t1 inner join kelas t2 on t1.idkelas = t2.idkelas inner join akademik.kegiatanmatakuliah t3 on t2.idkegiatanmatakuliah=t3.idkegiatanmatakuliah inner join akademik.matakuliah t4 on t3.idmatakuliah=t4.idmatakuliah INNER JOIN akademik.jadwalperkuliahan t5 ON t1.idkelas = t5.idkelas where t2.thnakademik = ?", [
+            $tahun_akademik, $tahun_akademik, $tahun_akademik
         ]);
     }
 
@@ -42,9 +42,8 @@ class vwJadwalKuliahMahasiswa extends Model
 
     public static function getVwJadwalKuliahMahasiswaByNim($nim, $tahun_akademik)
     {
-        return DB::connection('siakad')->select('SELECT jadwal_kuliah_id, NPK, nama_mata_kuliah, kelas_id, nama_dosen, tahun_akademik FROM vwJadwalKuliahMahasiswa WHERE tahun_akademik = :tahun_akademik AND NPK = :npk', [
-            'npk' => $nim,
-            'tahun_akademik' => $tahun_akademik
+        return DB::connection('siakad')->select('with krs as ( select t1.*,t2.kdmatakuliah,t2.namamatakuliah from akademik.rencanastudi t1 left join akademik.matakuliah t2 on t1.idmatakuliah=t2.idmatakuliah where t1.thnakademik = ? ) , kelas as ( select * from akademik.kelasperkuliahan t1 where t1.thnakademik= ?) select t1.idkelas, t5.idjadwalperkuliahan ,t1.nim ,t3.idmatakuliah ,t4.namamatakuliah from akademik.pesertakelas t1 inner join kelas t2 on t1.idkelas = t2.idkelas inner join akademik.kegiatanmatakuliah t3 on t2.idkegiatanmatakuliah=t3.idkegiatanmatakuliah inner join akademik.matakuliah t4 on t3.idmatakuliah=t4.idmatakuliah INNER JOIN akademik.jadwalperkuliahan t5 ON t1.idkelas = t5.idkelas where t2.thnakademik = ? and t1.nim = ?', [
+            $tahun_akademik, $tahun_akademik, $tahun_akademik, $nim
         ]);
     }
 

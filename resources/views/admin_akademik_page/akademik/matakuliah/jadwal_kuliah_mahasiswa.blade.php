@@ -226,7 +226,7 @@
                     <div class="form-group">
                         <select class="select2 form-control" id="tahun_akademik_sync-jadwal-kuliah">
                             @foreach($tahun_akademik_siakad AS $item)
-                                <option value="{{$item->tahun_akademik}}">{{$item->nama_tahun_akademik}}</option>
+                                <option value="{{$item->tahun_akademik}}{{$item->id_semester_uij}}">{{$item->tahun_akademik}} ({{$item->nama_tahun_akademik}})</option>
                             @endforeach
                         </select>
                     </div>
@@ -262,7 +262,7 @@
                         <label>Tahun Akademik</label>
                         <select class="select2 form-control" id="tahun_akademik_sync-jadwal-kuliah-nim">
                             @foreach($tahun_akademik_siakad AS $item)
-                                <option value="{{$item->tahun_akademik}}">{{$item->nama_tahun_akademik}}</option>
+                                <option value="{{$item->tahun_akademik}}{{$item->id_semester_uij}}">{{$item->tahun_akademik}} ({{$item->nama_tahun_akademik}})</option>
                             @endforeach
                         </select>
                     </div>

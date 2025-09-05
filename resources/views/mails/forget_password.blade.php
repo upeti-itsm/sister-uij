@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="description" content="Lupa Password di sipadu.itsm.ac.id">
     <meta name="robots" content="noindex,nofollow">
-    <title>Akun SIPADU STIE Mandala</title>
+    <title>Akun SISTER UIJ</title>
     <link rel="canonical" href="http://sipadu.itsm.ac.id/"/>
 </head>
 
@@ -17,7 +17,7 @@
             <tbody>
             <tr>
                 <td style="vertical-align: top; padding-bottom:15px;" align="center"><a href="#" target="_blank"><img
-                            src="http://sipadu.itsm.ac.id/image/logo-sipadu-uptti.png"
+                            src="https://sister.uij.ac.id/image/Logos.png"
                             style="border:none; height: 100%; max-width: 50%"></a>
                 </td>
             </tr>
@@ -27,7 +27,7 @@
             <tbody>
             <tr>
                 <td style="background:#36bea6; padding:20px; color:#fff; text-align:center;">
-                    AKUN SIPADU STIE MANDALA
+                    AKUN SISTER UNIVERSITAS ISLAM JEMBER
                 </td>
             </tr>
             </tbody>
@@ -42,28 +42,28 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <p>SIPADU adalah sistem yang ditujukan kepada Civitas Akademik ITS Mandala untuk menunjang
-                            kegiatan akademik/non akademik yang ada di lingkungan ITS Mandala. Berikut username dan
-                            password anda untuk mengakses <a href="http://sipadu.itsm.ac.id/sign-in">sipadu.itsm.ac.id</a><br/>
+                        <p>SISTER adalah sistem yang ditujukan kepada Civitas Akademik UIJ untuk menunjang
+                            kegiatan akademik/non akademik yang ada di lingkungan UIJ. Berikut username dan
+                            password anda untuk mengakses <a href="https://sister.uij.ac.id/sign-in">sister.uij.ac.id</a><br/>
                             <b>Username : </b>{{$data->username}}<br/>
                             <b>Password : </b>{{$data->password}}<br/>
                             <b style="color: red">Username dan Password ini digunakan selama anda menjadi civitas
-                                akademik di ITS Mandala, Pastikan anda menyimpan dengan benar</b>
+                                akademik di UIJ, Pastikan anda menyimpan dengan benar</b>
                         </p>
                         <center>
-                            <a href="http://sipadu.itsm.ac.id/sign-in"
+                            <a href="https://sister.uij.ac.id/sign-in"
                                style="display: inline-block; padding: 11px 30px; margin: 20px 0px 30px; font-size: 15px; color: #fff; background: #2962FF; border-radius: 60px; text-decoration:none;">Login
-                                SIPADU ITSM</a>
+                                SISTER UIJ</a>
                         </center>
-                        <b>Terimakasih <br/>(UPT-TI ITSM)</b></td>
+                        <b>Terimakasih <br/>(UPT-TI UIJ)</b></td>
                 </tr>
                 </tbody>
             </table>
         </div>
         <div style="text-align: center; font-size: 12px; color: #b2b2b5; margin-top: 20px">
             <p> Powered by <a href="https://upeti.itsm.ac.id/" style="color: #b2b2b5" target="_blank">UPETI
-                    ITS Mandala</a>
-                <br>© 2021 <a href="https://itsm.ac.id/" style="color: #b2b2b5" target="_blank">ITS Mandala</a></p>
+                    UIJ</a>
+                <br>© 2021 <a href="https://itsm.ac.id/" style="color: #b2b2b5" target="_blank">UIJ</a></p>
         </div>
     </div>
 </div>

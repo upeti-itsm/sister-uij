@@ -267,29 +267,29 @@ jQuery.jadwal_kuliah_mahasiswa = {
             url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-mahasiswa/synchron',
             method: 'post',
             data: {
-                'jadwal_kuliah_id': data[index].jadwal_kuliah_id,
-                'nim': data[index].NPK,
-                'kelas_id': data[index].kelas_id,
-                'nama_dosen': data[index].nama_dosen,
-                'nama_mata_kuliah': data[index].nama_mata_kuliah,
-                'tahun_akademik': data[index].tahun_akademik,
+                'jadwal_kuliah_id': data[index].idjadwalperkuliahan,
+                'nim': data[index].nim,
+                // 'kelas_id': data[index].kelas_id,
+                // 'nama_dosen': data[index].nama_dosen,
+                // 'nama_mata_kuliah': data[index].nama_mata_kuliah,
+                // 'tahun_akademik': data[index].tahun_akademik,
             },
             success: function (result) {
                 if (result.status) {
                     self.data.log_table_jadwal_kuliah.row.add([
                         (index + 1),
-                        data[index].nama_mata_kuliah + " (" + data[index].kelas_id + ")",
+                        data[index].namamatakuliah + " (" + data[index].idkelas + ")",
                         "<i class='fas fa-check-circle text-success p-1'></i> " + result.keterangan,
-                        data[index].nama_mata_kuliah,
+                        data[index].namamatakuliah,
                         "inserted"
                     ]).draw();
                     inserted++;
                 } else {
                     self.data.log_table_jadwal_kuliah.row.add([
                         (index + 1),
-                        data[index].nama_mata_kuliah + " (" + data[index].kelas_id + ")",
+                        data[index].namamatakuliah + " (" + data[index].idkelas + ")",
                         "<i class='fas fa-check-circle text-danger p-1'></i> " + result.keterangan,
-                        data[index].nama_mata_kuliah,
+                        data[index].namamatakuliah,
                         "gagal"
                     ]).draw();
                     failed++;

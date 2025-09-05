@@ -29,12 +29,12 @@ class DashboardController extends Controller
                     if ($skpi->status == 0)
                         return redirect(route('mahasiswa.akademik.skpi.index'));
                     else {
-                        $data["nilai_skripsi"] = tblMahasiswa::getNilaiSkripsi(Session::get('user')->nim);
+//                        $data["nilai_skripsi"] = tblMahasiswa::getNilaiSkripsi(Session::get('user')->nim);
                         $data["jadwal_wisuda"] = JadwalWisuda::get_daftar_jadwal_wisuda("all", 0, 1);
                     }
                 }
             } else {
-                $data["nilai_skripsi"] = tblMahasiswa::getNilaiSkripsi(Session::get('user')->nim);
+//                $data["nilai_skripsi"] = tblMahasiswa::getNilaiSkripsi(Session::get('user')->nim);
                 $data["jadwal_wisuda"] = JadwalWisuda::get_daftar_jadwal_wisuda("all", 0, 1);
             }
         } elseif (Session::get('peran')['aktif'] == 45) {

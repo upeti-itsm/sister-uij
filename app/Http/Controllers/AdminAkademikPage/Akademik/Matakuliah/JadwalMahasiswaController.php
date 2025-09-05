@@ -47,7 +47,7 @@ class JadwalMahasiswaController extends Controller
         ]);
         $delete = JadwalKuliahMahasiswa::delete_jadwal_matakuliah_mahasiswa($request->tahun_akademik);
         if ($delete->status) {
-            $elearning = JadwalMahasiswa::delete_jadwal_mahasiswa_by_tahun_akademik($request->tahun_akademik);
+            //$elearning = JadwalMahasiswa::delete_jadwal_mahasiswa_by_tahun_akademik($request->tahun_akademik);
             $data = \App\Models\SIAKAD_MODEL\vwJadwalKuliahMahasiswa::getVwJadwalKuliahMahasiswa($request->tahun_akademik);
             return response()->json($data);
         } else
@@ -62,7 +62,7 @@ class JadwalMahasiswaController extends Controller
         ]);
         $delete = JadwalKuliahMahasiswa::delete_jadwal_matakuliah_mahasiswa($request->tahun_akademik, $request->nim);
         if ($delete->status) {
-            $elearning = JadwalMahasiswa::delete_jadwal_mahasiswa($request->nim, $request->tahun_akademik);
+            //$elearning = JadwalMahasiswa::delete_jadwal_mahasiswa($request->nim, $request->tahun_akademik);
             $data = \App\Models\SIAKAD_MODEL\vwJadwalKuliahMahasiswa::getVwJadwalKuliahMahasiswaByNim($request->nim, $request->tahun_akademik);
             return response()->json($data);
         } else
@@ -74,12 +74,12 @@ class JadwalMahasiswaController extends Controller
         $request->validate([
             'jadwal_kuliah_id' => 'required',
             'nim' => 'required',
-            'nama_mata_kuliah' => 'required',
-            'kelas_id' => 'required',
-            'nama_dosen' => 'required',
-            'tahun_akademik' => 'required',
+//            'nama_mata_kuliah' => 'required',
+//            'kelas_id' => 'required',
+//            'nama_dosen' => 'required',
+//            'tahun_akademik' => 'required',
         ]);
-        $elearning = JadwalMahasiswa::sync_jadwal_mahasiswa($request->jadwal_kuliah_id, $request->nim, $request->nama_mata_kuliah, $request->kelas_id, $request->nama_dosen, $request->tahun_akademik);
+        //$elearning = JadwalMahasiswa::sync_jadwal_mahasiswa($request->jadwal_kuliah_id, $request->nim, $request->nama_mata_kuliah, $request->kelas_id, $request->nama_dosen, $request->tahun_akademik);
         $data = JadwalKuliahMahasiswa::insert_jadwal_matakuliah_mahasiswa($request->nim, $request->jadwal_kuliah_id);
         if ($data->status)
             return response()->json($data);

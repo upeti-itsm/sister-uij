@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="description" content="Registrasi Email sebagai username akun di sipadu.stie-mandala.ac.id">
     <meta name="robots" content="noindex,nofollow">
-    <title>Akun SIPADU STIE Mandala</title>
+    <title>Akun SISTER UIJ</title>
     <link rel="canonical" href="http://sipadu.stie-mandala.ac.id/"/>
 </head>
 
@@ -17,10 +17,8 @@
             <tbody>
             <tr>
                 <td style="vertical-align: top; padding-bottom:15px;" align="center"><a href="#" target="_blank"><img
-                            src="http://upeti.stie-mandala.ac.id/ebusiness/img/logo-mandala.png"
+                            src="https://sister.uij.ac.id/image/Logos.png"
                             style="border:none; height: 50px; width: 50px"><br/>
-                        <img src="http://upeti.stie-mandala.ac.id/img/logo-text.png"
-                             style="border:none; height: 15px; width: 148px"></a>
                 </td>
             </tr>
             </tbody>
@@ -29,7 +27,7 @@
             <tbody>
             <tr>
                 <td style="background:#36bea6; padding:20px; color:#fff; text-align:center;">
-                    AKUN SIPADU STIE MANDALA
+                    AKUN SISTER UNIVERSITAS ISLAM JEMBER
                 </td>
             </tr>
             </tbody>
@@ -44,36 +42,34 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <p style="margin-top:20px;">Anda terdaftar di Sistem Informasi Terpadu milik STIE Mandala Jember
+                        <p style="margin-top:20px;">Anda terdaftar di Sistem Informasi Terpadu milik Universitas Islam Jember
                             sebagai <b>{{$data->jenis_karyawan}}</b> dan dihitung aktif sejak tanggal
                             <b>{{$data->tgl_masuk}}</b></p>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <p>SIPADU adalah sistem yang ditujukan kepada Civitas Akademik STIE Mandala untuk menunjang
-                            kegiatan akademik/non akademik yang ada di lingkungan STIE Mandala. Berikut username dan
-                            password anda untuk mengakses <a href="http://sipadu.stie-mandala.ac.id/sign-in">sipadu.stie-mandala.ac.id</a><br/>
+                        <p>SISTER adalah sistem yang ditujukan kepada Civitas Akademik UIJ untuk menunjang
+                            kegiatan akademik/non akademik yang ada di lingkungan UIJ. Berikut username dan
+                            password anda untuk mengakses <a href="https://sister.uij.ac.id/sign-in">sister.uij.ac.id</a><br/>
                             <b>Username : </b>{{$data->username}}<br/>
                             <b>Password : </b>{{$data->password}}<br/>
                             <b style="color: red">Username dan Password ini digunakan selama anda menjadi civitas
-                                akademik di STIE Mandala Jember, Pastikan anda menyimpan dengan benar</b>
+                                akademik di UIJ, Pastikan anda menyimpan dengan benar</b>
                         </p>
                         <center>
-                            <a href="http://sipadu.stie-mandala.ac.id/sign-in"
+                            <a href="https://sister.uij.ac.id/sign-in"
                                style="display: inline-block; padding: 11px 30px; margin: 20px 0px 30px; font-size: 15px; color: #fff; background: #2962FF; border-radius: 60px; text-decoration:none;">Login
-                                SIPADU STIE Mandala</a>
+                                SISTER UIJ</a>
                         </center>
-                        <b>Terimakasih <br/>(HRD STIE Mandala)</b></td>
+                        <b>Terimakasih <br/>(HRD UIJ)</b></td>
                 </tr>
                 </tbody>
             </table>
         </div>
         <div style="text-align: center; font-size: 12px; color: #b2b2b5; margin-top: 20px">
-            <p> Powered by <a href="http://upeti.stie-mandala.ac.id/" style="color: #b2b2b5" target="_blank">UPETI
-                    STIE-Mandala</a>
-                <br>© 2021 <a href="http://www.stie-mandala.ac.id/" style="color: #b2b2b5" target="_blank">STIE Mandala
-                    Jember</a></p>
+            <p> Powered by <a href="https://upeti.itsm.ac.id/" style="color: #b2b2b5" target="_blank">UPT-TI UIJ</a>
+                <br>© 2021 <a href="https://itsm.ac.id/" style="color: #b2b2b5" target="_blank">UIJ</a></p>
         </div>
     </div>
 </div>

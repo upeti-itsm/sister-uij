@@ -221,7 +221,7 @@
                     <div class="form-group">
                         <select class="select2 form-control" id="angkatan_sync-data-center">
                             @foreach($angkatan_siakad AS $item)
-                                <option value="{{$item->angkatan}}">{{$item->angkatan}}</option>
+                                <option value="{{$item->thnakademikmasuk}}">{{$item->thnakademikmasuk}}</option>
                             @endforeach
                         </select>
                     </div>

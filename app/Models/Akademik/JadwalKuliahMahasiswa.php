@@ -36,4 +36,11 @@ class JadwalKuliahMahasiswa extends Model
             'tahun_akademik' => $tahun_akademik, 'nim' => $nim, 'id' => $id
         ])[0];
     }
+
+    public static function set_absensi_perkuliahan_mahasiswa($id_rekap, $id_mhs, $ip)
+    {
+        return DB::selectOne("select * from absensi.set_absensi_perkuliahan_mahasiswa(?,?,?)", [
+            $id_rekap, $id_mhs, $ip
+        ]);
+    }
 }

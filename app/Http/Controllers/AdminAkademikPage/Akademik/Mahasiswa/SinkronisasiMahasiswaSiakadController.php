@@ -70,10 +70,10 @@ class SinkronisasiMahasiswaSiakadController extends Controller
             'nama_lengkap' => 'required',
             'angkatan' => 'required'
         ]);
-        $data = \App\Models\Akademik\Mahasiswa::sync_mahasiswa_with_siakad($request->npk, $request->inf_nisn, $request->dosen_wali, $request->tgl_lulus_sma, $request->inf_jurusan_sma, $request->sekolah_asal, $request->inf_tgl_lulus, $request->inf_nomor_ijazah, $request->inf_nomor_transkrip, $request->status_aktif, $request->program_id, $request->konsentrasi_id,
+        $data = \App\Models\Akademik\Mahasiswa::sync_mahasiswa_with_siakad(trim($request->npk), $request->inf_nisn, $request->dosen_wali, $request->tgl_lulus_sma, $request->inf_jurusan_sma, $request->sekolah_asal, $request->inf_tgl_lulus, $request->inf_nomor_ijazah, $request->inf_nomor_transkrip, $request->status_aktif, trim($request->program_id), $request->konsentrasi_id,
             $request->nama_wali, $request->pekerjaan_wali, $request->jenis_mahasiswa, $request->jenis_pendanaan, $request->nomor_seri_ijazah, $request->nama_lengkap, $request->tempat_lahir, $request->tanggal_lahir, $request->jenis_kelamin, $request->agama_id, $request->status_menikah, $request->hp, $request->telepon_rumah, $request->alamat_rumah,
             $request->kode_pos_rumah, $request->inf_warga_negara, $request->email, $request->nik, $request->rt, $request->rw, $request->ds_kel, $request->nama_ibu, $pass, $request->angkatan, $request->jenis_kelas, $request->judul_skripsi, $request->ipk, $request->kota_rumah);
-        $moodle = \App\Models\MOODLE_MODEL\Mahasiswa::sync_mahasiswa($request->npk, $request->nama_lengkap, $request->angkatan, $pass, $request->program_id, $request->alamat_rumah, $request->hp, $request->tempat_lahir, $request->email, $request->nama_program, $request->jenis_pendanaan);
+        $moodle = \App\Models\MOODLE_MODEL\Mahasiswa::sync_mahasiswa($request->npk, $request->nama_lengkap, trim($request->angkatan), $pass, $request->program_id, $request->alamat_rumah, $request->hp, $request->tempat_lahir, $request->email, $request->nama_program, $request->jenis_pendanaan);
         if ($data->is_success)
             return response()->json($data);
         else

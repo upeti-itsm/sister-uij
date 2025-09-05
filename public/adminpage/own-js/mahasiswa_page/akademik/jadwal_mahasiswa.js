@@ -66,7 +66,7 @@ jQuery.jadwal_matakuliah = {
                     sClass: 'text-left',
                     width: "45%",
                     render: function (data) {
-                        return data.nama_mata_kuliah + " (" + data.kelas_id + ")";
+                        return "<p>" + data.nama_mata_kuliah + " (" + data.nama_kelas + ") - " + data.nama_prodi + "</p>";
                     }
                 },
                 {
@@ -78,19 +78,28 @@ jQuery.jadwal_matakuliah = {
                 {
                     data: null,
                     searchable: false,
-                    sClass: 'text-left',
-                    width: "15%",
+                    sClass: 'text-center',
+                    width: "10%",
                     render: function (data) {
-                        return self.data.hari[data.hari];
+                        return "<p>" + self.data.hari[data.hari] + "</p>";
                     }
                 },
                 {
                     data: null,
                     searchable: false,
-                    sClass: 'text-left',
-                    width: "30%",
+                    sClass: 'text-center',
+                    width: "15%",
                     render: function (data) {
-                        return data.jam_mulai + " s/d " + data.jam_selesai;
+                        return "<p>" + data.jam_mulai + " s/d " + data.jam_selesai + "</p>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-center',
+                    width: "15%",
+                    render: function (data) {
+                        return "<button class='btn btn-sm btn-info-soft'>" + data.persentase_absensi + "</button>";
                     }
                 },
                 {
@@ -123,6 +132,11 @@ jQuery.jadwal_matakuliah = {
                 self.data.table.search(this.value).draw();
             }
         });
+
+        $("#openModalBtn").click(function () {
+            $("#modal-scanner").modal('show');
+        });
+
         $("#btn-sync-ulang-jadwal-kuliah").click(function () {
             $.ajax({
                 url: '/mhs/akademik/perkuliahan/jadwal-mahasiswa/json-by-tahun-akademik',

@@ -205,6 +205,7 @@ Route::get('/mhs/akademik/perkuliahan/jadwal-mahasiswa', [\App\Http\Controllers\
 Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/json', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'json_get_daftar'])->name('mahasiswa.akademik.jadwal_kuliah.json_get_daftar')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
 Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/json-by-tahun-akademik', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'json_get_jadwal_kuliah_by_tahun_akademik'])->name('mahasiswa.akademik.jadwal_kuliah.json_get_jadwal_kuliah_by_tahun_akademik')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
 Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/synchron', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'json_syncron_data'])->name('mahasiswa.akademik.jadwal_kuliah.json_syncron_data')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
+Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/presensi', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'set_absensi'])->name('mahasiswa.akademik.jadwal_kuliah.set_absensi')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
 
 /*
  * ------------------------------------------------------------------------

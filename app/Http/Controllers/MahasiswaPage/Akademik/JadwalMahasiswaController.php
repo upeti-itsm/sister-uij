@@ -14,6 +14,7 @@ class JadwalMahasiswaController extends Controller
 {
     public function index()
     {
+//        dd(Session::get('user'));
         $menu = 'Sinkronisasi Jadwal Mahasiswa dengan Siakad';
         $tahun_akademik = JadwalKuliahMahasiswa::get_tahun_akademik();
         $tahun_akademik_aktif = Semester::get_semester()[0];
@@ -60,11 +61,21 @@ class JadwalMahasiswaController extends Controller
             'nama_dosen' => 'required',
             'tahun_akademik' => 'required',
         ]);
-        $elearning = JadwalMahasiswa::sync_jadwal_mahasiswa($request->jadwal_kuliah_id, Session::get('user')->nim, $request->nama_mata_kuliah, $request->kelas_id, $request->nama_dosen, $request->tahun_akademik);
+        //$elearning = JadwalMahasiswa::sync_jadwal_mahasiswa($request->jadwal_kuliah_id, Session::get('user')->nim, $request->nama_mata_kuliah, $request->kelas_id, $request->nama_dosen, $request->tahun_akademik);
         $data = JadwalKuliahMahasiswa::insert_jadwal_matakuliah_mahasiswa(Session::get('user')->nim, $request->jadwal_kuliah_id);
         if ($data->status)
             return response()->json($data);
         else
             return response()->json($data, 500);
+    }
+
+    public function set_absensi(Request $request)
+    {
+        $request->validate([
+            'id_rekap' => 'required',
+        ]);
+        $result = JadwalKuliahMahasiswa::set_absensi_perkuliahan_mahasiswa($request->id_rekap, Session::get('user')->id_mhs, Session::get('ip'));
+        Session::flash($result->status == 0 ? 'success_message' : 'failed_message', $result->keterangan);
+        return redirect()->back();
     }
 }

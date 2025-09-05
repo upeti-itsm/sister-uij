@@ -27,7 +27,7 @@
         <div class="card mb-4">
             <div class="card-body center-block">
                 <div class="center-block">
-                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)->generate($rekap->id_rekap) !!}
+                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)->generate($rekap->id_rekap.";".$rekap->nama_matkul.";".$rekap->tanggal_pelaksanaan.";".$rekap->jam_pelaksanaan) !!}
                 </div>
             </div>
             <div class="card-footer">
