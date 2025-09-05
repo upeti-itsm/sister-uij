@@ -66,4 +66,10 @@ class MatakuliahController extends Controller
         $pdf = Facade::loadView("dosen_page.akademik.pdf.peserta_matakuliah", compact('mahasiswa', 'matakuliah', 'data', 'dosen'))->setPaper('a4', 'landscape');
         return $pdf->download($matakuliah->nama_mata_kuliah . '_' . $matakuliah->kelas_id . '.pdf');
     }
+
+    public function export_presensi_mahasiswa($id_jadwal_kuliah)
+    {
+        $pdf = Facade::loadView("dosen_page.akademik.pdf.presensi_mahasiswa")->setPaper('a4', 'landscape');
+        return $pdf->download('detail_rekap.pdf');
+    }
 }
