@@ -84,7 +84,7 @@ class RekapitulasiAbsenMengajarController extends Controller
         $length = $_REQUEST['length'];
         $start = $_REQUEST['start'];
         $search = $_REQUEST['search']["value"];
-        $record = RekapitulasiAbsensiMengajarDosen::getRekapitulasiByPersonal($request->tgl_awal, $request->tgl_akhir, Session::get('user')->id_personal, $search, $start, $length, '00000');
+        $record = RekapitulasiAbsensiMengajarDosen::getRekapitulasiPresensiMahasiswa($request->id_rekap, $search, $start, $length);
         $data['draw'] = $_REQUEST['draw'];
         $data['recordsTotal'] = 0;
         if (sizeof($record) > 0)

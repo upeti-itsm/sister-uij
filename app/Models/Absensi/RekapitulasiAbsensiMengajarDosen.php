@@ -43,6 +43,12 @@ class RekapitulasiAbsensiMengajarDosen extends Model
         ]);
     }
 
+    public static function getRekapitulasiPresensiMahasiswa($id_rekap, $search = "", $offset = -1, $limit = 10){
+        return DB::select('SELECT * FROM absensi.get_rekapitulasi_absensi_mengajar_dosen_by_personal(:tgl_awal, :tgl_akhir, :id_personal, :search, :offset, :limit, :tahun_akademik)', [
+
+        ]);
+    }
+
     public static function getRekapitulasiByPersonalOnHrd($tgl_awal, $tgl_akhir, $id_personal = NULL, $search = "", $offset = -1, $limit = 10, $tahun_akademik = '20221'){
         return DB::select('SELECT * FROM absensi.get_rekapitulasi_absensi_mengajar_dosen_by_personal_on_hrd(:tgl_awal, :tgl_akhir, :id_personal, :search, :offset, :limit, :tahun_akademik)', [
             'tgl_awal' => $tgl_awal,
