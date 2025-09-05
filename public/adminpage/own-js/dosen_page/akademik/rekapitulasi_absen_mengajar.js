@@ -96,7 +96,10 @@ jQuery.rekapitulasi_absen_mengajar = {
                     sClass: 'text-left',
                     width: "25%",
                     render: function (data) {
-                        return "<small>Pertemuan Ke-" + data.pertemuan_ke + "</small><br/>" +
+                        var status = "<span class='badge badge-success'>Tepat Waktu</span>";
+                        if (data.status_absen === "Terlambat")
+                            status = "<span class='badge badge-danger'>Terlambat</span>";
+                        return "<small>Pertemuan Ke-" + data.pertemuan_ke + " - " + status + "</small><br/>" +
                             "<small>Materi : <br/>" + data.materi + "</small>";
                     }
                 },
@@ -107,10 +110,8 @@ jQuery.rekapitulasi_absen_mengajar = {
                     width: "20%",
                     render: function (data) {
                         var btn = "<button class='btn btn-primary btn-sm btn-block btn-delete' data-id='" + data.id_rekapitulasi_absensi_mengajar_dosen + "'><span class='spinner-border spinner-border-sm mr-2' id='delete-loading-spin-" + data.id_rekapitulasi_absensi_mengajar_dosen + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash mr-2'></i>Hapus</button>"
-                        var html = "<button class='btn btn-success-soft btn-sm btn-block' style='cursor: default'>Tepat Waktu</button>";
-                        if (data.status_absen === "Terlambat")
-                            html = "<button class='btn btn-danger-soft btn-sm btn-block' style='cursor: default'>Terlambat</button>"
-                        return html + btn;
+                        var btn_rekap = "<a href='/dosen/akademik/rekapitulasi-absen-mengajar/presensi/" + data.id_rekapitulasi_absensi_mengajar_dosen + "' class='btn btn-success-soft btn-sm btn-block' title='" + data.total_mhs_presensi + " Mahasiswa Hadir dalam Perkuliahan'><i class='fas fa-user-graduate mr-2'></i>" + data.total_mhs_presensi + " Mahasiswa</a>";
+                        return btn_rekap + btn;
                     }
                 },
                 {
@@ -186,7 +187,7 @@ jQuery.rekapitulasi_absen_mengajar = {
                                         })
                                     }
                                 },
-                                complete: function (){
+                                complete: function () {
                                     $("#delete-loading-spin-" + id).hide();
                                     self.data.table.ajax.reload();
                                 }

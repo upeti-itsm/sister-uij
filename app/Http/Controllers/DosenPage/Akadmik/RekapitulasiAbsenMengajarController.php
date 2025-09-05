@@ -20,6 +20,7 @@ class RekapitulasiAbsenMengajarController extends Controller
         return view('dosen_page.akademik.rekapitulasi_absen_mengajar', compact('menu'));
     }
 
+
     public function json_rekapitulasi_absen_mengajar(Request $request)
     {
         $request->validate([
@@ -68,5 +69,10 @@ class RekapitulasiAbsenMengajarController extends Controller
         ]);
         $del = RekapitulasiAbsensiMengajarDosen::delRekapitulasi($request->id_rekap, Session::get('user')->id_personal);
         return response()->json($del, 200);
+    }
+    public function presensi_mahasiswa()
+    {
+        $menu = "Melihat Rekap Absensi Mengajar";
+        return view('dosen_page.akademik.presensi_mahasiswa', compact('menu'));
     }
 }

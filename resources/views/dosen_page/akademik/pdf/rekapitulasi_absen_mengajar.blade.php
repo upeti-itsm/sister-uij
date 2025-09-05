@@ -155,28 +155,24 @@
 <body>
 <header class="clearfix">
     <table>
-        <td>
-            <div id="logo">
-                <img src="/var/www/html/sipadu/public/image/logo-mandala.png">
-            </div>
-        </td>
-        <td>
-            <div id="company">
-                <div>STIE Mandala Jember</div>
-                <div>
-                    Jl. Sumatra No.118-120, Tegal Boto Lor, Sumbersari, Kec. Sumbersari<br/>
-                    Kabupaten Jember, Jawa Timur ( 68121 )<br/>
+        <tr>
+            <td style="width: 20%; background-color: white">
+                <div id="logo" style="text-align: center">
+                    <img src="{{asset('image/logo-uij.png')}}">
                 </div>
-                <div>
-                    Telp: (0331) 334324<br/>
-                    Fax: (0331) 3304941<br/>
-                    www.stie-mandala.ac.id
+            </td>
+            <td style="width: 80%; background-color: white">
+                <div id="company" style="text-align: center; margin-bottom: 0px; padding-bottom: 0px">
+                    <div style="font-size: large; font-weight: bold; text-align: left">UNIVERSITAS ISLAM JEMBER
+                    </div>
                 </div>
-                <div>
-                    <a href="mailto:stie-mj@stie-mandala.ac.id">stie-mj@stie-mandala.ac.id</a>
-                </div>
-            </div>
-        </td>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center; margin: 0; padding: 0;" colspan="2">
+                <hr/>
+            </td>
+        </tr>
     </table>
     <h1>{{$data['tgl']['start']}} - {{$data['tgl']['end']}}</h1>
     <div id="project">
@@ -229,11 +225,9 @@
         <table>
             <tr>
                 <td style="text-align: left">
-                    Jumlah Kelas Reguler Pagi : <b>{{$rekap[0]->jml_reg_p}}</b><br/>
-                    Jumlah Kelas Reguler Malam : <b>{{$rekap[0]->jml_reg_m}}</b>
+                    Jumlah Absensi Tepat Waktu : <b>{{$rekap[0]->jml_tepat_waktu}}</b>
                 </td>
                 <td style="text-align: right">
-                    Jumlah Absensi Tepat Waktu : <b>{{$rekap[0]->jml_tepat_waktu}}</b><br/>
                     Jumlah Absensi Terlambat : <b>{{$rekap[0]->jml_terlambat}}</b>
                 </td>
             </tr>
@@ -242,17 +236,17 @@
     <hr/>
     <div id="company" style="text-align: right">
         <div>Jember, {{$data['tgl']['ttd']}}</div>
+        <br/>
+        <br/>
+        <br/>
         <div>
-            Kepala HRD STIE Mandala
-        </div>
-        <div style="margin-top: 75px">
-            HAYATUL MASPUFAH, S.P.,M.M
+            {{$dosen->nama_dosen}}
         </div>
     </div>
     <hr/>
 </main>
 <footer>
-    Di unduh/generate berdasarkan data absen yang tersimpan pada situs sipadu.stie-mandala.ac.id per
+    Di unduh/generate berdasarkan data absen yang tersimpan pada situs sister.uij.ac.id per
     tanggal {{$data['tgl']['now']}}.
 </footer>
 </body>
