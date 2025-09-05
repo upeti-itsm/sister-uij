@@ -674,6 +674,11 @@ Route::get('/keu/penggajian/pengaturan-gaji/pengaturan-transportasi', [\App\Http
 Route::post('/keu/penggajian/pengaturan-gaji/pengaturan-transportasi/json', [\App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanTransportasiController::class, 'json_get_pengaturan'])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_transportasi.json_get_pengaturan')->middleware('modul:Pengaturan Gaji');
 Route::post('/keu/penggajian/pengaturan-gaji/pengaturan-transportasi/edit', [\App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanTransportasiController::class, 'edit'])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_transportasi.edit')->middleware('modul:Pengaturan Gaji');
 
+// Pengaturan HR Mengajar
+Route::get('/keu/penggajian/pengaturan-gaji/pengaturan-hr', [\App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanHrController::class, 'index'])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_hr.index')->middleware('modul:Pengaturan Gaji');
+Route::post('/keu/penggajian/pengaturan-gaji/pengaturan-hr/json', [\App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanHrController::class, 'json_get_pengaturan'])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_hr.json_get_pengaturan')->middleware('modul:Pengaturan Gaji');
+Route::post('/keu/penggajian/pengaturan-gaji/pengaturan-hr/edit', [\App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanHrController::class, 'edit'])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_hr.edit')->middleware('modul:Pengaturan Gaji');
+
 // Pengaturan Tunjangan Kinerja
 Route::get('/keu/penggajian/pengaturan-gaji/tunjangan-kinerja', [\App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\DaftarTunjanganKinerjaController::class, 'index'])->name('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index')->middleware('modul:Pengaturan Gaji');
 Route::post('/keu/penggajian/pengaturan-gaji/tunjangan-kinerja/json', [\App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\DaftarTunjanganKinerjaController::class, 'json_get_daftar'])->name('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.json_get_daftar')->middleware('modul:Pengaturan Gaji');
