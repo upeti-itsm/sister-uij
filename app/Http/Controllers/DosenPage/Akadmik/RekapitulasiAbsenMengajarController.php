@@ -75,4 +75,23 @@ class RekapitulasiAbsenMengajarController extends Controller
         $menu = "Melihat Rekap Absensi Mengajar";
         return view('dosen_page.akademik.presensi_mahasiswa', compact('menu', 'id'));
     }
+
+    public function json_presensi_mahasiswa(Request $request)
+    {
+        $request->validate([
+            'id_rekap' => 'required',
+        ]);
+        $length = $_REQUEST['length'];
+        $start = $_REQUEST['start'];
+        $search = $_REQUEST['search']["value"];
+        $record = RekapitulasiAbsensiMengajarDosen::getRekapitulasiByPersonal($request->tgl_awal, $request->tgl_akhir, Session::get('user')->id_personal, $search, $start, $length, '00000');
+        $data['draw'] = $_REQUEST['draw'];
+        $data['recordsTotal'] = 0;
+        if (sizeof($record) > 0)
+            $data['recordsTotal'] = $record[0]->jml_record;
+        $data['recordsFiltered'] = $data['recordsTotal'];
+        $data['data'] = $record;
+        $data['error'] = null;
+        return response()->json($data, 200);
+    }
 }

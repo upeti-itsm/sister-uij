@@ -103,6 +103,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 collapse show" id="filter-collapse">
+                        <input type="hidden" id="id_rekap" value="{{$id}}">
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="form-group">
