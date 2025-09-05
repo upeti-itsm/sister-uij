@@ -75,7 +75,7 @@ class JadwalMahasiswaController extends Controller
             'id_rekap' => 'required',
         ]);
         $result = JadwalKuliahMahasiswa::set_absensi_perkuliahan_mahasiswa($request->id_rekap, Session::get('user')->id_mhs, Session::get('ip'));
-        Session::flash($result->status == 0 ? 'success_message' : 'failed_message', $result->keterangan);
+        Session::flash($result->status == 1 ? 'success_message' : 'failed_message', $result->keterangan);
         return redirect()->back();
     }
 }

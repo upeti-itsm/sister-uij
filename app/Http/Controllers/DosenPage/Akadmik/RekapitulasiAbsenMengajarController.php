@@ -70,9 +70,9 @@ class RekapitulasiAbsenMengajarController extends Controller
         $del = RekapitulasiAbsensiMengajarDosen::delRekapitulasi($request->id_rekap, Session::get('user')->id_personal);
         return response()->json($del, 200);
     }
-    public function presensi_mahasiswa()
+    public function presensi_mahasiswa($id)
     {
         $menu = "Melihat Rekap Absensi Mengajar";
-        return view('dosen_page.akademik.presensi_mahasiswa', compact('menu'));
+        return view('dosen_page.akademik.presensi_mahasiswa', compact('menu', 'id'));
     }
 }

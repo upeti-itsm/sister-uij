@@ -156,7 +156,7 @@ jQuery.rekapitulasi_absen_mengajar = {
                 title: 'Konfirmasi !',
                 type: 'orange',
                 columnClass: 'medium',
-                content: 'Apakah anda yakin akan menghapus data ini ? dalam waktu satu minggu hanya diperkenankan menghapus 3 data. <b>Data yang terhapus tidak dapat dikembalikan lagi</b>',
+                content: 'Apakah anda yakin akan menghapus data ini ? dalam waktu satu minggu hanya diperkenankan menghapus 3 data. <b>Seluruh Presensi Mahasiswa akan Terhapus, dan Data yang terhapus tidak dapat dikembalikan lagi</b>',
                 buttons: {
                     confirm: {
                         text: 'Yakin',
