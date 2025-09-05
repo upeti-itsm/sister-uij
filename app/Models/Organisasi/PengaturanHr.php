@@ -15,15 +15,19 @@ class PengaturanHr extends Model
         ]);
     }
 
-    public static function edit(?int $id_jabatan_fungsional, $nominal_tunjangan, bool $is_s2)
+    public static function edit(?int $id_jabatan_fungsional, $nominal, bool $is_s2)
     {
+        $params = [
+            'id_jabatan_fungsional' => $id_jabatan_fungsional,
+            'nominal' => $nominal,
+            'is_s2' => $is_s2,
+        ];
+
+        // dd($params);
+
         return DB::selectOne(
-            'SELECT * FROM organisasi.update_honor_ngajar_s1_s2(:id_jabatan_fungsional, :nominal_tunjangan, :is_s2)',
-            [
-                'id_jabatan_fungsional' => $id_jabatan_fungsional,
-                'nominal_tunjangan' => $nominal_tunjangan,
-                'is_s2' => $is_s2,
-            ]
+            'SELECT * FROM organisasi.update_honor_ngajar_s1_s2(:id_jabatan_fungsional, :nominal, :is_s2)',
+            $params
         );
     }
 }
