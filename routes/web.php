@@ -488,7 +488,7 @@ Route::post('/super-admin/aplikasi/update', [\App\Http\Controllers\SuperAdminPag
 Route::post('/super-admin/aplikasi/delete', [\App\Http\Controllers\SuperAdminPage\KonfigurasiSistem\AplikasiController::class, 'delete'])->name('aplikasi.delete')->middleware('modul:Pengelolaan Aplikasi Mandala');
 // Modul
 Route::get('/super-admin/modul/daftar-modul', [\App\Http\Controllers\SuperAdminPage\KonfigurasiSistem\ModulController::class, 'index'])->name('modul.index')->middleware('modul:Pengelolaan Modul Aplikasi');
-Route::post('/super-admin/modul/json/daftar-modul', [\App\Http\Controllers\SuperAdminPage\KonfigurasiSistem\ModulController::class, 'json_gfet_daftar_modul'])->name('aplikasi.json_get_daftar_modul')->middleware('modul:Pengelolaan Modul Aplikasi');
+Route::post('/super-admin/modul/json/daftar-modul', [\App\Http\Controllers\SuperAdminPage\KonfigurasiSistem\ModulController::class, 'json_get_daftar_modul'])->name('aplikasi.json_get_daftar_modul')->middleware('modul:Pengelolaan Modul Aplikasi');
 Route::post('/super-admin/modul/store', [\App\Http\Controllers\SuperAdminPage\KonfigurasiSistem\ModulController::class, 'store'])->name('modul.store')->middleware('modul:Pengelolaan Modul Aplikasi');
 Route::post('/super-admin/modul/update', [\App\Http\Controllers\SuperAdminPage\KonfigurasiSistem\ModulController::class, 'update'])->name('modul.update')->middleware('modul:Pengelolaan Modul Aplikasi');
 Route::post('/super-admin/modul/delete', [\App\Http\Controllers\SuperAdminPage\KonfigurasiSistem\ModulController::class, 'delete'])->name('modul.delete')->middleware('modul:Pengelolaan Modul Aplikasi');
