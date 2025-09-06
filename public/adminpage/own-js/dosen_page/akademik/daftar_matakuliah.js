@@ -24,14 +24,10 @@ jQuery.daftar_matakuliah = {
             scrollCollapse: true,
             columns: [
                 {
-                    data: null,
+                    data: 'nomor',
                     searchable: false,
-                    sClass: 'text-left',
-                    width: "30%",
-                    render: function (data) {
-                        return "<b>" + data.nama_mata_kuliah + " (" + data.kelas_id + ")</b><br/>" +
-                            "Kode Prodi : " + data.prodi;
-                    }
+                    sClass: 'text-center',
+                    width: "5%",
                 },
                 {
                     data: null,
@@ -39,13 +35,16 @@ jQuery.daftar_matakuliah = {
                     sClass: 'text-left',
                     width: "30%",
                     render: function (data) {
-                        if (data.nik === data.nik_asisten) {
-                            return "Dosen 1 : <b>" + data.nama_lengkap + "</b><br/>" +
-                                "Dosen 2 : <b>-- Tidak Ada --</b>";
-                        } else {
-                            return "Dosen 1 : <b>" + data.nama_lengkap + "</b><br/>" +
-                                "Dosen 2 : <b>" + data.nama_lengkap_asisten + "</b>";
-                        }
+                        return "<p>" + data.nama_matakuliah + " (" + data.nama_kelas + ")</p>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-left',
+                    width: "25%",
+                    render: function (data) {
+                        return "<p>" + data.nama_prodi + "</p>";
                     }
                 },
                 {
@@ -54,12 +53,11 @@ jQuery.daftar_matakuliah = {
                     sClass: 'text-center',
                     width: "15%",
                     render: function (data) {
-                        return "<button title='Lihat Peserta Kuliah' class='btn btn-success-soft btn-sm btn-lihat mr-2' data-id='" + data.jadwal_kuliah_id + "'><i class='fas fa-eye'></i></button>" +
-                            "<a href='/dosen/akademik/daftar-matakuliah/export-peserta-pdf/" + data.jadwal_kuliah_id + "' title='Export Peserta Kuliah' class='btn btn-danger-soft btn-sm btn-print mr-2' data-id='" + data.jadwal_kuliah_id + "'><i class='fas fa-file-pdf'></i></a>";
+                        return "<a href='/dosen/akademik/daftar-matakuliah/export-presensi/" + data.id_jadwal + "' title='Export Presensi Mahasiswa' class='btn btn-danger-soft btn-sm btn-print mr-2' data-id='" + data.id_jadwal + "'><i class='fas fa-file-pdf'></i></a>";
                     }
                 },
                 {
-                    data: 'nama_mata_kuliah',
+                    data: 'nama_matakuliah',
                     searchable: true,
                     sClass: 'text-center',
                     visible: false
@@ -77,6 +75,9 @@ jQuery.daftar_matakuliah = {
             }
         });
         $("#btn-filter").click(function () {
+            self.data.table.ajax.reload();
+        });
+        $("#tahun_akademik").change(function () {
             self.data.table.ajax.reload();
         });
         $("#btn-cari-data").click(function () {

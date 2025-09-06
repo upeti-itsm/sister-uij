@@ -59,7 +59,7 @@
                                             <select class="select2 form-control" id="tahun_akademik">
                                                 @foreach($tahun_akademik AS $item)
                                                     <option
-                                                        value="{{$item->kdakademik}}">{{$item->akademik}}</option>
+                                                        value="{{$item->tahun_akademik}}">{{$item->tahun_akademik}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -68,7 +68,7 @@
                                                     class="fas fa-filter mr-2"></i>Filter
                                             </button>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" style="display: none">
                                             <button class="btn btn-block btn-danger" id="btn-export-pdf"><i
                                                     class="fas fa-file-pdf mr-2"></i>Export To PDF
                                             </button>
@@ -84,8 +84,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table">
                             <thead>
                             <tr>
-                                <th class="text-center">MATAKULIAH</th>
-                                <th class="text-center">PENGAMPU</th>
+                                <th class="text-center">Nomor</th>
+                                <th class="text-center">Nama Matakuliah (Kelas)</th>
+                                <th class="text-center">Prodi</th>
                                 <th class="text-center"><i class="fas fa-th"></i></th>
                             </tr>
                             </thead>

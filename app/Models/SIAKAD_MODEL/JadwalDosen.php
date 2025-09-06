@@ -61,12 +61,10 @@ class JadwalDosen extends Model
         }
     }
 
-    public static function getMatakuliahByDosen($username, $tahun_akademik, $search = '')
+    public static function getMatakuliahByDosen($tahun_akademik, $id_personal, $search = '', $offset = 0, $limit = -1)
     {
-        return DB::connection('siakad')->select('SELECT t1.jadwal_kuliah_id, t1.nama_mata_kuliah, t1.kelas_id, t1.prodi, t1.tahun_akademik, t1.nama_lengkap, t1.karyawan_id, t2.nik, t3.nik as nik_asisten, t3.nama_lengkap as nama_lengkap_asisten FROM vwJadwalDosen t1 JOIN tblKaryawan t2 ON t1.karyawan_id = t2.karyawan_id JOIN tblJadwalKuliah t4 ON t1.jadwal_kuliah_id = t4.jadwal_kuliah_id LEFT JOIN tblKaryawan t3 ON LOWER(t4.nama_asisten) = LOWER(t3.nama_lengkap) WHERE t2.nik = :username AND t1.tahun_akademik = :tahun_akademik AND (LOWER(t1.nama_mata_kuliah) LIKE CONCAT("%", LOWER(:nama_matkul), "%"))', [
-            'username' => $username,
-            'tahun_akademik' => $tahun_akademik,
-            'nama_matkul' => $search
+        return DB::select("SELECT * FROM akademik.get_list_matakuliah_by_personal_dosen(?,?,?,?,?)", [
+            $id_personal, $tahun_akademik, $search, $offset, $limit
         ]);
     }
 
@@ -94,5 +92,12 @@ class JadwalDosen extends Model
         return DB::connection('siakad')->select('SELECT * FROM tblJadwalKuliah tjk WHERE tjk.jadwal_kuliah_id = ?', [
             $id
         ])[0];
+    }
+
+    public static function export_presensi($id_jadwal, $search = '', $offset = -1, $limit = 0)
+    {
+        return DB::select("select * from absensi.rekap_presensi_mahasiswa_per_jadwal(?,?,?,?)", [
+            $id_jadwal, $search, $offset, $limit
+        ]);
     }
 }

@@ -35,13 +35,17 @@
         .logo {
             width: 60px;
             height: 60px;
-            background: #f0f0f0;
-            border: 1px solid #ccc;
+            /*background: #f0f0f0;*/
+            /*border: 1px solid #ccc;*/
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 8px;
             color: #666;
+        }
+
+        .header-text {
+            flex: 1;
         }
 
         .header-text h1 {
@@ -137,7 +141,9 @@
         }
 
         @media print {
-            body { -webkit-print-color-adjust: exact; }
+            body {
+                -webkit-print-color-adjust: exact;
+            }
         }
     </style>
 </head>
@@ -145,14 +151,24 @@
 <!-- Header dengan Kop Universitas -->
 <div class="header">
     <div class="header-content">
-        <div class="logo">
-            LOGO UIJ
-        </div>
-        <div class="header-text">
-            <h1>UNIVERSITAS ISLAM JEMBER</h1>
-            <p>Jl. Kyai Mojo No. 101, Kaliwates, Jember, Jawa Timur 68136</p>
-            <p>Telp: (0331) 487550 | Email: info@unisma.ac.id | Website: www.unisma.ac.id</p>
-        </div>
+        <table>
+            <tbody>
+            <tr>
+                <td style="width: 20%">
+                    <div class="logo">
+                        <img src="{{ asset('image/logo-uij.png') }}" alt="Logo UIJ" style="max-height: 100%">
+                    </div>
+                </td>
+                <td style="width: 80%">
+                    <div class="header-text" style="padding-left: 15px">
+                        <h1>UNIVERSITAS ISLAM JEMBER</h1>
+                        <p>Jl. Kyai Mojo No. 101, Kaliwates, Jember, Jawa Timur 68133</p>
+                        <p>Telp: (0331) 488675 | Email: pmb@uij.ac.id | Website: www.uij.ac.id</p>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -161,91 +177,86 @@
     <table>
         <tr>
             <td class="label">Mata Kuliah</td>
-            <td>: {{ $matakuliah ?? 'Pemrograman Web Lanjut' }}</td>
+            <td>: {{ $rekap[0]->nama_mata_kuliah }}</td>
             <td class="label">Semester</td>
-            <td>: {{ $semester ?? 'Ganjil 2024/2025' }}</td>
+            <td>: {{ $rekap[0]->semester }}</td>
         </tr>
         <tr>
             <td class="label">Dosen Pengampu</td>
-            <td>: {{ $dosen ?? 'Dr. Ahmad Fadli, M.Kom' }}</td>
+            <td>: {{ $rekap[0]->nama_dosen }}</td>
             <td class="label">Kelas</td>
-            <td>: {{ $kelas ?? 'A - Informatika' }}</td>
+            <td>: {{$rekap[0]->nama_kelas}} - {{$rekap[0]->nama_program_studi}}</td>
         </tr>
         <tr>
             <td class="label">Kode Mata Kuliah</td>
             <td>: {{ $kode_matkul ?? 'INF301' }}</td>
             <td class="label">SKS</td>
-            <td>: {{ $sks ?? '3' }}</td>
+            <td>: {{ $rekap[0]->sks}}</td>
         </tr>
     </table>
 </div>
-
+<table style="width: 100%">
+    <tr>
+        <td>
+            <small><em>Diunduh berdasarkan data sister.uij.ac.id per tanggal {{ date('d F Y H:i:s') }}</em></small>
+        </td>
+        <td style="text-align: right">
+            <img src="{{ asset('image/hadir.png') }}" width="12"> : Hadir | <b style="color: #902b2b"><i>I</i></b> : Ijin | <b style="color: #902b2b"><i>S</i></b> : Sakit | <img src="{{ asset('image/alpha.png') }}" width="12"> : Alpha
+        </td>
+    </tr>
+</table>
 <!-- Tabel Presensi -->
 <table class="attendance-table">
     <thead>
     <tr>
-        <th class="no-col">No</th>
-        <th class="nim-col">NIM</th>
-        <th class="nama-col">Nama Mahasiswa</th>
-        @for($i = 1; $i <= 14; $i++)
-            <th class="date-col">{{ $i }}</th>
+        <th colspan="3">Tanggal Pertemuan</th>
+        @for($i = 0; $i < 16; $i++)
+            <th class="date-col">{{ is_null($tanggal[$i]) ? "-" : $tanggal[$i] }}</th>
         @endfor
+        <th rowspan="2">Total Kehadiran</th>
     </tr>
     <tr>
-        <th colspan="3">Tanggal Pertemuan</th>
-        @php
-            $tanggal_mulai = $tanggal_mulai ?? '2024-09-02';
-            $start_date = new DateTime($tanggal_mulai);
-        @endphp
-        @for($i = 0; $i < 14; $i++)
-            @php
-                $current_date = clone $start_date;
-                $current_date->add(new DateInterval('P' . ($i * 7) . 'D'));
-            @endphp
-            <th class="date-col">{{ $current_date->format('d/m') }}</th>
+        <th class="no-col">No</th>
+        <th class="nim-col">NIM</th>
+        <th class="nama-col" style="text-align: center!important;">Nama Mahasiswa</th>
+        @for($i = 1; $i <= 16; $i++)
+            <th class="date-col">{{ $i }}</th>
         @endfor
     </tr>
     </thead>
     <tbody>
-    @php
-        $mahasiswa_dummy = [
-            ['nim' => '220101001', 'nama' => 'Ahmad Rizki Pratama'],
-            ['nim' => '220101002', 'nama' => 'Siti Nurhaliza'],
-            ['nim' => '220101003', 'nama' => 'Budi Santoso'],
-            ['nim' => '220101004', 'nama' => 'Dewi Sartika'],
-            ['nim' => '220101005', 'nama' => 'Eko Prasetyo'],
-            ['nim' => '220101006', 'nama' => 'Fatimah Azzahra'],
-            ['nim' => '220101007', 'nama' => 'Gilang Ramadhan'],
-            ['nim' => '220101008', 'nama' => 'Hani Safitri'],
-            ['nim' => '220101009', 'nama' => 'Indra Kusuma'],
-            ['nim' => '220101010', 'nama' => 'Joko Widodo'],
-        ];
-
-        $mahasiswa_list = $mahasiswa ?? $mahasiswa_dummy;
-    @endphp
-
-    @foreach($mahasiswa_list as $index => $mhs)
+    @foreach($rekap as $index => $mhs)
         <tr>
             <td>{{ $index + 1 }}</td>
-            <td>{{ $mhs['nim'] }}</td>
-            <td class="nama-col">{{ $mhs['nama'] }}</td>
-            @for($i = 1; $i <= 14; $i++)
-                <td class="attendance-cell"></td>
+            <td>{{ $mhs->nim }}</td>
+            <td class="nama-col">{{ $mhs->nama_mahasiswa }}</td>
+            @for($i = 1; $i <= 16; $i++)
+                @php($field = "pertemuan_".$i)
+                @if(!is_null($tanggal[$i-1]))
+                    @if($mhs->$field == 1)
+                        <td class="attendance-cell">
+                            <img src="{{ asset('image/hadir.png') }}" width="12">
+                        </td>
+                    @elseif($mhs->$field == 2)
+                        <td class="attendance-cell">
+                            <b style="color: #902b2b"><i>I</i></b>
+                        </td>
+                    @elseif($mhs->$field == 3)
+                        <td class="attendance-cell">
+                            <b style="color: #902b2b"><i>S</i></b>
+                        </td>
+                    @else
+                        <td class="attendance-cell">
+                            <img src="{{ asset('image/alpha.png') }}" width="12">
+                        </td>
+                    @endif
+                @else
+                    <td class="attendance-cell"></td>
+                @endif
             @endfor
+            <td class="attendance-cell">{{ $mhs->total_hadir }}</td>
         </tr>
     @endforeach
-
-    <!-- Tambahan baris kosong untuk mahasiswa tambahan -->
-    @for($i = count($mahasiswa_list); $i < 30; $i++)
-        <tr>
-            <td>{{ $i + 1 }}</td>
-            <td class="attendance-cell"></td>
-            <td class="attendance-cell nama-col"></td>
-            @for($j = 1; $j <= 14; $j++)
-                <td class="attendance-cell"></td>
-            @endfor
-        </tr>
-    @endfor
     </tbody>
 </table>
 
@@ -255,8 +266,8 @@
         <p>Jember, {{ date('d F Y') }}</p>
         <p>Dosen Pengampu,</p>
         <div class="signature-line"></div>
-        <p><strong>{{ $dosen ?? 'Dr. Ahmad Fadli, M.Kom' }}</strong></p>
-        <p>NIDN: {{ $nidn ?? '0123456789' }}</p>
+        <p><strong>{{ $rekap[0]->nama_dosen }}</strong></p>
+        <p>NIDN: {{ $rekap[0]->nidn }}</p>
     </div>
 </div>
 </body>

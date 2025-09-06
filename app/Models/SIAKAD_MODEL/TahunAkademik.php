@@ -22,6 +22,11 @@ class TahunAkademik extends Model
         }
     }
 
+    public static function get_tahun_akademik_sister()
+    {
+        return DB::select("SELECT * FROM akademik.get_tahun_akademik_jadwal_kuliah()");
+    }
+
     public static function getTahunAkademikAktif()
     {
         return DB::connection('siakad')->select('SELECT * FROM tblTahunAkademik WHERE status_aktif = "AKTIF"')[0];

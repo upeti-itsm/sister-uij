@@ -18,7 +18,7 @@ class MatakuliahController extends Controller
     public function index()
     {
         $menu = 'Dosen - Akademik - Melihat Daftar Matakuliah';
-        $tahun_akademik = TahunAkademik::getTahunAkademik();
+        $tahun_akademik = TahunAkademik::get_tahun_akademik_sister();
 //        dd($tahun_akademik);
         return view('dosen_page.akademik.daftar_matakuliah', compact('menu', 'tahun_akademik'));
     }
@@ -31,12 +31,11 @@ class MatakuliahController extends Controller
         $length = $_REQUEST['length'];
         $start = $_REQUEST['start'];
         $search = $_REQUEST['search']["value"];
-        $data_ = JadwalDosen::getMatakuliahByDosen(Session::get('user')->nomor_induk_karyawan, $request->tahun, $search);
-        $total_ = JadwalDosen::getTotalRecordsMatakuliahByDosen(Session::get('user')->nomor_induk_karyawan, $request->tahun, $search);
+        $data_ = JadwalDosen::getMatakuliahByDosen($request->tahun, Session::get('user')->id_personal, $search, $start, $length);
         $data['draw'] = $_REQUEST['draw'];
         $data['recordsTotal'] = 0;
         if (sizeof($data_) > 0)
-            $data['recordsTotal'] = $total_[0]->jml_record;
+            $data['recordsTotal'] = $data_[0]->jml_record;
         $data['recordsFiltered'] = $data['recordsTotal'];
         $data['data'] = $data_;
         $data['error'] = null;
@@ -69,7 +68,15 @@ class MatakuliahController extends Controller
 
     public function export_presensi_mahasiswa($id_jadwal_kuliah)
     {
-        $pdf = Facade::loadView("dosen_page.akademik.pdf.presensi_mahasiswa")->setPaper('a4', 'landscape');
-        return $pdf->download('detail_rekap.pdf');
+        $tanggal = [];
+        $rekap = JadwalDosen::export_presensi($id_jadwal_kuliah);
+        if (sizeof($rekap) > 0) {
+            for ($i = 1; $i <= 16; $i++) {
+                $field = "tgl_pertemuan_" . $i;
+                $tanggal[] = $rekap[0]->$field;
+            }
+        }
+        $pdf = Facade::loadView("dosen_page.akademik.pdf.presensi_mahasiswa", compact('tanggal', 'rekap'))->setPaper('a4', 'landscape');
+        return $pdf->download('presensi_mahasiswa_'.$rekap[0]->nama_mata_kuliah.'.pdf');
     }
 }
