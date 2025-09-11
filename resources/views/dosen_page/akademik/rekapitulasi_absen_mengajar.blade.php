@@ -1,9 +1,9 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet">
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -17,7 +17,8 @@
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
                 <h1 class="font-weight-bold">Rekapitulasi Absen Honor Mengajar</h1>
-                <small>Halaman ini digunakan monitoring data absensi mengajar masing-masing dosen untuk keperluan perhitungan Honor mengajar</small>
+                <small>Halaman ini digunakan monitoring data absensi mengajar masing-masing dosen untuk keperluan
+                    perhitungan Honor mengajar</small>
             </div>
         </div>
     </div>
@@ -25,8 +26,7 @@
 @section('body-content')
     <div class="col-md-3">
         <div class="card card-stats statistic-box mb-4">
-            <div
-                class="card-header card-header-info card-header-icon position-relative border-0 text-right px-3 py-0">
+            <div class="card-header card-header-info card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
                     <i class="fas fa-users"></i>
                 </div>
@@ -42,8 +42,7 @@
     </div>
     <div class="col-md-3">
         <div class="card card-stats statistic-box mb-4">
-            <div
-                class="card-header card-header-info card-header-icon position-relative border-0 text-right px-3 py-0">
+            <div class="card-header card-header-info card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
                     <i class="fas fa-users"></i>
                 </div>
@@ -52,15 +51,14 @@
             </div>
             <div class="card-footer p-1">
                 <div class="stats">
-                    <i class="fas fa-cloud-moon mr-2 ml-2"></i>Kelas Reguler Malam
+                    <i class="fas fa-cloud-moon mr-2 ml-2"></i>Kelas Reguler dan Kelas Hybrid
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card card-stats statistic-box mb-4">
-            <div
-                class="card-header card-header-success card-header-icon position-relative border-0 text-right px-3 py-0">
+            <div class="card-header card-header-success card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
                     <i class="fas fa-clipboard-check"></i>
                 </div>
@@ -76,8 +74,7 @@
     </div>
     <div class="col-md-3">
         <div class="card card-stats statistic-box mb-4">
-            <div
-                class="card-header card-header-danger card-header-icon position-relative border-0 text-right px-3 py-0">
+            <div class="card-header card-header-danger card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
                     <i class="typcn typcn-info-outline"></i>
                 </div>
@@ -110,7 +107,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <input type="text" class="form-control" placeholder="Cari Nama Matakuliah"
-                                                   id="cari-data">
+                                                id="cari-data">
                                         </div>
                                         <div class="col-md-4">
                                             <button class="btn btn-block btn-primary" id="btn-cari-data"><i
@@ -121,23 +118,25 @@
                                 </div>
                             </div>
                             <div class="col-md-5">
-                                <label>Filtering (<small class="text-danger">Berdasarkan tanggal pengisian absensi</small>)</label>
+                                <label>Filtering (<small class="text-danger">Berdasarkan tanggal pengisian
+                                        absensi</small>)</label>
                                 <div class="row">
                                     <div class="col-md-5">
                                         <input type="text" readonly class="form-control" id="tgl_awal"
-                                               style="cursor: pointer" title="Pilih Tanggal Awal Rekap">
+                                            style="cursor: pointer" title="Pilih Tanggal Awal Rekap">
                                     </div>
                                     <div class="col-md-2">Sampai Dengan</div>
                                     <div class="col-md-5">
                                         <input type="text" readonly class="form-control" id="tgl_akhir"
-                                               style="cursor: pointer" title="Pilih Tanggal Akhir Rekap">
+                                            style="cursor: pointer" title="Pilih Tanggal Akhir Rekap">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <label>Exporting</label>
-                                <button id="export-to-pdf" class="btn btn-sm btn-block mb-2 btn-danger"><i class="fas fa-file-pdf mr-2"></i>Export To PDF</button>
-{{--                                <button id="export-to-excel" class="btn btn-sm btn-block btn-success"><i class="fas fa-file-excel mr-2"></i>Export To Excel</button>--}}
+                                <button id="export-to-pdf" class="btn btn-sm btn-block mb-2 btn-danger"><i
+                                        class="fas fa-file-pdf mr-2"></i>Export To PDF</button>
+                                {{--                                <button id="export-to-excel" class="btn btn-sm btn-block btn-success"><i class="fas fa-file-excel mr-2"></i>Export To Excel</button> --}}
                             </div>
                         </div>
                     </div>
@@ -146,13 +145,13 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="table">
                             <thead>
-                            <tr>
-                                <th class="text-center">Nomor</th>
-                                <th>Absensi</th>
-                                <th>Pelaksanaan Kuliah</th>
-                                <th>Keterangan</th>
-                                <th class="text-center">Status</th>
-                            </tr>
+                                <tr>
+                                    <th class="text-center">Nomor</th>
+                                    <th>Absensi</th>
+                                    <th>Pelaksanaan Kuliah</th>
+                                    <th>Keterangan</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -163,13 +162,12 @@
     </div>
 @endsection
 @section('modal')
-
 @endsection
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.id.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/moment/moment.min.js')}}"></script>
-    <script src="{{asset('adminpage/own-js/dosen_page/akademik/rekapitulasi_absen_mengajar.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.id.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/dosen_page/akademik/rekapitulasi_absen_mengajar.js') }}"></script>
 @endpush

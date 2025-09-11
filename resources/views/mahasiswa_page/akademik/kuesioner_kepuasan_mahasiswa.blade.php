@@ -1,7 +1,7 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -27,43 +27,46 @@
                 <div class="row justify-content-center">
                     <div class="col-xl-12 text-center">
                         <form method="post"
-                              action="{{route('mahasiswa.akademik.kuesioner_kepuasan_mahasiswa.insert_response')}}"
-                              class="f1">
+                            action="{{ route('mahasiswa.akademik.kuesioner_kepuasan_mahasiswa.insert_response') }}"
+                            class="f1">
                             @csrf
                             <h3 class="mb-1 font-weight-600">KUESIONER SURVEI KEPUASAN MAHASISWA</h3>
                             <ol class="mb-4 text-left">
                                 <li>Survei ini bertujuan untuk menentukan kebijakan dalam upaya meningkatkan kualitas
-                                    layanan akademik, layanan bagian, dan unit-unit yang terdapat di STIE Mandala.
+                                    layanan akademik, layanan bagian, dan unit-unit yang terdapat di Universitas Islam
+                                    Jember.
                                 </li>
                                 <li>Kuesioner ini bersifat <b>ANONIM</b></li>
                                 <li>Klik salah satu pada pilihan jawaban yang tersedia</li>
                             </ol>
-                            <hr/>
-                            @foreach($unsur AS $item)
-                                <fieldset id="{{$item->nomor_urut}}">
-                                    <h5 class="mt-4 mb-3 font-weight-600">{{$item->unsur_penilaian}}</h5>
-                                    @foreach($sub_unsur[$item->id_unsur] AS $item)
-                                        <hr/>
+                            <hr />
+                            @foreach ($unsur as $item)
+                                <fieldset id="{{ $item->nomor_urut }}">
+                                    <h5 class="mt-4 mb-3 font-weight-600">{{ $item->unsur_penilaian }}</h5>
+                                    @foreach ($sub_unsur[$item->id_unsur] as $item)
+                                        <hr />
                                         <div class="form-group">
                                             <label
-                                                class="font-weight-bold">{{$item->nomor_urut.'. '.$item->pernyataan}}</label><br/>
+                                                class="font-weight-bold">{{ $item->nomor_urut . '. ' . $item->pernyataan }}</label><br />
                                             <div class="ml-3">
-                                                @foreach($nilai AS $n)
+                                                @foreach ($nilai as $n)
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" id="{{$n->akronim.'_'.$item->id_sub_unsur}}"
-                                                               type="radio" name="{{$item->id_sub_unsur}}"
-                                                               value="{{$n->nilai}}" required>
-                                                        <label class="form-check-label" for="{{$n->akronim.'_'.$item->id_sub_unsur}}">{{$n->keterangan}}</label>
+                                                        <input class="form-check-input"
+                                                            id="{{ $n->akronim . '_' . $item->id_sub_unsur }}"
+                                                            type="radio" name="{{ $item->id_sub_unsur }}"
+                                                            value="{{ $n->nilai }}" required>
+                                                        <label class="form-check-label"
+                                                            for="{{ $n->akronim . '_' . $item->id_sub_unsur }}">{{ $n->keterangan }}</label>
                                                     </div>
                                                 @endforeach
                                             </div>
                                         </div>
                                     @endforeach
                                     <div class="f1-buttons">
-                                        @if(!$loop->first)
+                                        @if (!$loop->first)
                                             <button type="button" class="btn btn-previous">Previous</button>
                                         @endif
-                                        @if($loop->last)
+                                        @if ($loop->last)
                                             <button type="submit" class="btn btn-success btn-submit">Submit</button>
                                         @else
                                             <button type="button" class="btn btn-success btn-next">Next</button>
@@ -81,7 +84,7 @@
 @section('modal')
 @endsection
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/bootstrap-wizard/jquery.backstretch.min.js')}}"></script>
-    <script src="{{asset('adminpage/own-js/mahasiswa_page/akademik/kuesioner_kepuasan_mahasiswa.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/bootstrap-wizard/jquery.backstretch.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/mahasiswa_page/akademik/kuesioner_kepuasan_mahasiswa.js') }}"></script>
 @endpush
