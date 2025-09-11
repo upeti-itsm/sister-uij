@@ -623,17 +623,19 @@
                                 </ul>
                             </li>
                         @endif
-                        @if (array_key_exists('Jenis Pelaksanaan Mata Kuliah', $modul) ||
+                        @if (array_key_exists('JPengelolaan Jenis Pelaksanaan Kuliah', $modul) ||
                                 array_key_exists('Jenis Mata Kuliah', $modul) ||
-                                array_key_exists('Kurikulum', $modul) ||
+                                array_key_exists('Manajemen Kurikulum', $modul) ||
                                 array_key_exists('Mata Kuliah', $modul) ||
-                                array_key_exists('Konsentrasi Jurusan', $modul))
+                                array_key_exists('Konsentrasi Jurusan', $modul) ||
+                                array_key_exists('Pengelolaan Jenis Matakuliah', $modul))
                             <li @if (
                                 $menu == 'Mata Kuliah' ||
-                                    $menu == 'Kurikulum' ||
+                                    $menu == 'Manajemen Kurikulum' ||
                                     $menu == 'Jenis Mata Kuliah' ||
-                                    $menu == 'Jenis Pelaksanaan Mata Kuliah' ||
-                                    $menu == 'Konsentrasi Jurusan') class="mm-active" @endif>
+                                    $menu == 'Pengelolaan Jenis Pelaksanaan Kuliah' ||
+                                    $menu == 'Konsentrasi Jurusan' ||
+                                    $menu == 'Pengelolaan Jenis Matakuliah') class="mm-active" @endif>
                                 <a class="has-arrow material-ripple" href="#">
                                     <i class="typcn typcn-edit mr-2"></i>
                                     Perkuliahan
@@ -644,25 +646,25 @@
                                             <a href="#">Mata Kuliah</a>
                                         </li>
                                     @endif
-                                    @if (array_key_exists('Kurikulum', $modul))
-                                        <li @if ($menu == 'Kurikulum') class="mm-active" @endif>
-                                            <a href="#">Kurikulum</a>
-                                        </li>
-                                    @endif
-                                    @if (array_key_exists('Jenis Mata Kuliah', $modul))
-                                        <li @if ($menu == 'Jenis Mata Kuliah') class="mm-active" @endif>
-                                            <a href="#">Jenis Mata Kuliah</a>
-                                        </li>
-                                    @endif
-                                    @if (array_key_exists('Jenis Pelaksanaan Mata Kuliah', $modul))
-                                        <li @if ($menu == 'Jenis Pelaksanaan Mata Kuliah') class="mm-active" @endif>
-                                            <a href="#">Jenis Pelaksanaan Mata Kuliah</a>
-                                        </li>
-                                    @endif
                                     @if (array_key_exists('Konsentrasi Jurusan', $modul))
                                         <li @if ($menu == 'Konsentrasi Jurusan') class="mm-active" @endif>
                                             <a href="{{ route('konsentrasi_jurusan.konsentrasi_jurusan') }}">Konsentrasi
                                                 Jurusan</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Manajemen Kurikulum', $modul))
+                                        <li @if ($menu == 'Manajemen Kurikulum') class="mm-active" @endif>
+                                            <a href="{{route('kurikulum.index')}}">Manajemen Kurikulum</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengelolaan Jenis Matakuliah', $modul))
+                                        <li @if ($menu == 'Pengelolaan Jenis Matakuliah') class="mm-active" @endif>
+                                            <a href="{{route('jenis_matakuliah.index')}}">Jenis Mata Kuliah</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengelolaan Jenis Pelaksanaan Kuliah', $modul))
+                                        <li @if ($menu == 'Pengelolaan Jenis Pelaksanaan Kuliah') class="mm-active" @endif>
+                                            <a href="{{route('jenis_pelaksanaan_kuliah.index')}}">Jenis Pelaksanaan Kuliah</a>
                                         </li>
                                     @endif
                                 </ul>

@@ -189,7 +189,7 @@
         </tr>
         <tr>
             <td class="label">Kode Mata Kuliah</td>
-            <td>: {{ $kode_matkul ?? 'INF301' }}</td>
+            <td>: {{ $rekap[0]->kd_mata_kuliah }}</td>
             <td class="label">SKS</td>
             <td>: {{ $rekap[0]->sks}}</td>
         </tr>
@@ -198,7 +198,7 @@
 <table style="width: 100%">
     <tr>
         <td>
-            <small><em>Diunduh berdasarkan data sister.uij.ac.id per tanggal {{ date('d F Y H:i:s') }}</em></small>
+            <small><em>Diunduh berdasarkan data sister.uij.ac.id per tanggal {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d F Y H:i:s') }}</em></small>
         </td>
         <td style="text-align: right">
             <img src="{{ asset('image/hadir.png') }}" width="12"> : Hadir | <b style="color: #902b2b"><i>I</i></b> : Ijin | <b style="color: #902b2b"><i>S</i></b> : Sakit | <img src="{{ asset('image/alpha.png') }}" width="12"> : Alpha
@@ -263,7 +263,7 @@
 <!-- Footer dengan Tanda Tangan -->
 <div class="footer">
     <div class="signature-section">
-        <p>Jember, {{ date('d F Y') }}</p>
+        <p>Jember, {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d F Y') }}</p>
         <p>Dosen Pengampu,</p>
         <div class="signature-line"></div>
         <p><strong>{{ $rekap[0]->nama_dosen }}</strong></p>

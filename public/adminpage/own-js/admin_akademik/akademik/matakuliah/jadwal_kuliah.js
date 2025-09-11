@@ -1,4 +1,4 @@
-jQuery.jadwal_matakuliah = {
+jQuery.jadwal_kuliah = {
     data: {
         isSyncCanceled: false,
         log_table_jadwal_kuliah: $("#log-table-jadwal-kuliah").DataTable({
@@ -443,5 +443,5 @@ jQuery.jadwal_matakuliah = {
 };
 
 jQuery(document).ready(function () {
-    jQuery.jadwal_matakuliah.init();
+    jQuery.jadwal_kuliah.init();
 });

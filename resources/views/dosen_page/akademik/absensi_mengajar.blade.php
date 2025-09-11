@@ -95,7 +95,7 @@
                                 <label>Pertemuan Ke <span class="text-danger">*</span></label>
                                 <select class="form-control select2" id="pertemuan_ke"
                                         name="pertemuan_ke" required>
-                                    @for($i = 1; $i <= 14; $i++)
+                                    @for($i = 1; $i <= 16; $i++)
                                         <option value="{{$i}}"
                                                 @if(old('pertemuan_ke') == strval($i)) selected @endif>
                                             Pertemuan
@@ -132,12 +132,19 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-md-9 mb-3">
+                            <div class="col-md-5 mb-3">
                                 <label>Materi Pembelajaran <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="materi_pembelajaran"
                                        id="materi_pembelajaran" required
                                        placeholder="Masukkan Judul Materi Pembelajaran"
                                        value="{{old('materi_pembelajaran')}}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Link Materi Perkuliahan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="link_materi_pembelajaran"
+                                       id="link_materi_pembelajaran" required
+                                       placeholder="Masukkan Link Menuju Materi Perkuliahan"
+                                       value="{{old('link_materi_pembelajaran')}}">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label>Jenis Pertemuan <span class="text-danger">*</span></label>
@@ -191,7 +198,7 @@
                             {{--                                                    export Attendance di elearning</small>--}}
                             {{--                                            </div>--}}
                             <div class="col-md-12">
-                                <label>Alasan Terlambar Absen</label>
+                                <label>Alasan Terlambat Absen</label>
                                 <textarea class="form-control" rows="4" name="keterangan"
                                           placeholder="Masukkan keterangan jika terlambat">{{old('keterangan') ? old('keterangan') : ""}}</textarea>
                                 <small class="form-text text-muted">Alasan jika mengisi tidak pada
@@ -221,15 +228,27 @@
     <script src="{{asset('adminpage/assets/plugins/moment/moment.min.js')}}"></script>
     <script>
         $(document).ready(function () {
+            // var tanggal_pelaksanaan = $("#tgl_pelaksanaan").datepicker({
+            //     language: 'id',
+            //     format: 'dd MM yyyy',
+            //     autoclose: true,
+            //     startDate: moment('01/08/2024', 'DD/MM/YYYY').format('D/M/YYYY'),
+            //     orientation: 'bottom'
+            // }).datepicker('setDate', moment($("#tgl_pelaksanaan_").val(), 'YYYY-MM-DD').format('D/M/YYYY')).on('changeDate', function (e) {
+            //     $("#tgl_pelaksanaan_").val(moment(e.date).format('YYYY-MM-DD'));
+            // });
+
             var tanggal_pelaksanaan = $("#tgl_pelaksanaan").datepicker({
                 language: 'id',
                 format: 'dd MM yyyy',
                 autoclose: true,
-                startDate: moment('01/08/2024', 'DD/MM/YYYY').format('D/M/YYYY'),
-                orientation: 'bottom'
-            }).datepicker('setDate', moment($("#tgl_pelaksanaan_").val(), 'YYYY-MM-DD').format('D/M/YYYY')).on('changeDate', function (e) {
-                $("#tgl_pelaksanaan_").val(moment(e.date).format('YYYY-MM-DD'));
-            });
+                orientation: 'bottom',
+                startDate: moment().subtract(7, 'days').toDate(), // 1 minggu sebelum hari ini
+                endDate: moment().toDate() // hari ini
+            }).datepicker('setDate', moment($("#tgl_pelaksanaan_").val(), 'YYYY-MM-DD').toDate())
+                .on('changeDate', function (e) {
+                    $("#tgl_pelaksanaan_").val(moment(e.date).format('YYYY-MM-DD'));
+                });
 
             $(".select2").select2();
             $(".custom-file-input").on("change", function () {

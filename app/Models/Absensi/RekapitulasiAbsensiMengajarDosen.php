@@ -13,7 +13,7 @@ class RekapitulasiAbsensiMengajarDosen extends Model
     protected $table = 'absensi.rekapitulasi_absensi_mengajar_dosen';
     public $timestamps = false;
 
-    public static function addAbsensi($username, $jadwal_id, $fullname, $keterangan, $pertemuan_ke, $tgl_pelaksanaan, $id_waktu_mengajar, $jml_mahasiswa_hadir, $jml_mahasiswa_tdk_hadir, $path_bukti_ajar, $path_absensi_mahasiswa, $materi_pembelajaran, $tahun_akademik, $jenis_pertemuan){
+    public static function addAbsensi($username, $jadwal_id, $fullname, $keterangan, $pertemuan_ke, $tgl_pelaksanaan, $id_waktu_mengajar, $jml_mahasiswa_hadir, $jml_mahasiswa_tdk_hadir, $path_bukti_ajar, $path_absensi_mahasiswa, $materi_pembelajaran, $tahun_akademik, $jenis_pertemuan, $link_materi){
         return DB::select('SELECT * FROM absensi.absensi_set_waktu_mengajar_dosen(:username, :jadwal_id, :fullname, :keterangan, :pertemuan_ke, :tgl_pelaksanaan, :id_waktu_mengajar, :jml_mahasiswa_hadir, :jml_mahasiswa_tdk_hadir, :path_bukti_ajar, :path_absensi_mahasiswa, :materi_pembelajaran, :tahun_akademik, :jenis_pertemuan)', [
             'username' => $username, 'jadwal_id' => $jadwal_id, 'fullname' => $fullname, 'keterangan' => $keterangan,
             'pertemuan_ke' => $pertemuan_ke, 'tgl_pelaksanaan' => $tgl_pelaksanaan, 'id_waktu_mengajar' => $id_waktu_mengajar,

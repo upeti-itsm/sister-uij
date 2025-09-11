@@ -36,13 +36,13 @@ class JadwalMataKuliah extends Model
         ])[0];
     }
 
-    public static function sync_jadwal_matakuliah_with_siakad($jadawal_kuliah_id, $tahun_akademik, $kelas_id, $ruang_id, $hari, $jam_mulai, $jam_selesai, $matakuliah_id, $nama_mata_kuliah, $kapasitas, $dosen_id, $asisten_id, $kd_prodi, $jml_sks, $is_lab, $jenis_kelas)
+    public static function sync_jadwal_matakuliah_with_siakad($jadawal_kuliah_id, $tahun_akademik, $kelas_id, $ruang_id, $hari, $jam_mulai, $jam_selesai, $matakuliah_id, $nama_mata_kuliah, $kapasitas, $dosen_id, $asisten_id, $kd_prodi, $jml_sks, $is_lab, $jenis_kelas, $kd_matkul)
     {
-        return DB::select('SELECT * FROM akademik.sync_jadwal_matakuliah_with_siakad(:jadwal_kuliah_id, :tahun_akademik, :kelas_id, :ruang_id, :hari, :jam_mulai, :jam_selesai, :matakuliah_id, :nama_mata_kuliah, :kapasitas, :dosen_id, :asisten_id, :kd_prodi, :jml_sks, :is_lab, :jenis_kelas)', [
+        return DB::select('SELECT * FROM akademik.sync_jadwal_matakuliah_with_siakad(:jadwal_kuliah_id, :tahun_akademik, :kelas_id, :ruang_id, :hari, :jam_mulai, :jam_selesai, :matakuliah_id, :nama_mata_kuliah, :kapasitas, :dosen_id, :asisten_id, :kd_prodi, :jml_sks, :is_lab, :jenis_kelas, :kd_matkul)', [
             'jadwal_kuliah_id' => $jadawal_kuliah_id, 'tahun_akademik' => $tahun_akademik, 'kelas_id' => $kelas_id, 'ruang_id' => $ruang_id,
             'hari' => $hari, 'jam_mulai' => $jam_mulai, 'jam_selesai' => $jam_selesai, 'matakuliah_id' => $matakuliah_id, 'nama_mata_kuliah' => $nama_mata_kuliah,
             'kapasitas' => $kapasitas, 'dosen_id' => $dosen_id, 'asisten_id' => $asisten_id, 'kd_prodi' => $kd_prodi,
-            'jml_sks' => $jml_sks, 'is_lab' => $is_lab, 'jenis_kelas' => $jenis_kelas
+            'jml_sks' => $jml_sks, 'is_lab' => $is_lab, 'jenis_kelas' => $jenis_kelas, 'kd_matkul' => $kd_matkul
         ])[0];
     }
 }

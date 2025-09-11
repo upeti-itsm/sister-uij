@@ -77,12 +77,9 @@ class JadwalDosen extends Model
         ]);
     }
 
-    public static function getMatkulDosen($nidn, $ta = '20241')
+    public static function getMatkulDosen($nidn)
     {
-        $res = DB::selectOne("WITH data AS (SELECT t1.tahun_akademik, t1.sts_aktif, t1.id_semester_uij FROM akademik.get_tahun_akademik() t1) SELECT CONCAT(t1.tahun_akademik, t1.id_semester_uij) FROM data t1 WHERE t1.sts_aktif = 1");
-
-        return DB::connection('siakad')->select("SELECT t9.idjadwalperkuliahan, t1.idkelas, t3.namamatakuliah, t1.namakelas, t4.namaprogramstudi, t1.thnakademik, t8.nama, t6.idstafdosen FROM akademik.kelasperkuliahan t1 JOIN akademik.kegiatanmatakuliah t2 ON t2.idkegiatanmatakuliah = t1.idkegiatanmatakuliah JOIN akademik.matakuliah t3 ON t3.idmatakuliah = t2.idmatakuliah JOIN support.programstudi t4 ON t4.kdprogramstudi = t1.kdprogramstudi JOIN akademik.dosenkelas t5 ON t5.idkelas = t1.idkelas JOIN staf.stafdosen t6 ON t6.idstafdosen = t5.idstafdosen JOIN staf.pegawai t7 ON t7.idpegawai = t6.idpegawai JOIN person.identitas t8 ON t8.idpersonal = t7.idpersonal JOIN akademik.jadwalperkuliahan t9 ON t1.idkelas = t9.idkelas WHERE t1.thnakademik = ? AND trim(t6.nidn) = ?", [
-            $res->concat ? $res->concat : $ta,
+        return DB::select("SELECT * FROM akademik.daftar_jadwal_perkuliahan_dosen(?)", [
             $nidn
         ]);
     }

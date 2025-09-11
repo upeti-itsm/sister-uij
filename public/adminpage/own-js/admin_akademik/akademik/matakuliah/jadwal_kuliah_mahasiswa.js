@@ -294,9 +294,19 @@ jQuery.jadwal_kuliah_mahasiswa = {
                     ]).draw();
                     failed++;
                 }
-                progres++;
+            },
+            error: function () {
+                self.data.log_table_jadwal_kuliah.row.add([
+                    (index + 1),
+                    data[index].namamatakuliah + " (" + data[index].idkelas + ")",
+                    "<i class='fas fa-check-circle text-danger p-1'></i> Invalid Data",
+                    data[index].namamatakuliah,
+                    "gagal"
+                ]).draw();
+                failed++;
             },
             complete: function () {
+                progres++;
                 $("#progress-bar-jadwal-kuliah").width((progres / n * 100).toFixed(2) + '%');
                 $("#progress-text-jadwal-kuliah").text((progres / n * 100).toFixed(2) + '% Complete');
                 $("#btn-failed-log-jadwal-kuliah").text("Failed : " + failed);

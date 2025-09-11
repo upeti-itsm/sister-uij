@@ -17,6 +17,7 @@ class DashboardController extends Controller
 {
     public function dashboard()
     {
+//        dd(Session::get('modul'));
         $menu = "Dashboard";
         $data = array();
         if (Session::get('peran')['aktif'] == 41) {
