@@ -51,7 +51,7 @@
             </div>
             <div class="card-footer p-1">
                 <div class="stats">
-                    <i class="fas fa-cloud-moon mr-2 ml-2"></i>Kelas Reguler dan Kelas Hybrid
+                    <i class="fas fa-cloud-moon mr-2 ml-2"></i>Kelas Reguler dan Hybrid
                 </div>
             </div>
         </div>
