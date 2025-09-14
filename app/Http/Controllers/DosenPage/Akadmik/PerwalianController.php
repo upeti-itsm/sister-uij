@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Session;
 
 class PerwalianController extends Controller
 {
-    public function daftar_mahasiswa(){
+    public function daftar_mahasiswa()
+    {
         $menu = 'Perwalian - Daftar Mahasiswa';
         $semester = Semester::get_semester();
         return view('dosen_page.akademik.perwalian.list_mahasiswa', compact('menu', 'semester'));
@@ -24,7 +25,7 @@ class PerwalianController extends Controller
         $length = $_REQUEST['length'];
         $start = $_REQUEST['start'];
         $search = $_REQUEST['search']["value"];
-        $data_ = Mahasiswa::get_mahasiswa_by_id_personal_dosen_wali(Session::get('user')->id_personal, 1, $request->semester, $start, $length, $search);
+        $data_ = Mahasiswa::get_mahasiswa_by_id_personal_dosen_wali(Session::get('user')->nidn, 1, $request->semester, $start, $length, $search);
         $data['draw'] = $_REQUEST['draw'];
         $data['recordsTotal'] = 0;
         if (sizeof($data_) > 0)
