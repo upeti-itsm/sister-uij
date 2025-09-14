@@ -165,6 +165,15 @@ Route::post('/adm-akadmik/perkuliahan/konsentrasi-jurusan/json/get-konsentrasi-j
 Route::post('/adm-akadmik/perkuliahan/konsentrasi-jurusan/store-update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\KonsentrasiJurusanController::class, 'insup'])->name('konsentrasi_jurusan.insup')->middleware('modul:Konsentrasi Jurusan');
 Route::post('/adm-akadmik/perkuliahan/konsentrasi-jurusan/delete', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\KonsentrasiJurusanController::class, 'delete'])->name('konsentrasi_jurusan.delete')->middleware('modul:Konsentrasi Jurusan');
 
+// Pengelolaan Matakuliah
+Route::get('/adm-akadmik/perkuliahan/matakuliah', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'index'])->name('matakuliah.index')->middleware('modul:Pengelolaan Matakuliah');
+Route::post('/adm-akadmik/perkuliahan/matakuliah/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'json'])->name('matakuliah.json')->middleware('modul:Pengelolaan Matakuliah');
+Route::post('/adm-akadmik/perkuliahan/matakuliah/json-by-kurikulum', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'json_matakuliah_by_kurikulum'])->name('matakuliah.json_matakuliah_by_kurikulum')->middleware('modul:Pengelolaan Matakuliah');
+Route::post('/adm-akadmik/perkuliahan/matakuliah/json-kurikulum-by-prodi', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'json_kurikulum_by_prodi'])->name('matakuliah.json_kurikulum_by_prodi')->middleware('modul:Pengelolaan Matakuliah');
+Route::post('/adm-akadmik/perkuliahan/matakuliah/json-konsentrasi-by-prodi', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'json_konsentrasi_by_prodi'])->name('matakuliah.json_konsentrasi_by_prodi')->middleware('modul:Pengelolaan Matakuliah');
+Route::post('/adm-akadmik/perkuliahan/matakuliah/store', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'insup'])->name('matakuliah.insup')->middleware('modul:Pengelolaan Matakuliah');
+Route::post('/adm-akadmik/perkuliahan/matakuliah/delete', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'delete'])->name('matakuliah.delete')->middleware('modul:Pengelolaan Matakuliah');
+
 /* Sinkronisasi Data */
 // Program Studi
 Route::get('/adm-akadmik/sinkronisasi-data/program-studi', [\App\Http\Controllers\AdminAkademikPage\SinkronisasiData\ProgramStudiController::class, 'program_studi'])->name('sinkronisasi_data.program_studi.program_studi')->middleware('modul:Syncron Program Studi');

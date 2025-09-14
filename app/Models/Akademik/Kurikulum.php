@@ -10,7 +10,7 @@ class Kurikulum extends Model
 {
     use HasFactory;
 
-    public static function get_daftar_kurikulum($kd_prodi, $search = "", $start = 0, $length = -1)
+    public static function get_daftar_kurikulum($kd_prodi = 'all', $search = "", $start = 0, $length = -1)
     {
         return DB::select("SELECT * FROM akademik.get_daftar_kurikulum(?,?,?,?)", [
             $kd_prodi, $search, $start, $length

@@ -626,11 +626,11 @@
                         @if (array_key_exists('JPengelolaan Jenis Pelaksanaan Kuliah', $modul) ||
                                 array_key_exists('Jenis Mata Kuliah', $modul) ||
                                 array_key_exists('Manajemen Kurikulum', $modul) ||
-                                array_key_exists('Mata Kuliah', $modul) ||
+                                array_key_exists('Pengelolaan Matakuliah', $modul) ||
                                 array_key_exists('Konsentrasi Jurusan', $modul) ||
                                 array_key_exists('Pengelolaan Jenis Matakuliah', $modul))
                             <li @if (
-                                $menu == 'Mata Kuliah' ||
+                                $menu == 'Pengelolaan Matakuliah' ||
                                     $menu == 'Manajemen Kurikulum' ||
                                     $menu == 'Jenis Mata Kuliah' ||
                                     $menu == 'Pengelolaan Jenis Pelaksanaan Kuliah' ||
@@ -641,9 +641,9 @@
                                     Perkuliahan
                                 </a>
                                 <ul class="nav-second-level">
-                                    @if (array_key_exists('Mata Kuliah', $modul))
-                                        <li @if ($menu == 'Mata Kuliah') class="mm-active" @endif>
-                                            <a href="#">Mata Kuliah</a>
+                                    @if (array_key_exists('Pengelolaan Matakuliah', $modul))
+                                        <li @if ($menu == 'Pengelolaan Matakuliah') class="mm-active" @endif>
+                                            <a href="{{route('matakuliah.index')}}">Daftar Matakuliah</a>
                                         </li>
                                     @endif
                                     @if (array_key_exists('Konsentrasi Jurusan', $modul))
