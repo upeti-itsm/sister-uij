@@ -35,7 +35,7 @@
             </div>
             <div class="card-footer p-1">
                 <div class="stats">
-                    <i class="fas fa-cloud-sun mr-2 ml-2"></i>Kelas Reguler Pagi
+                    <i class="fas fa-cloud-sun mr-2 ml-2"></i>Kelas Reguler
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
             </div>
             <div class="card-footer p-1">
                 <div class="stats">
-                    <i class="fas fa-cloud-moon mr-2 ml-2"></i>Kelas Reguler dan Hybrid
+                    <i class="fas fa-cloud-moon mr-2 ml-2"></i>Kelas Hybrid
                 </div>
             </div>
         </div>
