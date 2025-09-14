@@ -150,7 +150,7 @@
                                     <th>Absensi</th>
                                     <th>Pelaksanaan Kuliah</th>
                                     <th>Keterangan</th>
-                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Presensi Mahasiswa</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
