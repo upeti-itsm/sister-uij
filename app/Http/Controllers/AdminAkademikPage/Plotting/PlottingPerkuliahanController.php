@@ -34,7 +34,7 @@ class PlottingPerkuliahanController extends Controller
         $kelas = [];
 
         if (!empty($program_studi)) {
-            $kurikulum = Kurikulum::get_daftar_kurikulum($program_studi[0]->kd_prodi);
+            $kurikulum = Kurikulum::get_daftar_kurikulum($program_studi[0]->kd_program_studi);
 
             if (!empty($kurikulum)) {
                 $matakuliah = Matakuliah::get_daftar('all', $kurikulum[0]->id_kurikulum);
@@ -42,7 +42,7 @@ class PlottingPerkuliahanController extends Controller
 
             if (!empty($tahun_akademik)) {
                 $tahunAkademikFormatted = $tahun_akademik[0]->tahun_akademik . $tahun_akademik[0]->id_semester_uij;
-                $kelas = KelasPerkuliahan::get_daftar($program_studi[0]->kd_prodi, $tahunAkademikFormatted);
+                $kelas = KelasPerkuliahan::get_daftar($program_studi[0]->kd_program_studi, $tahunAkademikFormatted);
             }
         }
 

@@ -46,7 +46,7 @@
                                 <div class="form-group">
                                     <label class="font-weight-bold">Program Studi <span class="text-danger">*</span></label>
                                     <select class="form-control select2" id="filter_kd_prodi" style="width: 100%">
-                                        <option value="">Pilih Program Studi</option>
+                                        <option value="all">Pilih Program Studi</option>
                                         @foreach($program_studi as $prodi)
                                             <option value="{{$prodi->kd_program_studi}}">{{$prodi->nama_program_studi}}</option>
                                         @endforeach
@@ -57,7 +57,7 @@
                                 <div class="form-group">
                                     <label class="font-weight-bold">Tahun Akademik <span class="text-danger">*</span></label>
                                     <select class="form-control select2" id="filter_tahun_akademik" style="width: 100%">
-                                        <option value="">Pilih Tahun Akademik</option>
+                                        <option value="all">Pilih Tahun Akademik</option>
                                         @foreach($tahun_akademik as $item)
                                             <option value="{{$item->tahun_akademik.$item->id_semester_uij}}">{{$item->tahun_akademik." ".$item->nama_tahun_akademik}}</option>
                                         @endforeach
@@ -74,7 +74,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <button class="btn btn-block btn-primary" id="btn-cari-data"><i
-                                                    class="fas fa-search mr-2"></i>Cari Data
+                                                    class="fas fa-search mr-2"></i>Cari
                                             </button>
                                         </div>
                                     </div>
@@ -139,7 +139,7 @@
                                     <select class="form-control select2" id="id_karyawan" style="width: 100%" required>
                                         <option value="">Pilih Dosen</option>
                                         @foreach($dosen as $item)
-                                            <option value="{{$item->id_karyawan}}">{{$item->nama_karyawan}} ({{$item->nip}})</option>
+                                            <option value="{{$item->id_karyawan}}">{{$item->nama_lengkap}} ({{$item->nidn}})</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -161,7 +161,7 @@
                             <select class="form-control select2" id="id_kelas" style="width: 100%" required>
                                 <option value="">Pilih Kelas</option>
                                 @foreach($kelas as $item)
-                                    <option value="{{$item->id_kelas}}">{{$item->kode_kelas}} - {{$item->nama_kelas}}</option>
+                                    <option value="{{$item->id_kelas}}">{{$item->kd_kelas}} - {{$item->nama_kelas}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -208,4 +208,4 @@
     <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
     <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
     <script src="{{asset('adminpage/own-js/admin_akademik/plotting/plotting_perkuliahan.js')}}"></script>
-@endpush<?php
+@endpush
