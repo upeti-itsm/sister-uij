@@ -254,7 +254,6 @@ class MatakuliahCont extends Controller
             } else {
                 Session::flash('failed_message', $result->keterangan ?? 'Gagal menghapus data');
             }
-
             return redirect()->back();
         } catch (\Illuminate\Validation\ValidationException $e) {
             Session::flash('failed_message', 'Data tidak valid: ' . implode(', ', array_flatten($e->errors())));

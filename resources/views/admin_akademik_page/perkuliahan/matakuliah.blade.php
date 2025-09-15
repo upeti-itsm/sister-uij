@@ -26,24 +26,53 @@
         }
 
         /* Badge styling untuk status dan kategori */
-        .badge-semester { background-color: #17a2b8; color: white; }
-        .badge-sks { background-color: #28a745; color: white; }
-        .badge-wajib { background-color: #dc3545; color: white; }
-        .badge-pilihan { background-color: #ffc107; color: #000; }
-        .badge-teori { background-color: #6f42c1; color: white; }
-        .badge-praktek { background-color: #fd7e14; color: white; }
-        .badge-gabungan { background-color: #20c997; color: white; }
+        .badge-semester {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .badge-sks {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-wajib {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-pilihan {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .badge-teori {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .badge-praktek {
+            background-color: #fd7e14;
+            color: white;
+        }
+
+        .badge-gabungan {
+            background-color: #20c997;
+            color: white;
+        }
 
         /* Multi-line info styling */
         .matakuliah-info {
             line-height: 1.4;
         }
+
         .matakuliah-title {
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 2px;
             font-size: 14px;
         }
+
         .matakuliah-subtitle {
             font-size: 11px;
             color: #6c757d;
@@ -52,11 +81,13 @@
         .prodi-info {
             line-height: 1.3;
         }
+
         .prodi-name {
             font-weight: 500;
             margin-bottom: 2px;
             font-size: 13px;
         }
+
         .konsentrasi-name {
             font-size: 11px;
             color: #6c757d;
@@ -68,6 +99,7 @@
             overflow-y: auto;
             font-size: 11px;
         }
+
         .prasyarat-item {
             background-color: #e9ecef;
             padding: 2px 6px;
@@ -260,16 +292,20 @@
                 padding: 6px 4px;
                 font-size: 12px;
             }
+
             .btn-sm {
                 padding: 0.2rem 0.4rem;
                 font-size: 11px;
             }
+
             .filter-section {
                 padding: 10px;
             }
+
             .matakuliah-title {
                 font-size: 13px;
             }
+
             .upload-area {
                 padding: 20px;
             }
@@ -336,7 +372,8 @@
                                     <i class="fas fa-search mr-1"></i>Pencarian Matakuliah
                                 </label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Ketik nama atau kode matakuliah..." id="cari-data">
+                                    <input type="text" class="form-control"
+                                           placeholder="Ketik nama atau kode matakuliah..." id="cari-data">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" id="btn-cari-data" title="Cari Data">
                                             <i class="fas fa-search"></i>
@@ -356,7 +393,8 @@
                                         <select class="form-control select2" name="kd_prodi" id="kd_prodi">
                                             <option value="all">-- Semua Program Studi --</option>
                                             @foreach($program_studi as $item)
-                                                <option value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
+                                                <option
+                                                    value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -366,7 +404,8 @@
                                         <select class="form-control select2" name="id_kurikulum" id="id_kurikulum">
                                             <option value="">-- Semua Kurikulum --</option>
                                             @foreach($kurikulum as $item)
-                                                <option value="{{$item->id_kurikulum}}">{{$item->nama_kurikulum}}</option>
+                                                <option
+                                                    value="{{$item->id_kurikulum}}">{{$item->nama_kurikulum}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -383,7 +422,8 @@
 
                 <!-- Data Table -->
                 <div class="table-responsive">
-                    <table class="table table-sm table-striped table-bordered table-hover" id="table" style="width:100%">
+                    <table class="table table-sm table-striped table-bordered table-hover" id="table"
+                           style="width:100%">
                         <thead class="thead-light">
                         <tr>
                             <th width="5%" class="text-center">No</th>
@@ -433,17 +473,17 @@
     </div>
 
     <!-- Hidden Form for Delete Action -->
-    <form style="display: none" action="#" method="POST" id="delete-form">
+    <form style="display: none" action="{{route('matakuliah.delete')}}" method="POST" id="delete-form">
         @csrf
-        @method('DELETE')
         <input type="hidden" id="delete-id_matakuliah" name="id">
-        <input type="hidden" id="delete-status" name="status" value="delete">
+        <input type="hidden" id="delete-status" name="status" value="false">
     </form>
 @endsection
 
 @section('modal')
     <!-- Modal Insert/Update dengan Enhanced UI -->
-    <div class="modal fade" id="modal-insup" tabindex="-1" role="dialog" aria-labelledby="insupLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-insup" tabindex="-1" role="dialog" aria-labelledby="insupLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content shadow-lg">
                 <div class="modal-header">
@@ -463,7 +503,8 @@
                         <!-- Alert Info -->
                         <div class="alert alert-info alert-dismissible fade show" role="alert">
                             <i class="fas fa-info-circle mr-2"></i>
-                            <strong>Informasi:</strong> Field bertanda <span class="required-field">*</span> wajib diisi.
+                            <strong>Informasi:</strong> Field bertanda <span class="required-field">*</span> wajib
+                            diisi.
                             Pilih program studi untuk memuat konsentrasi, dan kurikulum untuk memuat prasyarat.
                             <button type="button" class="close" data-dismiss="alert">
                                 <span aria-hidden="true">&times;</span>
@@ -486,10 +527,12 @@
                                     <select class="form-control select2" name="kd_prodi" id="insup-kd_prodi" required>
                                         <option value="all">-- Pilih Program Studi --</option>
                                         @foreach($program_studi as $item)
-                                            <option value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
+                                            <option
+                                                value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
                                         @endforeach
                                     </select>
-                                    <small class="form-text text-muted">Pilih program studi untuk memuat konsentrasi</small>
+                                    <small class="form-text text-muted">Pilih program studi untuk memuat
+                                        konsentrasi</small>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -498,7 +541,8 @@
                                         <i class="fas fa-graduation-cap mr-1"></i>Konsentrasi
                                         <span class="required-field">*</span>
                                     </label>
-                                    <select class="form-control select2" name="id_konsentrasi" id="insup-id_konsentrasi" required>
+                                    <select class="form-control select2" name="id_konsentrasi" id="insup-id_konsentrasi"
+                                            required>
                                         <option value="">-- Pilih Program Studi Terlebih Dahulu --</option>
                                     </select>
                                     <small class="form-text text-muted">Konsentrasi akan dimuat sesuai prodi</small>
@@ -510,7 +554,8 @@
                                         <i class="fas fa-clipboard-list mr-1"></i>Kurikulum
                                         <span class="required-field">*</span>
                                     </label>
-                                    <select class="form-control select2" name="id_kurikulum" id="insup-id_kurikulum" required>
+                                    <select class="form-control select2" name="id_kurikulum" id="insup-id_kurikulum"
+                                            required>
                                         <option value="">-- Pilih Kurikulum --</option>
                                         @foreach($kurikulum as $item)
                                             <option value="{{$item->id_kurikulum}}">{{$item->nama_kurikulum}}</option>
@@ -534,7 +579,8 @@
                                         <i class="fas fa-font mr-1"></i>Nama Matakuliah
                                         <span class="required-field">*</span>
                                     </label>
-                                    <input type="text" name="nama_matakuliah" class="form-control" id="insup-nama_matakuliah"
+                                    <input type="text" name="nama_matakuliah" class="form-control"
+                                           id="insup-nama_matakuliah"
                                            required placeholder="Contoh: Pemrograman Web Lanjut">
                                     <small class="form-text text-muted">Nama lengkap matakuliah sesuai kurikulum</small>
                                 </div>
@@ -545,7 +591,8 @@
                                         <i class="fas fa-code mr-1"></i>Kode Matakuliah
                                         <span class="required-field">*</span>
                                     </label>
-                                    <input type="text" name="kode_matakuliah" class="form-control" id="insup-kode_matakuliah"
+                                    <input type="text" name="kode_matakuliah" class="form-control"
+                                           id="insup-kode_matakuliah"
                                            required placeholder="Contoh: TI301">
                                     <small class="form-text text-muted">Kode unik matakuliah</small>
                                 </div>
@@ -587,10 +634,12 @@
                                         <i class="fas fa-tag mr-1"></i>Jenis Matakuliah
                                         <span class="required-field">*</span>
                                     </label>
-                                    <select class="form-control select2" name="id_jenis_matakuliah" id="insup-id_jenis_matakuliah" required>
+                                    <select class="form-control select2" name="id_jenis_matakuliah"
+                                            id="insup-id_jenis_matakuliah" required>
                                         <option value="">-- Pilih Jenis --</option>
                                         @foreach($jenis_matakuliah as $item)
-                                            <option value="{{$item->kd_jenis_matakuliah}}">{{$item->nama_jenis}}</option>
+                                            <option
+                                                value="{{$item->kd_jenis_matakuliah}}">{{$item->nama_jenis}}</option>
                                         @endforeach
                                     </select>
                                     <small class="form-text text-muted">Wajib/Pilihan</small>
@@ -602,10 +651,12 @@
                                         <i class="fas fa-chalkboard mr-1"></i>Jenis Pelaksanaan
                                         <span class="required-field">*</span>
                                     </label>
-                                    <select class="form-control select2" name="id_jenis_pelaksanaan" id="insup-id_jenis_pelaksanaan" required>
+                                    <select class="form-control select2" name="id_jenis_pelaksanaan"
+                                            id="insup-id_jenis_pelaksanaan" required>
                                         <option value="">-- Pilih Jenis Pelaksanaan --</option>
                                         @foreach($jenis_pelaksanaan as $item)
-                                            <option value="{{$item->kd_jenis_pelaksanaan_matakuliah}}">{{$item->jenis_pelaksanaan_matakuliah}}</option>
+                                            <option
+                                                value="{{$item->kd_jenis_pelaksanaan_matakuliah}}">{{$item->jenis_pelaksanaan_matakuliah}}</option>
                                         @endforeach
                                     </select>
                                     <small class="form-text text-muted">Teori/Praktik/Gabungan</small>
@@ -624,7 +675,8 @@
                                         <i class="fas fa-list-ul mr-1"></i>Pilih Matakuliah Prasyarat
                                         <small class="text-muted font-weight-normal">(opsional)</small>
                                     </label>
-                                    <select multiple class="form-control select2" name="id_matakuliah_prasyarat[]" id="insup-id_matakuliah_prasyarat">
+                                    <select multiple class="form-control select2" name="id_matakuliah_prasyarat[]"
+                                            id="insup-id_matakuliah_prasyarat">
                                         <option value="">-- Pilih Kurikulum Terlebih Dahulu --</option>
                                     </select>
                                     <small class="form-text text-muted">
@@ -651,7 +703,8 @@
     </div>
 
     <!-- Modal Upload Excel -->
-    <div class="modal fade" id="modal-upload-excel" tabindex="-1" role="dialog" aria-labelledby="uploadExcelLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-upload-excel" tabindex="-1" role="dialog" aria-labelledby="uploadExcelLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content shadow-lg">
                 <div class="modal-header bg-info text-white">
@@ -707,10 +760,11 @@
                                 <i class="fas fa-cloud-upload-alt upload-icon"></i>
                                 <h6>Pilih File Excel atau Drag & Drop</h6>
                                 <p class="text-muted mb-3 small">File maksimal 5MB (.xlsx, .xls)</p>
-                                <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('file-input').click()">
+                                <button type="button" class="btn btn-primary btn-sm"
+                                        onclick="document.getElementById('file-input').click()">
                                     <i class="fas fa-folder-open mr-1"></i>Pilih File
                                 </button>
-                                <input type="file" id="file-input" accept=".xlsx,.xls" />
+                                <input type="file" id="file-input" accept=".xlsx,.xls"/>
                             </div>
 
                             <div id="fileInfo" class="file-info" style="display: none;">
@@ -731,7 +785,8 @@
                                 <hr>
                                 <div class="alert alert-warning" role="alert">
                                     <i class="fas fa-exclamation-triangle mr-2"></i>
-                                    <strong>Penting!</strong> Anda HARUS memilih Kurikulum sebelum melakukan validasi data.
+                                    <strong>Penting!</strong> Anda HARUS memilih Kurikulum sebelum melakukan validasi
+                                    data.
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -743,10 +798,12 @@
                                             <select class="form-control select2" id="defaultProdi">
                                                 <option value="all">-- Pilih Program Studi --</option>
                                                 @foreach($program_studi as $item)
-                                                    <option value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
+                                                    <option
+                                                        value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
                                                 @endforeach
                                             </select>
-                                            <small class="form-text text-muted">Akan digunakan jika kolom kd_prodi kosong</small>
+                                            <small class="form-text text-muted">Akan digunakan jika kolom kd_prodi
+                                                kosong</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -759,7 +816,8 @@
                                                 <option value="">-- Pilih Kurikulum --</option>
                                             </select>
                                             <small class="form-text text-danger font-weight-bold">
-                                                <i class="fas fa-info-circle"></i> Wajib dipilih! Semua matakuliah akan menggunakan kurikulum ini
+                                                <i class="fas fa-info-circle"></i> Wajib dipilih! Semua matakuliah akan
+                                                menggunakan kurikulum ini
                                             </small>
                                         </div>
                                     </div>
@@ -769,7 +827,8 @@
                                     <button class="btn btn-info btn-sm" onclick="validateData()">
                                         <i class="fas fa-check-circle mr-1"></i>Validasi Data
                                     </button>
-                                    <button class="btn btn-success btn-sm" onclick="startUpload()" disabled id="btnStartUpload">
+                                    <button class="btn btn-success btn-sm" onclick="startUpload()" disabled
+                                            id="btnStartUpload">
                                         <i class="fas fa-upload mr-1"></i>Mulai Upload
                                     </button>
                                 </div>
@@ -834,7 +893,8 @@
                     <!-- Status Log -->
                     <div class="status-container" id="statusContainer">
                         <h6 class="small mt-3"><i class="fas fa-list-alt mr-2"></i>Log Proses Upload</h6>
-                        <div style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 8px;">
+                        <div
+                            style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 8px;">
                             <div id="logContainer"></div>
                         </div>
                         <button class="btn btn-sm btn-secondary mt-2" onclick="clearLog()">
@@ -875,20 +935,47 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr><td>kode_matakuliah</td><td>Text</td><td>TI301</td></tr>
-                                <tr><td>nama_matakuliah</td><td>Text</td><td>Pemrograman Web</td></tr>
-                                <tr><td>jumlah_sks</td><td>Number (1-6)</td><td>3</td></tr>
-                                <tr><td>semester</td><td>Number (1-8)</td><td>5</td></tr>
-                                <tr><td>kd_prodi</td><td>Text</td><td>TI</td></tr>
-                                <tr><td>id_konsentrasi</td><td>Number</td><td>1</td></tr>
+                                <tr>
+                                    <td>kode_matakuliah</td>
+                                    <td>Text</td>
+                                    <td>TI301</td>
+                                </tr>
+                                <tr>
+                                    <td>nama_matakuliah</td>
+                                    <td>Text</td>
+                                    <td>Pemrograman Web</td>
+                                </tr>
+                                <tr>
+                                    <td>jumlah_sks</td>
+                                    <td>Number (1-6)</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>semester</td>
+                                    <td>Number (1-8)</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>kd_prodi</td>
+                                    <td>Text</td>
+                                    <td>58601</td>
+                                </tr>
                                 <tr class="table-warning">
                                     <td>id_kurikulum</td>
                                     <td colspan="2">
                                         <strong>Akan diisi otomatis dari pilihan Anda</strong>
                                     </td>
                                 </tr>
-                                <tr><td>id_jenis_matakuliah</td><td>Text</td><td>WAJIB</td></tr>
-                                <tr><td>id_jenis_pelaksanaan</td><td>Text</td><td>TEORI</td></tr>
+                                <tr>
+                                    <td>kd_jenis_matakuliah</td>
+                                    <td>Text</td>
+                                    <td>MKWK</td>
+                                </tr>
+                                <tr>
+                                    <td>kd_jenis_pelaksanaan</td>
+                                    <td>Text</td>
+                                    <td>PR</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -896,10 +983,16 @@
                             <h6>Kolom Opsional:</h6>
                             <table class="table table-sm table-bordered">
                                 <thead class="thead-light">
-                                <tr><th>Kolom</th><th>Keterangan</th></tr>
+                                <tr>
+                                    <th>Kolom</th>
+                                    <th>Keterangan</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                <tr><td>prasyarat</td><td>Pisahkan dengan koma jika lebih dari 1</td></tr>
+                                <tr>
+                                    <td>prasyarat</td>
+                                    <td>Pisahkan dengan koma jika lebih dari 1</td>
+                                </tr>
                                 </tbody>
                             </table>
 
@@ -907,25 +1000,51 @@
                             <div class="row">
                                 <div class="col-6">
                                     <strong>Jenis Matakuliah:</strong>
-                                    <ul class="small">
-                                        <li>WAJIB</li>
-                                        <li>PILIHAN</li>
-                                    </ul>
+                                    <table class="small">
+                                        <thead>
+                                        <tr>
+                                            <th colspan="2">Kode</th>
+                                            <th>Jenis</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($jenis_matakuliah as $item)
+                                            <tr>
+                                                <td>{{$item->kd_jenis_matakuliah}}</td>
+                                                <td>:</td>
+                                                <td>{{$item->nama_jenis}}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <div class="col-6">
                                     <strong>Jenis Pelaksanaan:</strong>
-                                    <ul class="small">
-                                        <li>TEORI</li>
-                                        <li>PRAKTEK</li>
-                                        <li>GABUNGAN</li>
-                                    </ul>
+                                    <table class="small">
+                                        <thead>
+                                        <tr>
+                                            <th colspan="2">Kode</th>
+                                            <th>Jenis</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($jenis_pelaksanaan as $item)
+                                            <tr>
+                                                <td>{{$item->kd_jenis_pelaksanaan_matakuliah}}</td>
+                                                <td>:</td>
+                                                <td>{{$item->jenis_pelaksanaan_matakuliah}}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{asset('template/template_matakuliah.xlsx')}}" class="btn btn-success" download="template_matakuliah.xlsx">
+                    <a href="{{asset('template/template_matakuliah.xlsx')}}" class="btn btn-success"
+                       download="template_matakuliah.xlsx">
                         <i class="fas fa-download mr-1"></i>Download Template
                     </a>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -938,14 +1057,14 @@
 @push('scripts')
     <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
     <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="{{asset('adminpage/assets/plugins/sheetjs.min.js')}}"></script>
     <script src="{{asset('adminpage/own-js/admin_akademik/perkuliahan/matakuliah.js')}}"></script>
 
     <script>
         // Additional UI enhancements
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Auto-dismiss alerts after 5 seconds
-            setTimeout(function() {
+            setTimeout(function () {
                 $('.alert-dismissible').fadeOut('slow');
             }, 5000);
 
@@ -953,7 +1072,7 @@
             $('[title]').tooltip();
 
             // Form validation visual feedback
-            $('.form-control').on('blur', function() {
+            $('.form-control').on('blur', function () {
                 if ($(this).prop('required') && !$(this).val()) {
                     $(this).addClass('is-invalid');
                 } else {

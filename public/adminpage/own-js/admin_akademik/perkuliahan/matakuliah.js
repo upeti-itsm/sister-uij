@@ -1066,7 +1066,7 @@ jQuery.matakuliah = {
 
         // Prepare form data object sesuai dengan struktur yang diinginkan
         const formData = {
-            id: '00000000-0000-0000-0000-000000000000', // New record ID
+            id: $("#insup-id").val(), // Sesuai ID
             kode_matakuliah: $("#insup-kode_matakuliah").val(),
             nama_matakuliah: $("#insup-nama_matakuliah").val(),
             jumlah_sks: $("#insup-jumlah_sks").val(),
