@@ -74,7 +74,7 @@ class PlottingPerkuliahanController extends Controller
 
             // Handle response from model functions
             if (is_object($result) || is_array($result)) {
-                $result = (object) $result;
+                $result = (object)$result;
 
                 return response()->json([
                     'success' => isset($result->status) ? $result->status == 1 : true,
@@ -139,10 +139,10 @@ class PlottingPerkuliahanController extends Controller
             'tahun_akademik' => 'required|string',
         ]);
 
-        return $this->handleDataTablesOperation(function() use ($request) {
+        return $this->handleDataTablesOperation(function () use ($request) {
             $length = $request->input('length');
             $start = $request->input('start');
-            $search = $request->input('search.value', '');
+            $search = $request->input('search')['value'] ?? '';
             $kd_prodi = $request->input('kd_prodi');
             $tahun_akademik = $request->input('tahun_akademik');
 
@@ -173,12 +173,12 @@ class PlottingPerkuliahanController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->handleApiOperation(function() use ($request) {
+        return $this->handleApiOperation(function () use ($request) {
             $validated = $request->validate([
                 'id_matakuliah' => 'required|uuid',
                 'id_karyawan' => 'required|uuid',
                 'tahun_akademik' => 'required|string|max:20',
-                'jenis_pengajaran' => 'required|uuid',
+                'jenis_pengajaran' => 'required',
                 'id_kelas' => 'required|uuid',
             ]);
 
@@ -200,13 +200,13 @@ class PlottingPerkuliahanController extends Controller
      */
     public function update(Request $request)
     {
-        return $this->handleApiOperation(function() use ($request) {
+        return $this->handleApiOperation(function () use ($request) {
             $validated = $request->validate([
                 'id' => 'required|uuid',
                 'id_matakuliah' => 'required|uuid',
                 'id_karyawan' => 'required|uuid',
                 'tahun_akademik' => 'required|string|max:20',
-                'jenis_pengajaran' => 'required|uuid',
+                'jenis_pengajaran' => 'required',
                 'id_kelas' => 'required|uuid',
             ]);
 
@@ -222,6 +222,72 @@ class PlottingPerkuliahanController extends Controller
     }
 
     /**
+     * Store plotting data - Enhanced untuk support import
+     */
+    public function import(Request $request)
+    {
+        try {
+            // Validation rules
+            $request->validate([
+                'kd_matakuliah' => 'required',
+                'nidn' => 'required',
+                'tahun_akademik' => 'required',
+                'jenis_pengajaran' => 'required',
+                'kd_kelas' => 'required'
+            ], [
+                'kd_matakuliah.required' => 'Mata kuliah harus dipilih',
+                'nidn.required' => 'Dosen pengampu harus dipilih',
+                'tahun_akademik.required' => 'Tahun akademik harus dipilih',
+                'jenis_pengajaran.required' => 'Jenis pengajaran harus dipilih',
+                'kd_kelas.required' => 'Kelas harus dipilih'
+            ]);
+
+            // Panggil function import database
+            $result = PlottingPerkuliahan::import_ploting(
+                $request->kd_matakuliah,    // kd_matkul
+                $request->nidn,         // nidn
+                $request->tahun_akademik,   // tahun_akademik
+                $request->jenis_pengajaran, // jenis_pengajaran
+                $request->kd_kelas          // kd_kelas
+            );
+
+            // Cek hasil dari database function
+            if ($result && isset($result->status)) {
+                if ($result->status === 1) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => $result->keterangan ?? 'Data plotting berhasil disimpan'
+                    ]);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $result->keterangan ?? 'Gagal menyimpan data plotting'
+                    ]);
+                }
+            }
+
+            // Jika response tidak sesuai format, anggap berhasil jika tidak ada error
+            return response()->json([
+                'success' => true,
+                'message' => 'Data plotting berhasil disimpan'
+            ]);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Toggle the active status of a plotting.
      *
      * @param \Illuminate\Http\Request $request
@@ -229,10 +295,10 @@ class PlottingPerkuliahanController extends Controller
      */
     public function delete(Request $request)
     {
-        return $this->handleApiOperation(function() use ($request) {
+        return $this->handleApiOperation(function () use ($request) {
             $validated = $request->validate([
                 'id' => 'required|uuid',
-                'status' => 'required|boolean'
+                'status' => 'required'
             ]);
 
             return PlottingPerkuliahan::set_aktif($validated['id'], $validated['status']);
@@ -341,6 +407,4 @@ class PlottingPerkuliahanController extends Controller
             ], 500);
         }
     }
-
-
 }

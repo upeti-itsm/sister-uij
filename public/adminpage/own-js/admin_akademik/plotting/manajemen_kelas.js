@@ -281,7 +281,7 @@ jQuery.manajemen_kelas = {
             var id = $(this).data("id");
             var nama_kelas = $(this).data('nama_kelas');
             var status = $(this).data('status');
-            var action = status === 'true' ? 'Mengaktifkan' : 'Menonaktifkan';
+            var action = status === true ? 'Mengaktifkan' : 'Menonaktifkan';
             var keterangan = 'Apakah anda yakin ' + action + ' kelas <b>' + nama_kelas + '</b>?';
 
             $.confirm({
@@ -300,7 +300,7 @@ jQuery.manajemen_kelas = {
                                 method: 'POST',
                                 data: {
                                     id: id,
-                                    status: status === 'true'
+                                    status: status === true
                                 },
                                 beforeSend: function () {
                                     $("#detail-loading-spin-" + id).show();

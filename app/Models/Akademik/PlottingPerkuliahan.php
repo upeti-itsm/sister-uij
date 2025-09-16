@@ -37,4 +37,11 @@ class PlottingPerkuliahan extends Model
             $search
         ]);
     }
+
+    public static function import_ploting($kd_matkul, $nidn, $tahun_akademik, $jenis_pengajaran, $kd_kelas)
+    {
+        return DB::selectOne("SELECT * FROM akademik.import_ploting_matakuliah(?,?,?,?,?)", [
+            $kd_matkul, $nidn, $tahun_akademik, $jenis_pengajaran, $kd_kelas
+        ]);
+    }
 }
