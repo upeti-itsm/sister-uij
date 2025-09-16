@@ -680,6 +680,7 @@ jQuery.plotting_perkuliahan = {
     // Method baru untuk process rows yang sudah valid
     processValidRowsSequentially: function(validDataRows, currentIndex) {
         var self = this;
+
         if (currentIndex >= validDataRows.length) {
             // Selesai import
             self.finishImport();
