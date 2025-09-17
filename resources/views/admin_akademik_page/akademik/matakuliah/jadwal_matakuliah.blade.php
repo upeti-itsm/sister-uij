@@ -32,6 +32,11 @@
                     </div>
                     <div class="text-right">
                         <div class="actions">
+                            <button class="btn btn-success btn-generate-jadwal mr-2"
+                                    id="btn-generate-jadwal"
+                                    title="Generate Jadwal Kuliah">
+                                <i class="fas fa-calendar-plus"></i> Generate Jadwal
+                            </button>
                             <button class="btn btn-danger-soft btn-sync-ulang-jadwal-kuliah mr-2"
                                     id="btn-sync-ulang-jadwal-kuliah"
                                     title="Syncron Dengan Siakad"><i
@@ -43,6 +48,17 @@
             </div>
             <div class="card-body">
                 <div class="row">
+                    <div class="col-md-12 mt-3" id="progress-bar-generate-jadwal" style="display: none">
+                        <div class="alert alert-info">
+                            <button class="btn btn-primary mr-1 mb-2" type="button" disabled="">
+                                <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                                <span id="keterangan-progress-generate-jadwal">Sedang generate jadwal kuliah...</span>
+                            </button>
+                            <button class="btn btn-danger-soft mr-1 mb-2" id="btn-cancel-generate-jadwal">
+                                <i class="fas fa-window-close mr-2"></i>Batal
+                            </button>
+                        </div>
+                    </div>
                     <div class="col-md-12 mt-3" id="progress-bar-syncron-ulang-jadwal-kuliah" style="display: none">
                         <button class="btn btn-primary mr-1 mb-2" type="button" disabled="">
                             <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"
@@ -206,6 +222,42 @@
     </div>
 @endsection
 @section('modal')
+    {{-- Modal Generate Jadwal --}}
+    <div class="modal modal-primary fade" id="modal-generate-jadwal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-600">Konfirmasi Generate Jadwal Kuliah</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Proses generate jadwal akan membuat jadwal kuliah baru berdasarkan data yang tersedia. Silahkan pilih tahun akademik untuk generate jadwal:</p>
+                    <div class="form-group">
+                        <label for="tahun_akademik_generate">Tahun Akademik</label>
+                        <select class="select2 form-control" id="tahun_akademik_generate">
+                            @foreach($tahun_akademik_siakad AS $item)
+                                <option value="{{$item->tahun_akademik}}{{$item->id_semester_uij}}">{{$item->tahun_akademik}} ({{$item->nama_tahun_akademik}})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Peringatan:</strong> Proses ini akan memakan waktu beberapa menit. Pastikan tidak menutup halaman selama proses berlangsung.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success" id="modal-btn-generate-jadwal">
+                        <i class="fas fa-cog mr-2"></i>Generate Jadwal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Sync Jadwal (existing) --}}
     <div class="modal modal-primary fade" id="modal-sync-jadwal-kuliah" tabindex="-1" role="dialog"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -240,6 +292,5 @@
 @push('scripts')
     <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
     <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script
-        src="{{asset('adminpage/own-js/admin_akademik/akademik/matakuliah/jadwal_matakuliah.js')}}"></script>
+    <script src="{{asset('adminpage/own-js/admin_akademik/akademik/matakuliah/jadwal_matakuliah.js')}}"></script>
 @endpush

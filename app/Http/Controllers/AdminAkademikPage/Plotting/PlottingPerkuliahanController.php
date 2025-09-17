@@ -175,16 +175,21 @@ class PlottingPerkuliahanController extends Controller
     {
         return $this->handleApiOperation(function () use ($request) {
             $validated = $request->validate([
-                'id_matakuliah' => 'required|uuid',
-                'id_karyawan' => 'required|uuid',
-                'tahun_akademik' => 'required|string|max:20',
-                'jenis_pengajaran' => 'required',
-                'id_kelas' => 'required|uuid',
+                'id_matakuliah'   => 'required|uuid',
+                'id_karyawan'     => 'required',
+                'tahun_akademik'  => 'required|string|max:20',
+                'jenis_pengajaran'=> 'required',
+                'id_kelas'        => 'required|uuid',
             ]);
+
+            // Normalisasi id_karyawan -> selalu string
+            $idKaryawan = is_array($validated['id_karyawan'])
+                ? implode(',', $validated['id_karyawan']) // misal gabung dengan koma
+                : (string) $validated['id_karyawan'];
 
             return PlottingPerkuliahan::insup(
                 $validated['id_matakuliah'],
-                $validated['id_karyawan'],
+                $idKaryawan,
                 $validated['tahun_akademik'],
                 $validated['jenis_pengajaran'],
                 $validated['id_kelas']
@@ -202,17 +207,22 @@ class PlottingPerkuliahanController extends Controller
     {
         return $this->handleApiOperation(function () use ($request) {
             $validated = $request->validate([
-                'id' => 'required|uuid',
-                'id_matakuliah' => 'required|uuid',
-                'id_karyawan' => 'required|uuid',
-                'tahun_akademik' => 'required|string|max:20',
-                'jenis_pengajaran' => 'required',
-                'id_kelas' => 'required|uuid',
+                'id'              => 'required|uuid',
+                'id_matakuliah'   => 'required|uuid',
+                'id_karyawan'     => 'required',
+                'tahun_akademik'  => 'required|string|max:20',
+                'jenis_pengajaran'=> 'required',
+                'id_kelas'        => 'required|uuid',
             ]);
+
+            // Normalisasi id_karyawan -> selalu string
+            $idKaryawan = is_array($validated['id_karyawan'])
+                ? implode(',', $validated['id_karyawan']) // bisa juga ambil index 0 kalau hanya satu
+                : (string) $validated['id_karyawan'];
 
             return PlottingPerkuliahan::insup(
                 $validated['id_matakuliah'],
-                $validated['id_karyawan'],
+                $idKaryawan,
                 $validated['tahun_akademik'],
                 $validated['jenis_pengajaran'],
                 $validated['id_kelas'],

@@ -45,4 +45,11 @@ class JadwalMataKuliah extends Model
             'jml_sks' => $jml_sks, 'is_lab' => $is_lab, 'jenis_kelas' => $jenis_kelas, 'kd_matkul' => $kd_matkul
         ])[0];
     }
+
+    public static function generate_jadwal($tahun_akademik)
+    {
+        return DB::selectOne("SELECT * FROM akademik.run_set_jadwal_otomatis(?)", [
+            $tahun_akademik
+        ]);
+    }
 }

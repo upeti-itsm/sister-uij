@@ -4,10 +4,102 @@ jQuery.plotting_perkuliahan = {
         isPopulatingData: false,  // Flag untuk mencegah cascade refresh
         editData: null            // Menyimpan data untuk edit
     },
+
+    // Multiple Dosen Handler
+    multipleDosenHandler: {
+        init: function() {
+            var self = this;
+            self.setupJenisPengajaranHandler();
+            self.initializeDosenSelect();
+        },
+
+        setupJenisPengajaranHandler: function() {
+            $('#jenis_pengajaran').on('change', function() {
+                const jenisValue = $(this).val();
+                const dosenSelect = $('#id_karyawan');
+                const multipleInfo = $('#multiple-info');
+                const helpText = $('#dosen-help-text');
+
+                // Reset select2 dosen
+                dosenSelect.select2('destroy');
+
+                if (jenisValue == '2') {
+                    // Jika jenis pengajaran ID = 2 (team teaching), aktifkan multiple
+                    dosenSelect.attr('multiple', true);
+                    dosenSelect.select2({
+                        placeholder: "Pilih maksimal 2 dosen",
+                        allowClear: true,
+                        maximumSelectionLength: 2,
+                        language: {
+                            maximumSelected: function (e) {
+                                return "Maksimal " + e.maximum + " dosen dapat dipilih";
+                            }
+                        }
+                    });
+                    multipleInfo.show();
+                    helpText.text('Pilih maksimal 2 dosen untuk team teaching');
+                } else {
+                    // Jika bukan team teaching, gunakan single selection
+                    dosenSelect.removeAttr('multiple');
+                    dosenSelect.select2({
+                        placeholder: "Pilih dosen",
+                        allowClear: true
+                    });
+                    multipleInfo.hide();
+                    helpText.text('Pilih satu dosen pengampu');
+
+                    // Clear selection jika sebelumnya multiple
+                    dosenSelect.val(null).trigger('change');
+                }
+            });
+        },
+
+        initializeDosenSelect: function() {
+            $('#id_karyawan').select2({
+                placeholder: "Pilih dosen",
+                allowClear: true
+            });
+        },
+
+        validateDosenSelection: function() {
+            const jenisValue = $('#jenis_pengajaran').val();
+            const dosenValue = $('#id_karyawan').val();
+
+            if (jenisValue == '2') {
+                // Validasi untuk team teaching
+                if (!dosenValue || dosenValue.length < 1) {
+                    return {
+                        valid: false,
+                        message: 'Pilih minimal 1 dosen untuk team teaching'
+                    };
+                }
+                if (dosenValue.length > 2) {
+                    return {
+                        valid: false,
+                        message: 'Maksimal 2 dosen untuk team teaching'
+                    };
+                }
+            } else {
+                // Validasi untuk single dosen
+                if (!dosenValue) {
+                    return {
+                        valid: false,
+                        message: 'Pilih dosen pengampu'
+                    };
+                }
+            }
+
+            return { valid: true };
+        }
+    },
+
     init: function () {
         var self = this;
         self.setEvents();
+        // Initialize multiple dosen handler
+        self.multipleDosenHandler.init();
     },
+
     setEvents: function () {
         var self = this;
         // Option Data
@@ -58,7 +150,15 @@ jQuery.plotting_perkuliahan = {
                     sClass: 'text-left',
                     width: "20%",
                     render: function (data) {
-                        return data.nama_dosen || data.nama_karyawan || '-';
+                        // Handle multiple dosen untuk display
+                        if (data.dosen_list && data.dosen_list.length > 1) {
+                            var dosenNames = data.dosen_list.map(function(dosen) {
+                                return dosen.nama_lengkap || dosen.nama_karyawan;
+                            });
+                            return dosenNames.join('<br><small class="text-muted">+</small><br>');
+                        } else {
+                            return data.nama_dosen || data.nama_karyawan || '-';
+                        }
                     }
                 },
                 {
@@ -547,17 +647,29 @@ jQuery.plotting_perkuliahan = {
 
                 self.loadKelas(editData.kd_prodi, editData.tahun_akademik, function () {
                     console.log('Step 5: Kelas loaded, setting remaining fields');
-                    // Step 5: Set semua field sisanya
-                    $("#id_kelas").val(editData.id_kelas).trigger('change');
-                    $("#id_karyawan").val(editData.id_karyawan).trigger('change');
+
+                    // Step 5: Set jenis pengajaran dulu untuk trigger multiple dosen handler
                     $("#jenis_pengajaran").val(editData.jenis_pengajaran).trigger('change');
 
-                    // Step 6: Reset flag setelah semua selesai
-                    setTimeout(function () {
-                        self.data.isPopulatingData = false;
-                        self.data.editData = null;
-                        console.log('Step 6: Populate completed, flags reset');
-                    }, 100);
+                    // Wait a bit for the select2 to be reinitialized
+                    setTimeout(function() {
+                        // Step 6: Set kelas dan dosen
+                        $("#id_kelas").val(editData.id_kelas).trigger('change');
+
+                        // Handle multiple dosen values (jika ada)
+                        var dosenValues = editData.id_karyawan;
+                        if (typeof dosenValues === 'string' && dosenValues.includes(',')) {
+                            dosenValues = dosenValues.split(',');
+                        }
+                        $("#id_karyawan").val(dosenValues).trigger('change');
+
+                        // Step 7: Reset flag setelah semua selesai
+                        setTimeout(function () {
+                            self.data.isPopulatingData = false;
+                            self.data.editData = null;
+                            console.log('Step 7: Populate completed, flags reset');
+                        }, 100);
+                    }, 300);
                 });
             });
         });
@@ -611,7 +723,7 @@ jQuery.plotting_perkuliahan = {
 
                     // Check if row is completely empty
                     var isEmpty = true;
-                    for (var j = 0; j < 5; j++) {
+                    for (var j = 0; j < 6; j++) { // Updated to 6 columns for multiple dosen
                         if (row[j] && String(row[j]).trim() !== '') {
                             isEmpty = false;
                             break;
@@ -624,16 +736,16 @@ jQuery.plotting_perkuliahan = {
                         continue;
                     }
 
-                    // Check if row has all required data (5 columns)
-                    var hasAllData = true;
+                    // Check if row has all required data (first 5 columns required, 6th optional for multiple dosen)
+                    var hasRequiredData = true;
                     for (var k = 0; k < 5; k++) {
                         if (!row[k] || String(row[k]).trim() === '') {
-                            hasAllData = false;
+                            hasRequiredData = false;
                             break;
                         }
                     }
 
-                    if (hasAllData) {
+                    if (hasRequiredData) {
                         // Add row with its original row number for tracking
                         validDataRows.push({
                             data: row,
@@ -694,7 +806,7 @@ jQuery.plotting_perkuliahan = {
         // Update current row
         $("#current-row").text(originalRowNumber);
 
-        // Prepare data (semua row di sini sudah dipastikan valid)
+        // Prepare data - handle multiple dosen for team teaching
         var importData = {
             kd_matakuliah: String(row[0]).trim(),
             nidn: String(row[1]).trim(),
@@ -702,6 +814,11 @@ jQuery.plotting_perkuliahan = {
             jenis_pengajaran: String(row[3]).trim(),
             kd_kelas: String(row[4]).trim()
         };
+
+        // Handle multiple NIDN untuk team teaching (kolom ke-6 opsional)
+        if (row[5] && String(row[5]).trim() !== '') {
+            importData.nidn += ',' + String(row[5]).trim();
+        }
 
         self.addStatus("Baris " + originalRowNumber + ": Memproses " + importData.kd_matakuliah + "...", "info");
 
@@ -942,6 +1059,7 @@ jQuery.plotting_perkuliahan = {
     },
 
     validateForm: function () {
+        var self = this;
         var isValid = true;
         var errorMessages = [];
 
@@ -951,8 +1069,10 @@ jQuery.plotting_perkuliahan = {
             isValid = false;
         }
 
-        if (!$("#id_karyawan").val()) {
-            errorMessages.push("Dosen Pengampu harus dipilih");
+        // Validate dosen dengan multiple handler
+        var dosenValidation = self.multipleDosenHandler.validateDosenSelection();
+        if (!dosenValidation.valid) {
+            errorMessages.push(dosenValidation.message);
             isValid = false;
         }
 
@@ -993,10 +1113,20 @@ jQuery.plotting_perkuliahan = {
         $("#tahun_akademik").val("all").trigger('change');
         $("#id_kurikulum").html('<option value="">Pilih Kurikulum</option>');
         $("#id_matakuliah").html('<option value="">Pilih Mata Kuliah</option>');
-        $("#id_karyawan").val("").trigger('change');
         $("#jenis_pengajaran").val("").trigger('change');
         $("#id_kelas").html('<option value="">Pilih Kelas</option>');
         $("#cari-data").val("");
+
+        // Reset dosen select ke single mode
+        var dosenSelect = $("#id_karyawan");
+        dosenSelect.select2('destroy');
+        dosenSelect.removeAttr('multiple');
+        dosenSelect.val("").trigger('change');
+        self.multipleDosenHandler.initializeDosenSelect();
+
+        // Hide multiple info
+        $("#multiple-info").hide();
+        $("#dosen-help-text").text('Pilih satu dosen pengampu');
     }
 };
 

@@ -1,6 +1,7 @@
 jQuery.jadwal_matakuliah = {
     data: {
         isSyncCanceled: false,
+        isGenerateCanceled: false,
         log_table_jadwal_kuliah: $("#log-table-jadwal-kuliah").DataTable({
             scrollY: '300px',
             columns: [
@@ -158,6 +159,75 @@ jQuery.jadwal_matakuliah = {
                 self.data.table.search(this.value).draw();
             }
         });
+
+        // Event handler untuk Generate Jadwal
+        $("#btn-generate-jadwal").click(function () {
+            $("#modal-generate-jadwal").modal('show');
+        });
+
+        $("#modal-btn-generate-jadwal").click(function () {
+            var tahunAkademik = $("#tahun_akademik_generate").val();
+
+            if (!tahunAkademik) {
+                $.alert({
+                    title: "Peringatan",
+                    type: "red",
+                    content: "Silahkan pilih tahun akademik terlebih dahulu!"
+                });
+                return;
+            }
+
+            $.confirm({
+                title: 'Konfirmasi !',
+                type: 'orange',
+                content: 'Apakah anda yakin akan melakukan Generate Jadwal Kuliah ?<br/><b class="text-warning">Proses ini akan memakan waktu beberapa menit</b>',
+                buttons: {
+                    confirm: {
+                        text: 'Yakin',
+                        btnClass: 'btn-green',
+                        keys: ['enter'],
+                        action: function () {
+                            $("#modal-generate-jadwal").modal('hide');
+                            self.startGenerateJadwal(tahunAkademik);
+                        }
+                    },
+                    cancel: {
+                        text: 'Batal',
+                        btnClass: 'btn-red'
+                    }
+                }
+            });
+        });
+
+        $("#btn-cancel-generate-jadwal").click(function () {
+            $.confirm({
+                title: 'Konfirmasi !',
+                type: 'orange',
+                content: 'Proses generate jadwal akan dihentikan, apakah anda yakin ?',
+                buttons: {
+                    confirm: {
+                        text: 'Yakin',
+                        btnClass: 'btn-green',
+                        keys: ['enter'],
+                        action: function () {
+                            self.isGenerateCanceled = true;
+                            $("#progress-bar-generate-jadwal").hide();
+                            $("#btn-generate-jadwal").prop('disabled', false).html('<i class="fas fa-calendar-plus"></i> Generate Jadwal');
+                            $.alert({
+                                title: "Informasi",
+                                type: "blue",
+                                content: "Proses generate jadwal dibatalkan"
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Batal',
+                        btnClass: 'btn-red'
+                    }
+                }
+            });
+        });
+
         $("#btn-sync-ulang-jadwal-kuliah").click(function () {
             $("#modal-sync-jadwal-kuliah").modal('show');
         });
@@ -340,6 +410,93 @@ jQuery.jadwal_matakuliah = {
             self.data.table_jadwal_kuliah.ajax.reload();
         });
     },
+
+    // Fungsi untuk memulai generate jadwal
+    startGenerateJadwal: function(tahunAkademik) {
+        var self = this;
+
+        // Reset flag cancel
+        self.isGenerateCanceled = false;
+
+        // Disable tombol generate
+        $("#btn-generate-jadwal").prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+
+        // Tampilkan progress bar
+        $("#progress-bar-generate-jadwal").show();
+
+        // Update keterangan
+        $("#keterangan-progress-generate-jadwal").text('Memulai proses generate jadwal...');
+
+        // AJAX Request
+        $.ajax({
+            url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/generate-jadwal',
+            type: 'POST',
+            data: {
+                tahun_akademik: tahunAkademik,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            timeout: 300000, // 5 menit timeout
+            beforeSend: function() {
+                $("#keterangan-progress-generate-jadwal").text('Mengirim request ke server...');
+            },
+            success: function(response) {
+                if (!self.isGenerateCanceled) {
+                    if (response.status === 'success') {
+                        $("#keterangan-progress-generate-jadwal").html('<i class="fas fa-check-circle text-success"></i> ' + response.message);
+
+                        $.alert({
+                            title: "Berhasil",
+                            type: "green",
+                            content: response.message
+                        });
+
+                        // Reload table
+                        self.data.table_jadwal_kuliah.ajax.reload();
+
+                        // Hide progress after 3 seconds
+                        setTimeout(function() {
+                            $("#progress-bar-generate-jadwal").hide();
+                        }, 3000);
+
+                    } else {
+                        $("#keterangan-progress-generate-jadwal").html('<i class="fas fa-exclamation-triangle text-warning"></i> ' + response.message);
+
+                        $.alert({
+                            title: "Gagal",
+                            type: "red",
+                            content: response.message
+                        });
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                if (!self.isGenerateCanceled) {
+                    var errorMessage = 'Terjadi kesalahan saat generate jadwal';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (status === 'timeout') {
+                        errorMessage = 'Request timeout. Proses mungkin masih berjalan di background.';
+                    }
+
+                    $("#keterangan-progress-generate-jadwal").html('<i class="fas fa-times-circle text-danger"></i> ' + errorMessage);
+
+                    $.alert({
+                        title: "Error",
+                        type: "red",
+                        content: errorMessage
+                    });
+                }
+            },
+            complete: function() {
+                if (!self.isGenerateCanceled) {
+                    // Enable tombol kembali
+                    $("#btn-generate-jadwal").prop('disabled', false).html('<i class="fas fa-calendar-plus"></i> Generate Jadwal');
+                }
+            }
+        });
+    },
+
     next_data: function (data, index = 0, progres = 0, failed = 0, inserted = 0, updated = 0) {
         var self = this;
         var n = data.length;
@@ -437,9 +594,8 @@ jQuery.jadwal_matakuliah = {
                 failed++;
                 progres++;
             }
-        })
+        });
     }
-    ,
 };
 
 jQuery(document).ready(function () {

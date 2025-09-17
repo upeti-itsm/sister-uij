@@ -122,4 +122,90 @@ class JadwalMatakuliahController extends Controller
             return redirect(route('admin_akademik.akademik.jadwal_kuliah.sinkronisasi_jadwal_kuliah_siakad.detail', ['id' => $request->id]));
         }
     }
+
+    public function generate_jadwal(Request $request)
+    {
+        try {
+            // Validasi input
+            $request->validate([
+                'tahun_akademik' => 'required|string',
+            ]);
+
+            // Log untuk tracking
+            \Log::info('Generate jadwal dimulai', [
+                'tahun_akademik' => $request->tahun_akademik,
+                'user_id' => auth()->id(),
+                'timestamp' => now()
+            ]);
+
+            // Panggil method generate_jadwal dari model
+            $result = JadwalMataKuliah::generate_jadwal($request->tahun_akademik);
+
+            // Konversi format response model ke format yang diharapkan frontend
+            $status = ($result->status == 1 || $result->status === true) ? 'success' : 'error';
+            $message = $result->keterangan ?? 'Proses generate jadwal selesai';
+
+            // Log hasil
+            \Log::info('Generate jadwal selesai', [
+                'tahun_akademik' => $request->tahun_akademik,
+                'status' => $status,
+                'message' => $message,
+                'raw_status' => $result->status
+            ]);
+
+            // Return response dengan status HTTP yang sesuai
+            $httpStatus = $status === 'success' ? 200 : 422;
+
+            return response()->json([
+                'status' => $status,
+                'message' => $message,
+                'raw_result' => [
+                    'status' => $result->status,
+                    'keterangan' => $result->keterangan
+                ],
+                'timestamp' => now()->toISOString()
+            ], $httpStatus);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::warning('Validation error pada generate jadwal', [
+                'errors' => $e->errors(),
+                'input' => $request->all()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all()),
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            \Log::error('Error pada generate jadwal', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'tahun_akademik' => $request->tahun_akademik ?? null,
+                'user_id' => auth()->id()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat generate jadwal: ' . $e->getMessage(),
+                'error_code' => 'GENERATE_JADWAL_ERROR'
+            ], 500);
+
+        } catch (\Throwable $e) {
+            \Log::critical('Critical error pada generate jadwal', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan sistem yang tidak terduga',
+                'error_code' => 'SYSTEM_ERROR'
+            ], 500);
+        }
+    }
 }

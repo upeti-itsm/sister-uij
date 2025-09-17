@@ -101,6 +101,7 @@
                                                 <li>Download template Excel terlebih dahulu</li>
                                                 <li>Isi data sesuai format yang disediakan</li>
                                                 <li>Kolom yang wajib diisi: Kode MK, NIDN, Tahun Akademik, Jenis Pengajaran, Kode Kelas</li>
+                                                <li>Untuk jenis pengajaran team teaching, pisahkan NIDN dengan koma (maksimal 2)</li>
                                                 <li>File maksimal 2MB dengan format .xlsx atau .xls</li>
                                             </ul>
                                         </div>
@@ -230,17 +231,6 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="font-weight-bold">Dosen Pengampu <span class="text-danger">*</span></label>
-                                    <select class="form-control select2" id="id_karyawan" style="width: 100%" required>
-                                        <option value="">Pilih Dosen</option>
-                                        @foreach($dosen as $item)
-                                            <option value="{{$item->id_karyawan}}">{{$item->nama_lengkap}} ({{$item->nidn}})</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label class="font-weight-bold">Jenis Pengajaran <span class="text-danger">*</span></label>
                                     <select class="form-control select2" id="jenis_pengajaran" style="width: 100%" required>
                                         <option value="">Pilih Jenis Pengajaran</option>
@@ -248,6 +238,19 @@
                                             <option value="{{$item->id_jenis_pengajaran}}">{{$item->jenis_pengajaran}}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Dosen Pengampu <span class="text-danger">*</span></label>
+                                    <span id="multiple-info" class="badge badge-info ml-2" style="display: none;">Maksimal 2 dosen</span>
+                                    <select class="form-control select2" id="id_karyawan" style="width: 100%" required>
+                                        <option value="">Pilih Dosen</option>
+                                        @foreach($dosen as $item)
+                                            <option value="{{$item->id_karyawan}}">{{$item->nama_lengkap}} ({{$item->nidn}})</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted" id="dosen-help-text">Pilih satu dosen pengampu</small>
                                 </div>
                             </div>
                         </div>
