@@ -481,6 +481,11 @@
                                         <a href="{{ route('mahasiswa.akademik.skpi.index') }}">SKPI</a>
                                     </li>
                                 @endif
+                                @if (array_key_exists('Mengelola Kartu Rencana Studi', $modul))
+                                    <li @if ($menu == 'Mengelola Kartu Rencana Studi') class="mm-active" @endif>
+                                        <a href="{{ route('mahasiswa.akademik.krs.index') }}">KRS</a>
+                                    </li>
+                                @endif
                                 @if (session()->has('nilai_labkom'))
                                     @if (array_key_exists('Pengajuan Sertifikat Laboratorium Komputer', $modul))
                                         <li @if ($menu == 'Pengajuan Sertifikat Laboratorium Komputer') class="mm-active" @endif>

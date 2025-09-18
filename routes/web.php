@@ -264,6 +264,10 @@ Route::get('/mhs/skpi', [\App\Http\Controllers\MahasiswaPage\Akademik\SKPIContro
 Route::post('/mhs/skpi/json', [\App\Http\Controllers\MahasiswaPage\Akademik\SKPIController::class, 'json_daftar'])->name('mahasiswa.akademik.skpi.json_daftar')->middleware('modul:Pengisian SPI');
 Route::post('/mhs/skpi/insup', [\App\Http\Controllers\MahasiswaPage\Akademik\SKPIController::class, 'insup'])->name('mahasiswa.akademik.skpi.insup')->middleware('modul:Pengisian SPI');
 
+// Kartu Rencana Studi
+Route::get('/mhs/krs', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'index'])->name('mahasiswa.akademik.krs.index')->middleware('modul:Mengelola Kartu Rencana Studi');
+Route::post('/mhs/krs/json', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'json'])->name('mahasiswa.akademik.krs.json')->middleware('modul:Mengelola Kartu Rencana Studi');
+
 // Jadwal Mahasiswa
 Route::get('/mhs/akademik/perkuliahan/jadwal-mahasiswa', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'index'])->name('mahasiswa.akademik.jadwal_kuliah.index')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
 Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/json', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'json_get_daftar'])->name('mahasiswa.akademik.jadwal_kuliah.json_get_daftar')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
