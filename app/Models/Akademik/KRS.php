@@ -10,10 +10,10 @@ class KRS extends Model
 {
     use HasFactory;
 
-    public static function get_daftar($kd_prodi, $tahun_akademik = 1, $search = '', $offset = -1, $limit = 10)
+    public static function get_daftar($kd_prodi, $tahun_akademik = 1, $nim = '', $search = '', $offset = -1, $limit = 10)
     {
-        return DB::select("SELECT * FROM akademik.get_daftar_jadwal_krs(?,?,?,?,?)", [
-            $kd_prodi, $tahun_akademik, $search, $offset, $limit
+        return DB::select("SELECT * FROM akademik.get_daftar_jadwal_krs(?,?,?,?,?,?)", [
+            $kd_prodi, $tahun_akademik, $nim, $search, $offset, $limit
         ]);
     }
 }

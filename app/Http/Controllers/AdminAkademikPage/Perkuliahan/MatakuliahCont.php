@@ -162,7 +162,7 @@ class MatakuliahCont extends Controller
                 'nama_matakuliah' => 'required|string|max:255',
                 'id_kurikulum' => 'required|string',
                 'jumlah_sks' => 'required|integer|min:1|max:6',
-                'id_konsentrasi' => 'required|string',
+//                'id_konsentrasi' => 'required|string',
                 'semester' => 'required|integer|min:1|max:8',
                 'id_jenis_matakuliah' => 'required|string',
                 'id_jenis_pelaksanaan' => 'required|string',
@@ -192,7 +192,7 @@ class MatakuliahCont extends Controller
                 $validated['nama_matakuliah'],
                 $validated['id_kurikulum'],
                 $validated['jumlah_sks'],
-                $validated['id_konsentrasi'],
+                $request->id_konsentrasi,
                 $validated['semester'],
                 $validated['id_jenis_matakuliah'],
                 $validated['id_jenis_pelaksanaan'],
@@ -230,7 +230,7 @@ class MatakuliahCont extends Controller
             return response()->json([
                 'success' => false,
                 'status' => 500,
-                'message' => 'Terjadi kesalahan saat menyimpan data',
+                'message' => $e->getMessage(),
                 'error' => $e->getMessage()
             ], 500);
         }

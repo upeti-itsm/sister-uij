@@ -19,11 +19,12 @@ class KRSController extends Controller
         try {
             // Set default values untuk filter
             $kd_prodi = Session::get('user')->kd_prodi;
+            $nim = Session::get('user')->nim;
             $length = $request->length ?? 10;
             $start = $request->start ?? 0;
             $search = $request->search['value'] ?? '';
 
-            $data_ = KRS::get_daftar($kd_prodi, '20251', $search, $start, $length);
+            $data_ = KRS::get_daftar($kd_prodi, 1, $nim, $search, $start, $length);
 
             $data = [
                 'draw' => intval($request->draw ?? 1),

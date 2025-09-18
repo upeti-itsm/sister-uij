@@ -595,9 +595,9 @@ jQuery.matakuliah = {
             }
 
             // Set defaults for other fields if not provided
-            if (!row.id_konsentrasi) row.id_konsentrasi = '1'; // Default konsentrasi
-            if (!row.kd_jenis_matakuliah) row.kd_jenis_matakuliah = 'WAJIB';
-            if (!row.kd_jenis_pelaksanaa) row.kd_jenis_pelaksanaa = 'TEORI';
+            if (!row.id_konsentrasi) row.id_konsentrasi = null; // Default konsentrasi
+            if (!row.kd_jenis_matakuliah) row.kd_jenis_matakuliah = null;
+            if (!row.kd_jenis_pelaksanaa) row.kd_jenis_pelaksanaa = null;
 
             if (errors.length === 0) {
                 self.data.validatedData.push(row);
@@ -698,7 +698,7 @@ jQuery.matakuliah = {
                 id_konsentrasi: row.id_konsentrasi,
                 id_kurikulum: row.id_kurikulum,
                 id_jenis_matakuliah: row.kd_jenis_matakuliah,
-                id_jenis_pelaksanaan: row.kd_jenis_pelaksanaa,
+                id_jenis_pelaksanaan: row.kd_jenis_pelaksanaan,
                 'id_matakuliah_prasyarat[]': row.prasyarat ? row.prasyarat.split(',').map(p => p.trim()) : [],
                 _token: $('meta[name="csrf-token"]').attr('content')
             };

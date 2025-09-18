@@ -1043,7 +1043,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{asset('template/template_matakuliah.xlsx')}}" class="btn btn-success"
+                    <a href="{{asset('files/akademik/template_matakuliah.xlsx')}}" class="btn btn-success"
                        download="template_matakuliah.xlsx">
                         <i class="fas fa-download mr-1"></i>Download Template
                     </a>
