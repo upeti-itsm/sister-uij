@@ -244,7 +244,7 @@
                 <div class="col-md-12 mt-3">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="table-jadwal">
-                            <thead>
+                            <thead class="thead-light">
                             <tr>
                                 <th class="text-center" width="3%">
                                     <input type="checkbox" id="select-all">
@@ -287,7 +287,7 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered" id="table-krs-terpilih">
-                        <thead>
+                        <thead class="thead-light">
                         <tr>
                             <th class="text-center" width="4%">No</th>
                             <th width="25%">Mata Kuliah</th>
