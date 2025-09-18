@@ -212,6 +212,11 @@ Route::get('/adm-akadmik/sinkronisasi-data/mahasiswa', [\App\Http\Controllers\Ad
 Route::post('/adm-akadmik/sinkronisasi-data/mahasiswa/json/get-mahasiswa', [\App\Http\Controllers\AdminAkademikPage\SinkronisasiData\MahasiswaController::class, 'json_get_mahasiswa'])->name('sinkronisasi_data.mahasiswa.json_get_mahasiswa')->middleware('modul:Syncron Mahasiswa');
 Route::post('/adm-akadmik/sinkronisasi-data/mahasiswa/json/syncron', [\App\Http\Controllers\AdminAkademikPage\SinkronisasiData\MahasiswaController::class, 'json_syncron'])->name('sinkronisasi_data.mahasiswa.json_syncron')->middleware('modul:Syncron Mahasiswa');
 Route::get('/adm-akadmik/sinkronisasi-data/mahasiswa/json/get-mahasiswa-feeder/{nim?}', [\App\Http\Controllers\AdminAkademikPage\SinkronisasiData\MahasiswaController::class, 'json_get_mahasiswa_feeder'])->name('sinkronisasi_data.mahasiswa.json_get_mahasiswa_feeder')->middleware('modul:Syncron Mahasiswa');
+
+// Manajemen Ruangan
+Route::get('/adm-akademik/manajemen-ruangan', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenRuanganController::class, 'index'])->name('manajemen_ruangan.index')->middleware('modul:Manajemen Ruangan');
+Route::post('/adm-akademik/manajemen-ruangan/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenRuanganController::class, 'json'])->name('manajemen_ruangan.json')->middleware('modul:Manajemen Ruangan');
+
 // Dosen
 Route::get('/adm-akadmik/sinkronisasi-data/dosen', [\App\Http\Controllers\AdminAkademikPage\SinkronisasiData\DosenController::class, 'dosen'])->name('sinkronisasi_data.dosen.dosen')->middleware('modul:Syncron Dosen');
 Route::post('/adm-akadmik/sinkronisasi-data/dosen/json/get-dosen', [\App\Http\Controllers\AdminAkademikPage\SinkronisasiData\DosenController::class, 'json_get_dosen'])->name('sinkronisasi_data.dosen.json_get_dosen')->middleware('modul:Syncron Dosen');
@@ -231,6 +236,9 @@ Route::get('/adm-uptti/akademik/nomor-sertifikat/daftar-nomor-sertifikat', [\App
 Route::post('/adm-uptti/akademik/nomor-sertifikat/json/daftar-nomor-sertifikat', [\App\Http\Controllers\AdminUpttiPage\Akademik\NomorSertifikatController::class, 'json_nomor_sertifikat'])->name('akademik.nomor_sertifikat.json_nomor_sertifikat')->middleware('modul:Pengelolaan Nomor Sertifikat');
 Route::post('/adm-uptti/akademik/nomor-sertifikat/store', [\App\Http\Controllers\AdminUpttiPage\Akademik\NomorSertifikatController::class, 'store'])->name('akademik.nomor_sertifikat.store')->middleware('modul:Pengelolaan Nomor Sertifikat');
 Route::post('/adm-uptti/akademik/nomor-sertifikat/update', [\App\Http\Controllers\AdminUpttiPage\Akademik\NomorSertifikatController::class, 'update'])->name('akademik.nomor_sertifikat.update')->middleware('modul:Pengelolaan Nomor Sertifikat');
+
+
+
 /*
  * ------------------------------------------------------------------------
  * MAHASISWA PAGE
