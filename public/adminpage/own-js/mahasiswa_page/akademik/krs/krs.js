@@ -3,8 +3,84 @@ jQuery.krs_jadwal = {
         table_jadwal: $("#table-jadwal"),
         table_krs_terpilih: $("#table-krs-terpilih"),
         selected_matkul: [],
-        sks_maksimal: 24, // SKS maksimal per semester
+        sks_maksimal: 24,
         search: ''
+    },
+
+    // Method untuk reinit table jika diperlukan
+    reInitTable: function() {
+        var self = this;
+
+        console.log('Reinitializing DataTable...');
+
+        // Destroy existing table
+        if (self.data.table_jadwal) {
+            self.data.table_jadwal.destroy();
+        }
+
+        // Clear table content
+        $("#table-jadwal").empty();
+
+        // Reinitialize after short delay
+        setTimeout(function() {
+            self.setEvents();
+        }, 100);
+    },
+
+    // Method untuk debug response
+    debugResponse: function(response) {
+        console.log('=== DEBUG RESPONSE ===');
+        console.log('Type:', typeof response);
+        console.log('Keys:', Object.keys(response || {}));
+        console.log('Data length:', response.data ? response.data.length : 'No data property');
+        console.log('Records Total:', response.recordsTotal);
+        console.log('Records Filtered:', response.recordsFiltered);
+        console.log('Draw:', response.draw);
+        console.log('=== END DEBUG ===');
+    },
+
+    // Method untuk switch ke non-serverside mode
+    switchToClientSide: function() {
+        var self = this;
+
+        console.log('Switching to client-side mode');
+
+        // Destroy existing table
+        if (self.data.table_jadwal) {
+            self.data.table_jadwal.destroy();
+        }
+
+        // Reinitialize without serverSide
+        self.data.table_jadwal = $("#table-jadwal").DataTable({
+            serverSide: false, // Disable server-side processing
+            processing: true,
+            ajax: {
+                url: '/mhs/krs/json',
+                type: 'POST',
+                data: {
+                    search_matkul: self.data.search
+                },
+                dataSrc: 'data' // Simple dataSrc for client-side
+            },
+            // ... rest of columns config sama seperti sebelumnya
+        });
+    },
+
+    // Method untuk clear processing state
+    clearProcessingState: function() {
+        $("#table-jadwal_processing").hide();
+        $("#btn-cari-data").prop('disabled', false).html('<i class="fas fa-search mr-1"></i>Cari');
+        console.log('Processing state cleared');
+    },
+
+    // Method untuk validate response
+    isValidResponse: function(response) {
+        if (!response) return false;
+        if (typeof response !== 'object') return false;
+        if (!response.hasOwnProperty('data')) return false;
+        if (!Array.isArray(response.data)) return false;
+
+        return true;
     },
     init: function () {
         var self = this;
@@ -21,17 +97,70 @@ jQuery.krs_jadwal = {
         // Initialize DataTable untuk jadwal mata kuliah
         self.data.table_jadwal = $("#table-jadwal").DataTable({
             serverSide: true,
+            processing: true,
             ajax: {
                 url: '/mhs/krs/json',
-                type: 'post',
+                type: 'POST',
                 data: function (d) {
                     d.search_matkul = self.data.search;
                     return d;
+                },
+                dataSrc: function(json) {
+                    // Pastikan response valid
+                    if (!json || typeof json !== 'object') {
+                        return [];
+                    }
+
+                    // Jika response tidak memiliki struktur DataTable yang benar
+                    if (!json.hasOwnProperty('data')) {
+                        // Jika response langsung berupa array data
+                        if (Array.isArray(json)) {
+                            return json;
+                        }
+                        return [];
+                    }
+
+                    // Set default values untuk server-side processing
+                    if (!json.hasOwnProperty('recordsTotal')) {
+                        json.recordsTotal = json.data ? json.data.length : 0;
+                    }
+                    if (!json.hasOwnProperty('recordsFiltered')) {
+                        json.recordsFiltered = json.recordsTotal;
+                    }
+                    if (!json.hasOwnProperty('draw')) {
+                        json.draw = 1;
+                    }
+
+                    return json.data || [];
+                },
+                complete: function(xhr, status) {
+                    // Pastikan processing hilang setelah selesai
+                    setTimeout(function() {
+                        $("#table-jadwal_processing").hide();
+                    }, 300);
+                },
+                error: function(xhr, error, thrown) {
+                    // Clear processing state manually
+                    $("#table-jadwal_processing").hide();
+
+                    // Enable search button if disabled
+                    $("#btn-cari-data").prop('disabled', false).html('<i class="fas fa-search mr-1"></i>Cari');
+
+                    $.alert({
+                        title: 'Error',
+                        content: 'Gagal memuat data jadwal. Silakan refresh halaman.',
+                        type: 'red'
+                    });
                 }
             },
-            fnDrawCallback: function () {
-                var rows = this.fnGetData();
-                var total_matkul = rows.length;
+            drawCallback: function (settings) {
+                // Force hide processing
+                $("#table-jadwal_processing").hide();
+
+                // Menggunakan API yang lebih modern
+                var api = this.api();
+                var data = api.rows().data().toArray();
+                var total_matkul = data.length;
 
                 $("#tot_matkul").text(total_matkul);
 
@@ -46,31 +175,28 @@ jQuery.krs_jadwal = {
                     searchable: false,
                     orderable: false,
                     sClass: 'text-center',
-                    width: "5%",
+                    width: "3%",
                     render: function (data, type, row) {
                         var isSelected = self.data.selected_matkul.some(item => item.id === data.id);
                         var isDisabled = (data.jumlah_peserta >= data.kapasitas) ? 'disabled' : '';
                         var checked = isSelected ? 'checked' : '';
-                        return `<input type="checkbox" class="matkul-checkbox" data-id="${data.id}" ${checked} ${isDisabled}>`;
+                        return `<input type="checkbox" class="matkul-checkbox" data-id="${data.id}" ${checked} ${isDisabled} style="transform: scale(0.8);">`;
                     }
                 },
                 {
                     data: 'nomor',
                     searchable: false,
                     sClass: 'text-center',
-                    width: "5%"
+                    width: "3%"
                 },
                 {
                     data: null,
                     searchable: true,
                     sClass: 'text-left',
-                    width: "15%",
+                    width: "16%",
                     render: function (data) {
                         return `<strong>${data.kd_mata_kuliah}</strong><br/>
-                                <small>${data.nama_mata_kuliah}</small><br/>
-                                <button class="btn btn-xs btn-info mt-1" onclick="jQuery.krs_jadwal.showDetailMatkul(${data.id})">
-                                    <i class="fas fa-eye"></i> Detail
-                                </button>`;
+                                <small class="text-muted">${data.nama_mata_kuliah}</small>`;
                     }
                 },
                 {
@@ -80,25 +206,16 @@ jQuery.krs_jadwal = {
                     width: "10%",
                     render: function (data) {
                         return `<span class="badge badge-primary">${data.nama_kelas}</span><br/>
-                                <small>${data.jenis_kelas}</small>`;
+                                <small class="text-muted">${data.jenis_kelas}</small>`;
                     }
                 },
                 {
                     data: 'sks',
                     searchable: false,
                     sClass: 'text-center',
-                    width: "8%",
+                    width: "7%",
                     render: function (data) {
                         return `<span class="badge badge-success">${data} SKS</span>`;
-                    }
-                },
-                {
-                    data: 'nama_dosen',
-                    searchable: true,
-                    sClass: 'text-left',
-                    width: "10%",
-                    render: function (data) {
-                        return `<small>${data || '-'}</small>`;
                     }
                 },
                 {
@@ -130,7 +247,7 @@ jQuery.krs_jadwal = {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "8%",
+                    width: "9%",
                     render: function (data) {
                         var sisa = data.kapasitas - data.jumlah_peserta;
                         var color = sisa > 0 ? 'success' : 'danger';
@@ -141,7 +258,7 @@ jQuery.krs_jadwal = {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "9%",
+                    width: "7%",
                     render: function (data) {
                         var sisa = data.kapasitas - data.jumlah_peserta;
                         if (sisa > 0) {
@@ -149,6 +266,18 @@ jQuery.krs_jadwal = {
                         } else {
                             return `<span class="badge badge-danger">Penuh</span>`;
                         }
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    orderable: false,
+                    sClass: 'text-center',
+                    width: "6%",
+                    render: function (data) {
+                        return `<button class="btn btn-sm btn-info" onclick="jQuery.krs_jadwal.showDetailMatkul(${data.id})" title="Lihat Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>`;
                     }
                 }
             ],
@@ -160,7 +289,8 @@ jQuery.krs_jadwal = {
             autoWidth: false,
             sDom: 'ltipr',
             language: {
-                "emptyTable": "Tidak ditemukan data jadwal mata kuliah"
+                "emptyTable": "Tidak ditemukan data jadwal mata kuliah",
+                "processing": "Sedang memuat data..."
             }
         });
 
@@ -172,7 +302,7 @@ jQuery.krs_jadwal = {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "5%",
+                    width: "4%",
                     render: function (data, type, row, meta) {
                         return meta.row + 1;
                     }
@@ -181,7 +311,7 @@ jQuery.krs_jadwal = {
                     data: null,
                     searchable: false,
                     sClass: 'text-left',
-                    width: "20%",
+                    width: "25%",
                     render: function (data) {
                         return `<strong>${data.kd_mata_kuliah}</strong><br/>
                                 <small>${data.nama_mata_kuliah}</small>`;
@@ -191,7 +321,7 @@ jQuery.krs_jadwal = {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "10%",
+                    width: "12%",
                     render: function (data) {
                         return `<span class="badge badge-primary">${data.nama_kelas}</span>`;
                     }
@@ -206,19 +336,10 @@ jQuery.krs_jadwal = {
                     }
                 },
                 {
-                    data: 'nama_dosen',
-                    searchable: false,
-                    sClass: 'text-left',
-                    width: "15%",
-                    render: function (data) {
-                        return `<small>${data || '-'}</small>`;
-                    }
-                },
-                {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "8%",
+                    width: "10%",
                     render: function (data) {
                         var hari_names = ['', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
                         return hari_names[data.hari] || '-';
@@ -228,7 +349,7 @@ jQuery.krs_jadwal = {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "12%",
+                    width: "15%",
                     render: function (data) {
                         return `${data.jam_mulai} - ${data.jam_selesai}`;
                     }
@@ -237,7 +358,7 @@ jQuery.krs_jadwal = {
                     data: 'ruang',
                     searchable: false,
                     sClass: 'text-center',
-                    width: "10%"
+                    width: "15%"
                 },
                 {
                     data: null,
@@ -267,32 +388,89 @@ jQuery.krs_jadwal = {
     setEventHandlers: function() {
         var self = this;
 
-        // Search events
-        $("#cari-matkul").keyup(function() {
-            self.data.search = $(this).val();
+        // Search events - UPDATE SEARCH VALUE SEBELUM RELOAD
+        $("#btn-cari-data").click(function() {
+            var $btn = $(this);
+
+            // Disable button sementara
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i>Mencari...');
+
+            // Update search value dari input
+            self.data.search = $("#cari-matkul").val().trim();
+
+            // Clear dan reload DataTable
+            if (self.data.table_jadwal) {
+                // Force clear processing sebelum reload
+                $("#table-jadwal_processing").hide();
+
+                // Reload table
+                self.data.table_jadwal.ajax.reload(function(json) {
+                    // Success callback - pastikan button enabled kembali
+                    $btn.prop('disabled', false).html('<i class="fas fa-search mr-1"></i>Cari');
+                    $("#table-jadwal_processing").hide();
+                }, false);
+
+                // Fallback timeout untuk memastikan button tidak stuck
+                setTimeout(function() {
+                    if ($btn.is(':disabled')) {
+                        $btn.prop('disabled', false).html('<i class="fas fa-search mr-1"></i>Cari');
+                        $("#table-jadwal_processing").hide();
+                    }
+                }, 5000);
+            }
         });
 
-        $("#btn-cari-data").click(function() {
-            self.data.table_jadwal.ajax.reload();
+        // Search input events
+        $("#cari-matkul").keyup(function() {
+            self.data.search = $(this).val().trim();
         });
 
         // Enter key search
         $("#cari-matkul").keypress(function(event) {
             if (event.keyCode === 13) {
-                self.data.table_jadwal.ajax.reload();
+                event.preventDefault();
+                // Update search value dari input
+                self.data.search = $(this).val().trim();
+                $("#table-jadwal_processing").hide(); // Clear processing sebelum reload
+                self.data.table_jadwal.ajax.reload(function() {
+                    // Success callback untuk enter key search
+                    $("#table-jadwal_processing").hide();
+                }, false);
             }
         });
 
-        // Auto search on input change (optional - real-time search)
+        // Auto search on input change dengan debouncing yang lebih baik
         $("#cari-matkul").on('input', function() {
+            var current_value = $(this).val().trim();
+
+            // Clear timeout sebelumnya
             clearTimeout(self.searchTimeout);
+
             self.searchTimeout = setTimeout(function() {
-                if (self.data.search !== $("#cari-matkul").val()) {
-                    self.data.search = $("#cari-matkul").val();
-                    self.data.table_jadwal.ajax.reload();
+                if (self.data.search !== current_value) {
+                    self.data.search = current_value;
+                    $("#table-jadwal_processing").hide(); // Clear processing sebelum reload
+                    self.data.table_jadwal.ajax.reload(function() {
+                        // Success callback untuk auto search
+                        $("#table-jadwal_processing").hide();
+                    }, false);
                 }
-            }, 500); // 500ms delay untuk menghindari terlalu banyak request
+            }, 800); // 800ms delay untuk menghindari terlalu banyak request
         });
+
+        // Clear search button (opsional)
+        $("#btn-clear-search").click(function() {
+            $("#cari-matkul").val('');
+            self.data.search = '';
+            $("#table-jadwal_processing").hide();
+            self.data.table_jadwal.ajax.reload(null, false);
+        });
+
+        // Emergency clear processing button (hidden, bisa dipanggil via console)
+        window.clearTableProcessing = function() {
+            $("#table-jadwal_processing").hide();
+            $("#btn-cari-data").prop('disabled', false).html('<i class="fas fa-search mr-1"></i>Cari');
+        };
 
         // Checkbox events
         $("#select-all").change(function() {
@@ -324,7 +502,7 @@ jQuery.krs_jadwal = {
         $(document).on('click', '.btn-hapus-matkul', function() {
             var id = $(this).data('id');
             self.removeFromKRS(id);
-            self.data.table_jadwal.ajax.reload();
+            self.data.table_jadwal.ajax.reload(null, false);
         });
 
         // Hapus semua KRS
@@ -340,7 +518,7 @@ jQuery.krs_jadwal = {
                         action: function() {
                             self.data.selected_matkul = [];
                             self.updateKRSTable();
-                            self.data.table_jadwal.ajax.reload();
+                            self.data.table_jadwal.ajax.reload(null, false);
                         }
                     },
                     batal: {
@@ -502,15 +680,18 @@ jQuery.krs_jadwal = {
         var matkul = rows.find(item => item.id == id);
 
         if (matkul) {
-            $("#detail-kode-matkul").text(matkul.kd_mata_kuliah);
+            var hari_names = ['', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
             $("#detail-nama-matkul").text(matkul.nama_mata_kuliah);
+            $("#detail-kode-matkul").text(matkul.kd_mata_kuliah);
             $("#detail-sks").text(matkul.sks + ' SKS');
             $("#detail-kelas").text(matkul.nama_kelas + ' (' + matkul.jenis_kelas + ')');
-            $("#detail-dosen").text(matkul.nama_dosen || '-');
+            $("#detail-hari").text(hari_names[matkul.hari] || '-');
+            $("#detail-jam").text(matkul.jam_mulai + ' - ' + matkul.jam_selesai);
             $("#detail-ruang").text(matkul.ruang || '-');
             $("#detail-kapasitas").text(matkul.kapasitas);
             $("#detail-peserta").text(matkul.jumlah_peserta);
-            $("#detail-keterangan").text(matkul.keterangan || '-');
+            $("#detail-keterangan").text(matkul.keterangan || 'Tidak ada keterangan khusus');
 
             $("#modal-detail-matkul").modal('show');
         }
@@ -518,7 +699,6 @@ jQuery.krs_jadwal = {
 
     loadSKSMaksimal: function() {
         var self = this;
-        // Load SKS maksimal dari server atau bisa di-hardcode
         $.ajax({
             url: '/mhs/krs/sks-maksimal',
             method: 'GET',
@@ -531,7 +711,6 @@ jQuery.krs_jadwal = {
                 }
             },
             error: function() {
-                // Jika gagal load dari server, gunakan default
                 console.log('Menggunakan SKS maksimal default: 24');
             }
         });

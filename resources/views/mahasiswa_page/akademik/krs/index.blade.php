@@ -4,6 +4,105 @@
     <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
     <link href="{{ asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet">
+
+    <style>
+        /* Modal general */
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .modal-title i {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+
+        .close {
+            opacity: 0.8;
+            transition: 0.2s;
+        }
+
+        .close:hover {
+            opacity: 1;
+        }
+
+        /* Modal body compact but modern */
+        .modal-body {
+            padding: 1.5rem;
+            background-color: #f9fafb;
+        }
+
+        .modal-body h6 {
+            font-size: 1rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.35em 0.6em;
+            border-radius: 6px;
+        }
+
+        .badge-warning {
+            background-color: #ffb74d;
+            color: #fff;
+        }
+
+        .badge-success {
+            background-color: #4caf50;
+        }
+
+        .badge-secondary {
+            background-color: #607d8b;
+        }
+
+        .badge-primary {
+            background-color: #1976d2;
+        }
+
+        small.text-muted {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            display: inline-block;
+            color: #6c757d !important;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #eaeaea;
+            background: #fff;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn-sm {
+            border-radius: 6px;
+            font-weight: 600;
+            padding: 0.35rem 0.75rem;
+        }
+
+        /* Hover effect on rows */
+        .modal-body .row:not(:last-child) {
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+    </style>
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -147,19 +246,19 @@
                         <table class="table table-striped table-bordered table-hover" id="table-jadwal">
                             <thead>
                             <tr>
-                                <th class="text-center" width="5%">
+                                <th class="text-center" width="3%">
                                     <input type="checkbox" id="select-all">
                                 </th>
-                                <th class="text-center" width="5%">No</th>
-                                <th width="15%">Mata Kuliah</th>
+                                <th class="text-center" width="3%">No</th>
+                                <th width="16%">Mata Kuliah</th>
                                 <th width="10%">Kelas</th>
-                                <th width="8%">SKS</th>
-                                <th width="10%">Dosen</th>
+                                <th width="7%">SKS</th>
                                 <th width="8%">Hari</th>
                                 <th width="12%">Jam</th>
                                 <th width="10%">Ruang</th>
-                                <th width="8%">Kapasitas</th>
-                                <th width="9%">Status</th>
+                                <th width="9%">Kapasitas</th>
+                                <th width="7%">Status</th>
+                                <th class="text-center" width="6%">Detail</th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -190,14 +289,13 @@
                     <table class="table table-striped table-bordered" id="table-krs-terpilih">
                         <thead>
                         <tr>
-                            <th class="text-center" width="5%">No</th>
-                            <th width="20%">Mata Kuliah</th>
-                            <th width="10%">Kelas</th>
+                            <th class="text-center" width="4%">No</th>
+                            <th width="25%">Mata Kuliah</th>
+                            <th width="12%">Kelas</th>
                             <th width="8%">SKS</th>
-                            <th width="15%">Dosen</th>
-                            <th width="8%">Hari</th>
-                            <th width="12%">Jam</th>
-                            <th width="10%">Ruang</th>
+                            <th width="10%">Hari</th>
+                            <th width="15%">Jam</th>
+                            <th width="15%">Ruang</th>
                             <th width="7%">Action</th>
                         </tr>
                         </thead>
@@ -206,7 +304,7 @@
                         <tr class="bg-light">
                             <th colspan="3" class="text-right">Total SKS:</th>
                             <th id="total-sks">0</th>
-                            <th colspan="5"></th>
+                            <th colspan="4"></th>
                         </tr>
                         </tfoot>
                     </table>
@@ -245,66 +343,66 @@
 
     <!-- Modal Detail Mata Kuliah -->
     <div class="modal fade" id="modal-detail-matkul" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog" role="document"> <!-- saya buat modal-lg biar lega -->
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detail Mata Kuliah</h5>
-                    <button type="button" class="close" data-dismiss="modal">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle"></i> Detail Mata Kuliah
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
+                    <!-- Informasi Utama -->
                     <div class="row">
-                        <div class="col-md-6">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><strong>Kode Mata Kuliah:</strong></td>
-                                    <td id="detail-kode-matkul">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Nama Mata Kuliah:</strong></td>
-                                    <td id="detail-nama-matkul">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>SKS:</strong></td>
-                                    <td id="detail-sks">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Kelas:</strong></td>
-                                    <td id="detail-kelas">-</td>
-                                </tr>
-                            </table>
+                        <div class="col-md-8">
+                            <h6 class="font-weight-bold text-primary mb-2" id="detail-nama-matkul">-</h6>
+                            <div class="d-flex align-items-center mb-2 flex-wrap">
+                                <span class="badge badge-secondary mr-2 mb-1" id="detail-kode-matkul">-</span>
+                                <span class="badge badge-success mr-2 mb-1" id="detail-sks">-</span>
+                                <span class="badge badge-primary mb-1" id="detail-kelas">-</span>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><strong>Dosen:</strong></td>
-                                    <td id="detail-dosen">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Ruang:</strong></td>
-                                    <td id="detail-ruang">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Kapasitas:</strong></td>
-                                    <td id="detail-kapasitas">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Peserta:</strong></td>
-                                    <td id="detail-peserta">-</td>
-                                </tr>
-                            </table>
+                        <div class="col-md-4 text-right">
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Kapasitas</small>
+                                <span class="font-weight-bold" id="detail-peserta">-</span> /
+                                <span id="detail-kapasitas">-</span>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Jadwal & Ruang -->
                     <div class="row">
-                        <div class="col-md-12">
-                            <strong>Keterangan:</strong>
-                            <p id="detail-keterangan">-</p>
+                        <div class="col-md-4">
+                            <small class="text-muted">Hari</small>
+                            <div class="font-weight-bold" id="detail-hari">-</div>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">Waktu</small>
+                            <div class="font-weight-bold" id="detail-jam">-</div>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">Ruang</small>
+                            <div>
+                                <span class="badge badge-warning" id="detail-ruang">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keterangan -->
+                    <div class="row">
+                        <div class="col-12">
+                            <small class="text-muted">Keterangan</small>
+                            <p class="mb-0 text-secondary" id="detail-keterangan">-</p>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i> Tutup
+                    </button>
                 </div>
             </div>
         </div>
@@ -319,3 +417,4 @@
     <script src="{{ asset('adminpage/assets/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('adminpage/own-js/mahasiswa_page/akademik/krs/krs.js') }}"></script>
 @endpush
+

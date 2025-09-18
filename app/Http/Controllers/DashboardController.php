@@ -26,13 +26,13 @@ class DashboardController extends Controller
                 if ($kuesioner_kepuasan->status == 0)
                     return redirect(route('mahasiswa.akademik.kuesioner_kepuasan_mahasiswa.index'));
                 else {
-                    $skpi = DokumenSKPI::cek_status_skpi(Session::get('user')->id_mhs, 333);
-                    if ($skpi->status == 0)
+                    //$skpi = DokumenSKPI::cek_status_skpi(Session::get('user')->id_mhs, 333);
+                    //if ($skpi->status == 0)
                         return redirect(route('mahasiswa.akademik.skpi.index'));
-                    else {
+                    //else {
 //                        $data["nilai_skripsi"] = tblMahasiswa::getNilaiSkripsi(Session::get('user')->nim);
-                        $data["jadwal_wisuda"] = JadwalWisuda::get_daftar_jadwal_wisuda("all", 0, 1);
-                    }
+                        //$data["jadwal_wisuda"] = JadwalWisuda::get_daftar_jadwal_wisuda("all", 0, 1);
+                    //}
                 }
             } else {
 //                $data["nilai_skripsi"] = tblMahasiswa::getNilaiSkripsi(Session::get('user')->nim);

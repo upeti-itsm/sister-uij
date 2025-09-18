@@ -445,7 +445,6 @@
                                     $menu == 'Pengajuan Tugas Akhir' ||
                                     $menu == 'Sinkronisasi Tahun Akademik dengan Siakad' ||
                                     $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
-                                    $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
                                     $menu == 'Student Body') class="mm-active" @endif>
                             <a class="has-arrow material-ripple" href="#">
                                 <i class="fas fa-graduation-cap mr-2"></i>
@@ -479,11 +478,6 @@
                                 @if (array_key_exists('Pengisian SPI', $modul))
                                     <li @if ($menu == 'Pengisian SPI') class="mm-active" @endif>
                                         <a href="{{ route('mahasiswa.akademik.skpi.index') }}">SKPI</a>
-                                    </li>
-                                @endif
-                                @if (array_key_exists('Mengelola Kartu Rencana Studi', $modul))
-                                    <li @if ($menu == 'Mengelola Kartu Rencana Studi') class="mm-active" @endif>
-                                        <a href="{{ route('mahasiswa.akademik.krs.index') }}">KRS</a>
                                     </li>
                                 @endif
                                 @if (session()->has('nilai_labkom'))
@@ -534,11 +528,13 @@
                                 @endif
                                 @if (array_key_exists('Sinkronisasi Jadwal Kuliah dengan Siakad', $modul) ||
                                         array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul) ||
-                                        array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul))
+                                        array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
+                                        array_key_exists('Mengelola Rencana Studi'))
                                     <li @if (
                                             $menu == 'Sinkronisasi Jadwal Kuliah dengan Siakad' ||
                                                 $menu == 'Sinkronisasi Tahun Akademik dengan Siakad' ||
-                                                $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad') class="mm-active" @endif>
+                                                $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
+                                                $menu == 'Mengelola Rencana Studi') class="mm-active" @endif>
                                         <a class="has-arrow" href="#" aria-expanded="true">Perkuliahan</a>
                                         <ul class="nav-third-level mm-collapse" style="">
                                             @if (array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul))
@@ -553,6 +549,12 @@
                                                     <a
                                                         href="{{ route('admin_akademik.akademik.jadwal_kuliah.sinkronisasi_jadwal_kuliah_siakad.index') }}">Jadwal
                                                         Kuliah</a>
+                                                </li>
+                                            @endif
+                                            @if (array_key_exists('Mengelola Kartu Rencana Studi', $modul))
+                                                <li @if ($menu == 'Mengelola Kartu Rencana Studi') class="mm-active" @endif>
+                                                    <a href="{{ route('mahasiswa.akademik.krs.index') }}">Rencana Studi
+                                                        (KRS)</a>
                                                 </li>
                                             @endif
                                             @if (array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul))
@@ -573,6 +575,20 @@
                                                     <a
                                                         href="{{ route('admin_akademik.akademik.jadwal_kuliah.ip_presensi_perkuliahan.index') }}">
                                                         IP Presensi Perkuliahan
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </li>
+                                @endif
+                                @if (array_key_exists('Melihat Tanggungan', $modul))
+                                    <li @if ( $menu == 'Melihat Tanggungan') class="mm-active" @endif>
+                                        <a class="has-arrow" href="#" aria-expanded="true">Keuangan</a>
+                                        <ul class="nav-third-level mm-collapse" style="">
+                                            @if (array_key_exists('Melihat Tanggungan', $modul))
+                                                <li @if ($menu == 'Melihat Tanggungan') class="mm-active" @endif>
+                                                    <a href="{{ route('mahasiswa.keuangan.tanggungan.index') }}">
+                                                        Tanggungan Keuangan
                                                     </a>
                                                 </li>
                                             @endif

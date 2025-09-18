@@ -268,6 +268,11 @@ Route::post('/mhs/skpi/insup', [\App\Http\Controllers\MahasiswaPage\Akademik\SKP
 Route::get('/mhs/krs', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'index'])->name('mahasiswa.akademik.krs.index')->middleware('modul:Mengelola Kartu Rencana Studi');
 Route::post('/mhs/krs/json', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'json'])->name('mahasiswa.akademik.krs.json')->middleware('modul:Mengelola Kartu Rencana Studi');
 
+// Melihat Tanggungan
+Route::get('/mhs/tanggungan', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'index'])->name('mahasiswa.keuangan.tanggungan.index')->middleware('modul:Melihat Tanggungan');
+Route::post('/mhs/tanggungan/json', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'json'])->name('mahasiswa.keuangan.tanggungan.json')->middleware('modul:Melihat Tanggungan');
+Route::post('/mhs/tanggungan/json-riwayat-pembayaran', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'json_detail_pembayaran'])->name('mahasiswa.keuangan.tanggungan.json_detail_pembayaran')->middleware('modul:Melihat Tanggungan');
+
 // Jadwal Mahasiswa
 Route::get('/mhs/akademik/perkuliahan/jadwal-mahasiswa', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'index'])->name('mahasiswa.akademik.jadwal_kuliah.index')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
 Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/json', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'json_get_daftar'])->name('mahasiswa.akademik.jadwal_kuliah.json_get_daftar')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
