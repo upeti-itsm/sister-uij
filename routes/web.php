@@ -216,6 +216,9 @@ Route::get('/adm-akadmik/sinkronisasi-data/mahasiswa/json/get-mahasiswa-feeder/{
 // Manajemen Ruangan
 Route::get('/adm-akademik/manajemen-ruangan', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenRuanganController::class, 'index'])->name('manajemen_ruangan.index')->middleware('modul:Manajemen Ruangan');
 Route::post('/adm-akademik/manajemen-ruangan/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenRuanganController::class, 'json'])->name('manajemen_ruangan.json')->middleware('modul:Manajemen Ruangan');
+Route::post('/adm-akademik/manajemen-ruangan/store', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenRuanganController::class, 'store'])->name('manajemen_ruangan.store')->middleware('modul:Manajemen Ruangan');
+Route::post('/adm-akademik/manajemen-ruangan/update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenRuanganController::class, 'update'])->name('manajemen_ruangan.update')->middleware('modul:Manajemen Ruangan');
+Route::post('/adm-akademik/manajemen-ruangan/delete', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenRuanganController::class, 'delete'])->name('manajemen_ruangan.delete')->middleware('modul:Manajemen Ruangan');
 
 // Dosen
 Route::get('/adm-akadmik/sinkronisasi-data/dosen', [\App\Http\Controllers\AdminAkademikPage\SinkronisasiData\DosenController::class, 'dosen'])->name('sinkronisasi_data.dosen.dosen')->middleware('modul:Syncron Dosen');

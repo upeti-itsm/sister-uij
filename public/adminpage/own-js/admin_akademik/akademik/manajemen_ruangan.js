@@ -22,10 +22,13 @@ jQuery.manajemen_ruangan = {
             scrollCollapse: true,
             columns: [
                 {
-                    data: 'nomor',
+                    data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "5%"
+                    width: "5%",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
                 },
                 {
                     data: null,
@@ -66,22 +69,11 @@ jQuery.manajemen_ruangan = {
                 {
                     data: null,
                     searchable: false,
-                    sClass: 'text-left',
-                    width: "10%",
-                    render: function (data) {
-                        const status = data.sts_aktif === true ? 'Aktif' : 'Tidak Aktif';
-
-                        return "<b>" + status + "</b>";
-                    }
-                },
-                {
-                    data: null,
-                    searchable: false,
                     sClass: 'text-center',
                     width: "20%",
                     render: function (data) {
-                        return "<button title='Edit Kurikulum' class='btn btn-sm btn-primary btn-edit mr-2' data-id='" + data.id_kurikulum + "' data-id_prodi='" + data.kd_program_studi + "' data-nama_kurikulum='" + data.nama_kurikulum + "' data-sks_lulus='" + data.sks_lulus + "' data-tahun_kurikulum='" + data.tahun_kurikulum + "'><i class='fas fa-edit'></i></button>" +
-                            "<button title='Non-Aktifkan Kurikulum' class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_kurikulum + "' data-nama_kurikulum='" + data.nama_kurikulum + "' data-nama_prodi='" + data.nama_program_studi + "' ><span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_kurikulum + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash'></i></button>";
+                        return "<button title='Edit Ruangan Perkuliahan' class='btn btn-sm btn-primary btn-edit mr-2' data-id='" + data.id_ruang_perkuliahan + "' data-ruang_perkuliahan='" + data.ruang_perkuliahan + "' data-kapasitas='" + data.kapasitas + "' data-informasi_ruangan='" + data.informasi_kelas + "' data-sts_aktif='" + data.sts_aktif + "'><i class='fas fa-edit'></i></button>" +
+                            "<button title='Non-Aktifkan Ruangan Perkuliahan' class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_ruang_perkuliahan + "' data-ruang_perkuliahan='" + data.ruang_perkuliahan + "' data-kapasitas='" + data.kapasitas + "' ><span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_ruang_perkuliahan + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash'></i></button>";
                     }
                 }
             ],
@@ -116,60 +108,58 @@ jQuery.manajemen_ruangan = {
         $("#btn-tambah-data").click(function () {
             $("#filter-collapse").collapse("hide");
             $("#form-collapse").collapse("show");
-            $("#id_kurikulum").val("");
-            $("#id_prodi_add").val("").change();
-            $("#id_prodi_add").attr('disabled', false);
+            $("#id_ruang_perkuliahan").val("");
         });
         // On Cancel Click
         $("#btn-cancel").click(function () {
-            $("#nama_kurikulum").val("");
-            $("#tahun_kurikulum").val("");
-            $("#sks_lulus").val("");
+            $("#ruang_perkuliahan").val("");
+            $("#kapasitas").val("");
+            $("#informasi_kelas").val("");
             $("#cari-data").val("");
             $("#filter-collapse").collapse("show");
             $("#form-collapse").collapse("hide");
         });
         // On Edit
         $("#table").on('click', 'button.btn-edit', function () {
-            $("#nama_kurikulum").val($(this).data("nama_kurikulum"));
-            $("#tahun_kurikulum").val($(this).data("tahun_kurikulum"));
-            $("#sks_lulus").val($(this).data("sks_lulus"));
+            $("#ruang_perkuliahan").val($(this).data("ruang_perkuliahan"));
+            $("#kapasitas").val($(this).data("kapasitas"));
+            $("#informasi_kelas").val($(this).data("informasi_ruangan"));
             $("#btn-tambah-data").trigger("click");
-            $("#id_kurikulum").val($(this).data("id"));
-            $("#id_prodi_add").val($(this).data("id_prodi")).change();
-            $("#id_prodi_add").attr('disabled', true);
+            let sts = $(this).data("sts_aktif");
+            $("#status_ruangan").val(sts === true || sts === "true" ? "1" : "0").change();
+            $("#id_ruang_perkuliahan").val($(this).data("id"));
         });
 
         // On Save Data
         $("#btn-save").click(function () {
-            if (!$("#nama_kurikulum").val() || !$("#tahun_kurikulum").val() || !$("#sks_lulus").val())
+            if (!$("#ruang_perkuliahan").val() || !$("#kapasitas").val() || !$("#informasi_kelas").val())
                 $.alert({
                     title: "Peringatan",
                     type: "orange",
-                    content: "Pastikan Nama, Tahun dan SKS Lulus Kurikulum Terisi"
+                    content: "Pastikan Ruang Perkuliahan, Kapasitas dan Informasi Kelas Terisi"
                 });
             else {
                 var operasi = 'store';
-                var id = '00000000-0000-0000-0000-000000000000'
-                if ($("#id_kurikulum").val()) {
-                    id = $("#id_kurikulum").val();
+                var id = 0;
+                if ($("#id_ruang_perkuliahan").val()) {
+                    id = $("#id_ruang_perkuliahan").val();
                     operasi = 'update';
                 }
                 $.ajax({
-                    url: '/adm-akademik/akademik/kurikulum/' + operasi,
+                    url: '/adm-akademik/manajemen-ruangan/' + operasi,
                     method: 'POST',
                     data: {
-                        kd_prodi: $("#id_prodi_add").val(),
-                        nama_kurikulum: $("#nama_kurikulum").val(),
-                        tahun_kurikulum: $("#tahun_kurikulum").val(),
-                        sks_lulus: $("#sks_lulus").val(),
+                        ruang_perkuliahan: $("#ruang_perkuliahan").val(),
+                        kapasitas: $("#kapasitas").val(),
+                        informasi_kelas: $("#informasi_kelas").val(),
+                        status_ruangan: $("#status_ruangan").val(),
                         id: id
                     },
                     beforeSend: function () {
                         $("#loading-tambah-data").show();
                     },
                     success: function (response) {
-                        if (response.status === 1) {
+                        if (response.status === true) {
                             $.alert({
                                 title: 'Informasi',
                                 type: 'green',
@@ -194,12 +184,12 @@ jQuery.manajemen_ruangan = {
         // On Delete
         $("#table").on('click', 'button.btn-delete', function () {
             var id = $(this).data("id");
-            var nama_kurikulum = $(this).data('nama_kurikulum');
+            var ruang_perkuliahan = $(this).data('ruang_perkuliahan');
             $.confirm({
                 title: 'Konfirmasi !',
                 type: 'orange',
                 columnClass: 'medium',
-                content: 'Apakah anda yakin Menon-Aktifkan <b>' + nama_kurikulum + '</b> dari Kurikulum ?',
+                content: 'Apakah anda yakin ingin menghapus ruangan <b>' + ruang_perkuliahan + '</b> ?',
                 buttons: {
                     confirm: {
                         text: 'Yakin',
@@ -207,7 +197,7 @@ jQuery.manajemen_ruangan = {
                         keys: ['enter'],
                         action: function () {
                             $.ajax({
-                                url: '/adm-akademik/akademik/kurikulum/delete',
+                                url: '/adm-akademik/manajemen-ruangan/delete',
                                 method: 'POST',
                                 data: {
                                     id: id,
@@ -217,7 +207,7 @@ jQuery.manajemen_ruangan = {
                                     $("#detail-loading-spin-" + id).show();
                                 },
                                 success: function (response) {
-                                    if (response.status === 1) {
+                                    if (response.status === true) {
                                         $.alert({
                                             title: 'Informasi',
                                             type: 'green',

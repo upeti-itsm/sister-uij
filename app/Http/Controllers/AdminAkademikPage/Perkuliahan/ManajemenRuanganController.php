@@ -17,10 +17,6 @@ class ManajemenRuanganController extends Controller
 
     public function json(Request $request)
     {
-        // $request->validate([
-        //     'id' => 'required'
-        // ]);
-
         $length = $_REQUEST['length'];
         $start = $_REQUEST['start'];
         $search = $_REQUEST['search']["value"];
@@ -34,5 +30,43 @@ class ManajemenRuanganController extends Controller
         $data['data'] = $data_;
         $data['error'] = null;
         return response()->json($data, 200);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'ruang_perkuliahan' => 'required',
+            'kapasitas' => 'required',
+            'informasi_kelas' => 'required'
+        ]);
+
+        $status = ($request->status_ruangan == '1') ? true : false;
+
+        $data = ManajemenRuangan::insup_ruangan($request->ruang_perkuliahan, $request->kapasitas, $request->informasi_kelas, $status, 0);
+
+        return response()->json($data);
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'ruang_perkuliahan' => 'required',
+            'kapasitas' => 'required',
+            'informasi_kelas' => 'required',
+            'status_ruangan' => 'required',
+            'id' => 'required',
+        ]);
+        $data = ManajemenRuangan::insup_ruangan($request->ruang_perkuliahan, $request->kapasitas, $request->informasi_kelas, $request->status_ruangan, $request->id);
+        return response()->json($data);
+    }
+
+    public function delete(Request $request)
+    {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
+        $data = ManajemenRuangan::delete_ruangan($request->id);
+        return response()->json($data);
     }
 }

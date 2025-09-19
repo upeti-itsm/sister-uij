@@ -19,4 +19,22 @@ class ManajemenRuangan extends Model
             $length
         ]);
     }
+
+    public static function insup_ruangan($ruang_perkuliahan, $kapasitas, $informasi_kelas, $sts_aktif, $id_ruang_perkuliahan)
+    {
+        return DB::selectOne("SELECT * FROM akademik.insup_ruang_perkuliahan(?,?,?,?,?)", [
+            $ruang_perkuliahan,
+            $kapasitas,
+            $informasi_kelas,
+            $sts_aktif,
+            $id_ruang_perkuliahan
+        ]);
+    }
+
+    public static function delete_ruangan($id_ruang_perkuliahan)
+    {
+        return DB::selectOne("SELECT * FROM akademik.hapus_ruang_perkuliahan(?)", [
+            $id_ruang_perkuliahan
+        ]);
+    }
 }
