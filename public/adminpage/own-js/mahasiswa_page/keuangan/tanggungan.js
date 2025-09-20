@@ -195,7 +195,7 @@ jQuery.tanggungan_mahasiswa = {
                     data: null,
                     searchable: false,
                     sClass: 'text-right',
-                    width: "20%",
+                    width: "15%",
                     render: function (data) {
                         var html = "<strong>" + data.jumlah_bayar_fmt + "</strong>";
                         return html;
@@ -205,7 +205,7 @@ jQuery.tanggungan_mahasiswa = {
                     data: null,
                     searchable: false,
                     sClass: 'text-left',
-                    width: "30%",
+                    width: "25%",
                     render: function (data) {
                         var html = "<strong>" + data.metode_bayar + "</strong>";
                         if (data.nomor_referensi) {
@@ -218,11 +218,23 @@ jQuery.tanggungan_mahasiswa = {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "20%",
+                    width: "15%",
                     render: function (data) {
                         if (data.tgl_bayar) {
                             var date = new Date(data.tgl_bayar);
                             return "<strong>" + date.toLocaleDateString('id-ID') + "</strong> | <small>" + date.toLocaleTimeString('id-ID') + "</small>";
+                        }
+                        return '-';
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-center',
+                    width: "15%",
+                    render: function (data) {
+                        if (data.jenis_tanggungan) {
+                            return "<p>" + data.jenis_tanggungan + "</p>";
                         }
                         return '-';
                     }

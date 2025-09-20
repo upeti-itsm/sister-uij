@@ -97,4 +97,46 @@ class JadwalDosen extends Model
             $id_jadwal, $search, $offset, $limit
         ]);
     }
+
+    public static function insert_kriteria_penilaian($id_jadwal, $id_kriteria, $kriteria = NULL, $bobot = NULL)
+    {
+        return DB::selectOne("SELECT * FROM akademik.insert_kriteria_penilaian(?,?,?,?)", [
+            $id_jadwal, $id_kriteria, $kriteria, $bobot
+        ]);
+    }
+
+    public static function get_kriteria_penilaian($id_jadwal_kuliah)
+    {
+        return DB::select("SELECT *  FROM akademik.list_kriteria_penilaian_jadwal_kuliah(?)", [
+            $id_jadwal_kuliah
+        ]);
+    }
+
+    public static function get_list_mahasiswa_by_jadwal($id_jadwal)
+    {
+        return DB::select("SELECT * FROM akademik.get_list_mahasiswa_jadwal_kuliah(?)", [
+            $id_jadwal
+        ]);
+    }
+
+    public static function insup_nilai($id_kriteria_penilaian, $nim, $nilai)
+    {
+        return DB::selectOne("SELECT * FROM akademik.insup_nilai_matakuliah(?,?,?)", [
+            $id_kriteria_penilaian, $nim, $nilai
+        ]);
+    }
+
+    public static function get_kriteria($search = NULL, $offset = -1, $limit = 10)
+    {
+        return DB::select("SELECT * FROM akademik.get_daftar_kriteria_penilaian(?,?,?)", [
+            $search, $offset, $limit
+        ]);
+    }
+
+    public static function delete_kriteria($id_kriteria_penilaian)
+    {
+        return DB::selectOne("SELECT * FROM akademik.delete_kriteria_penilaian_matakuliah(?)", [
+            $id_kriteria_penilaian
+        ]);
+    }
 }
