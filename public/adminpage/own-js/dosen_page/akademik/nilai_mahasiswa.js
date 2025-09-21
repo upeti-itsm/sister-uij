@@ -1,17 +1,936 @@
-jQuery.daftar_matakuliah = {
+jQuery.nilai_mahasiswa = {
     data: {
         table: $("#table"),
+        isSaving: false,
+        unsavedChanges: new Set(),
+        originalValues: new Map()
     },
     init: function () {
         var self = this;
         self.setEvents();
+        self.initDataTable();
+        self.addSaveButton();
+        self.initOriginalValues();
+        self.initAutoSaveIndicator();
+        self.updateInputPlaceholders();
     },
     setEvents: function () {
         var self = this;
+
+        // Event untuk input nilai (hanya validasi real-time, tidak auto-save)
+        $(document).on('input', 'input[name^="nilai["]', function() {
+            var $input = $(this);
+            var nilai = $input.val();
+            var inputName = $input.attr('name');
+            var originalValue = self.data.originalValues.get(inputName);
+
+            // Track perubahan
+            if (nilai !== originalValue) {
+                self.trackUnsavedChange(inputName);
+            } else {
+                self.markAsSaved(inputName);
+            }
+
+            // Get criteria name for validation
+            var kriteriaName = self.getKriteriaName($input);
+
+            // Validasi real-time tanpa auto-save
+            var validation = self.validateNilai(nilai, kriteriaName);
+            if (!validation.valid && nilai !== '') {
+                $input.addClass('border-danger').removeClass('border-success border-warning');
+                return;
+            } else {
+                $input.removeClass('border-danger border-warning border-success');
+            }
+        });
+
+        // Event untuk simpan semua
+        $(document).on('click', '#btn-save-all', function() {
+            self.saveAllNilai();
+        });
+
+        // Event untuk reset semua nilai
+        $(document).on('click', '#btn-reset-all', function() {
+            self.resetAllNilai();
+        });
+
+        // Event untuk export nilai
+        $(document).on('click', '#btn-export-nilai', function() {
+            self.exportNilai();
+        });
+
+        // Event untuk refresh
+        $(document).on('click', '#btn-refresh', function() {
+            self.refreshPage();
+        });
+
+        // Keyboard shortcuts
+        $(document).on('keydown', function(e) {
+            // Ctrl+S untuk simpan semua
+            if (e.ctrlKey && e.which === 83) {
+                e.preventDefault();
+                if (!self.data.isSaving) {
+                    self.saveAllNilai();
+                }
+            }
+
+            // Ctrl+R untuk reset (dengan konfirmasi)
+            if (e.ctrlKey && e.which === 82) {
+                e.preventDefault();
+                self.resetAllNilai();
+            }
+        });
+
+        // Warn user about unsaved changes before leaving page
+        $(window).on('beforeunload', function(e) {
+            if (self.data.unsavedChanges.size > 0) {
+                var message = 'Anda memiliki ' + self.data.unsavedChanges.size + ' perubahan yang belum disimpan. Yakin ingin meninggalkan halaman?';
+                e.returnValue = message;
+                return message;
+            }
+        });
     },
+
+    initDataTable: function() {
+        // Initialize DataTable jika diperlukan
+        if (this.data.table.length > 0) {
+            this.data.table.DataTable({
+                "paging": false,
+                "searching": true,
+                "ordering": false,
+                "info": false,
+                "autoWidth": false,
+                "responsive": true,
+                "dom": 'rt', // Hide default search box and other elements
+                "language": {
+                    "search": "Cari:",
+                    "zeroRecords": "Tidak ada data yang ditemukan",
+                    "emptyTable": "Tidak ada data mahasiswa"
+                }
+            });
+        }
+    },
+
+    addSaveButton: function() {
+        // Tambahkan tombol-tombol aksi ke container yang sudah disediakan
+        const container = $('#action-buttons-container');
+        if (container.length && $('#btn-save-all').length === 0) {
+            var actionButtons = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="input-group input-group-sm" style="width: 250px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-right-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                        </div>
+                        <input type="text" id="custom-search" class="form-control border-left-0"
+                               placeholder="Cari mahasiswa..."
+                               style="font-size: 13px;">
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" id="btn-save-all" class="btn btn-success btn-sm" title="Simpan semua nilai (Ctrl+S)">
+                            <i class="fas fa-save mr-1"></i>Simpan Semua Nilai
+                        </button>
+                        <button type="button" id="btn-reset-all" class="btn btn-warning btn-sm" title="Reset semua nilai (Ctrl+R)">
+                            <i class="fas fa-eraser mr-1"></i>Reset
+                        </button>
+                        <button type="button" id="btn-export-nilai" class="btn btn-info btn-sm" title="Export ke Excel/CSV">
+                            <i class="fas fa-download mr-1"></i>Export
+                        </button>
+                        <button type="button" id="btn-refresh" class="btn btn-secondary btn-sm" title="Refresh halaman">
+                            <i class="fas fa-sync-alt mr-1"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.html(actionButtons);
+
+            // Connect custom search to DataTable
+            this.initCustomSearch();
+        }
+    },
+
+    // Initialize custom search functionality
+    initCustomSearch: function() {
+        var self = this;
+
+        // Connect custom search input to DataTable
+        $('#custom-search').on('keyup', function() {
+            if (self.data.table.length > 0) {
+                var table = self.data.table.DataTable();
+                table.search(this.value).draw();
+            }
+        });
+
+        // Clear search on Escape key
+        $('#custom-search').on('keydown', function(e) {
+            if (e.which === 27) { // Escape key
+                $(this).val('');
+                if (self.data.table.length > 0) {
+                    var table = self.data.table.DataTable();
+                    table.search('').draw();
+                }
+            }
+        });
+
+        // Add search counter
+        if (self.data.table.length > 0) {
+            var table = self.data.table.DataTable();
+
+            table.on('draw', function() {
+                var info = table.page.info();
+                var searchValue = $('#custom-search').val();
+
+                if (searchValue && searchValue.length > 0) {
+                    var searchInfo = info.recordsDisplay + ' dari ' + info.recordsTotal + ' mahasiswa';
+                    $('#custom-search').attr('title', 'Menampilkan ' + searchInfo);
+                } else {
+                    $('#custom-search').attr('title', 'Cari berdasarkan NIM atau nama mahasiswa');
+                }
+            });
+        }
+    },
+
+    // Simpan semua nilai sekaligus
+    saveAllNilai: function() {
+        var self = this;
+
+        if (self.data.isSaving) return;
+
+        var allData = {};
+        var hasData = false;
+        var invalidInputs = [];
+
+        // Kumpulkan semua nilai dan validasi
+        $('input[name^="nilai["]').each(function() {
+            var $input = $(this);
+            var name = $input.attr('name');
+            var nilai = $input.val();
+
+            if (nilai !== '') {
+                // Get criteria name for validation
+                var kriteriaName = self.getKriteriaNameFromInput($input);
+
+                // Validasi nilai
+                var validation = self.validateNilai(nilai, kriteriaName);
+                if (!validation.valid) {
+                    invalidInputs.push({
+                        input: $input,
+                        message: validation.message
+                    });
+                    return;
+                }
+
+                var matches = name.match(/nilai\[(.+?)\]\[(.+?)\]/);
+                if (matches) {
+                    var nim = matches[1];
+                    var kriteriaId = matches[2];
+
+                    if (!allData[nim]) {
+                        allData[nim] = {};
+                    }
+                    allData[nim][kriteriaId] = validation.value;
+                    hasData = true;
+                }
+            }
+        });
+
+        // Jika ada input yang tidak valid
+        if (invalidInputs.length > 0) {
+            var errorMessage = 'Terdapat ' + invalidInputs.length + ' nilai yang tidak valid:<br>';
+            invalidInputs.slice(0, 5).forEach(function(item) {
+                item.input.addClass('border-danger');
+                errorMessage += '• ' + item.message + '<br>';
+            });
+
+            if (invalidInputs.length > 5) {
+                errorMessage += '• ... dan ' + (invalidInputs.length - 5) + ' lainnya';
+            }
+
+            self.showMessage('error', errorMessage);
+
+            // Fokus ke input pertama yang error
+            invalidInputs[0].input.focus();
+
+            // Hapus border error setelah 5 detik
+            setTimeout(function() {
+                invalidInputs.forEach(function(item) {
+                    item.input.removeClass('border-danger');
+                });
+            }, 5000);
+
+            return;
+        }
+
+        if (!hasData) {
+            self.showMessage('warning', 'Tidak ada nilai yang akan disimpan');
+            return;
+        }
+
+        // Konfirmasi
+        $.confirm({
+            title: '<i class="fa fa-question-circle text-blue"></i> Konfirmasi Simpan',
+            content: 'Apakah Anda yakin ingin menyimpan semua nilai mahasiswa?<br><small class="text-muted">Total nilai yang akan disimpan: <strong>' + Object.keys(allData).length + ' mahasiswa</strong></small>',
+            type: 'blue',
+            theme: 'bootstrap',
+            closeIcon: true,
+            draggable: false,
+            backgroundDismiss: false,
+            buttons: {
+                ya: {
+                    text: '<i class="fa fa-save"></i> Ya, Simpan',
+                    btnClass: 'btn-blue',
+                    action: function() {
+                        self.processSaveAll(allData);
+                    }
+                },
+                batal: {
+                    text: '<i class="fa fa-times"></i> Batal',
+                    btnClass: 'btn-light',
+                    action: function() {
+                        // Tidak melakukan apa-apa, hanya menutup dialog
+                    }
+                }
+            }
+        });
+    },
+
+    processSaveAll: function(allData) {
+        var self = this;
+        self.data.isSaving = true;
+
+        var data = {
+            nilai_data: allData,
+            save_all: true,
+            _token: $('meta[name="csrf-token"]').attr('content') || $('input[name="_token"]').val()
+        };
+
+        // Loading dialog
+        var loadingDialog = $.dialog({
+            title: '<i class="fa fa-spinner fa-spin text-blue"></i> Menyimpan Data',
+            content: 'Sedang menyimpan semua nilai mahasiswa, mohon tunggu...',
+            type: 'blue',
+            theme: 'bootstrap',
+            closeIcon: false,
+            backgroundDismiss: false,
+            escapeKey: false,
+            buttons: false
+        });
+
+        // Visual feedback pada tombol
+        $('#btn-save-all').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i>Menyimpan...');
+
+        $.ajax({
+            url: '/dosen/akademik/nilai-matakuliah/store',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                loadingDialog.close();
+
+                if (response.success) {
+                    self.showMessage('success', response.message || 'Semua nilai berhasil disimpan');
+
+                    // Clear all unsaved changes
+                    self.data.unsavedChanges.clear();
+                    self.updateUnsavedCounter();
+                    self.initOriginalValues();
+
+                    // Update tampilan jika ada data response
+                    if (response.data && response.data.updated_students) {
+                        response.data.updated_students.forEach(function(student) {
+                            var $row = $('input[name="nilai[' + student.nim + '][' + Object.keys(allData[student.nim])[0] + ']"]').closest('tr');
+
+                            if (student.nilai_akhir !== undefined) {
+                                var colorClass = student.nilai_mutu < 2.0 ? 'text-danger' : 'text-success';
+                                var icon = student.nilai_mutu < 2.0 ? 'fa-arrow-down' : 'fa-arrow-up';
+                                $row.find('.nilai-akhir').html(
+                                    '<span class="' + colorClass + ' font-weight-bold">' +
+                                    '<i class="fas ' + icon + ' mr-1"></i>' + student.nilai_akhir + '</span>'
+                                );
+                            }
+
+                            if (student.nilai_mutu !== undefined) {
+                                var badgeClass = student.nilai_mutu < 2.0 ? 'badge-danger' : 'badge-success';
+                                var icon = student.nilai_mutu < 2.0 ? 'fa-times' : 'fa-check';
+                                $row.find('.nilai-mutu').html(
+                                    '<span class="badge ' + badgeClass + ' badge-lg">' +
+                                    '<i class="fas ' + icon + ' mr-1"></i>' + student.nilai_mutu + '</span>'
+                                );
+                            }
+
+                            if (student.nilai_huruf !== undefined) {
+                                var badgeClass = student.nilai_mutu < 2.0 ? 'badge-danger' : 'badge-success';
+                                $row.find('.nilai-huruf').html(
+                                    '<span class="badge ' + badgeClass + ' badge-lg">' + student.nilai_huruf + '</span>'
+                                );
+                            }
+                        });
+                    }
+
+                    // Update last save time
+                    if (typeof window.updateLastSave === 'function') {
+                        window.updateLastSave();
+                    }
+
+                    // Update summary count
+                    if (typeof window.updateSummaryCount === 'function') {
+                        setTimeout(window.updateSummaryCount, 500);
+                    }
+
+                } else {
+                    self.showMessage('error', response.message || 'Gagal menyimpan nilai');
+                }
+            },
+            error: function(xhr, status, error) {
+                loadingDialog.close();
+
+                var message = 'Terjadi kesalahan saat menyimpan nilai';
+                var detailError = '';
+
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                } else if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    // Validation errors
+                    var errors = [];
+                    Object.keys(xhr.responseJSON.errors).forEach(function(key) {
+                        errors.push(xhr.responseJSON.errors[key].join(', '));
+                    });
+                    detailError = '<br><small class="text-muted">Detail: ' + errors.join('; ') + '</small>';
+                } else if (xhr.status === 500) {
+                    detailError = '<br><small class="text-muted">Terjadi kesalahan server internal</small>';
+                } else if (xhr.status === 419) {
+                    message = 'Sesi telah berakhir, silakan refresh halaman';
+                    detailError = '<br><small class="text-muted">CSRF Token tidak valid</small>';
+                }
+
+                $.alert({
+                    title: '<i class="fa fa-times-circle text-red"></i> Gagal Menyimpan',
+                    content: message + detailError,
+                    type: 'red',
+                    theme: 'bootstrap',
+                    buttons: {
+                        ok: {
+                            text: 'OK',
+                            btnClass: 'btn-red'
+                        },
+                        refresh: {
+                            text: '<i class="fa fa-refresh"></i> Refresh',
+                            btnClass: 'btn-light',
+                            action: function() {
+                                if (xhr.status === 419) {
+                                    location.reload();
+                                }
+                            }
+                        }
+                    }
+                });
+            },
+            complete: function() {
+                self.data.isSaving = false;
+                $('#btn-save-all').prop('disabled', false).html('<i class="fas fa-save mr-1"></i>Simpan Semua Nilai');
+            }
+        });
+    },
+
+    // Reset semua nilai
+    resetAllNilai: function() {
+        var self = this;
+
+        $.confirm({
+            title: '<i class="fa fa-exclamation-triangle text-orange"></i> Konfirmasi Reset',
+            content: 'Apakah Anda yakin ingin menghapus semua nilai yang telah diinput?<br><small class="text-muted">Tindakan ini tidak dapat dibatalkan!</small>',
+            type: 'orange',
+            theme: 'bootstrap',
+            closeIcon: true,
+            draggable: false,
+            backgroundDismiss: false,
+            buttons: {
+                ya: {
+                    text: '<i class="fa fa-eraser"></i> Ya, Reset',
+                    btnClass: 'btn-warning',
+                    action: function() {
+                        $('input[name^="nilai["]').val('').removeClass('border-success border-danger border-warning');
+
+                        // Reset tracking system
+                        self.data.unsavedChanges.clear();
+                        self.updateUnsavedCounter();
+                        self.initOriginalValues();
+
+                        // Update summary
+                        if (typeof window.updateSummaryCount === 'function') {
+                            setTimeout(window.updateSummaryCount, 100);
+                        }
+
+                        self.showToast('success', 'Semua nilai berhasil direset');
+                    }
+                },
+                batal: {
+                    text: '<i class="fa fa-times"></i> Batal',
+                    btnClass: 'btn-light'
+                }
+            }
+        });
+    },
+
+    // Export nilai ke Excel
+    exportNilai: function() {
+        var self = this;
+
+        // Tampilkan modal export jika ada
+        if ($('#exportModal').length > 0) {
+            $('#exportModal').modal('show');
+
+            // Handle confirm export di modal
+            $('#btn-confirm-export').off('click').on('click', function() {
+                var format = $('input[name="export-format"]:checked').val();
+                $('#exportModal').modal('hide');
+                self.processExport(format);
+            });
+            return;
+        }
+
+        // Fallback jika tidak ada modal
+        self.processExport('csv');
+    },
+
+    // Proses export
+    processExport: function(format) {
+        var self = this;
+
+        // Kumpulkan data untuk export
+        var exportData = [];
+        var headers = ['No', 'NIM', 'Nama'];
+
+        // Ambil header kriteria
+        var kriteriaHeaders = [];
+        $('.table thead th').each(function(index) {
+            if (index > 2 && index < $('.table thead th').length - 3) {
+                kriteriaHeaders.push($(this).text().trim().replace(/\n/g, ' '));
+                headers.push($(this).text().trim().replace(/\n/g, ' '));
+            }
+        });
+        headers.push('Nilai Akhir', 'Nilai Mutu', 'Nilai Huruf');
+
+        // Kumpulkan data mahasiswa
+        $('.table tbody tr').each(function() {
+            var row = [];
+            var $tr = $(this);
+
+            // Skip jika row kosong atau bukan data mahasiswa
+            if ($tr.find('td').length < 3) return;
+
+            // No, NIM, Nama
+            row.push($tr.find('td:eq(0)').text().trim());
+            row.push($tr.find('td:eq(1)').text().trim());
+            row.push($tr.find('td:eq(2)').text().trim().replace(/\n/g, ' '));
+
+            // Nilai per kriteria
+            $tr.find('input[name^="nilai["]').each(function() {
+                row.push($(this).val() || '0');
+            });
+
+            // Nilai Akhir, Mutu, Huruf
+            row.push($tr.find('.nilai-akhir').text().trim().replace(/\n/g, ' '));
+            row.push($tr.find('.nilai-mutu').text().trim().replace(/\n/g, ' '));
+            row.push($tr.find('.nilai-huruf').text().trim().replace(/\n/g, ' '));
+
+            if (row.length > 3) { // Pastikan ada data
+                exportData.push(row);
+            }
+        });
+
+        if (exportData.length === 0) {
+            self.showMessage('warning', 'Tidak ada data untuk diekspor');
+            return;
+        }
+
+        if (format === 'excel') {
+            self.exportToExcel(headers, exportData);
+        } else {
+            self.exportToCSV(headers, exportData);
+        }
+    },
+
+    // Export ke CSV
+    exportToCSV: function(headers, data) {
+        var self = this;
+
+        var csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += headers.join(",") + "\n";
+
+        data.forEach(function(rowArray) {
+            var row = rowArray.map(function(field, index) {
+                var cleanField = field.toString().replace(/"/g, '""');
+
+                // Format NIM column (index 1) dengan prefix untuk Excel
+                if (index === 1) {
+                    return '="' + cleanField + '"'; // Force Excel to treat as text
+                }
+
+                return '"' + cleanField + '"';
+            }).join(",");
+            csvContent += row + "\n";
+        });
+
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "nilai_mahasiswa_" + new Date().toISOString().split('T')[0] + ".csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        self.showToast('success', 'File CSV berhasil didownload');
+    },
+
+    // Export ke Excel (menggunakan SheetJS jika tersedia)
+    exportToExcel: function(headers, data) {
+        var self = this;
+
+        // Check if XLSX is available
+        if (typeof XLSX === 'undefined') {
+            console.error('XLSX library not loaded');
+            self.showToast('error', 'Library Excel tidak tersedia, menggunakan CSV');
+            self.exportToCSV(headers, data);
+            return;
+        }
+
+        console.log('Creating Excel file...');
+
+        try {
+            var wb = XLSX.utils.book_new();
+
+            // Prepare data with proper formatting
+            var wsData = [headers];
+
+            // Process each row to ensure proper formatting
+            data.forEach(function(row) {
+                var processedRow = row.map(function(cell, index) {
+                    // Format NIM column (index 1) as text to prevent scientific notation
+                    if (index === 1) {
+                        return String(cell); // Ensure it's a string
+                    }
+                    return cell;
+                });
+                wsData.push(processedRow);
+            });
+
+            var ws = XLSX.utils.aoa_to_sheet(wsData);
+
+            // Set column widths
+            ws['!cols'] = [
+                {wch: 5},   // No
+                {wch: 15},  // NIM
+                {wch: 25},  // Nama
+                ...Array(headers.length - 6).fill({wch: 10}), // Kriteria columns
+                {wch: 12},  // Nilai Akhir
+                {wch: 12},  // Nilai Mutu
+                {wch: 8}    // Huruf
+            ];
+
+            // Style header row
+            var range = XLSX.utils.decode_range(ws['!ref']);
+            for (var C = range.s.c; C <= range.e.c; ++C) {
+                var address = XLSX.utils.encode_cell({r: 0, c: C});
+                if (!ws[address]) continue;
+                ws[address].s = {
+                    font: {bold: true, color: {rgb: "FFFFFF"}},
+                    fill: {fgColor: {rgb: "4472C4"}},
+                    alignment: {horizontal: "center", vertical: "center"}
+                };
+            }
+
+            // Format NIM column as text
+            for (var R = 1; R <= range.e.r; ++R) {
+                var nimAddress = XLSX.utils.encode_cell({r: R, c: 1});
+                if (ws[nimAddress]) {
+                    ws[nimAddress].t = 's'; // Set as string type
+                    ws[nimAddress].z = '@'; // Text format
+                }
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws, "Nilai Mahasiswa");
+
+            // Generate filename
+            var fileName = "nilai_mahasiswa_" + new Date().toISOString().split('T')[0] + ".xlsx";
+
+            console.log('Writing Excel file:', fileName);
+
+            // Write file with explicit Excel format
+            XLSX.writeFile(wb, fileName, {
+                bookType: 'xlsx',
+                type: 'array'
+            });
+
+            console.log('Excel file created successfully');
+            self.showToast('success', 'File Excel berhasil didownload');
+
+        } catch (error) {
+            console.error('Error creating Excel file:', error);
+            self.showToast('error', 'Gagal membuat file Excel: ' + error.message);
+            self.exportToCSV(headers, data);
+        }
+    },
+
+    // Refresh halaman
+    refreshPage: function() {
+        var self = this;
+
+        $.confirm({
+            title: '<i class="fa fa-sync-alt text-blue"></i> Refresh Halaman',
+            content: 'Apakah Anda yakin ingin me-refresh halaman?<br><small class="text-warning">Pastikan semua perubahan telah disimpan!</small>',
+            type: 'blue',
+            theme: 'bootstrap',
+            closeIcon: true,
+            backgroundDismiss: false,
+            buttons: {
+                ya: {
+                    text: '<i class="fa fa-sync-alt"></i> Ya, Refresh',
+                    btnClass: 'btn-primary',
+                    action: function() {
+                        location.reload();
+                    }
+                },
+                batal: {
+                    text: '<i class="fa fa-times"></i> Batal',
+                    btnClass: 'btn-light'
+                }
+            }
+        });
+    },
+
+    // Validasi input nilai dengan criteria-specific rules
+    validateNilai: function(nilai, kriteriaName) {
+        if (nilai === '' || nilai === null || nilai === undefined) {
+            return { valid: true, value: '' }; // Kosong diizinkan
+        }
+
+        var numValue = parseFloat(nilai);
+
+        if (isNaN(numValue)) {
+            return { valid: false, message: 'Nilai harus berupa angka' };
+        }
+
+        if (numValue < 0) {
+            return { valid: false, message: 'Nilai tidak boleh kurang dari 0' };
+        }
+
+        // Check if criteria is "Kehadiran" for different max range
+        var maxValue = 100; // default
+        var maxValueText = "100";
+
+        if (kriteriaName && kriteriaName.toLowerCase().includes('kehadiran')) {
+            maxValue = 16;
+            maxValueText = "16";
+        }
+
+        if (numValue > maxValue) {
+            return {
+                valid: false,
+                message: 'Nilai tidak boleh lebih dari ' + maxValueText + (kriteriaName && kriteriaName.toLowerCase().includes('kehadiran') ? ' (kehadiran)' : '')
+            };
+        }
+
+        return { valid: true, value: numValue };
+    },
+
+    // Get criteria name from input element
+    getKriteriaName: function($input) {
+        return this.getKriteriaNameFromInput($input);
+    },
+
+    // Helper function to get criteria name from input element
+    getKriteriaNameFromInput: function($input) {
+        try {
+            // Get column index of this input
+            var $td = $input.closest('td');
+            var columnIndex = $td.index();
+
+            // Get criteria name from table header
+            var $headerCell = $input.closest('table').find('thead th').eq(columnIndex);
+            var kriteriaText = $headerCell.text().trim();
+
+            // Extract criteria name (remove percentage info)
+            var kriteriaName = kriteriaText.replace(/\d+%/g, '').replace(/\n/g, ' ').trim();
+
+            return kriteriaName;
+        } catch (e) {
+            return '';
+        }
+    },
+
+    // Update input placeholders and titles based on criteria
+    updateInputPlaceholders: function() {
+        var self = this;
+
+        $('input[name^="nilai["]').each(function() {
+            var $input = $(this);
+            var kriteriaName = self.getKriteriaNameFromInput($input);
+
+            if (kriteriaName && kriteriaName.toLowerCase().includes('kehadiran')) {
+                $input.attr('placeholder', '0-16');
+                $input.attr('max', '16');
+                var currentTitle = $input.attr('title') || '';
+                var newTitle = currentTitle.replace(/0-100/g, '0-16 (kehadiran)');
+                $input.attr('title', newTitle);
+            } else {
+                $input.attr('placeholder', '0-100');
+                $input.attr('max', '100');
+            }
+        });
+    },
+
+    // Initialize original values untuk tracking changes
+    initOriginalValues: function() {
+        var self = this;
+        $('input[name^="nilai["]').each(function() {
+            var $input = $(this);
+            var key = $input.attr('name');
+            self.data.originalValues.set(key, $input.val());
+        });
+    },
+
+    // Initialize auto-save indicator
+    initAutoSaveIndicator: function() {
+        var self = this;
+
+        // Add auto-save status to page
+        if ($('#auto-save-status').length === 0) {
+            var statusHtml = `
+                <div id="auto-save-status" class="position-fixed" style="bottom: 20px; right: 20px; z-index: 1050;">
+                    <div class="card border-0 shadow-sm" style="display: none;">
+                        <div class="card-body p-2">
+                            <small class="text-muted">
+                                <i class="fas fa-save mr-1"></i>
+                                <span id="auto-save-text">Manual save mode</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('body').append(statusHtml);
+        }
+    },
+
+    // Track unsaved changes
+    trackUnsavedChange: function(inputName) {
+        var self = this;
+        self.data.unsavedChanges.add(inputName);
+        self.updateUnsavedCounter();
+    },
+
+    // Remove from unsaved changes
+    markAsSaved: function(inputName) {
+        var self = this;
+        self.data.unsavedChanges.delete(inputName);
+        self.updateUnsavedCounter();
+    },
+
+    // Update unsaved counter di UI
+    updateUnsavedCounter: function() {
+        var count = this.data.unsavedChanges.size;
+        var $counter = $('#unsaved-count');
+
+        if (count > 0) {
+            $counter.find('span').text(count);
+            $counter.show();
+        } else {
+            $counter.hide();
+        }
+    },
+
+    showMessage: function(type, message) {
+        var config = {
+            'success': {
+                title: 'Berhasil',
+                type: 'green',
+                icon: 'fa fa-check-circle'
+            },
+            'error': {
+                title: 'Error',
+                type: 'red',
+                icon: 'fa fa-times-circle'
+            },
+            'warning': {
+                title: 'Peringatan',
+                type: 'orange',
+                icon: 'fa fa-exclamation-triangle'
+            },
+            'info': {
+                title: 'Informasi',
+                type: 'blue',
+                icon: 'fa fa-info-circle'
+            }
+        };
+
+        var setting = config[type] || config['info'];
+
+        $.alert({
+            title: setting.title,
+            content: message,
+            type: setting.type,
+            icon: setting.icon,
+            theme: 'bootstrap',
+            closeIcon: true,
+            autoClose: 'ok|4000', // Auto close setelah 4 detik
+            buttons: {
+                ok: {
+                    text: 'OK',
+                    btnClass: 'btn-' + setting.type.replace('orange', 'warning')
+                }
+            }
+        });
+    },
+
+    // Toast notification untuk feedback ringan
+    showToast: function(type, message) {
+        var config = {
+            'success': {
+                title: 'Berhasil',
+                type: 'green',
+                icon: 'fa fa-check'
+            },
+            'error': {
+                title: 'Error',
+                type: 'red',
+                icon: 'fa fa-times'
+            },
+            'warning': {
+                title: 'Peringatan',
+                type: 'orange',
+                icon: 'fa fa-exclamation'
+            }
+        };
+
+        var setting = config[type] || config['success'];
+
+        // Hapus toast sebelumnya jika ada
+        if (window.currentToast) {
+            window.currentToast.close();
+        }
+
+        window.currentToast = $.dialog({
+            title: setting.title,
+            content: message,
+            type: setting.type,
+            icon: setting.icon,
+            theme: 'bootstrap',
+            closeIcon: false,
+            backgroundDismiss: true,
+            escapeKey: true,
+            animation: 'scale',
+            animationBounce: 1.2,
+            animationSpeed: 300,
+            columnClass: 'col-md-4 col-md-offset-8 col-sm-6 col-sm-offset-6 col-xs-10 col-xs-offset-1',
+            containerFluid: true,
+            buttons: false,
+            autoClose: type === 'success' ? 'close|2000' : 'close|3000'
+        });
+    }
 };
 
 // Initialize when document ready
 jQuery(document).ready(function () {
-    jQuery.daftar_matakuliah.init();
+    jQuery.nilai_mahasiswa.init();
 });

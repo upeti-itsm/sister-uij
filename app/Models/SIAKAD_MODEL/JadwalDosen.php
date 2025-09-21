@@ -121,9 +121,45 @@ class JadwalDosen extends Model
 
     public static function insup_nilai($id_kriteria_penilaian, $nim, $nilai)
     {
-        return DB::selectOne("SELECT * FROM akademik.insup_nilai_matakuliah(?,?,?)", [
-            $id_kriteria_penilaian, $nim, $nilai
-        ]);
+        // Validasi input
+        self::validateInputs($id_kriteria_penilaian, $nim, $nilai);
+
+        // Menggunakan Laravel's DB dengan raw expression yang lebih aman
+        return DB::selectOne(
+            "SELECT * FROM akademik.insup_nilai_matakuliah(?, ?, ?)",
+            [
+                (string) $id_kriteria_penilaian,
+                (string) $nim,
+                (string) $nilai
+            ]
+        );
+    }
+
+    private function validateInputs($kriteria, $nim, $nilai)
+    {
+        // Validasi bahwa input tidak mengandung karakter berbahaya
+        $dangerousChars = ["'", '"', ';', '--', '/*', '*/', 'DROP', 'DELETE', 'UPDATE', 'INSERT'];
+
+        foreach ([$kriteria, $nim, $nilai] as $input) {
+            foreach ($dangerousChars as $char) {
+                if (stripos($input, $char) !== false && $char !== ';' && $char !== ',') {
+                    throw new \InvalidArgumentException('Input mengandung karakter yang tidak diizinkan');
+                }
+            }
+        }
+
+        // Validasi format spesifik
+        if (!preg_match('/^[a-f0-9-,]+$/i', $kriteria)) {
+            throw new \InvalidArgumentException('Format kriteria tidak valid');
+        }
+
+        if (!preg_match('/^[0-9,]+$/', $nim)) {
+            throw new \InvalidArgumentException('Format NIM tidak valid');
+        }
+
+        if (!preg_match('/^[0-9.,;]+$/', $nilai)) {
+            throw new \InvalidArgumentException('Format nilai tidak valid');
+        }
     }
 
     public static function get_kriteria($search = NULL, $offset = -1, $limit = 10)
