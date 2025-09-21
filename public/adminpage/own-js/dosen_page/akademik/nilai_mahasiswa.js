@@ -17,12 +17,15 @@ jQuery.nilai_mahasiswa = {
     setEvents: function () {
         var self = this;
 
-        // Event untuk input nilai (hanya validasi real-time, tidak auto-save)
-        $(document).on('input', 'input[name^="nilai["]', function() {
+        // Event untuk input nilai dengan dukungan desimal
+        $(document).on('input', 'input[name^="nilai["]', function () {
             var $input = $(this);
             var nilai = $input.val();
             var inputName = $input.attr('name');
             var originalValue = self.data.originalValues.get(inputName);
+
+            // Allow decimal input dengan titik sebagai separator
+            self.handleDecimalInput($input);
 
             // Track perubahan
             if (nilai !== originalValue) {
@@ -38,34 +41,58 @@ jQuery.nilai_mahasiswa = {
             var validation = self.validateNilai(nilai, kriteriaName);
             if (!validation.valid && nilai !== '') {
                 $input.addClass('border-danger').removeClass('border-success border-warning');
+                self.showInputError($input, validation.message);
                 return;
             } else {
                 $input.removeClass('border-danger border-warning border-success');
+                self.hideInputError($input);
             }
         });
 
+        // Event untuk mencegah input karakter yang tidak valid
+        $(document).on('keydown', 'input[name^="nilai["]', function (e) {
+            self.handleKeyInput(e, $(this));
+        });
+
+        // Event untuk paste - validasi content yang di-paste
+        $(document).on('paste', 'input[name^="nilai["]', function (e) {
+            var $input = $(this);
+            setTimeout(function () {
+                self.handleDecimalInput($input);
+                var kriteriaName = self.getKriteriaName($input);
+                var validation = self.validateNilai($input.val(), kriteriaName);
+                if (!validation.valid && $input.val() !== '') {
+                    $input.addClass('border-danger');
+                    self.showInputError($input, validation.message);
+                } else {
+                    $input.removeClass('border-danger border-warning border-success');
+                    self.hideInputError($input);
+                }
+            }, 10);
+        });
+
         // Event untuk simpan semua
-        $(document).on('click', '#btn-save-all', function() {
+        $(document).on('click', '#btn-save-all', function () {
             self.saveAllNilai();
         });
 
         // Event untuk reset semua nilai
-        $(document).on('click', '#btn-reset-all', function() {
+        $(document).on('click', '#btn-reset-all', function () {
             self.resetAllNilai();
         });
 
         // Event untuk export nilai
-        $(document).on('click', '#btn-export-nilai', function() {
+        $(document).on('click', '#btn-export-nilai', function () {
             self.exportNilai();
         });
 
         // Event untuk refresh
-        $(document).on('click', '#btn-refresh', function() {
+        $(document).on('click', '#btn-refresh', function () {
             self.refreshPage();
         });
 
         // Keyboard shortcuts
-        $(document).on('keydown', function(e) {
+        $(document).on('keydown', function (e) {
             // Ctrl+S untuk simpan semua
             if (e.ctrlKey && e.which === 83) {
                 e.preventDefault();
@@ -82,7 +109,7 @@ jQuery.nilai_mahasiswa = {
         });
 
         // Warn user about unsaved changes before leaving page
-        $(window).on('beforeunload', function(e) {
+        $(window).on('beforeunload', function (e) {
             if (self.data.unsavedChanges.size > 0) {
                 var message = 'Anda memiliki ' + self.data.unsavedChanges.size + ' perubahan yang belum disimpan. Yakin ingin meninggalkan halaman?';
                 e.returnValue = message;
@@ -91,7 +118,82 @@ jQuery.nilai_mahasiswa = {
         });
     },
 
-    initDataTable: function() {
+    // Handle decimal input validation and formatting
+    handleDecimalInput: function ($input) {
+        var value = $input.val();
+
+        // Remove any characters that aren't numbers or decimal point
+        var cleanValue = value.replace(/[^0-9.]/g, '');
+
+        // Ensure only one decimal point
+        var parts = cleanValue.split('.');
+        if (parts.length > 2) {
+            cleanValue = parts[0] + '.' + parts.slice(1).join('');
+        }
+
+        // Update input value if it was cleaned
+        if (value !== cleanValue) {
+            $input.val(cleanValue);
+        }
+    },
+
+    // Handle keyboard input for decimal support
+    handleKeyInput: function (e, $input) {
+        var key = e.which || e.keyCode;
+        var value = $input.val();
+
+        // Allow: backspace, delete, tab, escape, enter
+        if ($.inArray(key, [46, 8, 9, 27, 13]) !== -1 ||
+            // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+Z
+            (key === 65 && e.ctrlKey === true) ||
+            (key === 67 && e.ctrlKey === true) ||
+            (key === 86 && e.ctrlKey === true) ||
+            (key === 88 && e.ctrlKey === true) ||
+            (key === 90 && e.ctrlKey === true) ||
+            // Allow: home, end, left, right, down, up
+            (key >= 35 && key <= 40)) {
+            return;
+        }
+
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (key < 48 || key > 57)) && (key < 96 || key > 105)) {
+            // Allow decimal point (period key 190, numpad period 110)
+            if (key === 190 || key === 110) {
+                // Only allow one decimal point
+                if (value.indexOf('.') !== -1) {
+                    e.preventDefault();
+                }
+                return;
+            }
+            e.preventDefault();
+        }
+    },
+
+    // Show input error tooltip
+    showInputError: function ($input, message) {
+        // Remove existing error tooltip
+        this.hideInputError($input);
+
+        // Add error tooltip
+        $input.attr('data-error', message)
+            .attr('title', message)
+            .tooltip('dispose')
+            .tooltip({
+                title: message,
+                placement: 'top',
+                trigger: 'manual'
+            })
+            .tooltip('show');
+    },
+
+    // Hide input error tooltip
+    hideInputError: function ($input) {
+        $input.removeAttr('data-error')
+            .removeAttr('title')
+            .tooltip('dispose');
+    },
+
+    initDataTable: function () {
         // Initialize DataTable jika diperlukan
         if (this.data.table.length > 0) {
             this.data.table.DataTable({
@@ -111,7 +213,7 @@ jQuery.nilai_mahasiswa = {
         }
     },
 
-    addSaveButton: function() {
+    addSaveButton: function () {
         // Tambahkan tombol-tombol aksi ke container yang sudah disediakan
         const container = $('#action-buttons-container');
         if (container.length && $('#btn-save-all').length === 0) {
@@ -151,11 +253,11 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Initialize custom search functionality
-    initCustomSearch: function() {
+    initCustomSearch: function () {
         var self = this;
 
         // Connect custom search input to DataTable
-        $('#custom-search').on('keyup', function() {
+        $('#custom-search').on('keyup', function () {
             if (self.data.table.length > 0) {
                 var table = self.data.table.DataTable();
                 table.search(this.value).draw();
@@ -163,7 +265,7 @@ jQuery.nilai_mahasiswa = {
         });
 
         // Clear search on Escape key
-        $('#custom-search').on('keydown', function(e) {
+        $('#custom-search').on('keydown', function (e) {
             if (e.which === 27) { // Escape key
                 $(this).val('');
                 if (self.data.table.length > 0) {
@@ -177,7 +279,7 @@ jQuery.nilai_mahasiswa = {
         if (self.data.table.length > 0) {
             var table = self.data.table.DataTable();
 
-            table.on('draw', function() {
+            table.on('draw', function () {
                 var info = table.page.info();
                 var searchValue = $('#custom-search').val();
 
@@ -192,7 +294,7 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Simpan semua nilai sekaligus
-    saveAllNilai: function() {
+    saveAllNilai: function () {
         var self = this;
 
         if (self.data.isSaving) return;
@@ -202,7 +304,7 @@ jQuery.nilai_mahasiswa = {
         var invalidInputs = [];
 
         // Kumpulkan semua nilai dan validasi
-        $('input[name^="nilai["]').each(function() {
+        $('input[name^="nilai["]').each(function () {
             var $input = $(this);
             var name = $input.attr('name');
             var nilai = $input.val();
@@ -238,7 +340,7 @@ jQuery.nilai_mahasiswa = {
         // Jika ada input yang tidak valid
         if (invalidInputs.length > 0) {
             var errorMessage = 'Terdapat ' + invalidInputs.length + ' nilai yang tidak valid:<br>';
-            invalidInputs.slice(0, 5).forEach(function(item) {
+            invalidInputs.slice(0, 5).forEach(function (item) {
                 item.input.addClass('border-danger');
                 errorMessage += '• ' + item.message + '<br>';
             });
@@ -253,8 +355,8 @@ jQuery.nilai_mahasiswa = {
             invalidInputs[0].input.focus();
 
             // Hapus border error setelah 5 detik
-            setTimeout(function() {
-                invalidInputs.forEach(function(item) {
+            setTimeout(function () {
+                invalidInputs.forEach(function (item) {
                     item.input.removeClass('border-danger');
                 });
             }, 5000);
@@ -280,14 +382,14 @@ jQuery.nilai_mahasiswa = {
                 ya: {
                     text: '<i class="fa fa-save"></i> Ya, Simpan',
                     btnClass: 'btn-blue',
-                    action: function() {
+                    action: function () {
                         self.processSaveAll(allData);
                     }
                 },
                 batal: {
                     text: '<i class="fa fa-times"></i> Batal',
                     btnClass: 'btn-light',
-                    action: function() {
+                    action: function () {
                         // Tidak melakukan apa-apa, hanya menutup dialog
                     }
                 }
@@ -295,7 +397,7 @@ jQuery.nilai_mahasiswa = {
         });
     },
 
-    processSaveAll: function(allData) {
+    processSaveAll: function (allData) {
         var self = this;
         self.data.isSaving = true;
 
@@ -325,12 +427,10 @@ jQuery.nilai_mahasiswa = {
             type: 'POST',
             data: data,
             dataType: 'json',
-            success: function(response) {
+            success: function (response) {
                 loadingDialog.close();
 
                 if (response.success) {
-                    self.showMessage('success', response.message || 'Semua nilai berhasil disimpan');
-
                     // Clear all unsaved changes
                     self.data.unsavedChanges.clear();
                     self.updateUnsavedCounter();
@@ -338,7 +438,7 @@ jQuery.nilai_mahasiswa = {
 
                     // Update tampilan jika ada data response
                     if (response.data && response.data.updated_students) {
-                        response.data.updated_students.forEach(function(student) {
+                        response.data.updated_students.forEach(function (student) {
                             var $row = $('input[name="nilai[' + student.nim + '][' + Object.keys(allData[student.nim])[0] + ']"]').closest('tr');
 
                             if (student.nilai_akhir !== undefined) {
@@ -378,11 +478,14 @@ jQuery.nilai_mahasiswa = {
                         setTimeout(window.updateSummaryCount, 500);
                     }
 
+                    // Show success message dengan auto reload
+                    self.showMessage('success', response.message || 'Semua nilai berhasil disimpan', true);
+
                 } else {
                     self.showMessage('error', response.message || 'Gagal menyimpan nilai');
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 loadingDialog.close();
 
                 var message = 'Terjadi kesalahan saat menyimpan nilai';
@@ -393,7 +496,7 @@ jQuery.nilai_mahasiswa = {
                 } else if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                     // Validation errors
                     var errors = [];
-                    Object.keys(xhr.responseJSON.errors).forEach(function(key) {
+                    Object.keys(xhr.responseJSON.errors).forEach(function (key) {
                         errors.push(xhr.responseJSON.errors[key].join(', '));
                     });
                     detailError = '<br><small class="text-muted">Detail: ' + errors.join('; ') + '</small>';
@@ -417,7 +520,7 @@ jQuery.nilai_mahasiswa = {
                         refresh: {
                             text: '<i class="fa fa-refresh"></i> Refresh',
                             btnClass: 'btn-light',
-                            action: function() {
+                            action: function () {
                                 if (xhr.status === 419) {
                                     location.reload();
                                 }
@@ -426,7 +529,7 @@ jQuery.nilai_mahasiswa = {
                     }
                 });
             },
-            complete: function() {
+            complete: function () {
                 self.data.isSaving = false;
                 $('#btn-save-all').prop('disabled', false).html('<i class="fas fa-save mr-1"></i>Simpan Semua Nilai');
             }
@@ -434,7 +537,7 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Reset semua nilai
-    resetAllNilai: function() {
+    resetAllNilai: function () {
         var self = this;
 
         $.confirm({
@@ -449,8 +552,13 @@ jQuery.nilai_mahasiswa = {
                 ya: {
                     text: '<i class="fa fa-eraser"></i> Ya, Reset',
                     btnClass: 'btn-warning',
-                    action: function() {
+                    action: function () {
                         $('input[name^="nilai["]').val('').removeClass('border-success border-danger border-warning');
+
+                        // Clear error tooltips
+                        $('input[name^="nilai["]').each(function () {
+                            self.hideInputError($(this));
+                        });
 
                         // Reset tracking system
                         self.data.unsavedChanges.clear();
@@ -474,7 +582,7 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Export nilai ke Excel
-    exportNilai: function() {
+    exportNilai: function () {
         var self = this;
 
         // Tampilkan modal export jika ada
@@ -482,7 +590,7 @@ jQuery.nilai_mahasiswa = {
             $('#exportModal').modal('show');
 
             // Handle confirm export di modal
-            $('#btn-confirm-export').off('click').on('click', function() {
+            $('#btn-confirm-export').off('click').on('click', function () {
                 var format = $('input[name="export-format"]:checked').val();
                 $('#exportModal').modal('hide');
                 self.processExport(format);
@@ -495,7 +603,7 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Proses export
-    processExport: function(format) {
+    processExport: function (format) {
         var self = this;
 
         // Kumpulkan data untuk export
@@ -504,7 +612,7 @@ jQuery.nilai_mahasiswa = {
 
         // Ambil header kriteria
         var kriteriaHeaders = [];
-        $('.table thead th').each(function(index) {
+        $('.table thead th').each(function (index) {
             if (index > 2 && index < $('.table thead th').length - 3) {
                 kriteriaHeaders.push($(this).text().trim().replace(/\n/g, ' '));
                 headers.push($(this).text().trim().replace(/\n/g, ' '));
@@ -513,7 +621,7 @@ jQuery.nilai_mahasiswa = {
         headers.push('Nilai Akhir', 'Nilai Mutu', 'Nilai Huruf');
 
         // Kumpulkan data mahasiswa
-        $('.table tbody tr').each(function() {
+        $('.table tbody tr').each(function () {
             var row = [];
             var $tr = $(this);
 
@@ -526,8 +634,13 @@ jQuery.nilai_mahasiswa = {
             row.push($tr.find('td:eq(2)').text().trim().replace(/\n/g, ' '));
 
             // Nilai per kriteria
-            $tr.find('input[name^="nilai["]').each(function() {
-                row.push($(this).val() || '0');
+            $tr.find('input[name^="nilai["]').each(function () {
+                var nilai = $(this).val() || '0';
+                // Ensure decimal values are properly formatted for export
+                if (nilai && nilai !== '0' && !isNaN(parseFloat(nilai))) {
+                    nilai = parseFloat(nilai).toString();
+                }
+                row.push(nilai);
             });
 
             // Nilai Akhir, Mutu, Huruf
@@ -553,14 +666,14 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Export ke CSV
-    exportToCSV: function(headers, data) {
+    exportToCSV: function (headers, data) {
         var self = this;
 
         var csvContent = "data:text/csv;charset=utf-8,";
         csvContent += headers.join(",") + "\n";
 
-        data.forEach(function(rowArray) {
-            var row = rowArray.map(function(field, index) {
+        data.forEach(function (rowArray) {
+            var row = rowArray.map(function (field, index) {
                 var cleanField = field.toString().replace(/"/g, '""');
 
                 // Format NIM column (index 1) dengan prefix untuk Excel
@@ -585,7 +698,7 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Export ke Excel (menggunakan SheetJS jika tersedia)
-    exportToExcel: function(headers, data) {
+    exportToExcel: function (headers, data) {
         var self = this;
 
         // Check if XLSX is available
@@ -605,11 +718,18 @@ jQuery.nilai_mahasiswa = {
             var wsData = [headers];
 
             // Process each row to ensure proper formatting
-            data.forEach(function(row) {
-                var processedRow = row.map(function(cell, index) {
+            data.forEach(function (row) {
+                var processedRow = row.map(function (cell, index) {
                     // Format NIM column (index 1) as text to prevent scientific notation
                     if (index === 1) {
                         return String(cell); // Ensure it's a string
+                    }
+                    // Handle decimal values properly
+                    if (index > 2 && index < row.length - 3) {
+                        var numVal = parseFloat(cell);
+                        if (!isNaN(numVal)) {
+                            return numVal;
+                        }
                     }
                     return cell;
                 });
@@ -674,7 +794,7 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Refresh halaman
-    refreshPage: function() {
+    refreshPage: function () {
         var self = this;
 
         $.confirm({
@@ -688,7 +808,8 @@ jQuery.nilai_mahasiswa = {
                 ya: {
                     text: '<i class="fa fa-sync-alt"></i> Ya, Refresh',
                     btnClass: 'btn-primary',
-                    action: function() {
+                    action: function () {
+                        self.showReloadAnimation();
                         location.reload();
                     }
                 },
@@ -700,20 +821,34 @@ jQuery.nilai_mahasiswa = {
         });
     },
 
-    // Validasi input nilai dengan criteria-specific rules
-    validateNilai: function(nilai, kriteriaName) {
+    // Enhanced validation with decimal support
+    validateNilai: function (nilai, kriteriaName) {
         if (nilai === '' || nilai === null || nilai === undefined) {
-            return { valid: true, value: '' }; // Kosong diizinkan
+            return {valid: true, value: ''}; // Kosong diizinkan
+        }
+
+        // Trim whitespace
+        nilai = nilai.toString().trim();
+
+        // Check for invalid decimal format
+        if (nilai.indexOf('.') !== -1) {
+            var parts = nilai.split('.');
+            if (parts.length > 2) {
+                return {valid: false, message: 'Format desimal tidak valid (terlalu banyak titik)'};
+            }
+            if (parts[1] && parts[1].length > 2) {
+                return {valid: false, message: 'Maksimal 2 digit setelah koma'};
+            }
         }
 
         var numValue = parseFloat(nilai);
 
         if (isNaN(numValue)) {
-            return { valid: false, message: 'Nilai harus berupa angka' };
+            return {valid: false, message: 'Nilai harus berupa angka (gunakan titik untuk desimal)'};
         }
 
         if (numValue < 0) {
-            return { valid: false, message: 'Nilai tidak boleh kurang dari 0' };
+            return {valid: false, message: 'Nilai tidak boleh kurang dari 0'};
         }
 
         // Check if criteria is "Kehadiran" for different max range
@@ -732,16 +867,19 @@ jQuery.nilai_mahasiswa = {
             };
         }
 
-        return { valid: true, value: numValue };
+        // Round to 2 decimal places
+        var roundedValue = Math.round(numValue * 100) / 100;
+
+        return {valid: true, value: roundedValue};
     },
 
     // Get criteria name from input element
-    getKriteriaName: function($input) {
+    getKriteriaName: function ($input) {
         return this.getKriteriaNameFromInput($input);
     },
 
     // Helper function to get criteria name from input element
-    getKriteriaNameFromInput: function($input) {
+    getKriteriaNameFromInput: function ($input) {
         try {
             // Get column index of this input
             var $td = $input.closest('td');
@@ -760,31 +898,36 @@ jQuery.nilai_mahasiswa = {
         }
     },
 
-    // Update input placeholders and titles based on criteria
-    updateInputPlaceholders: function() {
+    // Update input placeholders and titles based on criteria with decimal support
+    updateInputPlaceholders: function () {
         var self = this;
 
-        $('input[name^="nilai["]').each(function() {
+        $('input[name^="nilai["]').each(function () {
             var $input = $(this);
             var kriteriaName = self.getKriteriaNameFromInput($input);
 
+            // Set input attributes for decimal support
+            $input.attr('type', 'text')
+                .attr('inputmode', 'decimal')
+                .attr('pattern', '[0-9]*[.]?[0-9]*')
+                .attr('step', '0.01');
+
             if (kriteriaName && kriteriaName.toLowerCase().includes('kehadiran')) {
-                $input.attr('placeholder', '0-16');
-                $input.attr('max', '16');
-                var currentTitle = $input.attr('title') || '';
-                var newTitle = currentTitle.replace(/0-100/g, '0-16 (kehadiran)');
-                $input.attr('title', newTitle);
+                $input.attr('placeholder', '0-16 (contoh: 15.5)')
+                    .attr('max', '16')
+                    .attr('title', 'Masukkan nilai kehadiran 0-16 (gunakan titik untuk desimal, contoh: 15.5)');
             } else {
-                $input.attr('placeholder', '0-100');
-                $input.attr('max', '100');
+                $input.attr('placeholder', '0-100 (contoh: 85.75)')
+                    .attr('max', '100')
+                    .attr('title', 'Masukkan nilai 0-100 (gunakan titik untuk desimal, contoh: 85.75)');
             }
         });
     },
 
     // Initialize original values untuk tracking changes
-    initOriginalValues: function() {
+    initOriginalValues: function () {
         var self = this;
-        $('input[name^="nilai["]').each(function() {
+        $('input[name^="nilai["]').each(function () {
             var $input = $(this);
             var key = $input.attr('name');
             self.data.originalValues.set(key, $input.val());
@@ -792,7 +935,7 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Initialize auto-save indicator
-    initAutoSaveIndicator: function() {
+    initAutoSaveIndicator: function () {
         var self = this;
 
         // Add auto-save status to page
@@ -814,21 +957,21 @@ jQuery.nilai_mahasiswa = {
     },
 
     // Track unsaved changes
-    trackUnsavedChange: function(inputName) {
+    trackUnsavedChange: function (inputName) {
         var self = this;
         self.data.unsavedChanges.add(inputName);
         self.updateUnsavedCounter();
     },
 
     // Remove from unsaved changes
-    markAsSaved: function(inputName) {
+    markAsSaved: function (inputName) {
         var self = this;
         self.data.unsavedChanges.delete(inputName);
         self.updateUnsavedCounter();
     },
 
     // Update unsaved counter di UI
-    updateUnsavedCounter: function() {
+    updateUnsavedCounter: function () {
         var count = this.data.unsavedChanges.size;
         var $counter = $('#unsaved-count');
 
@@ -840,7 +983,9 @@ jQuery.nilai_mahasiswa = {
         }
     },
 
-    showMessage: function(type, message) {
+    // Updated showMessage function with auto reload capability and loading animation
+    showMessage: function (type, message, autoReload) {
+        var self = this;
         var config = {
             'success': {
                 title: 'Berhasil',
@@ -873,18 +1018,135 @@ jQuery.nilai_mahasiswa = {
             icon: setting.icon,
             theme: 'bootstrap',
             closeIcon: true,
-            autoClose: 'ok|4000', // Auto close setelah 4 detik
+            // Removed autoClose to eliminate countdown timer
             buttons: {
                 ok: {
                     text: 'OK',
-                    btnClass: 'btn-' + setting.type.replace('orange', 'warning')
+                    btnClass: 'btn-' + setting.type.replace('orange', 'warning'),
+                    action: function () {
+                        if (autoReload) {
+                            self.showReloadAnimation();
+                            location.reload();
+                        }
+                    }
                 }
             }
         });
     },
 
+    // Show reload animation overlay
+    showReloadAnimation: function () {
+        // Remove existing overlay if any
+        $('#reload-overlay').remove();
+
+        var overlayHtml = `
+            <div id="reload-overlay" class="position-fixed w-100 h-100" style="top: 0; left: 0; z-index: 9999; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(3px);">
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="text-center">
+                        <!-- Spinner Animation -->
+                        <div class="reload-spinner mb-4">
+                            <div class="spinner-border text-success" role="status" style="width: 4rem; height: 4rem; border-width: 4px;">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <div class="reload-pulse"></div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="progress mb-3" style="width: 300px; height: 8px; border-radius: 10px;">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                                 role="progressbar" style="width: 0%; transition: width 2.5s ease-in-out;">
+                            </div>
+                        </div>
+
+                        <!-- Loading Text -->
+                        <h5 class="text-success font-weight-bold mb-2">
+                            <i class="fas fa-sync-alt fa-spin mr-2"></i>
+                            Memuat Ulang Halaman
+                        </h5>
+                        <p class="text-muted mb-0">
+                            Mengambil data terbaru dari server...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .reload-spinner {
+                    position: relative;
+                    display: inline-block;
+                }
+
+                .reload-pulse {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 6rem;
+                    height: 6rem;
+                    border: 2px solid #28a745;
+                    border-radius: 50%;
+                    opacity: 0;
+                    animation: pulse-reload 2s infinite;
+                }
+
+                @keyframes pulse-reload {
+                    0% {
+                        transform: translate(-50%, -50%) scale(0.8);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate(-50%, -50%) scale(1.5);
+                        opacity: 0;
+                    }
+                }
+
+                .reload-spinner .spinner-border {
+                    animation-duration: 0.8s;
+                }
+
+                #reload-overlay {
+                    animation: fadeInOverlay 0.3s ease-in-out;
+                }
+
+                @keyframes fadeInOverlay {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+
+                .progress {
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    background-color: #e9ecef;
+                }
+
+                .progress-bar {
+                    background: linear-gradient(90deg, #28a745, #20c997, #28a745);
+                    background-size: 200% 100%;
+                    animation: shimmer 1.5s infinite;
+                }
+
+                @keyframes shimmer {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
+                }
+            </style>
+        `;
+
+        $('body').append(overlayHtml);
+
+        // Animate progress bar
+        setTimeout(function () {
+            $('#reload-overlay .progress-bar').css('width', '100%');
+        }, 100);
+    },
+
     // Toast notification untuk feedback ringan
-    showToast: function(type, message) {
+    showToast: function (type, message) {
         var config = {
             'success': {
                 title: 'Berhasil',

@@ -195,11 +195,23 @@
             </div>
         </div>
         <div class="row mb-3">
-            {{-- Card Petunjuk Penggunaan --}}
+            {{-- Card Petunjuk Penggunaan dengan Status Online --}}
             <div class="col-md-8 mb-3">
                 <div class="card border-0 shadow-sm rounded-lg">
                     <div class="card-header bg-info text-white font-weight-bold">
-                        <i class="fas fa-info-circle mr-2"></i> Petunjuk Penggunaan
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-info-circle mr-2"></i> Petunjuk Penggunaan
+                            </div>
+                            <div class="d-flex align-items-center">
+                    <span class="badge badge-light mr-2" id="connection-status">
+                        <i class="fas fa-wifi mr-1"></i> Online
+                    </span>
+                                <small class="text-white-50" style="display: none">
+                                    <span id="last-save">Belum ada perubahan</span>
+                                </small>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <ul class="mb-0 pl-3">
@@ -207,12 +219,13 @@
                             <li>Gunakan <kbd>Ctrl+S</kbd> untuk menyimpan semua nilai sekaligus</li>
                             <li>Gunakan <kbd>Ctrl+R</kbd> untuk reset semua nilai</li>
                             <li>Range nilai: <span class="text-primary font-weight-bold">0 - 100</span></li>
+                            <li>Gunakan tanda titik <kbd>.</kbd> sebagai pemisah desimal</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            {{-- Card Informasi Mata Kuliah --}}
+            {{-- Card Informasi Mata Kuliah (tanpa status online) --}}
             <div class="col-md-4 mb-3">
                 @if(isset($mahasiswa[0]))
                     <div class="card border-0 shadow-sm rounded-lg">
@@ -226,9 +239,9 @@
                                         {{ $mahasiswa[0]->mk ?? 'Mata Kuliah' }}
                                     </h5>
                                     <div class="d-flex align-items-center">
-                                <span class="badge badge-info mr-2">
-                                    {{ $mahasiswa[0]->kd_mk ?? '-' }}
-                                </span>
+                            <span class="badge badge-info mr-2">
+                                {{ $mahasiswa[0]->kd_mk ?? '-' }}
+                            </span>
                                         <small class="text-muted">
                                             {{ $mahasiswa[0]->program_studi ?? 'Program Studi' }}
                                         </small>
@@ -253,16 +266,6 @@
                         </div>
                     </div>
                 @endif
-                <div class="card border-0 shadow-sm rounded-lg mt-2">
-                    <div class="card-body p-2">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="badge badge-success" id="connection-status"><i class="fas fa-wifi mr-1"></i> Online </span>
-                            <small class="text-muted">
-                                <span id="last-save">Belum ada perubahan</span>
-                            </small>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         @php
@@ -417,27 +420,23 @@
                 @if(count($mahasiswa) > 0)
                     <div class="card-footer bg-light border-top">
                         <div class="row text-center">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="border-right">
                                     <h6 class="mb-1 text-primary">{{ count($mahasiswa) }}</h6>
                                     <small class="text-muted">Total Mahasiswa</small>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="border-right">
                                     <h6 class="mb-1 text-success" id="lulus-count">-</h6>
                                     <small class="text-muted">Lulus (≥2.0)</small>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="border-right">
                                     <h6 class="mb-1 text-danger" id="tidak-lulus-count">-</h6>
                                     <small class="text-muted">Tidak Lulus (<2.0)</small>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <h6 class="mb-1 text-warning" id="belum-nilai-count">{{ count($mahasiswa) }}</h6>
-                                <small class="text-muted">Belum Dinilai</small>
                             </div>
                         </div>
                     </div>
@@ -515,7 +514,7 @@
             const statusEl = document.getElementById('connection-status');
             if (navigator.onLine) {
                 statusEl.innerHTML = '<i class="fas fa-wifi mr-1"></i>Online';
-                statusEl.className = 'badge badge-success';
+                statusEl.className = 'badge badge-light';
             } else {
                 statusEl.innerHTML = '<i class="fas fa-wifi-slash mr-1"></i>Offline';
                 statusEl.className = 'badge badge-danger';
@@ -549,7 +548,6 @@
 
             $('#lulus-count').text(lulusCount);
             $('#tidak-lulus-count').text(tidakLulusCount);
-            $('#belum-nilai-count').text(belumNilaiCount);
         }
 
         // Monitor events

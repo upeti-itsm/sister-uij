@@ -32,7 +32,7 @@ jQuery.matakuliah = {
             ordering: false,
             autoWidth: false,
             scrollX: true,
-            searching: false, // Disable built-in search
+            searching: true, // Disable built-in search
             dom: 'ltipr', // Remove 'f' (filter/search) from DOM
             ajax: {
                 url: '/adm-akadmik/perkuliahan/matakuliah/json',

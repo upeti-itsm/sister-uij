@@ -135,7 +135,7 @@ class JadwalDosen extends Model
         );
     }
 
-    private function validateInputs($kriteria, $nim, $nilai)
+    private static function validateInputs($kriteria, $nim, $nilai)
     {
         // Validasi bahwa input tidak mengandung karakter berbahaya
         $dangerousChars = ["'", '"', ';', '--', '/*', '*/', 'DROP', 'DELETE', 'UPDATE', 'INSERT'];
