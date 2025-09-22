@@ -173,6 +173,13 @@ Route::post('/adm-akademik/perkuliahan/jenis-pengajaran/store', [\App\Http\Contr
 Route::post('/adm-akademik/perkuliahan/jenis-pengajaran/update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisPengajaranCont::class, 'update'])->name('jenis_pengajaran.update')->middleware('modul:Pengelolaan Jenis Pengajaran');
 Route::post('/adm-akademik/perkuliahan/jenis-pengajaran/delete', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisPengajaranCont::class, 'delete'])->name('jenis_pengajaran.delete')->middleware('modul:Pengelolaan Jenis Pengajaran');
 
+// Jenis Tagihan
+Route::get('/adm-akademik/perkuliahan/jenis-tagihan', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'index'])->name('jenis_tagihan.index')->middleware('modul:Pengelolaan Jenis Tagihan');
+Route::post('/adm-akademik/perkuliahan/jenis-tagihan/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'json'])->name('jenis_tagihan.json')->middleware('modul:Pengelolaan Jenis Tagihan');
+Route::post('/adm-akademik/perkuliahan/jenis-tagihan/store', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'store'])->name('jenis_tagihan.store')->middleware('modul:Pengelolaan Jenis Tagihan');
+Route::post('/adm-akademik/perkuliahan/jenis-tagihan/update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'update'])->name('jenis_tagihan.update')->middleware('modul:Pengelolaan Jenis Tagihan');
+Route::post('/adm-akademik/perkuliahan/jenis-tagihan/delete', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'delete'])->name('jenis_tagihan.delete')->middleware('modul:Pengelolaan Jenis Tagihan');
+
 // Pengelolaan Matakuliah
 Route::get('/adm-akadmik/perkuliahan/matakuliah', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'index'])->name('matakuliah.index')->middleware('modul:Pengelolaan Matakuliah');
 Route::post('/adm-akadmik/perkuliahan/matakuliah/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'json'])->name('matakuliah.json')->middleware('modul:Pengelolaan Matakuliah');

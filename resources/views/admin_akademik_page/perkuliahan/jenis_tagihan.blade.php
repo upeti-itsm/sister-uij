@@ -7,16 +7,18 @@
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
         <ol class="breadcrumb d-inline-flex font-weight-600 fs-13 bg-white mb-0 float-sm-right">
-            <li class="breadcrumb-item">Perkuliahan</li>
-            <li class="breadcrumb-item active">Jenis Pengajaran</li>
+            <li class="breadcrumb-item">Akademik</li>
+            <li class="breadcrumb-item active">
+                Jenis Tagihan
+            </li>
         </ol>
     </nav>
     <div class="col-sm-8 header-title p-0">
         <div class="media">
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
-                <h1 class="font-weight-bold">Jenis Pengajaran</h1>
-                <small>Halaman ini digunakan untuk mengelola data Jenis Pengajaran yang ada</small>
+                <h1 class="font-weight-bold">Jenis Tagihan</h1>
+                <small>Halaman ini digunakan untuk mengelola data jenis tagihan</small>
             </div>
         </div>
     </div>
@@ -27,13 +29,13 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="fs-17 font-weight-600 mb-0">Daftar Jenis Pengajaran</h6>
+                        <h6 class="fs-17 font-weight-600 mb-0">Daftar Jenis Tagihan</h6>
                     </div>
                     <div class="text-right">
                         <div class="actions">
-                            <a id="btn-tambah-data" class="btn btn-sm btn-success text-white"><i
-                                    class="fas fa-plus-square"></i> Tambah
-                                Data</a>
+                            <a id="btn-tambah-data" class="btn btn-sm btn-success text-white">
+                                <i class="fas fa-plus-square"></i> Tambah Data
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -42,15 +44,15 @@
                 <div class="row">
                     <div class="col-md-12 collapse show" id="filter-collapse">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="row">
-                                        <div class="col-md-8">
-                                            <input type="text" class="form-control"
-                                                placeholder="Cari Nama Jenis Pengajaran" id="cari-data">
+                                        <div class="col-md-10">
+                                            <input type="text" class="form-control" placeholder="Cari Jenis Tagihan"
+                                                id="cari-data">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-2">
                                             <button class="btn btn-block btn-primary" id="btn-cari-data"><i
                                                     class="fas fa-search mr-2"></i>Cari Data
                                             </button>
@@ -61,21 +63,39 @@
                         </div>
                     </div>
                     <div class="col-md-12 collapse" id="form-collapse">
-                        <input type="hidden" value="0" id="id_jenis_pengajaran">
+                        <input type="hidden" id="id_jenis_tagihan">
                         <div class="form-group">
-                            <label class="font-weight-bold">Nama Jenis Pengajaran <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" placeholder="Masukkan Nama Jenis Pengajaran"
-                                id="jenis_pengajaran" required>
-                            <small class="form-text text-muted">Contoh: Kuliah Teori, Praktikum, Seminar, dll.</small>
+                            <label class="font-weight-bold">Jenis Tagihan</label>
+                            <input type="text" id="jenis_tagihan" name="jenis_tagihan" class="form-control"
+                                placeholder="Masukkan Jenis Tagihan">
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-bold">Tipe Periodisasi</label>
+                            <input type="text" id="tipe_periodisasi" name="tipe_periodisasi" class="form-control"
+                                placeholder="Masukkan Tipe Periodisasi">
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-bold">Deskripsi</label>
+                            <textarea id="deskripsi" name="deskripsi" class="form-control" rows="3" placeholder="Masukkan Deskripsi"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-bold">Status</label>
+                            <select id="status_jenis_tagihan" name="status_jenis_tagihan" class="select2 form-control">
+                                <option>- Semua Status -</option>
+                                <option value="1">Aktif</option>
+                                <option value="0">Tidak Aktif</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <div class="float-right">
-                                <a class="btn btn-danger text-white  mr-2" id="btn-cancel"><i
-                                        class="fas fa-backward mr-2"></i>Batal</a>
-                                <a class="btn btn-primary text-white" id="btn-save"><span
-                                        class='spinner-border spinner-border-sm mr-2' id='loading-tambah-data'
-                                        style='display: none' role='status' aria-hidden='true'></span><i
-                                        class="fas fa-save mr-2"></i>Simpan Data</a>
+                                <a class="btn btn-danger text-white  mr-2" id="btn-cancel">
+                                    <i class="fas fa-backward mr-2"></i>Batal
+                                </a>
+                                <a class="btn btn-primary text-white" id="btn-save">
+                                    <span class='spinner-border spinner-border-sm mr-2' id='loading-tambah-data'
+                                        style='display: none' role='status' aria-hidden='true'></span>
+                                    <i class="fas fa-save mr-2"></i>Simpan Data
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -84,10 +104,12 @@
                             <table class="table table-striped table-bordered table-hover" id="table">
                                 <thead>
                                     <tr>
-                                        <th width="5%">No</th>
-                                        <th width="70%">Nama Jenis Pengajaran</th>
-                                        <th width="10%">Status</th>
-                                        <th width="15%"><i class="fas fa-th-large"></i></th>
+                                        <th>Nomor</th>
+                                        <th>Kode</th>
+                                        <th>Jenis Tagihan</th>
+                                        <th>Periodisasi</th>
+                                        <th>Keterangan</th>
+                                        <th><i class="fas fa-th-large"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -104,5 +126,5 @@
 @push('scripts')
     <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('adminpage/own-js/admin_akademik/perkuliahan/jenis_pengajaran.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/admin_akademik/perkuliahan/jenis_tagihan.js') }}"></script>
 @endpush

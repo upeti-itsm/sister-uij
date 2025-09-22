@@ -1,7 +1,5 @@
-jQuery.jenis_pengajaran = {
-    data: {
-        table: null
-    },
+jQuery.jenis_tagihan = {
+    data: {},
     init: function () {
         var self = this;
         self.setEvents();
@@ -10,46 +8,62 @@ jQuery.jenis_pengajaran = {
         var self = this;
         // Option Data
         $(".select2").select2();
-
         // Table With DataTable
-        self.data.table = $("#table").DataTable({
+        var table = $("#table").DataTable({
             serverSide: true,
             ajax: {
-                url: '/adm-akademik/perkuliahan/jenis-pengajaran/json',
+                url: '/adm-akademik/perkuliahan/jenis-tagihan/json',
                 type: 'post',
                 data: function (data) {
-                    // Additional data if needed
+                    // data.id = $("#kd_prodi").val();
                 }
             },
             scrollY: '300px',
             scrollCollapse: true,
             columns: [
                 {
-                    data: 'nomor',
-                    searchable: false,
-                    sClass: 'text-center',
-                    width: "5%"
-                },
-                {
                     data: null,
                     searchable: false,
-                    sClass: 'text-left',
-                    width: "70%",
-                    render: function (data) {
-                        return "<p>" + data.jenis_pengajaran + "</p>";
+                    sClass: 'text-center',
+                    width: "5%",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
                     }
                 },
                 {
                     data: null,
                     searchable: false,
-                    sClass: 'text-center',
+                    sClass: 'text-left',
                     width: "10%",
                     render: function (data) {
-                        if (data.sts_aktif === true || data.sts_aktif === 1) {
-                            return "<span class='badge badge-success'>Aktif</span>";
-                        } else {
-                            return "<span class='badge badge-danger'>Non-Aktif</span>";
-                        }
+                        return "<p>" + data.kd_tagihan + "</p>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-left',
+                    width: "20%",
+                    render: function (data) {
+                        return "<p>" + data.jenis_tagihan + "</p>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-left',
+                    width: "10%",
+                    render: function (data) {
+                        return "<p>" + data.tipe_periodisasi + "</p>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-left',
+                    width: "30%",
+                    render: function (data) {
+                        return "<p>" + data.deskripsi + "</p>";
                     }
                 },
                 {
@@ -58,36 +72,9 @@ jQuery.jenis_pengajaran = {
                     sClass: 'text-center',
                     width: "15%",
                     render: function (data) {
-                        var editButton = "<button title='Edit Jenis Pengajaran' class='btn btn-sm btn-primary btn-edit mr-2' " +
-                            "data-id='" + data.id_jenis_pengajaran + "' " +
-                            "data-jenis_pengajaran='" + data.jenis_pengajaran + "'>" +
-                            "<i class='fas fa-edit'></i></button>";
-
-                        var deleteButton = "";
-                        if (data.sts_aktif === true || data.sts_aktif === 1) {
-                            deleteButton = "<button title='Non-Aktifkan Jenis Pengajaran' class='btn btn-sm btn-danger btn-delete' " +
-                                "data-id='" + data.id_jenis_pengajaran + "' " +
-                                "data-jenis_pengajaran='" + data.jenis_pengajaran + "' " +
-                                "data-status='false'>" +
-                                "<span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_jenis_pengajaran + "' style='display: none' role='status' aria-hidden='true'></span>" +
-                                "<i class='fas fa-trash'></i></button>";
-                        } else {
-                            deleteButton = "<button title='Aktifkan Jenis Pengajaran' class='btn btn-sm btn-success btn-delete' " +
-                                "data-id='" + data.id_jenis_pengajaran + "' " +
-                                "data-jenis_pengajaran='" + data.jenis_pengajaran + "' " +
-                                "data-status='true'>" +
-                                "<span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_jenis_pengajaran + "' style='display: none' role='status' aria-hidden='true'></span>" +
-                                "<i class='fas fa-check'></i></button>";
-                        }
-
-                        return editButton + deleteButton;
+                        return "<button title='Edit Jenis Tagihan' class='btn btn-sm btn-primary btn-edit mr-2' data-id='" + data.id_jenis_tagihan + "' data-jenis_tagihan='" + data.jenis_tagihan + "' data-kd_tagihan='" + data.kd_tagihan + "' data-deskripsi='" + data.deskripsi + "' data-tipe_periodisasi='" + data.tipe_periodisasi + "' data-sts_aktif='" + data.sts_aktif + "'><i class='fas fa-edit'></i></button>" +
+                            "<button title='Non-Aktifkan Jenis Tagihan' class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_jenis_tagihan + "' data-kd_tagihan='" + data.kd_tagihan + "' data-deskripsi='" + data.deskripsi + "' ><span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_jenis_tagihan + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash'></i></button>";
                     }
-                },
-                {
-                    data: 'jenis_pengajaran',
-                    searchable: true,
-                    sClass: 'text-center',
-                    visible: false
                 }
             ],
             paging: true,
@@ -98,139 +85,111 @@ jQuery.jenis_pengajaran = {
             autoWidth: false,
             sDom: 'ltipr',
             language: {
-                "emptyTable": "Tidak ditemukan data",
-                "processing": "Memuat data...",
-                "loadingRecords": "Memuat data...",
-                "zeroRecords": "Tidak ditemukan data yang sesuai"
+                "emptyTable": "Tidak ditemukan data"
             }
         });
-
-        // Filter and Search Events
         $("#btn-filter").click(function () {
-            self.data.table.ajax.reload();
+            table.ajax.reload();
         });
-
         $("#btn-cari-data").click(function () {
-            self.data.table.search($("#cari-data").val()).draw();
+            table.search($("#cari-data").val()).draw();
         });
-
         $("#cari-data").keyup(function () {
             if (this.value === "") {
-                self.data.table.search(this.value).draw();
+                table.search(this.value).draw();
             }
         }).keypress(function (event) {
             if (event.keyCode === 13) {
-                self.data.table.search(this.value).draw();
+                table.search(this.value).draw();
             }
         });
-
-        // Form Events
+        // Add or Update Data
+        // Add
         $("#btn-tambah-data").click(function () {
-            self.resetForm();
             $("#filter-collapse").collapse("hide");
             $("#form-collapse").collapse("show");
+            $("#id_jenis_tagihan").val("");
         });
-
+        // On Cancel Click
         $("#btn-cancel").click(function () {
-            self.resetForm();
+            $("#jenis_tagihan").val("");
+            $("#tipe_periodisasi").val("");
+            $("#deskripsi").val("");
+            $("#cari-data").val("");
             $("#filter-collapse").collapse("show");
             $("#form-collapse").collapse("hide");
         });
-
-        // Edit Event
+        // On Edit
         $("#table").on('click', 'button.btn-edit', function () {
-            $("#jenis_pengajaran").val($(this).data("jenis_pengajaran"));
-            $("#id_jenis_pengajaran").val($(this).data("id"));
-            $("#filter-collapse").collapse("hide");
-            $("#form-collapse").collapse("show");
+            $("#jenis_tagihan").val($(this).data("jenis_tagihan"));
+            $("#tipe_periodisasi").val($(this).data("tipe_periodisasi"));
+            $("#deskripsi").val($(this).data("deskripsi"));
+            $("#btn-tambah-data").trigger("click");
+            let sts = $(this).data("sts_aktif");
+            $("#status_jenis_tagihan").val(sts === true || sts === "true" ? "1" : "0").change();
+            $("#id_jenis_tagihan").val($(this).data("id"));
         });
 
-        // Save Event
+        // On Save Data
         $("#btn-save").click(function () {
-            if (!$("#jenis_pengajaran").val().trim()) {
+            if (!$("#jenis_tagihan").val() || !$("#tipe_periodisasi").val() || !$("#deskripsi").val())
                 $.alert({
                     title: "Peringatan",
                     type: "orange",
-                    content: "Pastikan Nama Jenis Pengajaran terisi dengan benar"
+                    content: "Pastikan Jenis Tagihan, Tipe Periodisasi dan Deskripsi Terisi"
                 });
-                return;
-            }
-
-            var operasi = 'store';
-            var id = $("#id_jenis_pengajaran").val();
-            var data = {
-                jenis_pengajaran: $("#jenis_pengajaran").val().trim()
-            };
-
-            if (id !== "0") {
-                operasi = 'update';
-                data.id = id;
-            }
-
-            $.ajax({
-                url: '/adm-akademik/perkuliahan/jenis-pengajaran/' + operasi,
-                method: 'POST',
-                data: data,
-                beforeSend: function () {
-                    $("#loading-tambah-data").show();
-                    $("#btn-save").prop('disabled', true);
-                },
-                success: function (response) {
-                    if (response.success === true) {
-                        $.alert({
-                            title: 'Berhasil',
-                            type: 'green',
-                            content: response.message
-                        });
-                        $("#btn-cancel").trigger("click");
-                    } else {
-                        $.alert({
-                            title: 'Gagal',
-                            type: 'red',
-                            content: response.message || 'Terjadi kesalahan saat menyimpan data'
-                        });
-                    }
-                },
-                error: function (xhr) {
-                    var errorMessage = 'Terjadi kesalahan saat menyimpan data';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    }
-                    if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        var errors = xhr.responseJSON.errors;
-                        var errorList = [];
-                        for (var field in errors) {
-                            errorList = errorList.concat(errors[field]);
-                        }
-                        errorMessage = errorList.join('<br>');
-                    }
-                    $.alert({
-                        title: 'Error',
-                        type: 'red',
-                        content: errorMessage
-                    });
-                },
-                complete: function () {
-                    $("#loading-tambah-data").hide();
-                    $("#btn-save").prop('disabled', false);
-                    self.data.table.ajax.reload();
+            else {
+                var operasi = 'store';
+                var id = 0;
+                if ($("#id_jenis_tagihan").val()) {
+                    id = $("#id_jenis_tagihan").val();
+                    operasi = 'update';
                 }
-            });
+                $.ajax({
+                    url: '/adm-akademik/perkuliahan/jenis-tagihan/' + operasi,
+                    method: 'POST',
+                    data: {
+                        jenis_tagihan: $("#jenis_tagihan").val(),
+                        tipe_periodisasi: $("#tipe_periodisasi").val(),
+                        deskripsi: $("#deskripsi").val(),
+                        status_jenis_tagihan: $("#status_jenis_tagihan").val(),
+                        id: id
+                    },
+                    beforeSend: function () {
+                        $("#loading-tambah-data").show();
+                    },
+                    success: function (response) {
+                        if (response.status === true) {
+                            $.alert({
+                                title: 'Informasi',
+                                type: 'green',
+                                content: response.keterangan
+                            });
+                            $("#btn-cancel").trigger("click");
+                        } else {
+                            $.alert({
+                                title: 'Informasi',
+                                type: 'red',
+                                content: response.keterangan
+                            });
+                        }
+                    },
+                    complete: function () {
+                        $("#loading-tambah-data").hide();
+                        table.ajax.reload();
+                    }
+                });
+            }
         });
-
-        // Delete/Activate Event
+        // On Delete
         $("#table").on('click', 'button.btn-delete', function () {
             var id = $(this).data("id");
-            var jenis_pengajaran = $(this).data('jenis_pengajaran');
-            var status = $(this).data('status');
-            var action = status === 'true' ? 'Mengaktifkan' : 'Menonaktifkan';
-            var keterangan = 'Apakah anda yakin ' + action + ' <b>' + jenis_pengajaran + '</b> dari jenis pengajaran?';
-
+            var kd_tagihan = $(this).data('kd_tagihan');
             $.confirm({
-                title: 'Konfirmasi!',
+                title: 'Konfirmasi !',
                 type: 'orange',
                 columnClass: 'medium',
-                content: keterangan,
+                content: 'Apakah anda yakin ingin menghapus tagihan <b>' + kd_tagihan + '</b> ?',
                 buttons: {
                     confirm: {
                         text: 'Yakin',
@@ -238,46 +197,35 @@ jQuery.jenis_pengajaran = {
                         keys: ['enter'],
                         action: function () {
                             $.ajax({
-                                url: '/adm-akademik/perkuliahan/jenis-pengajaran/delete',
+                                url: '/adm-akademik/perkuliahan/jenis-tagihan/delete',
                                 method: 'POST',
                                 data: {
                                     id: id,
-                                    status: status
+                                    status: false,
                                 },
                                 beforeSend: function () {
                                     $("#detail-loading-spin-" + id).show();
                                 },
                                 success: function (response) {
-                                    if (response.success === true) {
+                                    if (response.status === true) {
                                         $.alert({
-                                            title: 'Berhasil',
+                                            title: 'Informasi',
                                             type: 'green',
-                                            content: response.message
+                                            content: response.keterangan
                                         });
                                     } else {
                                         $.alert({
-                                            title: 'Gagal',
+                                            title: 'Informasi',
                                             type: 'red',
-                                            content: response.message || 'Terjadi kesalahan saat memperbarui status'
+                                            content: response.keterangan
                                         });
                                     }
                                 },
-                                error: function (xhr) {
-                                    var errorMessage = 'Terjadi kesalahan saat memperbarui status';
-                                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                                        errorMessage = xhr.responseJSON.message;
-                                    }
-                                    $.alert({
-                                        title: 'Error',
-                                        type: 'red',
-                                        content: errorMessage
-                                    });
-                                },
                                 complete: function () {
                                     $("#detail-loading-spin-" + id).hide();
-                                    self.data.table.ajax.reload();
+                                    table.ajax.reload();
                                 }
-                            });
+                            })
                         }
                     },
                     cancel: {
@@ -288,14 +236,8 @@ jQuery.jenis_pengajaran = {
             });
         });
     },
-
-    resetForm: function () {
-        $("#id_jenis_pengajaran").val("0");
-        $("#jenis_pengajaran").val("");
-        $("#cari-data").val("");
-    }
 };
 
 jQuery(document).ready(function () {
-    jQuery.jenis_pengajaran.init();
+    jQuery.jenis_tagihan.init();
 });
