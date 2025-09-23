@@ -294,6 +294,23 @@
                                 array_key_exists('Keuangan - Melihat Daftar Mahasiswa Siakad', $modul))
                             <li class="nav-label">Keuangan</li>
                         @endif
+                        @if (array_key_exists('Manajemen Tanggungan Prodi', $modul))
+                            <li @if ($menu == 'Manajemen Tanggungan Prodi' || $menu == 'Pengaturan Gaji - Daftar Pegawai') class="mm-active" @endif>
+                                <a class="has-arrow material-ripple" href="#">
+                                    <i class="typcn typcn-th-small mr-2"></i>
+                                    Manajemen
+                                </a>
+                                <ul class="nav-second-level">
+                                    @if (array_key_exists('Manajemen Tanggungan Prodi', $modul))
+                                        <li @if ($menu == 'Manajemen Tanggungan Prodi') class="mm-active" @endif>
+                                            <a href="{{ route('manajemen_tanggungan_prodi.index') }}">
+                                                Tanggungan Prodi
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                        @endif
                         @if (array_key_exists('Pengelolaan Gaji Bulanan', $modul) ||
                                 array_key_exists('Pengaturan Gaji', $modul) ||
                                 array_key_exists('Melihat Gaji Bulanan', $modul) ||

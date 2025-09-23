@@ -679,6 +679,14 @@ Route::post('/super-admin/moodle/jadwal-mahasiswa/delete-jadwal-mahasiswa', [\Ap
  * KEUANGAN
  * ------------------------------------------------------------------------
 */
+
+// Manajemen Tanggungan Prodi
+Route::get('/keu/manajemen-tanggungan-prodi', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'index'])->name('manajemen_tanggungan_prodi.index')->middleware('modul:Manajemen Tanggungan Prodi');
+Route::post('/keu/manajemen-tanggungan-prodi/json', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'json'])->name('manajemen_tanggungan_prodi.json')->middleware('modul:Manajemen Tanggungan Prodi');
+Route::post('/keu/manajemen-tanggungan-prodi/store', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'store'])->name('manajemen_tanggungan_prodi.store')->middleware('modul:Manajemen Tanggungan Prodi');
+Route::post('/keu/manajemen-tanggungan-prodi/update', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'update'])->name('manajemen_tanggungan_prodi.update')->middleware('modul:Manajemen Tanggungan Prodi');
+Route::post('/keu/manajemen-tanggungan-prodi/delete', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'delete'])->name('manajemen_tanggungan_prodi.delete')->middleware('modul:Manajemen Tanggungan Prodi');
+
 /* PENGGAJIAN */
 // Gaji Bulanan
 Route::get('/keu/penggajian/gaji-bulanan/daftar', [\App\Http\Controllers\KeuanganPage\Penggajian\GajiBulananController::class, 'index'])->name('keuangan.penggajian.gaji_bulanan.index')->middleware('modul:Pengelolaan Gaji Bulanan');
