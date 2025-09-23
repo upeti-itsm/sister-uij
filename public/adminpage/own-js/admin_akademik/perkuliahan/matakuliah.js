@@ -429,14 +429,14 @@ jQuery.matakuliah = {
         reader.onload = function (e) {
             try {
                 const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
+                const workbook = XLSX.read(data, { type: 'array' });
 
                 // Get first sheet
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
 
                 // Convert to JSON
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
                 if (jsonData.length < 2) {
                     self.showLog('error', 'File Excel harus memiliki header dan minimal 1 baris data');
@@ -466,7 +466,7 @@ jQuery.matakuliah = {
 
         // Convert array format to object format
         self.data.excelData = rows.map((row, index) => {
-            const obj = {row_number: index + 2}; // +2 because Excel rows start from 1 and we skip header
+            const obj = { row_number: index + 2 }; // +2 because Excel rows start from 1 and we skip header
             headers.forEach((header, colIndex) => {
                 obj[header] = row[colIndex] || '';
             });
@@ -709,7 +709,7 @@ jQuery.matakuliah = {
                 data: formData,
                 timeout: 10000,
                 success: function (response) {
-                    resolve({success: true, data: response});
+                    resolve({ success: true, data: response });
                 },
                 error: function (xhr, status, error) {
                     let message = 'Error tidak diketahui';
@@ -727,7 +727,7 @@ jQuery.matakuliah = {
                         message = 'Server error';
                     }
 
-                    resolve({success: false, message: message});
+                    resolve({ success: false, message: message });
                 }
             });
         });
@@ -986,7 +986,7 @@ jQuery.matakuliah = {
 
         // Required fields dengan Program Studi
         const requiredFields = [
-            'insup-kd_prodi', 'insup-id_konsentrasi', 'insup-id_kurikulum',
+            'insup-kd_prodi', 'insup-id_kurikulum',
             'insup-kode_matakuliah', 'insup-nama_matakuliah',
             'insup-jumlah_sks', 'insup-semester',
             'insup-id_jenis_matakuliah', 'insup-id_jenis_pelaksanaan'
