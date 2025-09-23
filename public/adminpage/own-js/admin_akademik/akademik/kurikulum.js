@@ -31,7 +31,7 @@ jQuery.kurikulum = {
                     data: null,
                     searchable: false,
                     sClass: 'text-left',
-                    width: "35%",
+                    width: "25%",
                     render: function (data) {
                         return "<p>" + data.nama_kurikulum + " (" + data.tahun_kurikulum + ")</p>";
                     }
@@ -52,6 +52,16 @@ jQuery.kurikulum = {
                     width: "20%",
                     render: function (data) {
                         return "<b>" + data.sks_lulus + "</b>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-left',
+                    width: "10%",
+                    render: function (data) {
+                        const status = data.sts_aktif_data ? 'Aktif' : 'Non-Aktif';
+                        return "<b>" + status + "</b>";
                     }
                 },
                 {
