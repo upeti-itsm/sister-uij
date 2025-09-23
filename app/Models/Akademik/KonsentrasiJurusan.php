@@ -30,13 +30,13 @@ class KonsentrasiJurusan extends Model
         ]);
     }
 
-    public static function insup_konsentrasi_jurusan($kd_prodi, $nama_konsentrasi, $tahun_dibuka, $id_konsentrasi_jurusan = "00000000-0000-0000-0000-000000000000")
+    public static function insup_konsentrasi_jurusan($id_konsentrasi_jurusan = "00000000-0000-0000-0000-000000000000", $kd_prodi, $nama_konsentrasi, $tahun_dibuka)
     {
-        return DB::select('SELECT * FROM akademik.insup_konsentrasi_jurusan(:kd_prodi, :nama_konsentrasi, :tahun_dibuka, :id)', [
+        return DB::select('SELECT * FROM akademik.insup_konsentrasi_jurusan(:id, :kd_prodi, :nama_konsentrasi, :tahun_dibuka)', [
+            'id' => $id_konsentrasi_jurusan,
             'kd_prodi' => $kd_prodi,
             'nama_konsentrasi' => $nama_konsentrasi,
-            'tahun_dibuka' => $tahun_dibuka,
-            'id' => $id_konsentrasi_jurusan
+            'tahun_dibuka' => $tahun_dibuka
         ])[0];
     }
 
