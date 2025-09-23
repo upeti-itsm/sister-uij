@@ -1,8 +1,8 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -47,8 +47,8 @@
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="row">
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control" placeholder="Cari Jenis Pelaksanaan Kuliah"
-                                                   id="cari-data">
+                                            <input type="text" class="form-control"
+                                                placeholder="Cari Jenis Pelaksanaan Kuliah" id="cari-data">
                                         </div>
                                         <div class="col-md-4">
                                             <button class="btn btn-block btn-primary" id="btn-cari-data"><i
@@ -65,26 +65,25 @@
                         <div class="form-group">
                             <label class="font-weight-bold">Kode Jenis Pelaksanaan Kuliah</label>
                             <input type="text" class="form-control" placeholder="Masukkan Kode Jenis Pelaksanaan Kuliah"
-                                   id="kd_jenis_pelaksanaan_kuliah">
+                                id="kd_jenis_pelaksanaan_kuliah">
                         </div>
                         <div class="form-group">
                             <label class="font-weight-bold">Jenis Pelaksanaan Kulliah</label>
                             <input type="text" class="form-control" placeholder="Masukkan Nama Jenis Pelaksanaan Kuliah"
-                                   id="jenis_pelaksanaan_kuliah">
+                                id="jenis_pelaksanaan_kuliah">
                         </div>
                         <div class="form-group">
                             <label class="font-weight-bold">Keterangan</label>
                             <input type="text" min="0" class="form-control" placeholder="Masukkan Keterangan"
-                                   id="keterangan">
+                                id="keterangan">
                         </div>
                         <div class="form-group">
                             <div class="float-right">
                                 <a class="btn btn-danger text-white  mr-2" id="btn-cancel"><i
                                         class="fas fa-backward mr-2"></i>Batal</a>
                                 <a class="btn btn-primary text-white" id="btn-save"><span
-                                        class='spinner-border spinner-border-sm mr-2'
-                                        id='loading-tambah-data' style='display: none' role='status'
-                                        aria-hidden='true'></span><i
+                                        class='spinner-border spinner-border-sm mr-2' id='loading-tambah-data'
+                                        style='display: none' role='status' aria-hidden='true'></span><i
                                         class="fas fa-save mr-2"></i>Simpan Data</a>
                             </div>
                         </div>
@@ -93,13 +92,14 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" id="table">
                                 <thead>
-                                <tr>
-                                    <th>Nomor</th>
-                                    <th>Kode Jenis Pelaksanaan</th>
-                                    <th>Jenis Matakuliah</th>
-                                    <th>Keterangan</th>
-                                    <th><i class="fas fa-th-large"></i></th>
-                                </tr>
+                                    <tr>
+                                        <th>Nomor</th>
+                                        <th>Kode Jenis Pelaksanaan</th>
+                                        <th>Jenis Matakuliah</th>
+                                        <th>Keterangan</th>
+                                        <th>Status</th>
+                                        <th><i class="fas fa-th-large"></i></th>
+                                    </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
@@ -111,10 +111,9 @@
     </div>
 @endsection
 @section('modal')
-
 @endsection
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/own-js/admin_akademik/perkuliahan/jenis_pelaksanaan_kuliah.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/admin_akademik/perkuliahan/jenis_pelaksanaan_kuliah.js') }}"></script>
 @endpush
