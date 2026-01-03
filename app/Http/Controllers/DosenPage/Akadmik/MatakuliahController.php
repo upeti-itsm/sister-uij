@@ -144,14 +144,22 @@ class MatakuliahController extends Controller
 
     public function delete_kriteria(Request $request)
     {
-        $request->validate([
-            'id' => 'required'
-        ]);
+        try {
+            $request->validate([
+                'id' => 'required'
+            ]);
 
-        $kriteria = JadwalDosen::delete_kriteria($request->id);
-        return response()->json([
-            'success' => $kriteria->status == 1,
-            'message' => 'Kriteria penilaian "' . $kriteria->keterangan . '" berhasil dihapus'
-        ]);
+            $kriteria = JadwalDosen::delete_kriteria($request->id);
+            return response()->json([
+                'success' => $kriteria->status == 1,
+                'message' => 'Kriteria penilaian "' . $kriteria->keterangan . '" berhasil dihapus'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus kriteria: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

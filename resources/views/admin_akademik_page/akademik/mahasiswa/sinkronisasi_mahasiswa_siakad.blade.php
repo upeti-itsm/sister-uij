@@ -16,7 +16,7 @@
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
                 <h1 class="font-weight-bold">Sinkronisasi Mahasiswa</h1>
-                <small>Halaman ini digunakan untuk mengelola sinkronisasi mahasiswa antara sipadu dan siakad</small>
+                <small>Halaman ini digunakan untuk mengelola sinkronisasi mahasiswa antara sipadu, siakad, dan PMB</small>
             </div>
         </div>
     </div>
@@ -37,11 +37,18 @@
                                     title="Syncron Dengan Siakad"><i
                                     class="fas fa-cloud-download-alt"></i> Synchron Dengan Siakad
                             </button>
+                            <!-- TAMBAHAN: Tombol Sinkronisasi PMB -->
+                            <button class="btn btn-info-soft btn-sync-pmb mr-2"
+                                    id="btn-sync-pmb"
+                                    title="Syncron Dengan PMB"><i
+                                    class="fas fa-user-graduate"></i> Synchron Dengan PMB
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card-body">
+                <!-- Progress Bar SIAKAD -->
                 <div class="row">
                     <div class="col-md-12 mt-3" id="progress-bar-syncron-ulang-data-center" style="display: none">
                         <button class="btn btn-primary mr-1 mb-2" type="button" disabled="">
@@ -61,18 +68,42 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-12 mt-3" id="progress-bar-syncron-pmb" style="display: none">
+                        <div class="card border-info">
+                            <div class="card-body">
+                                <button class="btn btn-info mr-1 mb-2" type="button" disabled="">
+                <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"
+                      id="loading-progress-pmb"></span>
+                                    <span id="keterangan-progress-pmb">Mohon menunggu hingga proses sinkronisasi PMB selesai...</span>
+                                </button>
+                                <button class="btn btn-danger-soft mr-1 mb-2" id="btn-tutup-progress-pmb" style="display: none;">
+                                    <i class="fas fa-times mr-2"></i>Tutup
+                                </button>
+                                <div class="progress progress-lg mb-3">
+                                    <div
+                                        class="progress-bar progress-bar-info progress-bar-striped progress-bar-animated"
+                                        role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                                        style="width: 0" id="progress-bar-pmb">
+                                        <span id="progress-text-pmb"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Log SIAKAD -->
                     <div class="col-md-12 mt-3" id="log-syncron-ulang-data-center" style="display: none">
                         <div class="card bg-light">
                             <div class="card-header bg-info text-white">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="fs-17 font-weight-600 mb-0">Log Sinkronisasi</h6>
+                                        <h6 class="fs-17 font-weight-600 mb-0">Log Sinkronisasi SIAKAD</h6>
                                     </div>
                                     <div class="text-right">
                                         <div class="actions">
                                             <button class="btn btn-primary-soft mr-3 text-white"
                                                     id="btn-failed-log-data-center">
-                                                Failed : 0
+                                                Failed :  0
                                             </button>
                                             <button class="btn btn-primary-soft mr-3 text-white"
                                                     id="btn-inserted-log-data-center">
@@ -130,6 +161,78 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- TAMBAHAN: Log PMB -->
+                    <div class="col-md-12 mt-3" id="log-syncron-pmb" style="display: none">
+                        <div class="card bg-light">
+                            <div class="card-header bg-success text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="fs-17 font-weight-600 mb-0">Log Sinkronisasi PMB</h6>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="actions">
+                                            <button class="btn btn-primary-soft mr-3 text-white"
+                                                    id="btn-failed-log-pmb">
+                                                Failed : 0
+                                            </button>
+                                            <button class="btn btn-primary-soft mr-3 text-white"
+                                                    id="btn-inserted-log-pmb">
+                                                Inserted : 0
+                                            </button>
+                                            <button class="btn btn-primary-soft mr-3 text-white"
+                                                    id="btn-updated-log-pmb">
+                                                Updated : 0
+                                            </button>
+                                            <button class="action-item text-white" title="Tutup Log"
+                                                    id="btn-tutup-log-pmb">
+                                                <i class="fas fa-times-circle"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control"
+                                                   placeholder="Masukkan Nama Mahasiswa" id="cari-log-pmb">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-success" id="btn-cari-log-pmb"><i
+                                                        class="fas fa-search mr-2"></i>Cari
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <select class="form-control select2" id="status-log-pmb">
+                                                <option value="">-- All Of Them --</option>
+                                                <option value="inserted">-- Inserted --</option>
+                                                <option value="updated">-- Updated --</option>
+                                                <option value="failed">-- Failed --</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover"
+                                           id="log-table-pmb">
+                                        <thead>
+                                        <tr>
+                                            <th style="width:  5%">Nomor</th>
+                                            <th style="width: 80%">Nama - (No.  Pendaftaran)</th>
+                                            <th style="width: 15%">Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="log-table-tbody-pmb">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-12 collapse show" id="filter-collapse-data-center">
                         <div class="row">
                             <div class="col-md-5">
@@ -154,7 +257,7 @@
                                     <div class="row">
                                         <div class="col-md-5">
                                             <select class="select2 form-control" id="angkatan">
-                                                <option value="0">-- Semua Angkatan (2015 ke atas) --</option>
+                                                <option value="0">-- Semua Angkatan --</option>
                                                 @foreach($angkatan AS $item)
                                                     <option
                                                         value="{{$item->angkatan}}">{{$item->angkatan}}</option>
@@ -189,10 +292,12 @@
                         <table class="table table-striped table-bordered table-hover" id="table-data-center">
                             <thead>
                             <tr>
-                                <th class="text-center">Nomor</th>
+                                <th class="text-center">No</th>
                                 <th>Identitas Mahasiswa</th>
-                                <th>Keterangan</th>
-                                <th class="text-center"><i class="fas fa-th"></i></th>
+                                <th>Program Studi</th>
+                                <th>Data Pribadi</th>
+                                <th>Info Keluarga</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -204,12 +309,13 @@
     </div>
 @endsection
 @section('modal')
+    <!-- Modal SIAKAD -->
     <div class="modal modal-primary fade" id="modal-sync-mahasiswa-data-center" tabindex="-1" role="dialog"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title font-weight-600">Konfirmasi Sinkronisasi Mahasiswa</h5>
+                    <h5 class="modal-title font-weight-600">Konfirmasi Sinkronisasi Mahasiswa SIAKAD</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -230,6 +336,95 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
                     <button type="button" class="btn btn-success" id="modal-btn-sync-data-center"><i
                             class="fas fa-sync mr-2"></i>Sinkronisasi Mahasiswa
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAMBAHAN: Modal PMB -->
+    <div class="modal modal-info fade" id="modal-sync-mahasiswa-pmb" tabindex="-1" role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-600">Konfirmasi Sinkronisasi Mahasiswa PMB</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Jika dilakukan proses sinkronisasi, calon mahasiswa yang diterima di PMB akan di import ke database akademik,
+                        silahkan pilih tahun untuk proses sinkronisasi mahasiswa</p>
+                    <div class="form-group">
+                        <label>Tahun PMB</label>
+                        <select class="select2 form-control" id="tahun_sync-pmb">
+                            @foreach($tahun_pmb AS $item)
+                                <option value="{{$item->tahun_seleksi}}">{{$item->tahun_seleksi}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-info" id="modal-btn-sync-pmb"><i
+                            class="fas fa-sync mr-2"></i>Sinkronisasi Mahasiswa PMB
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Change Status -->
+    <div class="modal fade" id="modal-change-status-mahasiswa" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title font-weight-600 text-white">
+                        <i class="fas fa-exchange-alt mr-2"></i>Ubah Status Mahasiswa
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="nim-change-status">
+                    <div class="alert alert-info">
+                        <strong>Mahasiswa:</strong> <span id="nama-change-status"></span><br/>
+                        <strong>Status Saat Ini:</strong> <span id="current-status-display" class="badge badge-primary"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="font-weight-bold">Status Baru <span class="text-danger">*</span></label>
+                        <select class="form-control select2" id="new-status-mahasiswa" required>
+                            <option value="">-- Pilih Status Baru --</option>
+                            <option value="1">AKTIF</option>
+                            <option value="2">TIDAK AKTIF</option>
+                            <option value="3">LULUS</option>
+                            <option value="4">CUTI</option>
+                            <option value="5">DO (Drop Out)</option>
+                            <option value="6">MENGUNDURKAN DIRI</option>
+                            <option value="7">MENINGGAL DUNIA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="font-weight-bold">Alasan / Keterangan</label>
+                        <textarea class="form-control" id="alasan-change-status" rows="3"
+                                  placeholder="Masukkan alasan perubahan status (opsional)"></textarea>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <small>Perubahan status akan tercatat dalam sistem dan mempengaruhi status akademik mahasiswa</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-warning" id="btn-submit-change-status">
+                        <i class="fas fa-save mr-2"></i>Simpan Perubahan
                     </button>
                 </div>
             </div>

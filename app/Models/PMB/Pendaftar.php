@@ -16,10 +16,21 @@ class Pendaftar extends Model
         return DB::select('SELECT * FROM pmb.get_rekap_informasi_perolehan_mahasiswa()')[0];
     }
 
-    public static function get_mahasiswa_baru($kd_prodi = 'x', $offset = -1, $limit = 10, $search = '', $tahun_seleksi = 'now'){
+    public static function get_mahasiswa_baru($kd_prodi = 'x', $offset = -1, $limit = 10, $search = '', $tahun_seleksi = 'now')
+    {
         if ($tahun_seleksi == 'now') $tahun_seleksi = Carbon::now()->year;
         return DB::select('SELECT * FROM pmb.get_mahasiswa_baru(:kd_prodi, :offset, :limit, :search, :tahun_seleksi)', [
             'kd_prodi' => $kd_prodi, 'offset' => $offset, 'limit' => $limit, 'search' => $search, 'tahun_seleksi' => $tahun_seleksi
         ]);
+    }
+
+    public static function get_tahun_seleksi()
+    {
+        return DB::select('SELECT * FROM pmb.get_tahun_seleksi()');
+    }
+
+    public static function getMahasiswaByTahun($tahun)
+    {
+        return DB::select('SELECT * FROM pmb.get_mahasiswa_by_tahun(:tahun)', ['tahun' => $tahun]);
     }
 }

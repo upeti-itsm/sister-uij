@@ -40,7 +40,7 @@ jQuery.jenis_matakuliah = {
                     data: null,
                     searchable: false,
                     sClass: 'text-left',
-                    width: "25%",
+                    width: "20%",
                     render: function (data) {
                         return "<p>" + data.nama_jenis + "</p>";
                     }
@@ -57,8 +57,18 @@ jQuery.jenis_matakuliah = {
                 {
                     data: null,
                     searchable: false,
+                    sClass: 'text-left',
+                    width: "10%",
+                    render: function (data) {
+                        const status = data.sts_aktif ? 'Aktif' : 'Non-Aktif';
+                        return "<p>" + status + "</p>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
                     sClass: 'text-center',
-                    width: "20%",
+                    width: "15%",
                     render: function (data) {
                         var button = "<button title='Non-Aktifkan Jenis Matakuliah' class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_jenis_matakuliah + "' data-nama_jenis='" + data.nama_jenis + "' data-kd_jenis_matakuliah='" + data.kd_jenis_matakuliah + "' data-status='false' ><span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_jenis_matakuliah + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash'></i></button>";
                         if (data.sts_aktif === false) {
@@ -178,9 +188,9 @@ jQuery.jenis_matakuliah = {
             var id = $(this).data("id");
             var nama_jenis = $(this).data('nama_jenis');
             var status = $(this).data('status');
-            var keterangan = 'Apakah anda yakin Menon-Aktifkan <b>' + nama_jenis + '</b> dari jenis matakuliah ?';
+            var keterangan = 'Apakah anda yakin Mengaktifkan <b>' + nama_jenis + '</b> dari jenis matakuliah ?';
             if (status === false) {
-                keterangan = 'Apakah anda yakin Mengaktifkan <b>' + nama_jenis + '</b> dari jenis matakuliah ?';
+                keterangan = 'Apakah anda yakin Menon-Aktifkan <b>' + nama_jenis + '</b> dari jenis matakuliah ?';
             }
             $.confirm({
                 title: 'Konfirmasi !',

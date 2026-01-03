@@ -4,6 +4,8 @@ namespace App\Http\Controllers\DosenPage\Akadmik;
 
 use App\Http\Controllers\Controller;
 use App\Models\SIAKAD_MODEL\JadwalDosen;
+use Barryvdh\DomPDF\Facade;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class NilaiMahasiswaController extends Controller
@@ -13,7 +15,7 @@ class NilaiMahasiswaController extends Controller
         $menu = 'Dosen - Akademik - Melihat Daftar Matakuliah';
         $mahasiswa = JadwalDosen::get_list_mahasiswa_by_jadwal($id);
 //        dd($mahasiswa);
-        return view('dosen_page.akademik.nilai_mahasiswa', compact('menu', 'mahasiswa'));
+        return view('dosen_page.akademik.nilai_mahasiswa', compact('menu', 'mahasiswa', 'id'));
     }
 
     public function store_nilai(Request $request)
@@ -149,5 +151,53 @@ class NilaiMahasiswaController extends Controller
             'nim_list' => $nimList,
             'nilai_list' => $nilaiList
         ];
+    }
+
+    public function export_nilai_mahasiswa($id)
+    {
+        try {
+            // Ambil data mahasiswa dan nilai (sesuaikan dengan logic existing Anda)
+            $mahasiswa = JadwalDosen::get_list_mahasiswa_by_jadwal($id);
+
+            if (empty($mahasiswa)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data mahasiswa untuk diekspor'
+                ], 404);
+            }
+
+            // Prepare data untuk PDF
+            $data = [
+                'mahasiswa' => $mahasiswa,
+                'title' => 'Daftar Nilai Mahasiswa',
+                'exported_at' => Carbon::now('Asia/Jakarta'),
+                'semester' => $mahasiswa[0]->semester ?? 'Gasal',
+                'tahun_akademik' => $mahasiswa[0]->tahun_akademik ?? '2025'
+            ];
+
+            // Konfigurasi PDF
+            $pdf = Facade::loadView('dosen_page.akademik.pdf.nilai_mahasiswa', $data);
+            $pdf->setPaper('A4', 'landscape');
+            $pdf->setOptions([
+                'dpi' => 150,
+                'defaultFont' => 'Arial',
+                'isHtml5ParserEnabled' => true,
+                'isPhpEnabled' => true,
+                'debugKeepTemp' => false,
+            ]);
+
+            // Generate filename
+            $filename = 'daftar_nilai_mahasiswa_' .
+                ($mahasiswa[0]->kd_mk ?? 'unknown') . '_' .
+                Carbon::now()->format('Y-m-d') . '.pdf';
+            // Return PDF untuk download
+            return $pdf->download($filename);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat PDF: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

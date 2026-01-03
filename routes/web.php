@@ -110,6 +110,11 @@ Route::post('/adm-akademik/akademik/mahasiswa/sinkronisasi-mahasiswa-siakad/json
 Route::post('/adm-akademik/akademik/mahasiswa/sinkronisasi-mahasiswa-siakad/json-by-angkatan', [\App\Http\Controllers\AdminAkademikPage\Akademik\Mahasiswa\SinkronisasiMahasiswaSiakadController::class, 'json_get_mahasiswa_by_angkatan'])->name('admin_akademik.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad.json_get_mahasiswa_by_angkatan')->middleware('modul:Sinkronisasi Mahasiswa dengan Siakad');
 Route::post('/adm-akademik/akademik/mahasiswa/sinkronisasi-mahasiswa-siakad/json-by-nim', [\App\Http\Controllers\AdminAkademikPage\Akademik\Mahasiswa\SinkronisasiMahasiswaSiakadController::class, 'json_get_mahasiswa_by_nim'])->name('admin_akademik.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad.json_get_mahasiswa_by_nim')->middleware('modul:Sinkronisasi Mahasiswa dengan Siakad');
 Route::post('/adm-akademik/akademik/mahasiswa/sinkronisasi-mahasiswa-siakad/synchron', [\App\Http\Controllers\AdminAkademikPage\Akademik\Mahasiswa\SinkronisasiMahasiswaSiakadController::class, 'json_syncron_data'])->name('admin_akademik.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad.json_sync_data')->middleware('modul:Sinkronisasi Mahasiswa dengan Siakad');
+Route::post('/adm-akademik/akademik/mahasiswa/sinkronisasi-mahasiswa-pmb/synchron', [\App\Http\Controllers\AdminAkademikPage\Akademik\Mahasiswa\SinkronisasiMahasiswaSiakadController::class, 'json_syncron_data_pmb'])->name('admin_akademik.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad.json_syncron_data_pmb')->middleware('modul:Sinkronisasi Mahasiswa dengan Siakad');
+Route::post('/adm-akademik/akademik/mahasiswa/sinkronisasi-mahasiswa-siakad/change-status', [\App\Http\Controllers\AdminAkademikPage\Akademik\Mahasiswa\SinkronisasiMahasiswaSiakadController::class, 'change_status_mahasiswa'])->name('admin_akademik.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad.change_status_mahasiswa')->middleware('modul:Sinkronisasi Mahasiswa dengan Siakad');
+// Route untuk edit mahasiswa
+Route::get('/adm-akademik/akademik/mahasiswa/edit/{nim}', [\App\Http\Controllers\AdminAkademikPage\Akademik\Mahasiswa\SinkronisasiMahasiswaSiakadController::class, 'edit'])->name('mahasiswa.edit')->middleware('modul:Sinkronisasi Mahasiswa dengan Siakad');
+Route::put('/adm-akademik/akademik/mahasiswa/update/{nim}', [\App\Http\Controllers\AdminAkademikPage\Akademik\Mahasiswa\SinkronisasiMahasiswaSiakadController::class, 'update'])->name('mahasiswa.update')->middleware('modul:Sinkronisasi Mahasiswa dengan Siakad');
 /* Perkuliahan */
 // Tahun Akademik
 Route::get('/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad', [\App\Http\Controllers\AdminAkademikPage\Akademik\Matakuliah\SemesterController::class, 'index'])->name('admin_akademik.akademik.perkuliahan.sinkronisasi_tahun_akademik_siakad.index')->middleware('modul:Sinkronisasi Tahun Akademik dengan Siakad');
@@ -117,6 +122,7 @@ Route::post('/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siak
 Route::post('/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/json-tahun-akademik-siakad', [\App\Http\Controllers\AdminAkademikPage\Akademik\Matakuliah\SemesterController::class, 'json_get_tahun_akademik'])->name('admin_akademik.akademik.perkuliahan.sinkronisasi_tahun_akademik_siakad.json_get_tahun_akademik')->middleware('modul:Sinkronisasi Tahun Akademik dengan Siakad');
 Route::post('/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/json-by-tahun-akademik', [\App\Http\Controllers\AdminAkademikPage\Akademik\Matakuliah\SemesterController::class, 'json_get_tahun_akademik_by_tahun_akademik'])->name('admin_akademik.akademik.perkuliahan.sinkronisasi_tahun_akademik_siakad.json_get_tahun_akademik_by_tahun_akademik')->middleware('modul:Sinkronisasi Tahun Akademik dengan Siakad');
 Route::post('/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/synchron', [\App\Http\Controllers\AdminAkademikPage\Akademik\Matakuliah\SemesterController::class, 'json_syncron_data'])->name('admin_akademik.akademik.perkuliahan.sinkronisasi_tahun_akademik_siakad.json_syncron_data')->middleware('modul:Sinkronisasi Tahun Akademik dengan Siakad');
+
 // Jadwal Kuliah
 Route::get('/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/{filter?}', [\App\Http\Controllers\AdminAkademikPage\Akademik\Matakuliah\JadwalMatakuliahController::class, 'index'])->name('admin_akademik.akademik.jadwal_kuliah.sinkronisasi_jadwal_kuliah_siakad.index')->middleware('modul:Sinkronisasi Jadwal Kuliah dengan Siakad');
 Route::post('/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/json', [\App\Http\Controllers\AdminAkademikPage\Akademik\Matakuliah\JadwalMatakuliahController::class, 'json_get_daftar'])->name('admin_akademik.akademik.jadwal_kuliah.sinkronisasi_jadwal_kuliah_siakad.json_get_daftar')->middleware('modul:Sinkronisasi Jadwal Kuliah dengan Siakad');
@@ -172,6 +178,13 @@ Route::post('/adm-akademik/perkuliahan/jenis-pengajaran/json', [\App\Http\Contro
 Route::post('/adm-akademik/perkuliahan/jenis-pengajaran/store', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisPengajaranCont::class, 'store'])->name('jenis_pengajaran.store')->middleware('modul:Pengelolaan Jenis Pengajaran');
 Route::post('/adm-akademik/perkuliahan/jenis-pengajaran/update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisPengajaranCont::class, 'update'])->name('jenis_pengajaran.update')->middleware('modul:Pengelolaan Jenis Pengajaran');
 Route::post('/adm-akademik/perkuliahan/jenis-pengajaran/delete', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisPengajaranCont::class, 'delete'])->name('jenis_pengajaran.delete')->middleware('modul:Pengelolaan Jenis Pengajaran');
+
+// Jenis Tagihan
+Route::get('/adm-akademik/perkuliahan/jenis-tagihan', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'index'])->name('jenis_tagihan.index')->middleware('modul:Pengelolaan Jenis Tagihan');
+Route::post('/adm-akademik/perkuliahan/jenis-tagihan/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'json'])->name('jenis_tagihan.json')->middleware('modul:Pengelolaan Jenis Tagihan');
+Route::post('/adm-akademik/perkuliahan/jenis-tagihan/store', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'store'])->name('jenis_tagihan.store')->middleware('modul:Pengelolaan Jenis Tagihan');
+Route::post('/adm-akademik/perkuliahan/jenis-tagihan/update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'update'])->name('jenis_tagihan.update')->middleware('modul:Pengelolaan Jenis Tagihan');
+Route::post('/adm-akademik/perkuliahan/jenis-tagihan/delete', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\JenisTagihanController::class, 'delete'])->name('jenis_tagihan.delete')->middleware('modul:Pengelolaan Jenis Tagihan');
 
 // Pengelolaan Matakuliah
 Route::get('/adm-akadmik/perkuliahan/matakuliah', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'index'])->name('matakuliah.index')->middleware('modul:Pengelolaan Matakuliah');
@@ -672,6 +685,14 @@ Route::post('/super-admin/moodle/jadwal-mahasiswa/delete-jadwal-mahasiswa', [\Ap
  * KEUANGAN
  * ------------------------------------------------------------------------
 */
+
+// Manajemen Tanggungan Prodi
+Route::get('/keu/manajemen-tanggungan-prodi', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'index'])->name('manajemen_tanggungan_prodi.index')->middleware('modul:Manajemen Tanggungan Prodi');
+Route::post('/keu/manajemen-tanggungan-prodi/json', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'json'])->name('manajemen_tanggungan_prodi.json')->middleware('modul:Manajemen Tanggungan Prodi');
+Route::post('/keu/manajemen-tanggungan-prodi/store', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'store'])->name('manajemen_tanggungan_prodi.store')->middleware('modul:Manajemen Tanggungan Prodi');
+Route::post('/keu/manajemen-tanggungan-prodi/update', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'update'])->name('manajemen_tanggungan_prodi.update')->middleware('modul:Manajemen Tanggungan Prodi');
+Route::post('/keu/manajemen-tanggungan-prodi/delete', [\App\Http\Controllers\KeuanganPage\ManajemenTanggunganProdiController::class, 'delete'])->name('manajemen_tanggungan_prodi.delete')->middleware('modul:Manajemen Tanggungan Prodi');
+
 /* PENGGAJIAN */
 // Gaji Bulanan
 Route::get('/keu/penggajian/gaji-bulanan/daftar', [\App\Http\Controllers\KeuanganPage\Penggajian\GajiBulananController::class, 'index'])->name('keuangan.penggajian.gaji_bulanan.index')->middleware('modul:Pengelolaan Gaji Bulanan');

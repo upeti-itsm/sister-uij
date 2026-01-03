@@ -49,7 +49,7 @@ jQuery.jenis_pelaksanaan_kuliah = {
                     data: null,
                     searchable: false,
                     sClass: 'text-left',
-                    width: "30%",
+                    width: "25%",
                     render: function (data) {
                         return "<p>" + data.keterangan + "</p>";
                     }
@@ -57,11 +57,21 @@ jQuery.jenis_pelaksanaan_kuliah = {
                 {
                     data: null,
                     searchable: false,
+                    sClass: 'text-left',
+                    width: "10%",
+                    render: function (data) {
+                        const status = data.sts_aktif_data ? 'Aktif' : 'Non-Aktif';
+                        return "<p>" + status + "</p>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
                     sClass: 'text-center',
-                    width: "20%",
+                    width: "15%",
                     render: function (data) {
                         var button = "<button title='Non-Aktifkan Jenis Pelaksanaan Kuliah' class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_jenis_pelaksanaan_matakuliah + "' data-nama_jenis='" + data.jenis_pelaksanaan_matakuliah + "' data-kd_jenis='" + data.kd_jenis_pelaksanaan_matakuliah + "' data-status='false' ><span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_jenis_pelaksanaan_matakuliah + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash'></i></button>";
-                        if (data.sts_aktif === false) {
+                        if (data.sts_aktif_data === false) {
                             button = "<button title='Aktifkan Jenis Pelaksanaan Kuliah' class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_jenis_pelaksanaan_matakuliah + "' data-nama_jenis='" + data.jenis_pelaksanaan_matakuliah + "' data-kd_jenis='" + data.kd_jenis_pelaksanaan_matakuliah + "' data-status='true'><span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_jenis_pelaksanaan_matakuliah + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash'></i></button>";
                         }
                         return "<button title='Edit Jenis Pelaksanaan Kuliah' class='btn btn-sm btn-primary btn-edit mr-2' data-id='" + data.id_jenis_pelaksanaan_matakuliah + "' data-nama_jenis='" + data.jenis_pelaksanaan_matakuliah + "' data-keterangan='" + data.keterangan + "' data-kd_jenis='" + data.kd_jenis_pelaksanaan_matakuliah + "'><i class='fas fa-edit'></i></button>" +
@@ -178,9 +188,9 @@ jQuery.jenis_pelaksanaan_kuliah = {
             var id = $(this).data("id");
             var nama_jenis = $(this).data('nama_jenis');
             var status = $(this).data('status');
-            var keterangan = 'Apakah anda yakin Menon-Aktifkan <b>' + nama_jenis + '</b> dari jenis pelaksanaan kuliah ?';
+            var keterangan = 'Apakah anda yakin Mengaktifkan <b>' + nama_jenis + '</b> dari jenis pelaksanaan kuliah ?';
             if (status === false) {
-                keterangan = 'Apakah anda yakin Mengaktifkan <b>' + nama_jenis + '</b> dari jenis pelaksanaan kuliah?';
+                keterangan = 'Apakah anda yakin Menon-Aktifkan <b>' + nama_jenis + '</b> dari jenis pelaksanaan kuliah?';
             }
             $.confirm({
                 title: 'Konfirmasi !',

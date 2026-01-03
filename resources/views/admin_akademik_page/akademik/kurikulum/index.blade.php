@@ -1,8 +1,8 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -48,7 +48,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <input type="text" class="form-control" placeholder="Cari Nama Kurikulum"
-                                                   id="cari-data">
+                                                id="cari-data">
                                         </div>
                                         <div class="col-md-4">
                                             <button class="btn btn-block btn-primary" id="btn-cari-data"><i
@@ -64,9 +64,9 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <select class="select2 form-control" id="kd_prodi">
-                                                @foreach($prodi AS $item)
-                                                    <option
-                                                        value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
+                                                @foreach ($prodi as $item)
+                                                    <option value="{{ $item->kd_program_studi }}">
+                                                        {{ $item->nama_program_studi }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -85,35 +85,33 @@
                         <div class="form-group">
                             <label class="font-weight-bold">Program Studi</label>
                             <select class="select2 form-control" id="id_prodi_add">
-                                @foreach($prodi AS $item)
-                                    <option
-                                        value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
+                                @foreach ($prodi as $item)
+                                    <option value="{{ $item->kd_program_studi }}">{{ $item->nama_program_studi }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="font-weight-bold">Nama Kurikulum</label>
                             <input type="text" class="form-control" placeholder="Masukkan Nama Kurikulum"
-                                   id="nama_kurikulum">
+                                id="nama_kurikulum">
                         </div>
                         <div class="form-group">
                             <label class="font-weight-bold">Tahun Kurikulum</label>
-                            <input type="text" maxlength="4" minlength="4" class="form-control" placeholder="Masukkan Tahun Kurikulum"
-                                   id="tahun_kurikulum">
+                            <input type="text" maxlength="4" minlength="4" class="form-control"
+                                placeholder="Masukkan Tahun Kurikulum" id="tahun_kurikulum">
                         </div>
                         <div class="form-group">
                             <label class="font-weight-bold">SKS Lulus</label>
                             <input type="number" min="0" class="form-control" placeholder="Masukkan SKS Lulus"
-                                   id="sks_lulus">
+                                id="sks_lulus">
                         </div>
                         <div class="form-group">
                             <div class="float-right">
                                 <a class="btn btn-danger text-white  mr-2" id="btn-cancel"><i
                                         class="fas fa-backward mr-2"></i>Batal</a>
                                 <a class="btn btn-primary text-white" id="btn-save"><span
-                                        class='spinner-border spinner-border-sm mr-2'
-                                        id='loading-tambah-data' style='display: none' role='status'
-                                        aria-hidden='true'></span><i
+                                        class='spinner-border spinner-border-sm mr-2' id='loading-tambah-data'
+                                        style='display: none' role='status' aria-hidden='true'></span><i
                                         class="fas fa-save mr-2"></i>Simpan Data</a>
                             </div>
                         </div>
@@ -122,13 +120,14 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" id="table">
                                 <thead>
-                                <tr>
-                                    <th>Nomor</th>
-                                    <th>Nama Kurikulum (Tahun)</th>
-                                    <th>Program Studi</th>
-                                    <th>SKS Lulus</th>
-                                    <th><i class="fas fa-th-large"></i></th>
-                                </tr>
+                                    <tr>
+                                        <th>Nomor</th>
+                                        <th>Nama Kurikulum (Tahun)</th>
+                                        <th>Program Studi</th>
+                                        <th>SKS Lulus</th>
+                                        <th>Status</th>
+                                        <th><i class="fas fa-th-large"></i></th>
+                                    </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
@@ -140,10 +139,9 @@
     </div>
 @endsection
 @section('modal')
-
 @endsection
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/own-js/admin_akademik/akademik/kurikulum.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/admin_akademik/akademik/kurikulum.js') }}"></script>
 @endpush

@@ -41,7 +41,8 @@ class JenisPelaksanaanKuliahCont extends Controller
         return response()->json($data);
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $request->validate([
             'id' => 'required',
             'kd_jenis_pelaksanaan' => 'required',

@@ -68,4 +68,6 @@ class KurikulumController extends Controller
         $data = Kurikulum::set_aktif_kurikulum($request->id, $request->status);
         return response()->json($data);
     }
+
+
 }

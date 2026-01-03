@@ -12,9 +12,9 @@ class Ws_Sinta extends Model
     use HasFactory;
 
     private static $url = 'https://apisinta.kemdikbud.go.id/';
-    private static $username = 'ITSMANDALA';
-    private static $password = '9012841840924197135019';
-    private static $uniq_id = '496847296';
+    private static $username = 'xxxx';
+    private static $password = 'xxx';
+    private static $uniq_id = 'xxx';
     private static $env = 'prod';
 
     public static function GetToken()

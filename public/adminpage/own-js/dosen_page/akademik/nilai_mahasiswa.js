@@ -236,7 +236,7 @@ jQuery.nilai_mahasiswa = {
                         <button type="button" id="btn-reset-all" class="btn btn-warning btn-sm" title="Reset semua nilai (Ctrl+R)">
                             <i class="fas fa-eraser mr-1"></i>Reset
                         </button>
-                        <button type="button" id="btn-export-nilai" class="btn btn-info btn-sm" title="Export ke Excel/CSV">
+                        <button type="button" id="btn-export-nilai" class="btn btn-info btn-sm" title="Export ke Excel/CSV/PDF">
                             <i class="fas fa-download mr-1"></i>Export
                         </button>
                         <button type="button" id="btn-refresh" class="btn btn-secondary btn-sm" title="Refresh halaman">
@@ -593,7 +593,11 @@ jQuery.nilai_mahasiswa = {
             $('#btn-confirm-export').off('click').on('click', function () {
                 var format = $('input[name="export-format"]:checked').val();
                 $('#exportModal').modal('hide');
-                self.processExport(format);
+                if (format === 'csv' || format === 'excel') {
+                    self.processExport(format);
+                } else {
+                    window.open('/dosen/akademik/nilai-matakuliah-export/' + $("#id_jadwal").val());
+                }
             });
             return;
         }
@@ -913,11 +917,11 @@ jQuery.nilai_mahasiswa = {
                 .attr('step', '0.01');
 
             if (kriteriaName && kriteriaName.toLowerCase().includes('kehadiran')) {
-                $input.attr('placeholder', '0-16 (contoh: 15.5)')
+                $input.attr('placeholder', '0-16')
                     .attr('max', '16')
                     .attr('title', 'Masukkan nilai kehadiran 0-16 (gunakan titik untuk desimal, contoh: 15.5)');
             } else {
-                $input.attr('placeholder', '0-100 (contoh: 85.75)')
+                $input.attr('placeholder', '0-100')
                     .attr('max', '100')
                     .attr('title', 'Masukkan nilai 0-100 (gunakan titik untuk desimal, contoh: 85.75)');
             }

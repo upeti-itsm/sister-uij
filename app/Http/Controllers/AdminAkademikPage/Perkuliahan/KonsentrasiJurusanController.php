@@ -41,7 +41,7 @@ class KonsentrasiJurusanController extends Controller
             'nama_konsentrasi' => 'required',
             'tahun_dibuka' => 'required'
         ]);
-        $data = KonsentrasiJurusan::insup_konsentrasi_jurusan($request->kd_prodi, $request->nama_konsentrasi, $request->tahun_dibuka, $request->id);
+        $data = KonsentrasiJurusan::insup_konsentrasi_jurusan($request->id, $request->kd_prodi, $request->nama_konsentrasi, $request->tahun_dibuka);
         if ($data->status == 1)
             Session::flash('success_message', $data->keterangan);
         else
@@ -49,7 +49,8 @@ class KonsentrasiJurusanController extends Controller
         return redirect()->back();
     }
 
-    public function delete(Request $request){
+    public function delete(Request $request)
+    {
         $request->validate([
             'id' => 'required'
         ]);

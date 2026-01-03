@@ -29,7 +29,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="fs-17 font-weight-600 mb-0">Daftar Kurikulum</h6>
+                        <h6 class="fs-17 font-weight-600 mb-0">Daftar Ruang Perkuliahan</h6>
                     </div>
                     <div class="text-right">
                         <div class="actions">
@@ -49,8 +49,8 @@
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="row">
                                         <div class="col-md-10">
-                                            <input type="text" class="form-control" placeholder="Cari Nama Kurikulum"
-                                                id="cari-data">
+                                            <input type="text" class="form-control"
+                                                placeholder="Cari Nama Ruang Perkuliahan" id="cari-data">
                                         </div>
                                         <div class="col-md-2">
                                             <button class="btn btn-block btn-primary" id="btn-cari-data"><i

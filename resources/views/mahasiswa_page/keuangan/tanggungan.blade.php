@@ -216,7 +216,6 @@
                                 <th class="text-right">Jumlah Bayar</th>
                                 <th>Metode & Referensi</th>
                                 <th class="text-center">Tanggal Bayar</th>
-                                <th class="text-center">Jenis Tanggungan</th>
                                 <th>Keterangan</th>
                             </tr>
                             </thead>

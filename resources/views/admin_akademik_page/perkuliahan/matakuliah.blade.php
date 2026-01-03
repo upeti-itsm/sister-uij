@@ -1,8 +1,8 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
     <style>
         /* Header tabel lebih kontras */
         #table thead th {
@@ -373,7 +373,7 @@
                                 </label>
                                 <div class="input-group">
                                     <input type="text" class="form-control"
-                                           placeholder="Ketik nama atau kode matakuliah..." id="cari-data">
+                                        placeholder="Ketik nama atau kode matakuliah..." id="cari-data">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" id="btn-cari-data" title="Cari Data">
                                             <i class="fas fa-search"></i>
@@ -392,9 +392,9 @@
                                     <div class="form-group">
                                         <select class="form-control select2" name="kd_prodi" id="kd_prodi">
                                             <option value="all">-- Semua Program Studi --</option>
-                                            @foreach($program_studi as $item)
-                                                <option
-                                                    value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
+                                            @foreach ($program_studi as $item)
+                                                <option value="{{ $item->kd_program_studi }}">
+                                                    {{ $item->nama_program_studi }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -403,9 +403,9 @@
                                     <div class="form-group">
                                         <select class="form-control select2" name="id_kurikulum" id="id_kurikulum">
                                             <option value="">-- Semua Kurikulum --</option>
-                                            @foreach($kurikulum as $item)
-                                                <option
-                                                    value="{{$item->id_kurikulum}}">{{$item->nama_kurikulum}}</option>
+                                            @foreach ($kurikulum as $item)
+                                                <option value="{{ $item->id_kurikulum }}">{{ $item->nama_kurikulum }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -423,48 +423,48 @@
                 <!-- Data Table -->
                 <div class="table-responsive">
                     <table class="table table-sm table-striped table-bordered table-hover" id="table"
-                           style="width:100%">
+                        style="width:100%">
                         <thead class="thead-light">
-                        <tr>
-                            <th width="5%" class="text-center">No</th>
-                            <th width="25%">
-                                <i class="fas fa-book mr-1"></i>Matakuliah
-                                <small class="d-block font-weight-normal">Nama & Kode</small>
-                            </th>
-                            <th width="8%" class="text-center">
-                                <i class="fas fa-graduation-cap mr-1"></i>SKS/Semester
-                                <small class="d-block font-weight-normal">Kredit & Semester</small>
-                            </th>
-                            <th width="20%">
-                                <i class="fas fa-university mr-1"></i>Program Studi
-                                <small class="d-block font-weight-normal">Prodi & Konsentrasi</small>
-                            </th>
-                            <th width="15%">
-                                <i class="fas fa-clipboard-list mr-1"></i>Kurikulum
-                                <small class="d-block font-weight-normal">Tahun/Nama</small>
-                            </th>
-                            <th width="12%" class="text-center">
-                                <i class="fas fa-tags mr-1"></i>Kategori
-                                <small class="d-block font-weight-normal">Jenis & Pelaksanaan</small>
-                            </th>
-                            <th width="10%">
-                                <i class="fas fa-link mr-1"></i>Prasyarat
-                                <small class="d-block font-weight-normal">Matakuliah Pendahulu</small>
-                            </th>
-                            <th width="5%" class="text-center">
-                                <i class="fas fa-cogs mr-1"></i>Aksi
-                            </th>
-                        </tr>
+                            <tr>
+                                <th width="5%" class="text-center">No</th>
+                                <th width="25%">
+                                    <i class="fas fa-book mr-1"></i>Matakuliah
+                                    <small class="d-block font-weight-normal">Nama & Kode</small>
+                                </th>
+                                <th width="8%" class="text-center">
+                                    <i class="fas fa-graduation-cap mr-1"></i>SKS/Semester
+                                    <small class="d-block font-weight-normal">Kredit & Semester</small>
+                                </th>
+                                <th width="20%">
+                                    <i class="fas fa-university mr-1"></i>Program Studi
+                                    <small class="d-block font-weight-normal">Prodi & Konsentrasi</small>
+                                </th>
+                                <th width="15%">
+                                    <i class="fas fa-clipboard-list mr-1"></i>Kurikulum
+                                    <small class="d-block font-weight-normal">Tahun/Nama</small>
+                                </th>
+                                <th width="12%" class="text-center">
+                                    <i class="fas fa-tags mr-1"></i>Kategori
+                                    <small class="d-block font-weight-normal">Jenis & Pelaksanaan</small>
+                                </th>
+                                <th width="10%">
+                                    <i class="fas fa-link mr-1"></i>Prasyarat
+                                    <small class="d-block font-weight-normal">Matakuliah Pendahulu</small>
+                                </th>
+                                <th width="5%" class="text-center">
+                                    <i class="fas fa-cogs mr-1"></i>Aksi
+                                </th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <!-- Data akan dimuat via AJAX -->
+                            <!-- Data akan dimuat via AJAX -->
                         </tbody>
                         <tfoot class="thead-light">
-                        <tr>
-                            <th colspan="8" class="text-center">
-                                <small class="text-muted">Data akan ditampilkan sesuai filter yang dipilih</small>
-                            </th>
-                        </tr>
+                            <tr>
+                                <th colspan="8" class="text-center">
+                                    <small class="text-muted">Data akan ditampilkan sesuai filter yang dipilih</small>
+                                </th>
+                            </tr>
                         </tfoot>
                     </table>
                 </div>
@@ -473,7 +473,7 @@
     </div>
 
     <!-- Hidden Form for Delete Action -->
-    <form style="display: none" action="{{route('matakuliah.delete')}}" method="POST" id="delete-form">
+    <form style="display: none" action="{{ route('matakuliah.delete') }}" method="POST" id="delete-form">
         @csrf
         <input type="hidden" id="delete-id_matakuliah" name="id">
         <input type="hidden" id="delete-status" name="status" value="false">
@@ -483,7 +483,7 @@
 @section('modal')
     <!-- Modal Insert/Update dengan Enhanced UI -->
     <div class="modal fade" id="modal-insup" tabindex="-1" role="dialog" aria-labelledby="insupLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content shadow-lg">
                 <div class="modal-header">
@@ -498,7 +498,8 @@
                 <div class="modal-body">
                     <form action="#" method="POST" id="insup-form">
                         @csrf
-                        <input type="hidden" id="insup-id" name="id" value="00000000-0000-0000-0000-000000000000">
+                        <input type="hidden" id="insup-id" name="id"
+                            value="00000000-0000-0000-0000-000000000000">
 
                         <!-- Alert Info -->
                         <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -526,9 +527,9 @@
                                     </label>
                                     <select class="form-control select2" name="kd_prodi" id="insup-kd_prodi" required>
                                         <option value="all">-- Pilih Program Studi --</option>
-                                        @foreach($program_studi as $item)
-                                            <option
-                                                value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
+                                        @foreach ($program_studi as $item)
+                                            <option value="{{ $item->kd_program_studi }}">{{ $item->nama_program_studi }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     <small class="form-text text-muted">Pilih program studi untuk memuat
@@ -539,10 +540,9 @@
                                 <div class="form-group">
                                     <label class="font-weight-bold">
                                         <i class="fas fa-graduation-cap mr-1"></i>Konsentrasi
-                                        <span class="required-field">*</span>
                                     </label>
                                     <select class="form-control select2" name="id_konsentrasi" id="insup-id_konsentrasi"
-                                            required>
+                                        required>
                                         <option value="">-- Pilih Program Studi Terlebih Dahulu --</option>
                                     </select>
                                     <small class="form-text text-muted">Konsentrasi akan dimuat sesuai prodi</small>
@@ -555,10 +555,11 @@
                                         <span class="required-field">*</span>
                                     </label>
                                     <select class="form-control select2" name="id_kurikulum" id="insup-id_kurikulum"
-                                            required>
+                                        required>
                                         <option value="">-- Pilih Kurikulum --</option>
-                                        @foreach($kurikulum as $item)
-                                            <option value="{{$item->id_kurikulum}}">{{$item->nama_kurikulum}}</option>
+                                        @foreach ($kurikulum as $item)
+                                            <option value="{{ $item->id_kurikulum }}">{{ $item->nama_kurikulum }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     <small class="form-text text-muted">Pilih kurikulum untuk memuat prasyarat</small>
@@ -580,8 +581,7 @@
                                         <span class="required-field">*</span>
                                     </label>
                                     <input type="text" name="nama_matakuliah" class="form-control"
-                                           id="insup-nama_matakuliah"
-                                           required placeholder="Contoh: Pemrograman Web Lanjut">
+                                        id="insup-nama_matakuliah" required placeholder="Contoh: Pemrograman Web Lanjut">
                                     <small class="form-text text-muted">Nama lengkap matakuliah sesuai kurikulum</small>
                                 </div>
                             </div>
@@ -592,8 +592,7 @@
                                         <span class="required-field">*</span>
                                     </label>
                                     <input type="text" name="kode_matakuliah" class="form-control"
-                                           id="insup-kode_matakuliah"
-                                           required placeholder="Contoh: TI301">
+                                        id="insup-kode_matakuliah" required placeholder="Contoh: TI301">
                                     <small class="form-text text-muted">Kode unik matakuliah</small>
                                 </div>
                             </div>
@@ -613,7 +612,7 @@
                                         <span class="required-field">*</span>
                                     </label>
                                     <input type="number" name="jumlah_sks" class="form-control" id="insup-jumlah_sks"
-                                           required min="1" max="6" placeholder="3">
+                                        required min="1" max="6" placeholder="3">
                                     <small class="form-text text-muted">Rentang: 1-6 SKS</small>
                                 </div>
                             </div>
@@ -624,7 +623,7 @@
                                         <span class="required-field">*</span>
                                     </label>
                                     <input type="number" name="semester" class="form-control" id="insup-semester"
-                                           required min="1" max="8" placeholder="5">
+                                        required min="1" max="8" placeholder="5">
                                     <small class="form-text text-muted">Semester: 1-8</small>
                                 </div>
                             </div>
@@ -635,11 +634,11 @@
                                         <span class="required-field">*</span>
                                     </label>
                                     <select class="form-control select2" name="id_jenis_matakuliah"
-                                            id="insup-id_jenis_matakuliah" required>
+                                        id="insup-id_jenis_matakuliah" required>
                                         <option value="">-- Pilih Jenis --</option>
-                                        @foreach($jenis_matakuliah as $item)
-                                            <option
-                                                value="{{$item->kd_jenis_matakuliah}}">{{$item->nama_jenis}}</option>
+                                        @foreach ($jenis_matakuliah as $item)
+                                            <option value="{{ $item->kd_jenis_matakuliah }}">{{ $item->nama_jenis }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     <small class="form-text text-muted">Wajib/Pilihan</small>
@@ -652,11 +651,11 @@
                                         <span class="required-field">*</span>
                                     </label>
                                     <select class="form-control select2" name="id_jenis_pelaksanaan"
-                                            id="insup-id_jenis_pelaksanaan" required>
+                                        id="insup-id_jenis_pelaksanaan" required>
                                         <option value="">-- Pilih Jenis Pelaksanaan --</option>
-                                        @foreach($jenis_pelaksanaan as $item)
-                                            <option
-                                                value="{{$item->kd_jenis_pelaksanaan_matakuliah}}">{{$item->jenis_pelaksanaan_matakuliah}}</option>
+                                        @foreach ($jenis_pelaksanaan as $item)
+                                            <option value="{{ $item->kd_jenis_pelaksanaan_matakuliah }}">
+                                                {{ $item->jenis_pelaksanaan_matakuliah }}</option>
                                         @endforeach
                                     </select>
                                     <small class="form-text text-muted">Teori/Praktik/Gabungan</small>
@@ -676,7 +675,7 @@
                                         <small class="text-muted font-weight-normal">(opsional)</small>
                                     </label>
                                     <select multiple class="form-control select2" name="id_matakuliah_prasyarat[]"
-                                            id="insup-id_matakuliah_prasyarat">
+                                        id="insup-id_matakuliah_prasyarat">
                                         <option value="">-- Pilih Kurikulum Terlebih Dahulu --</option>
                                     </select>
                                     <small class="form-text text-muted">
@@ -704,7 +703,7 @@
 
     <!-- Modal Upload Excel -->
     <div class="modal fade" id="modal-upload-excel" tabindex="-1" role="dialog" aria-labelledby="uploadExcelLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content shadow-lg">
                 <div class="modal-header bg-info text-white">
@@ -761,10 +760,10 @@
                                 <h6>Pilih File Excel atau Drag & Drop</h6>
                                 <p class="text-muted mb-3 small">File maksimal 5MB (.xlsx, .xls)</p>
                                 <button type="button" class="btn btn-primary btn-sm"
-                                        onclick="document.getElementById('file-input').click()">
+                                    onclick="document.getElementById('file-input').click()">
                                     <i class="fas fa-folder-open mr-1"></i>Pilih File
                                 </button>
-                                <input type="file" id="file-input" accept=".xlsx,.xls"/>
+                                <input type="file" id="file-input" accept=".xlsx,.xls" />
                             </div>
 
                             <div id="fileInfo" class="file-info" style="display: none;">
@@ -797,9 +796,9 @@
                                             </label>
                                             <select class="form-control select2" id="defaultProdi">
                                                 <option value="all">-- Pilih Program Studi --</option>
-                                                @foreach($program_studi as $item)
-                                                    <option
-                                                        value="{{$item->kd_program_studi}}">{{$item->nama_program_studi}}</option>
+                                                @foreach ($program_studi as $item)
+                                                    <option value="{{ $item->kd_program_studi }}">
+                                                        {{ $item->nama_program_studi }}</option>
                                                 @endforeach
                                             </select>
                                             <small class="form-text text-muted">Akan digunakan jika kolom kd_prodi
@@ -828,7 +827,7 @@
                                         <i class="fas fa-check-circle mr-1"></i>Validasi Data
                                     </button>
                                     <button class="btn btn-success btn-sm" onclick="startUpload()" disabled
-                                            id="btnStartUpload">
+                                        id="btnStartUpload">
                                         <i class="fas fa-upload mr-1"></i>Mulai Upload
                                     </button>
                                 </div>
@@ -853,7 +852,7 @@
                                 <h6 class="small"><i class="fas fa-tasks mr-2"></i>Progress Upload</h6>
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                         role="progressbar" id="progressBar" style="width: 0%">
+                                        role="progressbar" id="progressBar" style="width: 0%">
                                         0%
                                     </div>
                                 </div>
@@ -928,54 +927,54 @@
                             <h6>Struktur Kolom Wajib:</h6>
                             <table class="table table-sm table-bordered">
                                 <thead class="thead-light">
-                                <tr>
-                                    <th>Kolom</th>
-                                    <th>Tipe Data</th>
-                                    <th>Contoh</th>
-                                </tr>
+                                    <tr>
+                                        <th>Kolom</th>
+                                        <th>Tipe Data</th>
+                                        <th>Contoh</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>kode_matakuliah</td>
-                                    <td>Text</td>
-                                    <td>TI301</td>
-                                </tr>
-                                <tr>
-                                    <td>nama_matakuliah</td>
-                                    <td>Text</td>
-                                    <td>Pemrograman Web</td>
-                                </tr>
-                                <tr>
-                                    <td>jumlah_sks</td>
-                                    <td>Number (1-6)</td>
-                                    <td>3</td>
-                                </tr>
-                                <tr>
-                                    <td>semester</td>
-                                    <td>Number (1-8)</td>
-                                    <td>5</td>
-                                </tr>
-                                <tr>
-                                    <td>kd_prodi</td>
-                                    <td>Text</td>
-                                    <td>58601</td>
-                                </tr>
-                                <tr class="table-warning">
-                                    <td>id_kurikulum</td>
-                                    <td colspan="2">
-                                        <strong>Akan diisi otomatis dari pilihan Anda</strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>kd_jenis_matakuliah</td>
-                                    <td>Text</td>
-                                    <td>MKWK</td>
-                                </tr>
-                                <tr>
-                                    <td>kd_jenis_pelaksanaan</td>
-                                    <td>Text</td>
-                                    <td>PR</td>
-                                </tr>
+                                    <tr>
+                                        <td>kode_matakuliah</td>
+                                        <td>Text</td>
+                                        <td>TI301</td>
+                                    </tr>
+                                    <tr>
+                                        <td>nama_matakuliah</td>
+                                        <td>Text</td>
+                                        <td>Pemrograman Web</td>
+                                    </tr>
+                                    <tr>
+                                        <td>jumlah_sks</td>
+                                        <td>Number (1-6)</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>semester</td>
+                                        <td>Number (1-8)</td>
+                                        <td>5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>kd_prodi</td>
+                                        <td>Text</td>
+                                        <td>58601</td>
+                                    </tr>
+                                    <tr class="table-warning">
+                                        <td>id_kurikulum</td>
+                                        <td colspan="2">
+                                            <strong>Akan diisi otomatis dari pilihan Anda</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>kd_jenis_matakuliah</td>
+                                        <td>Text</td>
+                                        <td>MKWK</td>
+                                    </tr>
+                                    <tr>
+                                        <td>kd_jenis_pelaksanaan</td>
+                                        <td>Text</td>
+                                        <td>PR</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -983,16 +982,16 @@
                             <h6>Kolom Opsional:</h6>
                             <table class="table table-sm table-bordered">
                                 <thead class="thead-light">
-                                <tr>
-                                    <th>Kolom</th>
-                                    <th>Keterangan</th>
-                                </tr>
+                                    <tr>
+                                        <th>Kolom</th>
+                                        <th>Keterangan</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>prasyarat</td>
-                                    <td>Pisahkan dengan koma jika lebih dari 1</td>
-                                </tr>
+                                    <tr>
+                                        <td>prasyarat</td>
+                                        <td>Pisahkan dengan koma jika lebih dari 1</td>
+                                    </tr>
                                 </tbody>
                             </table>
 
@@ -1002,19 +1001,19 @@
                                     <strong>Jenis Matakuliah:</strong>
                                     <table class="small">
                                         <thead>
-                                        <tr>
-                                            <th colspan="2">Kode</th>
-                                            <th>Jenis</th>
-                                        </tr>
+                                            <tr>
+                                                <th colspan="2">Kode</th>
+                                                <th>Jenis</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach($jenis_matakuliah as $item)
-                                            <tr>
-                                                <td>{{$item->kd_jenis_matakuliah}}</td>
-                                                <td>:</td>
-                                                <td>{{$item->nama_jenis}}</td>
-                                            </tr>
-                                        @endforeach
+                                            @foreach ($jenis_matakuliah as $item)
+                                                <tr>
+                                                    <td>{{ $item->kd_jenis_matakuliah }}</td>
+                                                    <td>:</td>
+                                                    <td>{{ $item->nama_jenis }}</td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -1022,19 +1021,19 @@
                                     <strong>Jenis Pelaksanaan:</strong>
                                     <table class="small">
                                         <thead>
-                                        <tr>
-                                            <th colspan="2">Kode</th>
-                                            <th>Jenis</th>
-                                        </tr>
+                                            <tr>
+                                                <th colspan="2">Kode</th>
+                                                <th>Jenis</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach($jenis_pelaksanaan as $item)
-                                            <tr>
-                                                <td>{{$item->kd_jenis_pelaksanaan_matakuliah}}</td>
-                                                <td>:</td>
-                                                <td>{{$item->jenis_pelaksanaan_matakuliah}}</td>
-                                            </tr>
-                                        @endforeach
+                                            @foreach ($jenis_pelaksanaan as $item)
+                                                <tr>
+                                                    <td>{{ $item->kd_jenis_pelaksanaan_matakuliah }}</td>
+                                                    <td>:</td>
+                                                    <td>{{ $item->jenis_pelaksanaan_matakuliah }}</td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -1043,8 +1042,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{asset('files/akademik/template_matakuliah.xlsx')}}" class="btn btn-success"
-                       download="template_matakuliah.xlsx">
+                    <a href="{{ asset('files/akademik/template_matakuliah.xlsx') }}" class="btn btn-success"
+                        download="template_matakuliah.xlsx">
                         <i class="fas fa-download mr-1"></i>Download Template
                     </a>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -1055,16 +1054,16 @@
 @endsection
 
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/sheetjs.min.js')}}"></script>
-    <script src="{{asset('adminpage/own-js/admin_akademik/perkuliahan/matakuliah.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/sheetjs.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/admin_akademik/perkuliahan/matakuliah.js') }}"></script>
 
     <script>
         // Additional UI enhancements
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Auto-dismiss alerts after 5 seconds
-            setTimeout(function () {
+            setTimeout(function() {
                 $('.alert-dismissible').fadeOut('slow');
             }, 5000);
 
@@ -1072,7 +1071,7 @@
             $('[title]').tooltip();
 
             // Form validation visual feedback
-            $('.form-control').on('blur', function () {
+            $('.form-control').on('blur', function() {
                 if ($(this).prop('required') && !$(this).val()) {
                     $(this).addClass('is-invalid');
                 } else {
