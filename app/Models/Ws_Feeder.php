@@ -13,15 +13,10 @@ class Ws_Feeder extends Model
     private static $url = '10.2.2.102:3003/ws/live2.php';
     public static function GetToken()
     {
-//        $response = Http::post('10.2.2.102:3004/ws/live2.php', [
-//            'act' => 'GetToken',
-//            'username' => '073030',
-//            'password' => 'm4nd4l4073030'
-//        ]);
         $response = Http::post(self::$url, [
             'act' => 'GetToken',
-            'username' => 'suwignyo@itsm.ac.id',
-            'password' => 'M4nd4l4072042!'
+            'username' => 'xxxx',
+            'password' => 'xxxx!'
         ]);
         Session::put('token', $response->json()["data"]["token"]);
     }

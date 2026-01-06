@@ -146,7 +146,7 @@
                         action="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_hr.edit') }}" method="POST">
                         @csrf
                         <input type="hidden" name="id_jabatan_fungsional" id="id_jabatan_fungsional">
-                        <input type="hidden" name="jenis_jenjang" id="input_jenis_jenjang">
+                        <input type="hidden" name="input_jenis_jenjang" id="input_jenis_jenjang">
                         <input type="hidden" name="jabatan_fungsional" id="jabatan_fungsional">
                         <input type="hidden" name="nominal_tunjangan" id="nominal_tunjangan">
                     </form>

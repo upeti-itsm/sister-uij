@@ -594,7 +594,7 @@ jQuery.jadwal_matakuliah = {
                 failed++;
                 progres++;
             }
-        });
+        })
     }
 };
 

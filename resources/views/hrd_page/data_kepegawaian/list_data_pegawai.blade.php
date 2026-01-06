@@ -74,7 +74,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="float-right">
-                                                <a href="{{route('hrd.data_kepegawaian.list_data_pegawai.create', ['jenis_karyawan' => 2])}}"
+                                                <a href="{{route('hrd.data_kepegawaian.list_data_pegawai.create', ['jenis_karyawan' => 4])}}"
                                                    class="btn btn-info" id="btn-tambah-data"><i
                                                         class="fas fa-user-plus mr-2"></i>Tambah Karyawan
                                                 </a>

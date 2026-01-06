@@ -4,12 +4,12 @@ jQuery.dosen = {
         log_table: $("#log-table").DataTable({
             scrollY: '400px',
             columns: [
-                {width: "5%", sClass: 'text-center', searchable: false},
-                {width: "50%", searchable: false},
-                {width: "45%", sClass: 'text-center', searchable: false},
-                {searchable: true, visible: false},
-                {searchable: true, visible: false},
-                {searchable: true, visible: false},
+                { width: "5%", sClass: 'text-center', searchable: false },
+                { width: "50%", searchable: false },
+                { width: "45%", sClass: 'text-center', searchable: false },
+                { searchable: true, visible: false },
+                { searchable: true, visible: false },
+                { searchable: true, visible: false },
             ],
             scrollCollapse: true,
             paging: true,
@@ -230,13 +230,13 @@ jQuery.dosen = {
                                 },
                                 success: function (response) {
                                     if (response.username) {
-                                        var gelar_awal = '';
-                                        if (response.gelar_awal !== '')
-                                            gelar_awal = response.gelar_awal.replaceAll('-', '') + ' ';
-                                        var gelar_akhir = '';
-                                        if (response.gelar_akhir !== '')
-                                            gelar_akhir = response.gelar_akhir.replaceAll('-', '');
-                                        var nama_lengkap = gelar_awal + response.nama_lengkap + gelar_akhir;
+                                        var gelardepan = '';
+                                        if (response.gelardepan !== '')
+                                            gelardepan = response.gelardepan.replaceAll('-', '') + ' ';
+                                        var gelarbelakang = '';
+                                        if (response.gelarbelakang !== '')
+                                            gelarbelakang = response.gelarbelakang.replaceAll('-', '');
+                                        var nama_lengkap = gelardepan + response.nama_lengkap + gelarbelakang;
                                         $.ajax({
                                             url: '/super-admin/moodle/dosen/json/json-syncron',
                                             method: 'post',
@@ -261,8 +261,8 @@ jQuery.dosen = {
                                                 'tgl_masuk': response.tgl_masuk,
                                                 'asal_sekolah': response.asal_sekolah,
                                                 'nama': response.nama_lengkap,
-                                                'gelar_awal': response.gelar_awal,
-                                                'gelar_akhir': response.gelar_akhir,
+                                                'gelardepan': response.gelardepan,
+                                                'gelarbelakang': response.gelarbelakang,
                                                 'no_ktp': response.no_ktp,
                                                 'tempat_lahir': response.tempat_lahir,
                                                 'tgl_lahir': response.tgl_lahir,
@@ -289,7 +289,7 @@ jQuery.dosen = {
                                                     });
                                                 }
                                             },
-                                            complete: function (){
+                                            complete: function () {
                                                 self.data.table.ajax.reload();
                                                 $("#sync-siakad-loading-spin-" + nik).hide();
                                             }
@@ -316,13 +316,13 @@ jQuery.dosen = {
     next_data: function (data, index = 0, progres = 0, failed = 0, inserted = 0, updated = 0) {
         var self = this;
         var n = data.length;
-        var gelar_awal = '';
-        if (data[index].gelar_awal !== '')
-            gelar_awal = data[index].gelar_awal.replaceAll('-', '') + ' ';
-        var gelar_akhir = '';
-        if (data[index].gelar_akhir !== '')
-            gelar_akhir = data[index].gelar_akhir.replaceAll('-', '');
-        var nama_lengkap = gelar_awal + data[index].nama_lengkap + gelar_akhir;
+        var gelardepan = '';
+        if (data[index].gelardepan !== '')
+            gelardepan = data[index].gelardepan.replaceAll('-', '') + ' ';
+        var gelarbelakang = '';
+        if (data[index].gelarbelakang !== '')
+            gelarbelakang = data[index].gelarbelakang.replaceAll('-', '');
+        var nama_lengkap = gelardepan + data[index].nama_lengkap + gelarbelakang;
         $.ajax({
             url: '/super-admin/moodle/dosen/json/json-syncron',
             method: 'post',
@@ -347,8 +347,8 @@ jQuery.dosen = {
                 'tgl_masuk': data[index].tgl_masuk,
                 'asal_sekolah': data[index].asal_sekolah,
                 'nama': data[index].nama_lengkap,
-                'gelar_awal': data[index].gelar_awal,
-                'gelar_akhir': data[index].gelar_akhir,
+                'gelardepan': data[index].gelardepan,
+                'gelarbelakang': data[index].gelarbelakang,
                 'no_ktp': data[index].no_ktp,
                 'tempat_lahir': data[index].tempat_lahir,
                 'tgl_lahir': data[index].tgl_lahir,

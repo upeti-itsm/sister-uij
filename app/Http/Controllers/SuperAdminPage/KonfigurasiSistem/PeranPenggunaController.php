@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 
 class PeranPenggunaController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $menu = 'Pengelolaan Peran Pengguna';
         $aplikasi = Aplikasi::get_daftar_aplikasi("", 0, -1);
         return view('super_admin_page.konfigurasi_sistem.peran_pengguna', compact('menu', 'aplikasi'));
@@ -33,7 +34,8 @@ class PeranPenggunaController extends Controller
         return response()->json($data, 200);
     }
 
-    public function detail($id, $id_aplikasi){
+    public function detail($id, $id_aplikasi)
+    {
         $menu = 'Pengelolaan Peran Pengguna';
         $personal = Karyawan::get_detail_karyawan_by_id_personal($id);
         $peran = Peran::get_daftar_peran($id_aplikasi);
@@ -61,7 +63,8 @@ class PeranPenggunaController extends Controller
         return response()->json($data, 200);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'id_personal' => 'required',
             'id_peran' => 'required',
@@ -71,7 +74,8 @@ class PeranPenggunaController extends Controller
         return response()->json($peran_pengguna);
     }
 
-    public function delete(Request $request){
+    public function delete(Request $request)
+    {
         $request->validate([
             'id_peran' => 'required',
             'id_personal' => 'required'

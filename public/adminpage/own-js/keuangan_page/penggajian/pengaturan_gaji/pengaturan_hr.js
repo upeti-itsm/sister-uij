@@ -134,7 +134,7 @@ jQuery.pengaturan_hr = {
             $("#add_jabatan_fungsional").val($(this).data('jabatan_fungsional'));
             $("#keterangan").text($(this).data('keterangan'));
             $("#add_nominal_tunjangan").val(numeral($(this).data('nominal')).format('0,-'));
-            $("#input_jenis_jenjang").val($("#keterangan").val());
+            $("#input_jenis_jenjang").val($(this).data('keterangan'));
             $("#modal-edit-data-fungsional").modal('show');
             self.setOnSaveButton();
         });
@@ -143,7 +143,6 @@ jQuery.pengaturan_hr = {
             if ($("#add_jabatan_fungsional").val() && $("#add_nominal_tunjangan").val()) {
                 $("#jabatan_fungsional").val($("#add_jabatan_fungsional").val());
                 $("#nominal_tunjangan").val(numeral($("#add_nominal_tunjangan").val()).value());
-                $("#input_jenis_jenjang").val($("#keterangan").val());
                 $("#add_form").submit();
             } else {
                 $.alert({

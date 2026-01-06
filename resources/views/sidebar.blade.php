@@ -514,18 +514,10 @@
                                         <li @if ($menu == 'Pengelolaan Mahasiswa LP3I Banyuwangi' || $menu == 'Sinkronisasi Mahasiswa dengan Siakad') class="mm-active" @endif>
                                             <a class="has-arrow" href="#" aria-expanded="true">Mahasiswa</a>
                                             <ul class="nav-third-level mm-collapse" style="">
-                                                @if (array_key_exists('Pengelolaan Mahasiswa LP3I Banyuwangi', $modul))
-                                                    <li @if ($menu == 'Pengelolaan Mahasiswa LP3I Banyuwangi') class="mm-active" @endif>
-                                                        <a
-                                                            href="{{ route('admin_akademik.akademik.mahasiswa.mahasiswa_lpppi.index') }}">Mahasiswa
-                                                            LP3I</a>
-                                                    </li>
-                                                @endif
                                                 @if (array_key_exists('Sinkronisasi Mahasiswa dengan Siakad', $modul))
                                                     <li @if ($menu == 'Sinkronisasi Mahasiswa dengan Siakad') class="mm-active" @endif>
                                                         <a
-                                                            href="{{ route('admin_akademik.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad.index') }}">Sinkronisasi
-                                                            dengan Siakad</a>
+                                                            href="{{ route('admin_akademik.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad.index') }}">Sinkronisasi Mahasiswa</a>
                                                     </li>
                                                 @endif
                                             </ul>

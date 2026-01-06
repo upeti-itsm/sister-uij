@@ -1,6 +1,6 @@
 @extends('sidebar')
 @section('head-css')
-
+    
     <?php
     function getUserIP()
     {

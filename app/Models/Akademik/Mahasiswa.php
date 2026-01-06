@@ -142,4 +142,171 @@ class Mahasiswa extends Model
             $jenis, $tahun, $prodi
         ]);
     }
+    public static function sync_mahasiswa_from_pmb($tahun_seleksi)
+    {
+        return DB::select('SELECT * FROM akademik.sync_biodata_mahasiswa_from_pmb(:tahun)', [
+            'tahun' => $tahun_seleksi
+        ])[0];
+    }
+
+    public static function update_status_mahasiswa($nim, $status, $alasan = '')
+    {
+        return DB::select('SELECT * FROM akademik.update_status_mahasiswa(:nim, :status, :alasan)', [
+            'nim' => $nim,
+            'status' => $status,
+            'alasan' => $alasan
+        ])[0];
+    }
+
+    public static function get_mahasiswa_by_nim($nim)
+    {
+        $result = DB::select('SELECT * FROM akademik.get_detail_mahasiswa_by_nim(:nim)', [
+            'nim' => $nim
+        ]);
+
+        return $result ?  $result[0] :null;
+    }
+
+    public static function update_mahasiswa(
+        $nim,
+        // Data Pribadi
+        $nama_mahasiswa = null,
+        $nik = null,
+        $nisn = null,
+        $kd_jenis_kelamin = null,
+        $tempat_lahir = null,
+        $tanggal_lahir = null,
+        $id_agama = null,
+        $is_kawin = null,
+        $kewarganegaraan = null,
+        // Kontak
+        $email = null,
+        $handphone = null,
+        $telepon = null,
+        // Alamat
+        $alamat = null,
+        $rt = null,
+        $rw = null,
+        $kelurahan = null,
+        $kode_pos = null,
+        $kota_rumah = null,
+        // Data Keluarga
+        $nama_ibu = null,
+        $nama_wali = null,
+        // Data Akademik
+        $kd_prodi = null,
+        $angkatan = null,
+        $kd_status_mahasiswa = null,
+        $kd_jenis_mahasiswa = null,
+        $kd_jenis_pendanaan = null,
+        $jenis_kelas_siakad = null,
+        $dosen_wali = null,
+        // Data Pendidikan Sebelumnya
+        $sekolah_asal = null,
+        $jurusan_sma = null,
+        $tgl_lulus_sma = null,
+        $nomor_ijazah = null,
+        $nomor_seri_ijazah = null,
+        $nomor_transkrip = null,
+        // Data Kelulusan
+        $tgl_lulus = null,
+        $judul_skripsi = null,
+        $ipk = null
+    ) {
+        try {
+            $result = DB::selectOne('SELECT * FROM akademik. update_mahasiswa_by_nim(
+            :p_nim,
+            :p_nama_mahasiswa,
+            :p_nik,
+            :p_nisn,
+            :p_kd_jenis_kelamin,
+            :p_tempat_lahir,
+            :p_tanggal_lahir,
+            :p_id_agama,
+            :p_is_kawin,
+            :p_kewarganegaraan,
+            :p_email,
+            :p_handphone,
+            :p_telepon,
+            :p_alamat,
+            :p_rt,
+            :p_rw,
+            :p_kelurahan,
+            :p_kode_pos,
+            :p_kota_rumah,
+            :p_nama_ibu,
+            :p_nama_wali,
+            :p_kd_prodi,
+            :p_angkatan,
+            :p_kd_status_mahasiswa,
+            :p_kd_jenis_mahasiswa,
+            :p_kd_jenis_pendanaan,
+            :p_jenis_kelas_siakad,
+            :p_dosen_wali,
+            :p_sekolah_asal,
+            :p_jurusan_sma,
+            :p_tgl_lulus_sma,
+            :p_nomor_ijazah,
+            :p_nomor_seri_ijazah,
+            :p_nomor_transkrip,
+            :p_tgl_lulus,
+            :p_judul_skripsi,
+            :p_ipk
+        )', [
+                'p_nim' => $nim,
+                'p_nama_mahasiswa' => $nama_mahasiswa,
+                'p_nik' => $nik,
+                'p_nisn' => $nisn,
+                'p_kd_jenis_kelamin' => $kd_jenis_kelamin,
+                'p_tempat_lahir' => $tempat_lahir,
+                'p_tanggal_lahir' => $tanggal_lahir,
+                'p_id_agama' => $id_agama,
+                'p_is_kawin' => $is_kawin,
+                'p_kewarganegaraan' => $kewarganegaraan,
+                'p_email' => $email,
+                'p_handphone' => $handphone,
+                'p_telepon' => $telepon,
+                'p_alamat' => $alamat,
+                'p_rt' => $rt,
+                'p_rw' => $rw,
+                'p_kelurahan' => $kelurahan,
+                'p_kode_pos' => $kode_pos,
+                'p_kota_rumah' => $kota_rumah,
+                'p_nama_ibu' => $nama_ibu,
+                'p_nama_wali' => $nama_wali,
+                'p_kd_prodi' => $kd_prodi,
+                'p_angkatan' => $angkatan,
+                'p_kd_status_mahasiswa' => $kd_status_mahasiswa,
+                'p_kd_jenis_mahasiswa' => $kd_jenis_mahasiswa,
+                'p_kd_jenis_pendanaan' => $kd_jenis_pendanaan,
+                'p_jenis_kelas_siakad' => $jenis_kelas_siakad,
+                'p_dosen_wali' => $dosen_wali,
+                'p_sekolah_asal' => $sekolah_asal,
+                'p_jurusan_sma' => $jurusan_sma,
+                'p_tgl_lulus_sma' => $tgl_lulus_sma,
+                'p_nomor_ijazah' => $nomor_ijazah,
+                'p_nomor_seri_ijazah' => $nomor_seri_ijazah,
+                'p_nomor_transkrip' => $nomor_transkrip,
+                'p_tgl_lulus' => $tgl_lulus,
+                'p_judul_skripsi' => $judul_skripsi,
+                'p_ipk' => $ipk
+            ]);
+
+            if (!empty($result)) {
+                return (object)[
+                    'is_success' => $result->status,
+                    'result' => $result->keterangan
+                ];
+            }
+            return (object)[
+                'is_success' => false,
+                'result' => 'Tidak ada response dari database'
+            ];
+        } catch (\Exception $e) {
+            return (object)[
+                'is_success' => false,
+                'result' => 'Error: ' . $e->getMessage()
+            ];
+        }
+    }
 }

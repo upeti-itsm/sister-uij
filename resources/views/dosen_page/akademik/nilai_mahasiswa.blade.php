@@ -39,28 +39,106 @@
             vertical-align: middle !important;
         }
 
+        /* Enhanced styling untuk input nilai */
         .nilai-input {
             transition: all 0.3s ease;
+            font-weight: normal;
         }
 
+        /* Placeholder styling dengan opacity rendah */
+        .nilai-input::placeholder {
+            opacity: 0.4 !important;
+            color: #6c757d !important;
+            font-weight: normal !important;
+            font-style: italic;
+        }
+
+        .nilai-input::-webkit-input-placeholder {
+            opacity: 0.4 !important;
+            color: #6c757d !important;
+            font-weight: normal !important;
+            font-style: italic;
+        }
+
+        .nilai-input::-moz-placeholder {
+            opacity: 0.4 !important;
+            color: #6c757d !important;
+            font-weight: normal !important;
+            font-style: italic;
+        }
+
+        .nilai-input:-ms-input-placeholder {
+            opacity: 0.4 !important;
+            color: #6c757d !important;
+            font-weight: normal !important;
+            font-style: italic;
+        }
+
+        .nilai-input:-moz-placeholder {
+            opacity: 0.4 !important;
+            color: #6c757d !important;
+            font-weight: normal !important;
+            font-style: italic;
+        }
+
+        /* Input dengan nilai asli - bold dan kontras tinggi */
+        .nilai-input.has-value {
+            font-weight: bold !important;
+            color: #212529 !important;
+            background-color: #f8f9fa;
+            border-color: #ced4da;
+        }
+
+        /* Input focus state */
         .nilai-input:focus {
+            font-weight: bold !important;
+            color: #212529 !important;
             border-color: #007bff;
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            background-color: #fff;
         }
 
-        .nilai-input.border-success {
+        /* Input dengan nilai valid */
+        .nilai-input.border-success.has-value {
+            font-weight: bold !important;
+            color: #155724 !important;
+            background-color: #f1f9f1;
             border-color: #28a745 !important;
-            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         }
 
-        .nilai-input.border-warning {
+        /* Input dengan nilai warning */
+        .nilai-input.border-warning.has-value {
+            font-weight: bold !important;
+            color: #856404 !important;
+            background-color: #fff9e6;
             border-color: #ffc107 !important;
-            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
         }
 
-        .nilai-input.border-danger {
+        /* Input dengan nilai error */
+        .nilai-input.border-danger.has-value {
+            font-weight: bold !important;
+            color: #721c24 !important;
+            background-color: #ffeaea;
             border-color: #dc3545 !important;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        /* Empty input styling */
+        .nilai-input:not(.has-value) {
+            font-weight: normal !important;
+            color: #495057;
+            background-color: #fff;
+        }
+
+        /* Enhanced hover effects */
+        .nilai-input:hover:not(:focus) {
+            border-color: #adb5bd;
+            background-color: #f8f9fa;
+        }
+
+        .nilai-input.has-value:hover:not(:focus) {
+            background-color: #e9ecef;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         /* Progress indicator untuk auto-save */
@@ -99,6 +177,15 @@
         @media (max-width: 768px) {
             .table-responsive {
                 font-size: 12px;
+            }
+            
+            .nilai-input.has-value {
+                font-weight: bold !important;
+                font-size: 11px !important;
+            }
+
+            .nilai-input::placeholder {
+                font-size: 10px !important;
             }
 
             .nilai-input {
@@ -182,6 +269,7 @@
 @endsection
 
 @section('body-content')
+    <input type="hidden" id="id_jadwal" value="{{$id}}">
     <div class="col-md-12">
         {{-- Loading Overlay --}}
         <div class="loading-overlay" id="loading-overlay">
@@ -420,22 +508,28 @@
                 @if(count($mahasiswa) > 0)
                     <div class="card-footer bg-light border-top">
                         <div class="row text-center">
-                            <div class="col-md-4">
+                            <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
                                 <div class="border-right">
                                     <h6 class="mb-1 text-primary">{{ count($mahasiswa) }}</h6>
                                     <small class="text-muted">Total Mahasiswa</small>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
                                 <div class="border-right">
                                     <h6 class="mb-1 text-success" id="lulus-count">-</h6>
                                     <small class="text-muted">Lulus (≥2.0)</small>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
                                 <div class="border-right">
                                     <h6 class="mb-1 text-danger" id="tidak-lulus-count">-</h6>
                                     <small class="text-muted">Tidak Lulus (<2.0)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div>
+                                    <h6 class="mb-1 text-warning" id="belum-nilai-count">-</h6>
+                                    <small class="text-muted">Belum Dinilai</small>
                                 </div>
                             </div>
                         </div>
@@ -486,6 +580,13 @@
                                 <i class="fas fa-file-csv text-primary mr-1"></i>CSV (.csv)
                             </label>
                         </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="format-pdf" name="export-format" class="custom-control-input"
+                                   value="pdf">
+                            <label class="custom-control-label" for="format-pdf">
+                                <i class="fas fa-file-pdf text-danger mr-1"></i>PDF (.pdf)
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -534,20 +635,36 @@
 
             $('.mahasiswa-row').each(function () {
                 const nilaiMutu = $(this).find('.nilai-mutu .badge').text().trim();
-                if (nilaiMutu === '-' || nilaiMutu === '') {
+
+                // Check if student has been graded
+                if (nilaiMutu === '-' || nilaiMutu === '' || nilaiMutu.includes('fa-')) {
                     belumNilaiCount++;
                 } else {
-                    const mutu = parseFloat(nilaiMutu);
-                    if (mutu >= 2.0) {
-                        lulusCount++;
+                    // Remove any icons from the text and parse the numeric value
+                    const cleanMutu = nilaiMutu.replace(/[^0-9.,]/g, '');
+                    const mutu = parseFloat(cleanMutu);
+
+                    if (!isNaN(mutu)) {
+                        if (mutu >= 2.0) {
+                            lulusCount++;
+                        } else {
+                            tidakLulusCount++;
+                        }
                     } else {
-                        tidakLulusCount++;
+                        belumNilaiCount++;
                     }
                 }
             });
 
+            // Update the display
             $('#lulus-count').text(lulusCount);
             $('#tidak-lulus-count').text(tidakLulusCount);
+            $('#belum-nilai-count').text(belumNilaiCount);
+
+            // Optional: Add visual emphasis for counts
+            $('#lulus-count').toggleClass('text-success', lulusCount > 0);
+            $('#tidak-lulus-count').toggleClass('text-danger', tidakLulusCount > 0);
+            $('#belum-nilai-count').toggleClass('text-warning', belumNilaiCount > 0);
         }
 
         // Monitor events
