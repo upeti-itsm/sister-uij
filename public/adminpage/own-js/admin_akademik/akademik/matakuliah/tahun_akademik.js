@@ -342,18 +342,19 @@ jQuery.tahun_akademik = {
                                     sts_aktif: status
                                 },
                                 success: function (res) {
+                                    console.log(res);
                                     if (res.status) {
                                         $.alert({
                                             title: "Berhasil",
                                             type: "green",
-                                            content: res.message
+                                            content: res.keterangan
                                         });
                                         jQuery.tahun_akademik.data.table.ajax.reload(null, false);
                                     } else {
                                         $.alert({
                                             title: "Gagal",
                                             type: "red",
-                                            content: res.message
+                                            content: res.keterangan
                                         });
                                     }
                                 }

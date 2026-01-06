@@ -74,4 +74,11 @@ class Semester extends Model
             ]
         );
     }
+
+    public static function toggle_status_tahun_akademik($id_semester)
+    {
+        return DB::selectOne('SELECT * FROM akademik.set_status_aktif_semester(:id_semester)', [
+            'id_semester' => $id_semester
+        ]);
+    }
 }

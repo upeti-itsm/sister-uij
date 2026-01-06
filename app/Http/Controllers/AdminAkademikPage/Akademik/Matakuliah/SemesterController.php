@@ -121,4 +121,19 @@ class SemesterController extends Controller
             return response()->json($data, 500);
         }
     }
+
+    public function toggle_status(Request $request)
+    {
+        $request->validate([
+            'id_semester' => 'required'
+        ]);
+
+        $data = Semester::toggle_status_tahun_akademik($request->id_semester);
+
+        if ($data->status) {
+            return response()->json($data);
+        } else {
+            return response()->json($data, 500);
+        }
+    }
 }
