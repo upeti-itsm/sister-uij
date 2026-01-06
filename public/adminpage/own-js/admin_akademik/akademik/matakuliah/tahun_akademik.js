@@ -34,6 +34,11 @@ jQuery.tahun_akademik = {
         $(".select2").select2();
         // Table With DataTable
         self.data.table = $("#table").DataTable({
+            createdRow: function (row, data) {
+                if (data.sts_aktif == 0) {
+                    $(row).addClass('row-disabled');
+                }
+            },
             serverSide: true,
             ajax: {
                 url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-tahun-akademik-siakad/json',
@@ -75,10 +80,68 @@ jQuery.tahun_akademik = {
                     sClass: 'text-center',
                     width: "15%",
                     render: function (data) {
-                        var html = "<button class='btn btn-danger-soft btn-block mb-2'>Tidak Memiliki Akses</button>";
-                        if ($("#hak_akses").val() === "1") {
-                            html = "<button class='btn btn-success btn-block btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-p_tahun_akademik='" + data.tahun_akademik + "' data-p_nama_semester='" + data.nama_tahun_akademik + "' data-p_id_semester='" + data.id_semester_uij + "'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.tahun_akademik + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>";
+
+                        let html = "";
+
+                        if (data.sts_aktif == 1) {
+                            html += `
+                                <button class="btn btn-success btn-sm btn-block btn-toggle-status mb-2"
+                                    title="Nonaktifkan Tahun Akademik"
+                                    data-id="${data.id_semester}"
+                                    data-status="0">
+                                    <i class="fas fa-toggle-on"></i> Aktif
+                                </button>
+                            `;
+                        } else {
+                            html += `
+                                <button class="btn btn-danger btn-sm btn-block btn-toggle-status mb-2"
+                                    title="Aktifkan Tahun Akademik"
+                                    data-id="${data.id_semester}"
+                                    data-status="1">
+                                    <i class="fas fa-toggle-off"></i> Non Aktif
+                                </button>
+                            `;
                         }
+
+                        // ===== TOMBOL EDIT =====
+                        html += `
+                            <button class="btn btn-warning btn-sm btn-block btn-edit-tahun mb-2"
+                                title="Edit Tahun Akademik"
+                                data-id="${data.id_semester}"
+                                data-nama_semester="${data.nama_tahun_akademik}"
+                                data-tahun_akademik="${data.tahun_akademik}"
+                                data-tgl_awal_perkuliahan="${data.tgl_awal_perkuliahan_raw || data.tgl_awal_perkuliahan}"
+                                data-tgl_akhir_perkuliahan="${data.tgl_akhir_perkuliahan_raw || data.tgl_akhir_perkuliahan}"
+                                data-tgl_mulai_krs="${data.tgl_mulai_krs_raw || data.tgl_mulai_krs}"
+                                data-tgl_selesai_krs="${data.tgl_selesai_krs_raw || data.tgl_selesai_krs}"
+                                data-tgl_mulai_input_nilai="${data.tgl_mulai_input_nilai_raw || data.tgl_mulai_input_nilai}"
+                                data-tgl_selesai_input_nilai="${data.tgl_selesai_input_nilai_raw || data.tgl_selesai_input_nilai}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        `;
+
+                        // ===== TOMBOL SYNC =====
+                        // if ($("#hak_akses").val() === "1" && data.sts_aktif == 1) {
+                        //     html += `
+                        //         <button class="btn btn-success btn-block btn-sync-siakad"
+                        //             title="Sinkron data dengan siakad"
+                        //             data-p_tahun_akademik="${data.tahun_akademik}"
+                        //             data-p_nama_semester="${data.nama_tahun_akademik}"
+                        //             data-p_id_semester="${data.id_semester_uij}">
+                        //             <span class="spinner-border spinner-border-sm mr-2"
+                        //                 id="sync-siakad-loading-spin-${data.tahun_akademik}"
+                        //                 style="display:none"></span>
+                        //             <i class="fas fa-sync"></i> Sync
+                        //         </button>
+                        //     `;
+                        // } else if ($("#hak_akses").val() !== "1") {
+                        //     html += `
+                        //         <button class="btn btn-secondary btn-block" disabled>
+                        //             Tidak Memiliki Akses
+                        //         </button>
+                        //     `;
+                        // }
+
                         return html;
                     }
                 },
@@ -255,6 +318,133 @@ jQuery.tahun_akademik = {
                 }
             });
         });
+        $("#table").on("click", ".btn-toggle-status", function () {
+
+            const id = $(this).data("id");
+            const status = $(this).data("status");
+
+            const text = status == 1 ? "mengaktifkan" : "menonaktifkan";
+
+            $.confirm({
+                title: "Konfirmasi!",
+                type: "orange",
+                content: `Apakah anda yakin ingin ${text} Tahun Akademik ini?`,
+                buttons: {
+                    confirm: {
+                        text: "Yakin",
+                        btnClass: "btn-green",
+                        action: function () {
+                            $.ajax({
+                                url: "/adm-akademik/akademik/perkuliahan/tahun-akademik/toggle-status",
+                                method: "POST",
+                                data: {
+                                    id_semester: id,
+                                    sts_aktif: status
+                                },
+                                success: function (res) {
+                                    if (res.status) {
+                                        $.alert({
+                                            title: "Berhasil",
+                                            type: "green",
+                                            content: res.message
+                                        });
+                                        jQuery.tahun_akademik.data.table.ajax.reload(null, false);
+                                    } else {
+                                        $.alert({
+                                            title: "Gagal",
+                                            type: "red",
+                                            content: res.message
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: "Batal",
+                        btnClass: "btn-red"
+                    }
+                }
+            });
+        });
+
+        $("#btn-tambah-tahun").click(function () {
+            $("#form-tahun-akademik")[0].reset();
+            $("input[name='p_id_semester_akademik']").val(0);
+            $("#modal-tahun-akademik .modal-title").html('<i class="fas fa-calendar-plus"></i> Tambah Tahun Akademik');
+            $("select[name='p_nama_semester']").val("").trigger('change');
+            $("#modal-tahun-akademik").modal("show");
+        });
+
+        $("#btn-simpan-tahun").click(function () {
+
+            $.ajax({
+                url: "/adm-akademik/akademik/perkuliahan/tahun-akademik/insup-tahun-akademik",
+                method: "POST",
+                data: $("#form-tahun-akademik").serialize(),
+                success: function (res) {
+                    if (res.status) {
+                        $.alert({
+                            title: "Berhasil",
+                            type: "green",
+                            content: res.keterangan
+                        });
+                        $("#modal-tahun-akademik").modal("hide");
+                        jQuery.tahun_akademik.data.table.ajax.reload(null, false);
+                    } else {
+                        $.alert({
+                            title: "Gagal",
+                            type: "red",
+                            content: res.keterangan
+                        });
+                    }
+                }
+            });
+
+        });
+
+        $("#table").on("click", ".btn-edit-tahun", function () {
+            const id = $(this).data("id");
+            const nama_semester = $(this).data("nama_semester");
+            const tahun_akademik = $(this).data("tahun_akademik");
+
+            function parseIndonesianDate(dateStr) {
+                const months = {
+                    'Januari': '01', 'Februari': '02', 'Maret': '03', 'April': '04',
+                    'Mei': '05', 'Juni': '06', 'Juli': '07', 'Agustus': '08',
+                    'September': '09', 'Oktober': '10', 'November': '11', 'Desember': '12'
+                };
+
+                const parts = dateStr.split(' ');
+                const day = parts[0].padStart(2, '0');
+                const month = months[parts[1]];
+                const year = parts[2];
+
+                return `${year}-${month}-${day}`;
+            }
+
+            const tgl_awal_perkuliahan = parseIndonesianDate($(this).data("tgl_awal_perkuliahan"));
+            const tgl_akhir_perkuliahan = parseIndonesianDate($(this).data("tgl_akhir_perkuliahan"));
+            const tgl_mulai_krs = parseIndonesianDate($(this).data("tgl_mulai_krs"));
+            const tgl_selesai_krs = parseIndonesianDate($(this).data("tgl_selesai_krs"));
+            const tgl_mulai_input_nilai = parseIndonesianDate($(this).data("tgl_mulai_input_nilai"));
+            const tgl_selesai_input_nilai = parseIndonesianDate($(this).data("tgl_selesai_input_nilai"));
+
+            $("#modal-tahun-akademik .modal-title").html('<i class="fas fa-edit"></i> Edit Tahun Akademik');
+
+            $("input[name='p_id_semester_akademik']").val(id);
+            $("select[name='p_nama_semester']").val(nama_semester).trigger('change');
+            $("input[name='p_tahun_akademik']").val(tahun_akademik);
+            $("input[name='p_tgl_awal_perkuliahan']").val(tgl_awal_perkuliahan);
+            $("input[name='p_tgl_akhir_perkuliahan']").val(tgl_akhir_perkuliahan);
+            $("input[name='p_tgl_mulai_krs']").val(tgl_mulai_krs);
+            $("input[name='p_tgl_akhir_krs']").val(tgl_selesai_krs);
+            $("input[name='p_tgl_mulai_input_nilai']").val(tgl_mulai_input_nilai);
+            $("input[name='p_tgl_akhir_input_nilai']").val(tgl_selesai_input_nilai);
+
+            $("#modal-tahun-akademik").modal("show");
+        });
+
     },
     next_data: function (data, index = 0, progres = 0, failed = 0, inserted = 0, updated = 0) {
         var self = this;

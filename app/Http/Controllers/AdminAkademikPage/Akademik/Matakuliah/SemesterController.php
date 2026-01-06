@@ -79,4 +79,46 @@ class SemesterController extends Controller
         else
             return response()->json($data, 500);
     }
+
+    public function insup_tahun_akademik(Request $request)
+    {
+        $request->validate([
+            'p_nama_semester' => 'required',
+            'p_tahun_akademik' => 'required',
+            'p_tgl_awal_perkuliahan' => 'required',
+            'p_tgl_akhir_perkuliahan' => 'required',
+            'p_tgl_mulai_krs' => 'required',
+            'p_tgl_akhir_krs' => 'required',
+            'p_tgl_mulai_input_nilai' => 'required',
+            'p_tgl_akhir_input_nilai' => 'required'
+        ], [
+            'p_nama_semester.required' => 'Nama Semester wajib diisi',
+            'p_tahun_akademik.required' => 'Tahun Akademik wajib diisi',
+            'p_tgl_awal_perkuliahan.required' => 'Tanggal Awal Perkuliahan wajib diisi',
+            'p_tgl_akhir_perkuliahan.required' => 'Tanggal Akhir Perkuliahan wajib diisi',
+            'p_tgl_mulai_krs.required' => 'Tanggal Mulai KRS wajib diisi',
+            'p_tgl_akhir_krs.required' => 'Tanggal Akhir KRS wajib diisi',
+            'p_tgl_mulai_input_nilai.required' => 'Tanggal Mulai Input Nilai wajib diisi',
+            'p_tgl_akhir_input_nilai.required' => 'Tanggal Akhir Input Nilai wajib diisi'
+        ]);
+
+        $data = Semester::insup_tahun_akademik(
+            $request->p_nama_semester,
+            $request->p_is_periode_aktif ?? 0,
+            $request->p_tgl_awal_perkuliahan,
+            $request->p_tgl_akhir_perkuliahan,
+            $request->p_tgl_mulai_krs,
+            $request->p_tgl_akhir_krs,
+            $request->p_tgl_mulai_input_nilai,
+            $request->p_tgl_akhir_input_nilai,
+            $request->p_tahun_akademik,
+            $request->p_id_semester_akademik ?? 0
+        );
+
+        if ($data->status) {
+            return response()->json($data);
+        } else {
+            return response()->json($data, 500);
+        }
+    }
 }
