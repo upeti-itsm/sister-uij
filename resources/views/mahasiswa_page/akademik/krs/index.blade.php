@@ -261,7 +261,28 @@
                                 <th class="text-center" width="6%">Detail</th>
                             </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody>
+                            <!-- TAMBAHKAN TR KOSONG INI - SANGAT PENTING -->
+                            <tr>
+                                <td colspan="11" class="text-center">Loading...</td>
+                            </tr>
+                            </tbody>
+                            <!-- TAMBAHKAN TFOOT JIKA TIDAK ADA -->
+                            <tfoot class="thead-light">
+                            <tr>
+                                <th class="text-center"><input type="checkbox" disabled></th>
+                                <th class="text-center">No</th>
+                                <th>Mata Kuliah</th>
+                                <th>Kelas</th>
+                                <th>SKS</th>
+                                <th>Hari</th>
+                                <th>Jam</th>
+                                <th>Ruang</th>
+                                <th>Kapasitas</th>
+                                <th>Status</th>
+                                <th class="text-center">Detail</th>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -299,10 +320,15 @@
                             <th width="7%">Action</th>
                         </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                        <!-- TAMBAHKAN TR KOSONG INI -->
+                        <tr>
+                            <td colspan="8" class="text-center">Belum ada mata kuliah yang dipilih</td>
+                        </tr>
+                        </tbody>
                         <tfoot>
                         <tr class="bg-light">
-                            <th colspan="3" class="text-right">Total SKS:</th>
+                            <th colspan="3" class="text-right">Total SKS: </th>
                             <th id="total-sks">0</th>
                             <th colspan="4"></th>
                         </tr>
@@ -311,8 +337,11 @@
                 </div>
             </div>
             <div class="card-footer text-right">
-                <button class="btn btn-success btn-lg" id="btn-simpan-krs">
-                    <i class="fas fa-save mr-2"></i>Simpan KRS
+                <button class="btn btn-success btn-lg mr-2" id="btn-simpan-krs">
+                    <i class="fas fa-save mr-2"></i>Simpan Draft KRS
+                </button>
+                <button class="btn btn-primary btn-lg" id="btn-ajukan-krs">
+                    <i class="fas fa-paper-plane mr-2"></i>Ajukan KRS
                 </button>
             </div>
         </div>
@@ -387,6 +416,12 @@
                             <small class="text-muted">Ruang</small>
                             <div>
                                 <span class="badge badge-warning" id="detail-ruang">-</span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <small class="text-muted">Nama Dosen</small>
+                            <div>
+                                <span class="badge badge-warning" id="detail-nama_dosen">-</span>
                             </div>
                         </div>
                     </div>
