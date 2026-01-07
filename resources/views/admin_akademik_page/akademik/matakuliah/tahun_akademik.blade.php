@@ -1,8 +1,36 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
+
+    <style>
+        .row-disabled {
+            background-color: #f1f1f1 !important;
+            color: #9e9e9e !important;
+        }
+
+        .row-disabled td {
+            opacity: 0.7;
+        }
+
+        /* Default: tombol mati */
+        .row-disabled button {
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* KECUALI tombol toggle status */
+        .row-disabled .btn-toggle-status {
+            pointer-events: auto !important;
+            opacity: 1 !important;
+        }
+
+        .row-disabled .btn-edit-tahun {
+            pointer-events: auto !important;
+            opacity: 1 !important;
+        }
+    </style>
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -22,7 +50,8 @@
     </div>
 @endsection
 @section('body-content')
-    <input type="hidden" id="hak_akses" value="{{\Illuminate\Support\Facades\Session::get('modul')['Sinkronisasi Tahun Akademik dengan Siakad']}}">
+    <input type="hidden" id="hak_akses"
+        value="{{ \Illuminate\Support\Facades\Session::get('modul')['Sinkronisasi Tahun Akademik dengan Siakad'] }}">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -31,32 +60,34 @@
                         <h6 class="fs-17 font-weight-600 mb-0">Daftar Tahun Akademik</h6>
                     </div>
                     <div class="text-right">
-                        <div class="actions">
-                            <button class="btn btn-danger-soft btn-sync-ulang mr-2"
-                                    id="btn-sync-ulang"
-                                    title="Syncron Dengan Siakad"><i
-                                    class="fas fa-cloud-download-alt"></i> Synchron Dengan Siakad
+                        <div class="actions d-flex">
+                            <button class="btn btn-success-soft mr-2" id="btn-tambah-tahun" title="Tambah Tahun Akademik">
+                                <i class="fas fa-plus"></i> Tambah Tahun Akademik
+                            </button>
+
+                            <button class="btn btn-danger-soft btn-sync-ulang" id="btn-sync-ulang"
+                                title="Synchron Dengan Siakad">
+                                <i class="fas fa-cloud-download-alt"></i> Synchron Dengan Siakad
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 mt-3" id="progress-bar-syncron-ulang" style="display: none">
                         <button class="btn btn-primary mr-1 mb-2" type="button" disabled="">
                             <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"
-                                  id="loading-progress"></span>
+                                id="loading-progress"></span>
                             <span id="keterangan-progress">Mohon menunggu hingga proses sinkronisasi selesai ...</span>
                         </button>
                         <button class="btn btn-danger-soft mr-1 mb-2" id="btn-cancel-syncron-ulang"><i
                                 class="fas fa-window-close mr-2"></i>Batal
                         </button>
                         <div class="progress progress-lg mb-3">
-                            <div
-                                class="progress-bar progress-bar-violet progress-bar-striped progress-bar-animated"
-                                role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                                style="width: 0" id="progress-bar">
+                            <div class="progress-bar progress-bar-violet progress-bar-striped progress-bar-animated"
+                                role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0" id="progress-bar">
                                 <span id="progress-text"></span>
                             </div>
                         </div>
@@ -70,20 +101,16 @@
                                     </div>
                                     <div class="text-right">
                                         <div class="actions">
-                                            <button class="btn btn-primary-soft mr-3 text-white"
-                                                    id="btn-failed-log">
+                                            <button class="btn btn-primary-soft mr-3 text-white" id="btn-failed-log">
                                                 Failed : 0
                                             </button>
-                                            <button class="btn btn-primary-soft mr-3 text-white"
-                                                    id="btn-inserted-log">
+                                            <button class="btn btn-primary-soft mr-3 text-white" id="btn-inserted-log">
                                                 Inserted : 0
                                             </button>
-                                            <button class="btn btn-primary-soft mr-3 text-white"
-                                                    id="btn-updated-log">
+                                            <button class="btn btn-primary-soft mr-3 text-white" id="btn-updated-log">
                                                 Updated : 0
                                             </button>
-                                            <button class="action-item text-white" title="Tutup Log"
-                                                    id="btn-tutup-log">
+                                            <button class="action-item text-white" title="Tutup Log" id="btn-tutup-log">
                                                 <i class="fas fa-times-circle"></i></button>
                                         </div>
                                     </div>
@@ -93,8 +120,8 @@
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control"
-                                                   placeholder="Masukkan Tahun Akademik" id="cari-log">
+                                            <input type="text" class="form-control" placeholder="Masukkan Tahun Akademik"
+                                                id="cari-log">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" id="btn-cari-log"><i
                                                         class="fas fa-search mr-2"></i>Cari
@@ -114,14 +141,13 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-striped table-bordered table-hover"
-                                           id="log-table">
+                                    <table class="table table-striped table-bordered table-hover" id="log-table">
                                         <thead>
-                                        <tr>
-                                            <th style="width: 5%">Nomor</th>
-                                            <th style="width: 80%">Tahun Akademik (ID SMT)</th>
-                                            <th style="width: 15%">Status</th>
-                                        </tr>
+                                            <tr>
+                                                <th style="width: 5%">Nomor</th>
+                                                <th style="width: 80%">Tahun Akademik (ID SMT)</th>
+                                                <th style="width: 15%">Status</th>
+                                            </tr>
                                         </thead>
                                         <tbody id="log-table-tbody">
                                         </tbody>
@@ -135,12 +161,12 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="table">
                             <thead>
-                            <tr>
-                                <th class="text-center">NOMOR</th>
-                                <th>TAHUN AKADEMIK</th>
-                                <th>PERKULIAHAN</th>
-                                <th class="text-center"><i class="fas fa-th"></i></th>
-                            </tr>
+                                <tr>
+                                    <th class="text-center">NOMOR</th>
+                                    <th>TAHUN AKADEMIK</th>
+                                    <th>PERKULIAHAN</th>
+                                    <th class="text-center"><i class="fas fa-th"></i></th>
+                                </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -149,10 +175,96 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modal-tahun-akademik" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-calendar-plus"></i> Tambah Tahun Akademik
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="form-tahun-akademik">
+
+                        <input type="hidden" name="p_id_semester_akademik" value="0">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Nama Semester</label>
+                                <select name="p_nama_semester" class="form-control select2" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Gasal">Gasal</option>
+                                    <option value="Genap">Genap</option>
+                                    <option value="Pendek">Pendek</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Tahun Akademik</label>
+                                <input type="text" class="form-control" name="p_tahun_akademik"
+                                    placeholder="Contoh: 2025/2026" required>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Awal Perkuliahan</label>
+                                <input type="date" class="form-control" name="p_tgl_awal_perkuliahan" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Akhir Perkuliahan</label>
+                                <input type="date" class="form-control" name="p_tgl_akhir_perkuliahan" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <label>Mulai KRS</label>
+                                <input type="date" class="form-control" name="p_tgl_mulai_krs" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Akhir KRS</label>
+                                <input type="date" class="form-control" name="p_tgl_akhir_krs" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <label>Mulai Input Nilai</label>
+                                <input type="date" class="form-control" name="p_tgl_mulai_input_nilai" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Akhir Input Nilai</label>
+                                <input type="date" class="form-control" name="p_tgl_akhir_input_nilai" required>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="button" class="btn btn-success" id="btn-simpan-tahun">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script
-        src="{{asset('adminpage/own-js/admin_akademik/akademik/matakuliah/tahun_akademik.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/admin_akademik/akademik/matakuliah/tahun_akademik.js') }}"></script>
 @endpush
