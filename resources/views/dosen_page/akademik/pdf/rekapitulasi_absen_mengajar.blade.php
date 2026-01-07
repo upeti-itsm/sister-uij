@@ -160,7 +160,7 @@
         <tr>
             <td style="width: 10%; background-color: white; border: none;">
                 <div id="logo">
-                    <img src="{{asset('image/logo-uij.png')}}" alt="Logo UIJ">
+                    <img src="{{secure_asset('image/logo-uij.png')}}" alt="Logo UIJ">
                 </div>
             </td>
             <td style="width: 90%; background-color: white; border:  none;">
