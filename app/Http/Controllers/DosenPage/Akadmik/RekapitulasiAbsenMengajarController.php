@@ -55,7 +55,7 @@ class RekapitulasiAbsenMengajarController extends Controller
         $rekap = RekapitulasiAbsensiMengajarDosen::getRekapitulasiByPersonal($tgl_awal, $tgl_akhir, Session::get('user')->id_personal, $search);
         $dosen = Dosen::get_dosen_by_id_personal(Session::get('user')->id_personal);
         $pdf = Facade::loadView("dosen_page.akademik.pdf.rekapitulasi_absen_mengajar", compact('rekap', 'data', 'dosen'))->setPaper('a4', 'landscape');
-        return $pdf->download('detail_rekap.pdf');
+        return $pdf->stream('detail_rekap.pdf');
     }
 
     public function export_excel($tgl_awal, $tgl_akhir)
