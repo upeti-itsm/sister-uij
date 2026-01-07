@@ -1,13 +1,18 @@
-<! DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Daftar Hadir Perkuliahan Mahasiswa</title>
+    <title>Detail Rekap Karyawan</title>
     <style>
         .clearfix:after {
             content: "";
             display: table;
             clear: both;
+        }
+
+        a {
+            color: #5D6975;
+            text-decoration: underline;
         }
 
         body {
@@ -19,6 +24,7 @@
             background: #FFFFFF;
             font-family: Arial, sans-serif;
             font-size: 12px;
+            font-family: Arial;
         }
 
         header {
@@ -27,7 +33,8 @@
         }
 
         #logo {
-            text-align: center;
+            text-align: left;
+            margin-bottom: 10px;
         }
 
         #logo img {
@@ -38,48 +45,34 @@
             border-top: 1px solid #5D6975;
             border-bottom: 1px solid #5D6975;
             color: #5D6975;
-            font-size: 1.5em;
+            font-size: 2.4em;
             line-height: 1.4em;
-            font-weight: bold;
+            font-weight: normal;
             text-align: center;
-            margin:  10px 0;
+            margin: 0 0 5px 0;
+            background: url("/var/www/html/sipadu/public/image/dimension.png");
         }
 
-        .info-section {
-            margin-bottom: 20px;
-            clear: both;
-            font-size: 12px;
+        #project {
+            float: left;
         }
 
-        .info-row {
-            display: table;
-            width: 100%;
-            margin-bottom: 3px;
-        }
-
-        .info-left {
-            display: table-cell;
-            width: 50%;
-            vertical-align: top;
-        }
-
-        .info-right {
-            display: table-cell;
-            width: 50%;
-            vertical-align: top;
-            padding-left: 30px;
-        }
-
-        .info-label {
-            display:  inline-block;
-            width: 150px;
+        #project span {
             color: #5D6975;
-        }
-
-        .info-label-right {
+            text-align: left;
+            width: 52px;
+            margin-right: 10px;
             display: inline-block;
-            width: 100px;
-            color: #5D6975;
+            font-size: 0.8em;
+        }
+
+        #company {
+            text-align: right;
+        }
+
+        #project div,
+        #company div {
+            white-space: nowrap;
         }
 
         table {
@@ -87,32 +80,34 @@
             border-collapse: collapse;
             border-spacing: 0;
             margin-bottom: 20px;
-            font-size:  11px;
         }
 
-        table tr:nth-child(2n) td {
-                                    background:  #F5F5F5;
-                                }
+        table tr:nth-child(2n-1) td {
+            background: #F5F5F5;
+        }
 
         table th,
         table td {
-            text-align: left;
-            border:  1px solid #000;
+            text-align: center;
         }
 
         table th {
-            padding: 8px;
+            padding: 5px 20px;
             color: #0b0b0b;
-            font-weight: bold;
-            background-color: #f0f0f0;
+            white-space: nowrap;
+            font-weight: normal;
+            text-align: center;
+            border: 1px solid #C1CED9;
+        }
+
+        table .service,
+        table .desc {
+            text-align: left;
         }
 
         table td {
-            padding: 8px;
+            padding: 5px;
             color: #5D6975;
-        }
-
-        table td.text-left {
             text-align: left;
         }
 
@@ -120,20 +115,24 @@
             text-align: center;
         }
 
-        .number-col {
-            width: 40px;
+        table td.service,
+        table td.desc {
+            vertical-align: top;
         }
 
-        .date-col {
-            width: 80px;
+        table td.unit,
+        table td.qty,
+        table td.total {
+            font-size: 1.2em;
         }
 
-        .presence-cols {
-            width: 60px;
+        table td.grand {
+            border-top: 1px solid #5D6975;;
         }
 
-        .signature-col {
-            width: 100px;
+        #notices .notice {
+            color: #5D6975;
+            font-size: 1.2em;
         }
 
         footer {
@@ -145,55 +144,43 @@
             border-top: 1px solid #C1CED9;
             padding: 8px 0;
             text-align: center;
-            font-size: 11px;
         }
-
+    </style>
+    <style>
         @page {
             margin: 30px;
-            size: A4 landscape;
         }
     </style>
 </head>
 <body>
 <header class="clearfix">
-    <table style="border:  none;">
+    <table>
         <tr>
-            <td style="width: 10%; background-color: white; border: none;">
-                <div id="logo">
-                    <img src="{{asset('image/logo-uij.png')}}" alt="Logo UIJ">
+            <td style="width: 20%; background-color: white">
+                <div id="logo" style="text-align: center">
+                    <img src="{{asset('image/logo-uij.png')}}">
                 </div>
             </td>
-            <td style="width: 90%; background-color: white; border:  none;">
-                <div style="text-align: left;">
-                    <div style="font-size: 16px; font-weight: bold;">YAYASAN PENDIDIKAN NAHDLATUL ULAMA' JEMBER</div>
-                    <div style="font-size: 14px; font-weight: bold;">UNIVERSITAS ISLAM JEMBER</div>
-                    <div style="font-size: 18px; font-weight: bold;">DAFTAR HADIR PERKULIAHAN MAHASISWA</div>
+            <td style="width: 80%; background-color: white">
+                <div id="company" style="text-align: center; margin-bottom: 0px; padding-bottom: 0px">
+                    <div style="font-size: large; font-weight: bold; text-align: left">UNIVERSITAS ISLAM JEMBER
+                    </div>
                 </div>
             </td>
         </tr>
         <tr>
-            <td style="background-color: white!important; text-align: center; margin:  0; padding: 5px 0; border: none;" colspan="2">
-                <hr style="border: 1px solid #5D6975;"/>
+            <td style="text-align: center; margin: 0; padding: 0;" colspan="2">
+                <hr/>
             </td>
         </tr>
     </table>
-    <div class="info-section">
-        <div class="info-row">
-            <div class="info-left">
-                <span class="info-label">FAK/PROG. STUDI</span> :  {{$dosen->nama_program_studi ??  '/ ADMINISTRASI PUBLIK'}}
-            </div>
-            <div class="info-right">
-                <span class="info-label-right">AKADEMIK</span> : {{$data['akademik'] ?? '2022 / GENAP'}}
-            </div>
-        </div>
-        <div class="info-row">
-            <div class="info-left">
-                <span class="info-label">MATAKULIAH/KELAS</span> :  {{$data['matakuliah'] ?? 'SNG215 / PENGANTAR ILMU PEMERINTAHAN / Kelas B'}}
-            </div>
-            <div class="info-right">
-                <span class="info-label-right">DOSEN</span> : {{$dosen->nama_dosen ?? 'ACH SYASI M. AP'}}
-            </div>
-        </div>
+    <h1>{{$data['tgl']['start']}} - {{$data['tgl']['end']}}</h1>
+    <div id="project">
+        <div><span>Nama</span> {{$dosen->nama_dosen}}</div>
+        <div><span>Program Studi</span> {{$dosen->nama_program_studi}}</div>
+        <div><span>Email </span> <a href="mailto:{{$dosen->email}}">{{$dosen->email}}</a></div>
+        <div><span>Nomor HP </span> {{$dosen->no_hp}}</div>
+        <div><span>Tgl Export</span> {{$data['tgl']['now']}}</div>
     </div>
 </header>
 <main>
