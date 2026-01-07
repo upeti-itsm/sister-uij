@@ -180,15 +180,15 @@
     <div class="info-section">
         <div class="info-row">
             <div class="info-left">
-                <span class="info-label">FAK/PROG. STUDI</span> :  {{$dosen->nama_program_studi ??  '/ ADMINISTRASI PUBLIK'}}
+                <span class="info-label">FAK/PROG. STUDI</span> :  {{$rekap[0]->fakultas ? $rekap[0]->fakultas.'/'.$dosen->nama_program_studi :  'FEB/ ADMINISTRASI PUBLIK'}}
             </div>
             <div class="info-right">
-                <span class="info-label-right">AKADEMIK</span> : {{$data['akademik'] ?? '2022 / GENAP'}}
+                <span class="info-label-right">AKADEMIK</span> : {{$rekap[0]->tahun_akademik ?? '2022 / GENAP'}}
             </div>
         </div>
         <div class="info-row">
             <div class="info-left">
-                <span class="info-label">MATAKULIAH/KELAS</span> :  {{$data['matakuliah'] ?? 'SNG215 / PENGANTAR ILMU PEMERINTAHAN / Kelas B'}}
+                <span class="info-label">MATAKULIAH/KELAS</span> :  {{$rekap[0]->fullname ?? 'SNG215 / PENGANTAR ILMU PEMERINTAHAN / Kelas B'}}
             </div>
             <div class="info-right">
                 <span class="info-label-right">DOSEN</span> : {{$dosen->nama_dosen ?? 'ACH SYASI M. AP'}}

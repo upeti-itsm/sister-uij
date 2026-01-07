@@ -214,7 +214,7 @@ class Mahasiswa extends Model
         $ipk = null
     ) {
         try {
-            $result = DB::selectOne('SELECT * FROM akademik. update_mahasiswa_by_nim(
+            $result = DB::selectOne('SELECT * FROM akademik.update_mahasiswa_by_nim(
             :p_nim,
             :p_nama_mahasiswa,
             :p_nik,
