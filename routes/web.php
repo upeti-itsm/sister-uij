@@ -340,6 +340,17 @@ Route::post('/dosen/akademik/daftar-matakuliah/json-kriteria-delete', [\App\Http
 // Nilai Matakuliah
 Route::get('/dosen/akademik/nilai-matakuliah/{id}', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'index'])->name('dosen.akademik.nilai_mahasiswa.index')->middleware('modul:Dosen - Daftar Matakuliah');
 Route::post('/dosen/akademik/nilai-matakuliah/store', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'store_nilai'])->name('dosen.akademik.nilai_mahasiswa.store_nilai')->middleware('modul:Dosen - Daftar Matakuliah');
+// KRS
+// Routes untuk Dosen - Persetujuan KRS
+Route::prefix('dosen/krs')->middleware('modul:Validasi KRS DPS')->group(function () {
+    Route::get('/', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'index'])->name('dosen.krs.index');
+    Route::post('/rekap-data', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController:: class, 'getRekapData'])->name('dosen.krs.rekap');
+    Route::post('/json-data', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController:: class, 'getKRSList'])->name('dosen.krs.list');
+    Route::post('/detail', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'getKRSDetail'])->name('dosen.krs.detail');
+    Route::post('/detail-matkul', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'getKRSMataKuliah'])->name('dosen.krs.detail. matkul');
+    Route::post('/approve', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'approveKRS'])->name('dosen.krs.approve');
+    Route::post('/reject', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'rejectKRS'])->name('dosen.krs.reject');
+});
 // Perwalian
 Route::get('/dosen/akademik/perwalian/list-mahasiswa', [\App\Http\Controllers\DosenPage\Akadmik\PerwalianController::class, 'daftar_mahasiswa'])->name('dosen.akademik.perwalian.daftar_mahasiswa')->middleware('modul:Perwalian Mahasiswa');
 Route::post('/dosen/akademik/perwalian/list-mahasiswa/json', [\App\Http\Controllers\DosenPage\Akadmik\PerwalianController::class, 'json_daftar_mahasiswa'])->name('dosen.akademik.perwalian.json_daftar_mahasiswa')->middleware('modul:Perwalian Mahasiswa');
@@ -686,6 +697,19 @@ Route::post('/super-admin/moodle/json/jadwal-mahasiswa/json-jadwal-mahasiswa-by-
 Route::post('/super-admin/moodle/jadwal-mahasiswa/json/json-krs-mahasiswa-by-nim', [\App\Http\Controllers\SuperAdminPage\Moodle\JadwalMahasiswaController::class, 'json_get_krs_mahasiswa_by_nim'])->name('moodle.jadwal_mahasiswa.json_get_jadwal_mahasiswa_by_nim')->middleware('modul:Moodle Synchronizer - Jadwal Mahasiswa');
 Route::post('/super-admin/moodle/jadwal-mahasiswa/delete-jadwal-mahasiswa', [\App\Http\Controllers\SuperAdminPage\Moodle\JadwalMahasiswaController::class, 'delete_jadwal_mahasiswa'])->name('moodle.jadwal_mahasiswa.delete_jadwal_mahasiswa')->middleware('modul:Moodle Synchronizer - Jadwal Mahasiswa');
 
+/*
+ * Kaprodi Page
+ */
+// Routes untuk Kaprodi - Persetujuan KRS
+Route::prefix('kaprodi/krs')->middleware('modul:Validasi KRS Kaprodi')->group(function () {
+    Route::get('/', [App\Http\Controllers\KaprodiPage\Akademik\KaprodiKRSController::class, 'index'])->name('kaprodi.krs.index');
+    Route::post('/rekap-data', [App\Http\Controllers\KaprodiPage\Akademik\KaprodiKRSController::class, 'getRekapData'])->name('kaprodi.krs.rekap');
+    Route::post('/json-data', [App\Http\Controllers\KaprodiPage\Akademik\KaprodiKRSController::class, 'getKRSList'])->name('kaprodi.krs.list');
+    Route::post('/detail', [App\Http\Controllers\KaprodiPage\Akademik\KaprodiKRSController::class, 'getKRSDetail'])->name('kaprodi.krs.detail');
+    Route::post('/detail-matkul', [App\Http\Controllers\KaprodiPage\Akademik\KaprodiKRSController::class, 'getKRSMataKuliah'])->name('kaprodi.krs.detail. matkul');
+    Route::post('/approve', [App\Http\Controllers\KaprodiPage\Akademik\KaprodiKRSController::class, 'approveKRS'])->name('kaprodi.krs.approve');
+    Route::post('/reject', [App\Http\Controllers\KaprodiPage\Akademik\KaprodiKRSController::class, 'rejectKRS'])->name('kaprodi.krs. reject');
+});
 /*
  * ------------------------------------------------------------------------
  * KEUANGAN
