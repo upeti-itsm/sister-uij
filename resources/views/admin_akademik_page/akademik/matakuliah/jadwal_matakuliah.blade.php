@@ -209,6 +209,10 @@
                                 <th class="text-center">Nomor</th>
                                 <th>Mata Kuliah</th>
                                 <th>Dosen Pengampu</th>
+                                <th class="text-center">Hari & Waktu</th>
+                                <th class="text-center">Ruangan</th>
+                                <th class="text-center">Kapasitas</th>
+                                <th class="text-center">Status Aktif</th>
                                 <th>Status Pengajar</th>
                                 <th class="text-center"><i class="fas fa-th"></i></th>
                             </tr>
@@ -257,7 +261,7 @@
         </div>
     </div>
 
-    {{-- Modal Sync Jadwal (existing) --}}
+    {{-- Modal Sync Jadwal --}}
     <div class="modal modal-primary fade" id="modal-sync-jadwal-kuliah" tabindex="-1" role="dialog"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -283,6 +287,88 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
                     <button type="button" class="btn btn-success" id="modal-btn-sync-jadwal-kuliah"><i
                             class="fas fa-sync mr-2"></i>Sinkronisasi Jadwal Kuliah
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Edit Jadwal --}}
+    <div class="modal modal-primary fade" id="modal-edit-jadwal-kuliah" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-600">Edit Jadwal Kuliah</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit_id">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Mata Kuliah</label>
+                                <input type="text" class="form-control" id="edit_nama_mata_kuliah" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Kelas</label>
+                                <input type="text" class="form-control" id="edit_nama_kelas" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Hari</label>
+                                <select class="form-control" id="edit_hari">
+                                    <option value="1">Senin</option>
+                                    <option value="2">Selasa</option>
+                                    <option value="3">Rabu</option>
+                                    <option value="4">Kamis</option>
+                                    <option value="5">Jumat</option>
+                                    <option value="6">Sabtu</option>
+                                    <option value="7">Minggu</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Jam Mulai</label>
+                                <input type="time" class="form-control" id="edit_jam_mulai">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Jam Selesai</label>
+                                <input type="time" class="form-control" id="edit_jam_selesai">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Ruangan</label>
+                                <input type="text" class="form-control" id="edit_ruang_id" placeholder="Kode Ruangan">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status Aktif</label>
+                                <select class="form-control" id="edit_status_aktif">
+                                    <option value="1">Aktif</option>
+                                    <option value="0">Nonaktif</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-success" id="modal-btn-update-jadwal"><i
+                            class="fas fa-save mr-2"></i>Update Jadwal
                     </button>
                 </div>
             </div>

@@ -8,6 +8,7 @@ use App\Models\Akademik\ProgramStudi;
 use App\Models\Akademik\Semester;
 use App\Models\MOODLE_MODEL\JadwalDosen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class JadwalMatakuliahController extends Controller
@@ -53,12 +54,52 @@ class JadwalMatakuliahController extends Controller
 
     public function json_get_jadwal_by_id(Request $request)
     {
-        $request->validate([
-            'id' => 'required'
-        ]);
-        $jadwal = JadwalMataKuliah::get_detail_jadwal_kuliah($request->id);
-        $data = \App\Models\SIAKAD_MODEL\JadwalMataKuliah::get_jadwal_mata_kuliah_by_id($jadwal->jadwal_kuliah_id);
-        return response()->json($data, 200);
+        try {
+            $request->validate([
+                'id' => 'required'
+            ]);
+
+            Log::info('Get jadwal by id', [
+                'id' => $request->id
+            ]);
+
+            $jadwal = JadwalMataKuliah::get_detail_jadwal_kuliah($request->id);
+
+            if (!$jadwal) {
+                Log::warning('Jadwal tidak ditemukan', [
+                    'id' => $request->id
+                ]);
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Jadwal tidak ditemukan'
+                ], 404);
+            }
+
+            Log::info('Jadwal berhasil diambil', [
+                'id' => $request->id,
+                'data' => $jadwal
+            ]);
+
+            return response()->json($jadwal, 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error get jadwal by id', [
+                'message' => $e->getMessage(),
+                'id' => $request->id ?? null,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengambil data jadwal: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function json_syncron_data(Request $request)
@@ -82,8 +123,6 @@ class JadwalMatakuliahController extends Controller
             'jenis_kelas' => 'required',
             'kd_matkul' => 'required'
         ]);
-
-//        $moodle = JadwalDosen::sync_jadwal_siakad($request->jadwal_kuliah_id, $request->nama_mata_kuliah, $request->kelas_id, $request->kd_prodi, $request->tahun_akademik, $request->nik_pengampu, $request->nama_dosen, $request->nik_asisten, $request->nama_asisten);
 
         $data = JadwalMataKuliah::sync_jadwal_matakuliah_with_siakad($request->jadwal_kuliah_id, $request->tahun_akademik, $request->kelas_id.';'.$request->nama_kelas,
             $request->ruang_id, $request->hari, $request->jam_mulai, $request->jam_selesai, $request->matakuliah_id,
@@ -132,7 +171,7 @@ class JadwalMatakuliahController extends Controller
             ]);
 
             // Log untuk tracking
-            \Log::info('Generate jadwal dimulai', [
+            Log::info('Generate jadwal dimulai', [
                 'tahun_akademik' => $request->tahun_akademik,
                 'user_id' => auth()->id(),
                 'timestamp' => now()
@@ -146,7 +185,7 @@ class JadwalMatakuliahController extends Controller
             $message = $result->keterangan ?? 'Proses generate jadwal selesai';
 
             // Log hasil
-            \Log::info('Generate jadwal selesai', [
+            Log::info('Generate jadwal selesai', [
                 'tahun_akademik' => $request->tahun_akademik,
                 'status' => $status,
                 'message' => $message,
@@ -167,7 +206,7 @@ class JadwalMatakuliahController extends Controller
             ], $httpStatus);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::warning('Validation error pada generate jadwal', [
+            Log::warning('Validation error pada generate jadwal', [
                 'errors' => $e->errors(),
                 'input' => $request->all()
             ]);
@@ -179,7 +218,7 @@ class JadwalMatakuliahController extends Controller
             ], 422);
 
         } catch (\Exception $e) {
-            \Log::error('Error pada generate jadwal', [
+            Log::error('Error pada generate jadwal', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -194,7 +233,7 @@ class JadwalMatakuliahController extends Controller
             ], 500);
 
         } catch (\Throwable $e) {
-            \Log::critical('Critical error pada generate jadwal', [
+            Log::critical('Critical error pada generate jadwal', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -205,6 +244,217 @@ class JadwalMatakuliahController extends Controller
                 'status' => 'error',
                 'message' => 'Terjadi kesalahan sistem yang tidak terduga',
                 'error_code' => 'SYSTEM_ERROR'
+            ], 500);
+        }
+    }
+
+    public function update_jadwal(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required',
+                'hari' => 'required',
+                'jam_mulai' => 'required',
+                'jam_selesai' => 'required'
+            ]);
+
+            Log::info('Update jadwal dimulai', [
+                'id' => $request->id,
+                'data' => $request->all()
+            ]);
+
+            // Helper function untuk convert empty string ke null
+            $toNullIfEmpty = function($value) {
+                return ($value === '' || $value === 'null') ? null : $value;
+            };
+
+            // Gunakan fungsi testing yang baru dengan parameter yang disederhanakan
+            $result = JadwalMataKuliah::update_jadwal_kuliah_testing(
+                $request->id,
+                $toNullIfEmpty($request->ruang_id),
+                $toNullIfEmpty($request->hari),
+                $toNullIfEmpty($request->jam_mulai),
+                $toNullIfEmpty($request->jam_selesai),
+                $toNullIfEmpty($request->sts_aktif)
+            );
+
+            $status = ($result->status == 1 || $result->status === true) ? 'success' : 'error';
+            $message = $result->keterangan ?? 'Jadwal berhasil diupdate';
+
+            Log::info('Update jadwal selesai', [
+                'status' => $status,
+                'message' => $message
+            ]);
+
+            $httpStatus = $status === 'success' ? 200 : 422;
+
+            return response()->json([
+                'status' => $status,
+                'message' => $message
+            ], $httpStatus);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error update jadwal', [
+                'message' => $e->getMessage(),
+                'id' => $request->id ?? null
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat update jadwal: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete_jadwal(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required'
+            ]);
+
+            Log::info('Delete jadwal dimulai', [
+                'id' => $request->id
+            ]);
+
+            $result = JadwalMataKuliah::delete_jadwal_kuliah($request->id);
+
+            $status = ($result->status == 1 || $result->status === true) ? 'success' : 'error';
+            $message = $result->keterangan ?? 'Jadwal berhasil dihapus';
+
+            Log::info('Delete jadwal selesai', [
+                'status' => $status,
+                'message' => $message
+            ]);
+
+            $httpStatus = $status === 'success' ? 200 : 422;
+
+            return response()->json([
+                'status' => $status,
+                'message' => $message
+            ], $httpStatus);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error delete jadwal', [
+                'message' => $e->getMessage(),
+                'id' => $request->id ?? null
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat menghapus jadwal: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function set_status_aktif(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required',
+                'sts_aktif' => 'required|boolean'
+            ]);
+
+            Log::info('Set status aktif jadwal dimulai', [
+                'id' => $request->id,
+                'sts_aktif' => $request->sts_aktif
+            ]);
+
+            $result = JadwalMataKuliah::set_status_aktif_jadwal_kuliah(
+                $request->id,
+                $request->sts_aktif
+            );
+
+            $status = ($result->status == 1 || $result->status === true) ? 'success' : 'error';
+            $message = $result->message ?? ($request->sts_aktif ? 'Jadwal berhasil diaktifkan' : 'Jadwal berhasil dinonaktifkan');
+
+            Log::info('Set status aktif jadwal selesai', [
+                'status' => $status,
+                'message' => $message
+            ]);
+
+            $httpStatus = $status === 'success' ? 200 : 422;
+
+            return response()->json([
+                'status' => $status,
+                'message' => $message
+            ], $httpStatus);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error set status aktif jadwal', [
+                'message' => $e->getMessage(),
+                'id' => $request->id ?? null
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengubah status jadwal: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update_status_kuliah_mahasiswa(Request $request)
+    {
+        try {
+            $request->validate([
+                'nim' => 'required|string',
+                'status_kuliah' => 'required|string|size:1'
+            ]);
+
+            Log::info('Update status kuliah mahasiswa dimulai', [
+                'nim' => $request->nim,
+                'status_kuliah' => $request->status_kuliah
+            ]);
+
+            $result = JadwalMataKuliah::update_status_kuliah_mahasiswa(
+                $request->nim,
+                $request->status_kuliah
+            );
+
+            $status = ($result->status == 1 || $result->status === true) ? 'success' : 'error';
+            $message = $result->keterangan ?? 'Status kuliah mahasiswa berhasil diupdate';
+
+            Log::info('Update status kuliah mahasiswa selesai', [
+                'status' => $status,
+                'message' => $message
+            ]);
+
+            $httpStatus = $status === 'success' ? 200 : 422;
+
+            return response()->json([
+                'status' => $status,
+                'message' => $message
+            ], $httpStatus);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error update status kuliah mahasiswa', [
+                'message' => $e->getMessage(),
+                'nim' => $request->nim ?? null
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat update status kuliah mahasiswa: ' . $e->getMessage()
             ], 500);
         }
     }

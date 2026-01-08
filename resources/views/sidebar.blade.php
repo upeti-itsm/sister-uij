@@ -25,7 +25,7 @@
 </head>
 
 <body class="fixed">
-    @php($modul = \Illuminate\Support\Facades\Session::get('modul'))
+    @php($modul = \Illuminate\Support\Facades\Session::get('modul', []))
     <!-- Page Loader -->
     <div class="page-loader-wrapper">
         <div class="loader">
@@ -660,7 +660,8 @@
                                 array_key_exists('Pengelolaan Matakuliah', $modul) ||
                                 array_key_exists('Konsentrasi Jurusan', $modul) ||
                                 array_key_exists('Pengelolaan Jenis Matakuliah', $modul) ||
-                                array_key_exists('Pengelolaan Jenis Pengajaran', $modul))
+                                array_key_exists('Pengelolaan Jenis Pengajaran', $modul) ||
+                                array_key_exists('Pengaturan SKS', $modul))
                             <li @if (
                                 $menu == 'Pengelolaan Matakuliah' ||
                                     $menu == 'Manajemen Kurikulum' ||
@@ -668,7 +669,8 @@
                                     $menu == 'Pengelolaan Jenis Pelaksanaan Kuliah' ||
                                     $menu == 'Konsentrasi Jurusan' ||
                                     $menu == 'Pengelolaan Jenis Matakuliah' ||
-                                    $menu == 'Pengelolaan Jenis Pengajaran') class="mm-active" @endif>
+                                    $menu == 'Pengelolaan Jenis Pengajaran' ||
+                                    $menu == 'Pengaturan SKS') class="mm-active" @endif>
                                 <a class="has-arrow material-ripple" href="#">
                                     <i class="typcn typcn-edit mr-2"></i>
                                     Data Referensi
@@ -714,6 +716,11 @@
                                     @if (array_key_exists('Pengelolaan Jenis Tagihan', $modul))
                                         <li @if ($menu == 'Pengelolaan Jenis Tagihan') class="mm-active" @endif>
                                             <a href="{{ route('jenis_tagihan.index') }}">Jenis Tagihan</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengaturan SKS', $modul))
+                                        <li @if ($menu == 'Pengaturan SKS') class="mm-active" @endif>
+                                            <a href="{{ route('pengaturan_sks.index') }}">Pengaturan SKS</a>
                                         </li>
                                     @endif
                                 </ul>
