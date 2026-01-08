@@ -16,13 +16,15 @@
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
                 <h1 class="font-weight-bold">Sinkronisasi Mahasiswa</h1>
-                <small>Halaman ini digunakan untuk mengelola sinkronisasi mahasiswa antara sipadu, siakad, dan PMB</small>
+                <small>Halaman ini digunakan untuk mengelola sinkronisasi mahasiswa antara sipadu, siakad, dan
+                    PMB</small>
             </div>
         </div>
     </div>
 @endsection
 @section('body-content')
-    <input type="hidden" id="hak_akses" value="{{\Illuminate\Support\Facades\Session::get('modul')['Sinkronisasi Mahasiswa dengan Siakad']}}">
+    <input type="hidden" id="hak_akses"
+           value="{{\Illuminate\Support\Facades\Session::get('modul')['Sinkronisasi Mahasiswa dengan Siakad']}}">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -77,7 +79,8 @@
                       id="loading-progress-pmb"></span>
                                     <span id="keterangan-progress-pmb">Mohon menunggu hingga proses sinkronisasi PMB selesai...</span>
                                 </button>
-                                <button class="btn btn-danger-soft mr-1 mb-2" id="btn-tutup-progress-pmb" style="display: none;">
+                                <button class="btn btn-danger-soft mr-1 mb-2" id="btn-tutup-progress-pmb"
+                                        style="display: none;">
                                     <i class="fas fa-times mr-2"></i>Tutup
                                 </button>
                                 <div class="progress progress-lg mb-3">
@@ -103,7 +106,7 @@
                                         <div class="actions">
                                             <button class="btn btn-primary-soft mr-3 text-white"
                                                     id="btn-failed-log-data-center">
-                                                Failed :  0
+                                                Failed : 0
                                             </button>
                                             <button class="btn btn-primary-soft mr-3 text-white"
                                                     id="btn-inserted-log-data-center">
@@ -221,7 +224,7 @@
                                         <thead>
                                         <tr>
                                             <th style="width:  5%">Nomor</th>
-                                            <th style="width: 80%">Nama - (No.  Pendaftaran)</th>
+                                            <th style="width: 80%">Nama - (No. Pendaftaran)</th>
                                             <th style="width: 15%">Status</th>
                                         </tr>
                                         </thead>
@@ -275,10 +278,9 @@
                                         </div>
                                         <div class="col-md-3">
                                             <select class="select2 form-control" id="status">
-                                                <option value="1">AKTIF</option>
-                                                <option value="3">LULUS</option>
-                                                <option value="4">CUTI</option>
-                                                <option value="2">TIDAK AKTIF</option>
+                                                @foreach($status_mahasiswa AS $item)
+                                                    <option value="{{$item->kd_status_mahasiswa}}">{{$item->status_mahasiswa}}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -354,7 +356,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Jika dilakukan proses sinkronisasi, calon mahasiswa yang diterima di PMB akan di import ke database akademik,
+                    <p>Jika dilakukan proses sinkronisasi, calon mahasiswa yang diterima di PMB akan di import ke
+                        database akademik,
                         silahkan pilih tahun untuk proses sinkronisasi mahasiswa</p>
                     <div class="form-group">
                         <label>Tahun PMB</label>
@@ -391,20 +394,17 @@
                     <input type="hidden" id="nim-change-status">
                     <div class="alert alert-info">
                         <strong>Mahasiswa:</strong> <span id="nama-change-status"></span><br/>
-                        <strong>Status Saat Ini:</strong> <span id="current-status-display" class="badge badge-primary"></span>
+                        <strong>Status Saat Ini:</strong> <span id="current-status-display"
+                                                                class="badge badge-primary"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="font-weight-bold">Status Baru <span class="text-danger">*</span></label>
                         <select class="form-control select2" id="new-status-mahasiswa" required>
                             <option value="">-- Pilih Status Baru --</option>
-                            <option value="1">AKTIF</option>
-                            <option value="2">TIDAK AKTIF</option>
-                            <option value="3">LULUS</option>
-                            <option value="4">CUTI</option>
-                            <option value="5">DO (Drop Out)</option>
-                            <option value="6">MENGUNDURKAN DIRI</option>
-                            <option value="7">MENINGGAL DUNIA</option>
+                            @foreach($status_mahasiswa AS $item)
+                                <option value="{{$item->kd_status_mahasiswa}}">{{$item->status_mahasiswa}}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -416,7 +416,8 @@
 
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle mr-2"></i>
-                        <small>Perubahan status akan tercatat dalam sistem dan mempengaruhi status akademik mahasiswa</small>
+                        <small>Perubahan status akan tercatat dalam sistem dan mempengaruhi status akademik
+                            mahasiswa</small>
                     </div>
                 </div>
                 <div class="modal-footer">

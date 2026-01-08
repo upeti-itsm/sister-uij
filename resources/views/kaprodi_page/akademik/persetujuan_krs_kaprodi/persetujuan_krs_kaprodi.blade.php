@@ -362,7 +362,7 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="font-weight-bold">Filter Status KRS</label>
-                        <select class="form-control select2" id="filter-status">
+                        <select class="form-control" id="filter-status">
                             <option value="">Semua Status</option>
                             <option value="0">Draft</option>
                             <option value="1">Menunggu Persetujuan DPS</option>

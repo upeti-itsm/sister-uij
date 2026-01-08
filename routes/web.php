@@ -297,6 +297,7 @@ Route::post('/mhs/krs/json-draft', [\App\Http\Controllers\MahasiswaPage\Akademik
 Route::post('/mhs/krs/simpan', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'store'])->name('mahasiswa.akademik.krs.store')->middleware('modul:Mengelola Kartu Rencana Studi');
 Route::post('/mhs/krs/ajukan-krs', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'ajukan_krs'])->name('mahasiswa.akademik.krs.ajukan_krs')->middleware('modul:Mengelola Kartu Rencana Studi');
 Route::post('/mhs/krs/sks-maksimal', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'cekMaksimalKrs'])->name('mahasiswa.akademik.krs.cekMaksimalKrs')->middleware('modul:Mengelola Kartu Rencana Studi');
+Route::post('/mhs/krs/download-krs', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'downloadKRS'])->name('mahasiswa.akademik.krs.downloadKRS')->middleware('modul:Mengelola Kartu Rencana Studi');
 
 // Melihat Tanggungan
 Route::get('/mhs/tanggungan', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'index'])->name('mahasiswa.keuangan.tanggungan.index')->middleware('modul:Melihat Tanggungan');

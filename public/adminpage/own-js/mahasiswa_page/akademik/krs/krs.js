@@ -4,8 +4,11 @@ jQuery.krs_jadwal = {
         table_krs_terpilih: null,
         selected_matkul: [],
         sks_maksimal: 24,
-        search: '',
-        draft_loaded: false // flag untuk track apakah draft sudah dimuat
+        search:  '',
+        draft_loaded: false,
+        status_krs: 0, // Status KRS:  0=draft, 1=diajukan, 2=disetujui PA, 3=ditolak, 4=disetujui final
+        can_edit: true, // Flag apakah bisa edit
+        komentar_dps: '' // Komentar dari DPS
     },
 
     init: function () {
@@ -13,12 +16,12 @@ jQuery.krs_jadwal = {
 
         // Pastikan DOM sudah ready
         if (!$('#table-jadwal').length) {
-            console.error('Table #table-jadwal tidak ditemukan!  ');
+            console.error('Table #table-jadwal tidak ditemukan! ');
             return;
         }
 
         if (!$('#table-krs-terpilih').length) {
-            console.error('Table #table-krs-terpilih tidak ditemukan! ');
+            console.error('Table #table-krs-terpilih tidak ditemukan!');
             return;
         }
 
@@ -27,6 +30,7 @@ jQuery.krs_jadwal = {
             self.setEvents();
             self.updateStatistik();
             self.loadSKSMaksimal();
+            self.updateUIBasedOnStatus(); // Update UI berdasarkan status
         });
     },
 
@@ -45,13 +49,41 @@ jQuery.krs_jadwal = {
 
                 // Cek apakah response valid dan ada data
                 if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
-                    self.data.selected_matkul = response.data;
+                    // Pastikan setiap item memiliki id_krs_mahasiswa
+                    self.data.selected_matkul = response.data.map(function(item) {
+                        // Set default UUID jika id_krs_mahasiswa null atau tidak ada
+                        if (! item.id_krs_mahasiswa || item.id_krs_mahasiswa === null) {
+                            item.id_krs_mahasiswa = '00000000-0000-0000-0000-000000000000';
+                        }
+
+                        // Ambil status_krs dari item pertama (asumsi semua item punya status sama)
+                        if (item.status_krs !== undefined && self.data.status_krs === 0) {
+                            self.data.status_krs = parseInt(item.status_krs) || 0;
+                        }
+
+                        // Ambil komentar DPS dari item pertama
+                        if (item.komentar_dps && ! self.data.komentar_dps) {
+                            self.data.komentar_dps = item.komentar_dps;
+                        }
+
+                        return item;
+                    });
+
+                    // Set flag can_edit berdasarkan status
+                    self.data.can_edit = (self.data.status_krs === 0 || self.data.status_krs === 3);
+
                     self.data.draft_loaded = true;
                     console.log('Draft KRS loaded:', self.data.selected_matkul.length + ' mata kuliah');
+                    console.log('Status KRS:', self.data.status_krs);
+                    console.log('Can Edit:', self.data.can_edit);
+                    console.log('Komentar DPS:', self.data.komentar_dps);
                 } else {
                     console.log('Tidak ada draft KRS atau data kosong');
                     self.data.selected_matkul = [];
                     self.data.draft_loaded = false;
+                    self.data.status_krs = 0;
+                    self.data.can_edit = true;
+                    self.data.komentar_dps = '';
                 }
             },
             error: function(xhr, status, error) {
@@ -59,6 +91,9 @@ jQuery.krs_jadwal = {
                 console.warn('Response:', xhr.responseText);
                 self.data.selected_matkul = [];
                 self.data.draft_loaded = false;
+                self.data.status_krs = 0;
+                self.data.can_edit = true;
+                self.data.komentar_dps = '';
             },
             complete: function() {
                 // Panggil callback setelah selesai (berhasil atau gagal)
@@ -102,7 +137,7 @@ jQuery.krs_jadwal = {
                         console.log('Received data:', json);
 
                         // Pastikan response valid
-                        if (! json || typeof json !== 'object') {
+                        if (!json || typeof json !== 'object') {
                             console.warn('Invalid JSON response');
                             return [];
                         }
@@ -113,7 +148,7 @@ jQuery.krs_jadwal = {
                                 json = {
                                     data: json,
                                     recordsTotal: json.length,
-                                    recordsFiltered: json.length,
+                                    recordsFiltered:  json.length,
                                     draw: 1
                                 };
                             } else {
@@ -142,7 +177,7 @@ jQuery.krs_jadwal = {
 
                         $.alert({
                             title: 'Error',
-                            content: 'Gagal memuat data jadwal:   ' + (thrown || error),
+                            content: 'Gagal memuat data jadwal:  ' + (thrown || error),
                             type: 'red'
                         });
                     }
@@ -167,9 +202,15 @@ jQuery.krs_jadwal = {
                         className: 'text-center',
                         width: "3%",
                         render: function (data, type, row) {
-                            if (!  data || !  data.id) return '';
+                            if (! data || ! data.id) return '';
                             var isSelected = self.data.selected_matkul.some(item => item.id === data.id);
-                            var isDisabled = (data.jumlah_peserta >= data.kapasitas) ?   'disabled' : '';
+                            var isDisabled = (data.jumlah_peserta >= data.kapasitas) ?  'disabled' : '';
+
+                            // Disable checkbox jika tidak bisa edit
+                            if (!self.data.can_edit) {
+                                isDisabled = 'disabled';
+                            }
+
                             var checked = isSelected ? 'checked' : '';
                             return `<input type="checkbox" class="matkul-checkbox" data-id="${data.id}" ${checked} ${isDisabled}>`;
                         }
@@ -237,7 +278,7 @@ jQuery.krs_jadwal = {
                     },
                     {
                         data: 'ruang',
-                        searchable: false,
+                        searchable:  false,
                         className: 'text-center',
                         width: "10%",
                         defaultContent: '-'
@@ -250,7 +291,7 @@ jQuery.krs_jadwal = {
                         render: function (data) {
                             if (!data) return '-';
                             var sisa = (data.kapasitas || 0) - (data.jumlah_peserta || 0);
-                            var color = sisa > 0 ?  'success' : 'danger';
+                            var color = sisa > 0 ? 'success' : 'danger';
                             return `<span class="badge badge-${color}">${data.jumlah_peserta || 0}/${data.kapasitas || 0}</span>`;
                         }
                     },
@@ -258,7 +299,7 @@ jQuery.krs_jadwal = {
                         data: null,
                         searchable: false,
                         className: 'text-center',
-                        width:   "7%",
+                        width: "7%",
                         render: function (data) {
                             if (!data) return '-';
                             var sisa = (data.kapasitas || 0) - (data.jumlah_peserta || 0);
@@ -296,7 +337,7 @@ jQuery.krs_jadwal = {
                     "zeroRecords": "Tidak ditemukan data yang sesuai",
                     "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                     "infoEmpty": "Menampilkan 0 sampai 0 dari 0 data",
-                    "infoFiltered":   "(disaring dari _MAX_ total data)",
+                    "infoFiltered": "(disaring dari _MAX_ total data)",
                     "paginate": {
                         "first": "Pertama",
                         "last": "Terakhir",
@@ -312,7 +353,7 @@ jQuery.krs_jadwal = {
             console.error('Error initializing table-jadwal:', e);
             $.alert({
                 title: 'Error',
-                content: 'Gagal inisialisasi tabel:  ' + e.message,
+                content: 'Gagal inisialisasi tabel: ' + e.message,
                 type: 'red'
             });
             return;
@@ -329,7 +370,7 @@ jQuery.krs_jadwal = {
             $('#table-krs-terpilih tbody').empty();
 
             self.data.table_krs_terpilih = $("#table-krs-terpilih").DataTable({
-                data: self.data.selected_matkul, // Data sudah dimuat dari draft
+                data: self.data.selected_matkul,
                 columns: [
                     {
                         data: null,
@@ -352,9 +393,9 @@ jQuery.krs_jadwal = {
                         }
                     },
                     {
-                        data:   null,
-                        searchable:   false,
-                        className:  'text-center',
+                        data: null,
+                        searchable: false,
+                        className: 'text-center',
                         width: "12%",
                         render: function (data) {
                             if (!data) return '-';
@@ -366,13 +407,13 @@ jQuery.krs_jadwal = {
                         searchable: false,
                         className: 'text-center',
                         width: "8%",
-                        render:   function (data) {
+                        render: function (data) {
                             return `<span class="badge badge-success">${data || 0} SKS</span>`;
                         }
                     },
                     {
-                        data:   null,
-                        searchable:  false,
+                        data: null,
+                        searchable: false,
                         className: 'text-center',
                         width: "10%",
                         render: function (data) {
@@ -384,7 +425,7 @@ jQuery.krs_jadwal = {
                     {
                         data: null,
                         searchable: false,
-                        className:   'text-center',
+                        className: 'text-center',
                         width: "15%",
                         render: function (data) {
                             if (!data) return '-';
@@ -396,22 +437,28 @@ jQuery.krs_jadwal = {
                         searchable: false,
                         className: 'text-center',
                         width: "15%",
-                        defaultContent:   '-'
+                        defaultContent:  '-'
                     },
                     {
-                        data:  null,
-                        searchable:  false,
+                        data: null,
+                        searchable: false,
                         className: 'text-center',
                         width: "7%",
                         render: function (data) {
                             if (!data || !data.id) return '';
+
+                            // Hide tombol hapus jika tidak bisa edit
+                            if (!self.data.can_edit) {
+                                return '<span class="text-muted"><i class="fas fa-lock"></i></span>';
+                            }
+
                             return `<button class="btn btn-sm btn-danger btn-hapus-matkul" data-id="${data.id}">
                                         <i class="fas fa-trash"></i>
                                     </button>`;
                         }
                     }
                 ],
-                paging:   false,
+                paging:  false,
                 searching: false,
                 ordering: false,
                 info: false,
@@ -438,6 +485,11 @@ jQuery.krs_jadwal = {
 
         // Search events
         $("#btn-cari-data").off('click').on('click', function() {
+            // Disable jika tidak bisa edit
+            if (!self.data.can_edit) {
+                return;
+            }
+
             var $btn = $(this);
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Mencari...');
 
@@ -470,8 +522,13 @@ jQuery.krs_jadwal = {
 
         // Checkbox events
         $("#select-all").off('change').on('change', function() {
+            if (! self.data.can_edit) {
+                $(this).prop('checked', false);
+                return;
+            }
+
             var isChecked = $(this).is(':checked');
-            $(".matkul-checkbox: not(:disabled)").prop('checked', isChecked);
+            $(".matkul-checkbox:not(:disabled)").prop('checked', isChecked);
 
             if (isChecked) {
                 $(".matkul-checkbox:checked").each(function() {
@@ -486,6 +543,11 @@ jQuery.krs_jadwal = {
 
         // Individual checkbox
         $(document).off('change', '.matkul-checkbox').on('change', '.matkul-checkbox', function() {
+            if (!self.data.can_edit) {
+                $(this).prop('checked', false);
+                return;
+            }
+
             var id = $(this).data('id');
             if ($(this).is(':checked')) {
                 self.addToKRS(id);
@@ -502,6 +564,10 @@ jQuery.krs_jadwal = {
 
         // Remove dari KRS
         $(document).off('click', '.btn-hapus-matkul').on('click', '.btn-hapus-matkul', function() {
+            if (!self.data.can_edit) {
+                return;
+            }
+
             var id = $(this).data('id');
             self.removeFromKRS(id);
 
@@ -512,6 +578,15 @@ jQuery.krs_jadwal = {
 
         // Hapus semua KRS
         $("#btn-hapus-semua").off('click').on('click', function() {
+            if (!self.data.can_edit) {
+                $.alert({
+                    title: 'Tidak Dapat Diubah',
+                    content: 'KRS sudah diajukan dan tidak dapat diubah.',
+                    type: 'orange'
+                });
+                return;
+            }
+
             $.confirm({
                 title: 'Konfirmasi',
                 content: 'Apakah Anda yakin ingin menghapus semua mata kuliah terpilih?',
@@ -530,7 +605,7 @@ jQuery.krs_jadwal = {
                         }
                     },
                     batal: {
-                        text:   'Batal',
+                        text:  'Batal',
                         btnClass: 'btn-default'
                     }
                 }
@@ -539,10 +614,19 @@ jQuery.krs_jadwal = {
 
         // Simpan KRS
         $("#btn-simpan-krs").off('click').on('click', function() {
+            if (!self.data.can_edit) {
+                $.alert({
+                    title: 'Tidak Dapat Diubah',
+                    content: 'KRS sudah diajukan dan tidak dapat diubah.',
+                    type: 'orange'
+                });
+                return;
+            }
+
             if (self.data.selected_matkul.length === 0) {
                 $.alert({
                     title: 'Peringatan',
-                    content: 'Anda belum memilih mata kuliah apapun! ',
+                    content:  'Anda belum memilih mata kuliah apapun! ',
                     type: 'orange'
                 });
                 return;
@@ -574,12 +658,26 @@ jQuery.krs_jadwal = {
         $("#btn-konfirmasi-ya").off('click').on('click', function() {
             self.simpanKRS();
         });
+
+        // Ajukan KRS
+        $("#btn-ajukan-krs").off('click').on('click', function() {
+            self.ajukanKRS();
+        });
+
+        // Download KRS
+        $("#btn-download-krs").off('click').on('click', function() {
+            self.downloadKRS();
+        });
     },
 
     addToKRS: function(id) {
         var self = this;
 
-        if (!  self.data.table_jadwal || ! $.fn.DataTable.isDataTable('#table-jadwal')) {
+        if (! self.data.can_edit) {
+            return;
+        }
+
+        if (! self.data.table_jadwal || !$.fn.DataTable.isDataTable('#table-jadwal')) {
             console.error('DataTable not initialized');
             return;
         }
@@ -587,7 +685,7 @@ jQuery.krs_jadwal = {
         var rows = self.data.table_jadwal.rows().data().toArray();
         var matkul = rows.find(item => item.id == id);
 
-        if (matkul && !  self.data.selected_matkul.some(item => item.id == id)) {
+        if (matkul && ! self.data.selected_matkul.some(item => item.id == id)) {
             var current_sks = self.getTotalSKS();
             var new_total_sks = current_sks + parseInt(matkul.sks);
 
@@ -604,11 +702,16 @@ jQuery.krs_jadwal = {
             if (self.checkBentrokJadwal(matkul)) {
                 $.alert({
                     title: 'Bentrok Jadwal',
-                    content: 'Mata kuliah ini bentrok dengan jadwal yang sudah dipilih!  ',
+                    content: 'Mata kuliah ini bentrok dengan jadwal yang sudah dipilih! ',
                     type: 'red'
                 });
                 $(`input[data-id="${id}"]`).prop('checked', false);
                 return;
+            }
+
+            // Set default id_krs_mahasiswa jika belum ada
+            if (!matkul.id_krs_mahasiswa) {
+                matkul.id_krs_mahasiswa = '00000000-0000-0000-0000-000000000000';
             }
 
             self.data.selected_matkul.push(matkul);
@@ -618,6 +721,11 @@ jQuery.krs_jadwal = {
 
     removeFromKRS: function(id) {
         var self = this;
+
+        if (!self.data.can_edit) {
+            return;
+        }
+
         self.data.selected_matkul = self.data.selected_matkul.filter(item => item.id != id);
         self.updateKRSTable();
         $(`input[data-id="${id}"]`).prop('checked', false);
@@ -640,7 +748,17 @@ jQuery.krs_jadwal = {
             var id = $(this).data('id');
             var isSelected = self.data.selected_matkul.some(item => item.id == id);
             $(this).prop('checked', isSelected);
+
+            // Disable jika tidak bisa edit
+            if (!self.data.can_edit) {
+                $(this).prop('disabled', true);
+            }
         });
+
+        // Disable select all jika tidak bisa edit
+        if (!self.data.can_edit) {
+            $("#select-all").prop('disabled', true);
+        }
     },
 
     updateStatistik:  function() {
@@ -659,7 +777,7 @@ jQuery.krs_jadwal = {
 
         if (total_sks > self.data.sks_maksimal) {
             sks_card.find('.card-header').removeClass('card-header-warning card-header-success').addClass('card-header-danger');
-            sks_status.text('Melebihi Batas!  ');
+            sks_status.text('Melebihi Batas! ');
         } else if (total_sks >= self.data.sks_maksimal * 0.8) {
             sks_card.find('.card-header').removeClass('card-header-warning card-header-danger').addClass('card-header-warning');
             sks_status.text('Mendekati Batas');
@@ -667,6 +785,162 @@ jQuery.krs_jadwal = {
             sks_card.find('.card-header').removeClass('card-header-danger card-header-warning').addClass('card-header-success');
             sks_status.text('Kredit Dipilih');
         }
+    },
+
+    updateUIBasedOnStatus: function() {
+        var self = this;
+
+        console.log('Updating UI based on status:', self.data.status_krs);
+
+        // Tampilkan status badge
+        self.showStatusBadge();
+
+        // Jika status >= 1 dan bukan status 3 (ditolak), disable semua input dan tombol edit
+        if (! self.data.can_edit) {
+            // Disable input pencarian
+            $("#cari-matkul").prop('disabled', true);
+            $("#btn-cari-data").prop('disabled', true);
+
+            // Disable checkbox select all
+            $("#select-all").prop('disabled', true);
+
+            // Hide tombol edit
+            $("#btn-hapus-semua").hide();
+            $("#btn-simpan-krs").hide();
+            $("#btn-ajukan-krs").hide();
+
+            // Tampilkan pesan
+            self.showStatusMessage();
+        } else {
+            // Enable controls
+            $("#cari-matkul").prop('disabled', false);
+            $("#btn-cari-data").prop('disabled', false);
+            $("#select-all").prop('disabled', false);
+
+            // Show tombol edit
+            $("#btn-hapus-semua").show();
+            $("#btn-simpan-krs").show();
+            $("#btn-ajukan-krs").show();
+
+            // Tampilkan pesan untuk status 3 (ditolak)
+            if (self.data.status_krs === 3) {
+                self.showStatusMessage();
+            }
+        }
+
+        // Jika status = 4 (approved final), tampilkan tombol download
+        if (self.data.status_krs === 4) {
+            $("#btn-download-krs").show();
+        } else {
+            $("#btn-download-krs").hide();
+        }
+
+        // Tampilkan komentar DPS jika status = 3 atau 4
+        if ((self.data.status_krs === 3 || self.data.status_krs === 4) && self.data.komentar_dps) {
+            self.showKomentarDPS();
+        }
+    },
+
+    showStatusBadge: function() {
+        var self = this;
+        var statusText = '';
+        var statusClass = '';
+
+        switch(self.data.status_krs) {
+            case 0:
+                statusText = 'Draft';
+                statusClass = 'badge-secondary';
+                break;
+            case 1:
+                statusText = 'Diajukan';
+                statusClass = 'badge-info';
+                break;
+            case 2:
+                statusText = 'Disetujui PA';
+                statusClass = 'badge-primary';
+                break;
+            case 3:
+                statusText = 'Ditolak';
+                statusClass = 'badge-danger';
+                break;
+            case 4:
+                statusText = 'Disetujui';
+                statusClass = 'badge-success';
+                break;
+            default:
+                statusText = 'Draft';
+                statusClass = 'badge-secondary';
+        }
+
+        var badgeHtml = `<span class="badge ${statusClass} ml-2" id="status-krs-badge">${statusText}</span>`;
+
+        // Tambahkan badge ke header
+        if ($("#status-krs-badge").length) {
+            $("#status-krs-badge").replaceWith(badgeHtml);
+        } else {
+            $(".card-header h6:first").append(badgeHtml);
+        }
+    },
+
+    showStatusMessage:  function() {
+        var self = this;
+        var messageHtml = '';
+
+        switch(self.data.status_krs) {
+            case 1:
+                messageHtml = `
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>KRS Anda sudah diajukan</strong> dan sedang menunggu persetujuan.  Anda tidak dapat mengubah KRS saat ini.
+            `;
+                $('#status-message').removeClass().addClass('alert alert-info').html(messageHtml).show();
+                break;
+            case 2:
+                messageHtml = `
+                <i class="fas fa-check-circle mr-2"></i>
+                <strong>KRS Anda sudah disetujui oleh Pembimbing Akademik</strong> dan sedang menunggu persetujuan final.
+            `;
+                $('#status-message').removeClass().addClass('alert alert-primary').html(messageHtml).show();
+                break;
+            case 3:
+                messageHtml = `
+                <i class="fas fa-times-circle mr-2"></i>
+                <strong>KRS Anda ditolak. </strong> Silakan perbaiki KRS Anda sesuai dengan komentar Pembimbing Akademik di bawah.
+            `;
+                $('#status-message').removeClass().addClass('alert alert-danger').html(messageHtml).show();
+                break;
+            case 4:
+                messageHtml = `
+                <i class="fas fa-check-double mr-2"></i>
+                <strong>KRS Anda sudah disetujui! </strong> Anda dapat mendownload KRS Anda.
+            `;
+                $('#status-message').removeClass().addClass('alert alert-success').html(messageHtml).show();
+                break;
+            default:
+                $('#status-message').hide();
+        }
+    },
+
+    showKomentarDPS: function() {
+        var self = this;
+
+        if (! self.data.komentar_dps) {
+            $('#komentar-dps-message').hide();
+            return;
+        }
+
+        var komentarClass = self.data.status_krs === 3 ? 'alert-warning' : 'alert-info';
+        var komentarIcon = self.data.status_krs === 3 ? 'fa-exclamation-triangle' :  'fa-comment-dots';
+        var komentarTitle = self.data.status_krs === 3 ? 'Alasan Penolakan' : 'Catatan Pembimbing Akademik';
+
+        var komentarHtml = `
+        <h6 class="alert-heading">
+            <i class="fas ${komentarIcon} mr-2"></i>${komentarTitle}
+        </h6>
+        <hr/>
+        <p class="mb-0">${self.data.komentar_dps}</p>
+    `;
+
+        $('#komentar-dps-message').removeClass().addClass('alert ' + komentarClass).html(komentarHtml).show();
     },
 
     getTotalSKS: function() {
@@ -690,7 +964,7 @@ jQuery.krs_jadwal = {
     showDetailMatkul: function(id) {
         var self = this;
 
-        if (! self.data.table_jadwal || !$.fn.DataTable.isDataTable('#table-jadwal')) {
+        if (!self.data.table_jadwal || !$.fn.DataTable.isDataTable('#table-jadwal')) {
             console.error('DataTable not initialized');
             return;
         }
@@ -731,18 +1005,29 @@ jQuery.krs_jadwal = {
                 }
             },
             error: function() {
-                console.log('Menggunakan SKS maksimal default:   24');
+                console.log('Menggunakan SKS maksimal default:  24');
             }
         });
     },
 
     simpanKRS: function() {
         var self = this;
-        var data_krs = self.data.selected_matkul.map(item => ({
-            id_jadwal: item.id_jadwal_kuliah_id || item.id,
-            kd_mata_kuliah: item.kd_mata_kuliah,
-            sks: item.sks
-        }));
+
+        // Mapping data KRS dengan id_krs_mahasiswa
+        var data_krs = self.data.selected_matkul.map(item => {
+            var krs_item = {
+                id_jadwal: item.id_jadwal_kuliah_id || item.id,
+                kd_mata_kuliah: item.kd_mata_kuliah,
+                sks: item.sks
+            };
+
+            // Tambahkan id_krs_mahasiswa, gunakan default UUID jika null
+            krs_item.id_krs_mahasiswa = item.id_krs_mahasiswa || '00000000-0000-0000-0000-000000000000';
+
+            return krs_item;
+        });
+
+        console.log('Data KRS yang akan dikirim:', data_krs);
 
         $.ajax({
             url: '/mhs/krs/simpan',
@@ -755,6 +1040,8 @@ jQuery.krs_jadwal = {
                 $("#btn-konfirmasi-ya").prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...');
             },
             success: function(response) {
+                console.log('Response simpan KRS:', response);
+
                 if (response.status === "1" || response.status === 1) {
                     $.alert({
                         title: "Berhasil",
@@ -768,8 +1055,8 @@ jQuery.krs_jadwal = {
                 } else {
                     $.alert({
                         title: "Gagal",
-                        type:   "red",
-                        content:   response.keterangan || 'Gagal menyimpan KRS'
+                        type: "red",
+                        content: response.keterangan || 'Gagal menyimpan KRS'
                     });
                 }
             },
@@ -778,7 +1065,7 @@ jQuery.krs_jadwal = {
                 $.alert({
                     title: "Error",
                     type: "red",
-                    content: "Terjadi kesalahan sistem:   " + (xhr.responseJSON?.message || xhr.statusText)
+                    content: "Terjadi kesalahan sistem:  " + (xhr.responseJSON?.message || xhr.statusText)
                 });
             },
             complete: function() {
@@ -786,6 +1073,186 @@ jQuery.krs_jadwal = {
                 $("#modal-konfirmasi").modal('hide');
             }
         });
+    },
+
+    ajukanKRS: function() {
+        var self = this;
+
+        // Validasi apakah ada mata kuliah yang dipilih
+        if (self.data.selected_matkul.length === 0) {
+            $.alert({
+                title: 'Peringatan',
+                content: 'Anda belum memilih mata kuliah apapun!  Silakan pilih mata kuliah terlebih dahulu.',
+                type: 'orange'
+            });
+            return;
+        }
+
+        // Filter hanya id_krs_mahasiswa yang bukan default UUID
+        var id_krs_list = self.data.selected_matkul
+            .map(item => item.id_krs_mahasiswa)
+            .filter(id => id && id !== '00000000-0000-0000-0000-000000000000');
+
+        // Validasi apakah ada data yang sudah tersimpan (bukan default UUID)
+        if (id_krs_list.length === 0) {
+            $.alert({
+                title: 'Peringatan',
+                content: 'Anda harus menyimpan draft KRS terlebih dahulu sebelum mengajukan! ',
+                type: 'orange'
+            });
+            return;
+        }
+
+        var total_sks = self.getTotalSKS();
+
+        // Validasi SKS maksimal
+        if (total_sks > self.data.sks_maksimal) {
+            $.alert({
+                title: 'Melebihi Batas SKS',
+                content: `Total SKS yang dipilih (${total_sks} SKS) melebihi batas maksimal ${self.data.sks_maksimal} SKS per semester. Silakan kurangi mata kuliah yang dipilih sebelum mengajukan.`,
+                type: 'red'
+            });
+            return;
+        }
+
+        // Konfirmasi pengajuan
+        $.confirm({
+            title: 'Konfirmasi Pengajuan KRS',
+            content: `
+                <div class="alert alert-info">
+                    <strong>Informasi Pengajuan: </strong><br/>
+                    - Jumlah Mata Kuliah: <strong>${self.data.selected_matkul.length}</strong><br/>
+                    - Total SKS: <strong>${total_sks} SKS</strong><br/>
+                    - Batas Maksimal:  <strong>${self.data.sks_maksimal} SKS</strong>
+                </div>
+                <p class="mt-2">Apakah Anda yakin ingin mengajukan KRS ini? </p>
+                <small class="text-muted">Setelah diajukan, KRS akan diproses untuk persetujuan dan tidak dapat diubah.</small>
+            `,
+            type: 'blue',
+            typeAnimated: true,
+            columnClass: 'medium',
+            buttons: {
+                ajukan: {
+                    text:  'Ya, Ajukan',
+                    btnClass: 'btn-primary',
+                    action: function() {
+                        self.prosesAjukanKRS(id_krs_list);
+                    }
+                },
+                batal: {
+                    text:  'Batal',
+                    btnClass: 'btn-default'
+                }
+            }
+        });
+    },
+
+    prosesAjukanKRS: function(id_krs_list) {
+        var self = this;
+
+        console.log('ID KRS yang akan diajukan:', id_krs_list);
+
+        $.ajax({
+            url: '/mhs/krs/ajukan-krs',
+            method: 'POST',
+            data: {
+                id_krs_list: id_krs_list[0],
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function() {
+                $("#btn-ajukan-krs").prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Mengajukan...');
+            },
+            success: function(response) {
+                console.log('Response ajukan KRS:', response);
+
+                if (response.status === "1" || response.status === 1 || response.status === true) {
+                    $.alert({
+                        title: "Berhasil",
+                        type:  "green",
+                        content:  response.keterangan || 'KRS berhasil diajukan. Menunggu persetujuan.',
+                        columnClass: 'medium',
+                        onClose:  function() {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    $.alert({
+                        title: "Gagal",
+                        type: "red",
+                        content: response.keterangan || 'Gagal mengajukan KRS'
+                    });
+                    $("#btn-ajukan-krs").prop('disabled', false).html('<i class="fas fa-paper-plane mr-2"></i>Ajukan KRS');
+                }
+            },
+            error: function(xhr) {
+                console.error('Ajukan error:', xhr);
+                var errorMsg = 'Terjadi kesalahan sistem';
+
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                } else if (xhr.responseText) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        errorMsg = response.keterangan || response.message || errorMsg;
+                    } catch (e) {
+                        errorMsg = xhr.statusText || errorMsg;
+                    }
+                }
+
+                $.alert({
+                    title: "Error",
+                    type: "red",
+                    content: errorMsg
+                });
+                $("#btn-ajukan-krs").prop('disabled', false).html('<i class="fas fa-paper-plane mr-2"></i>Ajukan KRS');
+            },
+            complete: function() {
+                setTimeout(function() {
+                    if ($("#btn-ajukan-krs").is(':disabled')) {
+                        $("#btn-ajukan-krs").prop('disabled', false).html('<i class="fas fa-paper-plane mr-2"></i>Ajukan KRS');
+                    }
+                }, 1000);
+            }
+        });
+    },
+
+    downloadKRS: function() {
+        var self = this;
+
+        console.log('Downloading KRS...');
+
+        // Tampilkan loading
+        $("#btn-download-krs").prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Mempersiapkan...');
+
+        // Buat form dan submit untuk download
+        var form = $('<form>', {
+            'method': 'POST',
+            'action': '/mhs/krs/download-krs',
+            'target': '_blank'
+        });
+
+        // Tambahkan CSRF token
+        form.append($('<input>', {
+            'type': 'hidden',
+            'name': '_token',
+            'value': $('meta[name="csrf-token"]').attr('content')
+        }));
+
+        // Submit form
+        $('body').append(form);
+        form.submit();
+        form.remove();
+
+        // Reset tombol setelah delay
+        setTimeout(function() {
+            $("#btn-download-krs").prop('disabled', false).html('<i class="fas fa-download mr-2"></i>Download KRS');
+
+            $.alert({
+                title: 'Download Dimulai',
+                content: 'File KRS sedang dipersiapkan.Jika download tidak dimulai, silakan klik tombol download lagi.',
+                type: 'green'
+            });
+        }, 2000);
     }
 };
 

@@ -157,13 +157,13 @@ jQuery.sinkronisasi_mahasiswa_siakad = {
 
                         if ($("#hak_akses").val() === "1") {
                             // Tombol Sync SIAKAD
-                            buttons += "<button class='btn btn-success btn-sm mb-1 btn-sync-siakad' " +
-                                "title='Sinkron data dengan siakad' data-nim='" + data.nim + "' " +
-                                "data-nama='" + data.nama_mahasiswa + "'>" +
-                                "<span class='spinner-border spinner-border-sm mr-1' id='sync-siakad-loading-spin-" + data.nim + "' " +
-                                "style='display: none' role='status' aria-hidden='true'></span>" +
-                                "<i class='fas fa-sync'></i> Sync" +
-                                "</button><br/>";
+                            // buttons += "<button class='btn btn-success btn-sm mb-1 btn-sync-siakad' " +
+                            //     "title='Sinkron data dengan siakad' data-nim='" + data.nim + "' " +
+                            //     "data-nama='" + data.nama_mahasiswa + "'>" +
+                            //     "<span class='spinner-border spinner-border-sm mr-1' id='sync-siakad-loading-spin-" + data.nim + "' " +
+                            //     "style='display: none' role='status' aria-hidden='true'></span>" +
+                            //     "<i class='fas fa-sync'></i> Sync" +
+                            //     "</button><br/>";
 
                             // Tombol Edit
                             buttons += "<button class='btn btn-primary btn-sm mb-1 btn-edit-mahasiswa' " +

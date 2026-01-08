@@ -2,9 +2,9 @@ jQuery.persetujuan_krs_dps = {
     data: {
         table_krs: null,
         table_detail_matkul: null,
-        search:  '',
+        search: '',
         status_filter: '',
-        tahun_akademik:  '',
+        tahun_akademik: '',
         current_krs_id: null
     },
 
@@ -25,7 +25,7 @@ jQuery.persetujuan_krs_dps = {
         var self = this;
 
         // Pastikan DOM sudah ready
-        if (!$('#table-krs-dps').length) {
+        if (! $('#table-krs-dps').length) {
             console.error('Table #table-krs-dps tidak ditemukan! ');
             return;
         }
@@ -48,7 +48,7 @@ jQuery.persetujuan_krs_dps = {
                 tahun_akademik: self.data.tahun_akademik,
                 _token: $('meta[name="csrf-token"]').attr('content')
             },
-            success: function(response) {
+            success:  function(response) {
                 console.log('Rekap data:', response);
 
                 if (response && response.data && response.data.length > 0) {
@@ -174,7 +174,7 @@ jQuery.persetujuan_krs_dps = {
 
                         $.alert({
                             title: 'Error',
-                            content: 'Gagal memuat data KRS:  ' + (thrown || error),
+                            content:  'Gagal memuat data KRS: ' + (thrown || error),
                             type: 'red'
                         });
                     }
@@ -212,7 +212,7 @@ jQuery.persetujuan_krs_dps = {
                     },
                     {
                         data: 'nama_prodi',
-                        searchable:  false,
+                        searchable: false,
                         className: 'text-left',
                         width: "15%",
                         defaultContent: '-'
@@ -257,8 +257,8 @@ jQuery.persetujuan_krs_dps = {
                         }
                     },
                     {
-                        data: null,
-                        searchable: false,
+                        data:  null,
+                        searchable:  false,
                         orderable: false,
                         className: 'text-center',
                         width: "12%",
@@ -295,6 +295,19 @@ jQuery.persetujuan_krs_dps = {
                                 `;
                             }
 
+                            // Tombol download jika status = 4 (Disetujui Final)
+                            if (data.status_krs === 4) {
+                                buttons += `
+                                    <button class="btn btn-sm btn-primary btn-download-krs"
+                                            data-id="${data.id_krs_mahasiswa}"
+                                            data-nim="${data.nim}"
+                                            data-nama="${data.nama_mahasiswa}"
+                                            title="Download KRS">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                `;
+                            }
+
                             return buttons;
                         }
                     }
@@ -312,7 +325,7 @@ jQuery.persetujuan_krs_dps = {
                     "zeroRecords": "Tidak ditemukan data yang sesuai",
                     "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                     "infoEmpty": "Menampilkan 0 sampai 0 dari 0 data",
-                    "infoFiltered": "(disaring dari _MAX_ total data)",
+                    "infoFiltered":  "(disaring dari _MAX_ total data)",
                     "paginate": {
                         "first": "Pertama",
                         "last": "Terakhir",
@@ -383,7 +396,7 @@ jQuery.persetujuan_krs_dps = {
                 }, false);
 
                 setTimeout(function() {
-                    if ($btn.is(':disabled')) {
+                    if ($btn.is(': disabled')) {
                         $btn.prop('disabled', false).html('<i class="fas fa-search mr-2"></i>Cari');
                         $("#table-krs-dps_processing").hide();
                     }
@@ -432,6 +445,15 @@ jQuery.persetujuan_krs_dps = {
             self.showModalReject(id, nim, nama, mk, sks);
         });
 
+        // Download button
+        $(document).off('click', '.btn-download-krs').on('click', '.btn-download-krs', function() {
+            var id = $(this).data('id');
+            var nim = $(this).data('nim');
+            var nama = $(this).data('nama');
+
+            self.downloadKRSMahasiswa(id, nim, nama);
+        });
+
         // Konfirmasi setujui
         $("#btn-setujui-krs").off('click').on('click', function() {
             self.approveKRS();
@@ -445,17 +467,25 @@ jQuery.persetujuan_krs_dps = {
 
     getStatusClass: function(status) {
         switch(status) {
-            case 0:  return 'status-draft';
-            case 1: return 'status-menunggu';
-            case 2: return 'status-disetujui';
-            case 3: return 'status-ditolak';
-            case 4: return 'status-selesai';
+            case 0: return 'badge-secondary';
+            case 1: return 'badge-warning';
+            case 2: return 'badge-info';
+            case 3: return 'badge-danger';
+            case 4: return 'badge-success';
             default: return 'badge-secondary';
         }
     },
 
-    showDetailKRS:  function(id) {
+    showDetailKRS: function(id) {
         var self = this;
+
+        // Show loading dialog
+        var loadingDialog = $.dialog({
+            title: false,
+            content: '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><br/><p class="mt-2">Memuat data...</p></div>',
+            closeIcon: false,
+            backgroundDismiss: false
+        });
 
         $.ajax({
             url: '/dosen/krs/detail',
@@ -464,15 +494,8 @@ jQuery.persetujuan_krs_dps = {
                 id_krs:  id,
                 _token: $('meta[name="csrf-token"]').attr('content')
             },
-            beforeSend: function() {
-                $.dialog({
-                    title: false,
-                    content: '<i class="fas fa-spinner fa-spin"></i> Memuat data...',
-                    closeIcon: false
-                });
-            },
             success: function(response) {
-                $.dialog.close();
+                loadingDialog.close();
 
                 if (response && response.data) {
                     var data = response.data;
@@ -492,7 +515,7 @@ jQuery.persetujuan_krs_dps = {
                         $('#detail-komentar-dps').html(`<i class="fas fa-comment-dots mr-2"></i><span>${data.komentar_dps}</span>`);
                         $('#section-komentar').show();
                     } else {
-                        $('#detail-komentar-dps').html('<i class="fas fa-comment-dots mr-2"></i><span>Belum ada komentar</span>');
+                        $('#detail-komentar-dps').html('<i class="fas fa-comment-dots mr-2"></i><span class="text-muted">Belum ada komentar</span>');
                         $('#section-komentar').show();
                     }
 
@@ -503,7 +526,7 @@ jQuery.persetujuan_krs_dps = {
                 }
             },
             error: function(xhr) {
-                $.dialog.close();
+                loadingDialog.close();
                 $.alert({
                     title: 'Error',
                     content: 'Gagal memuat detail KRS: ' + (xhr.responseJSON?.message || xhr.statusText),
@@ -590,7 +613,7 @@ jQuery.persetujuan_krs_dps = {
                         searching: false,
                         ordering:  false,
                         info: false,
-                        language: {
+                        language:  {
                             "emptyTable": "Tidak ada mata kuliah"
                         }
                     });
@@ -639,8 +662,9 @@ jQuery.persetujuan_krs_dps = {
 
         $.confirm({
             title: 'Konfirmasi Persetujuan',
-            content: 'Apakah Anda yakin ingin menyetujui KRS ini? ',
+            content: 'Apakah Anda yakin ingin menyetujui KRS ini?',
             type: 'green',
+            typeAnimated: true,
             buttons: {
                 ya: {
                     text: 'Ya, Setujui',
@@ -660,7 +684,7 @@ jQuery.persetujuan_krs_dps = {
                             success: function(response) {
                                 if (response.status === "1" || response.status === 1) {
                                     $.alert({
-                                        title: "Berhasil",
+                                        title:  "Berhasil",
                                         type: "green",
                                         content: response.keterangan || 'KRS berhasil disetujui',
                                         onClose: function() {
@@ -679,9 +703,9 @@ jQuery.persetujuan_krs_dps = {
                             },
                             error: function(xhr) {
                                 $.alert({
-                                    title: "Error",
+                                    title:  "Error",
                                     type: "red",
-                                    content:  "Terjadi kesalahan sistem:  " + (xhr.responseJSON?.message || xhr.statusText)
+                                    content: "Terjadi kesalahan sistem:  " + (xhr.responseJSON?.message || xhr.statusText)
                                 });
                             },
                             complete: function() {
@@ -691,7 +715,7 @@ jQuery.persetujuan_krs_dps = {
                     }
                 },
                 batal: {
-                    text:  'Batal',
+                    text: 'Batal',
                     btnClass: 'btn-default'
                 }
             }
@@ -717,17 +741,18 @@ jQuery.persetujuan_krs_dps = {
             title: 'Konfirmasi Penolakan',
             content: 'Apakah Anda yakin ingin menolak KRS ini?',
             type: 'red',
+            typeAnimated: true,
             buttons: {
-                ya:  {
+                ya: {
                     text: 'Ya, Tolak',
-                    btnClass: 'btn-red',
+                    btnClass:  'btn-red',
                     action: function() {
                         $.ajax({
                             url: '/dosen/krs/reject',
                             method: 'POST',
-                            data: {
+                            data:  {
                                 id_krs: id_krs,
-                                alasan:  alasan,
+                                alasan: alasan,
                                 _token: $('meta[name="csrf-token"]').attr('content')
                             },
                             beforeSend: function() {
@@ -736,8 +761,8 @@ jQuery.persetujuan_krs_dps = {
                             success: function(response) {
                                 if (response.status === "1" || response.status === 1) {
                                     $.alert({
-                                        title:  "Berhasil",
-                                        type: "green",
+                                        title: "Berhasil",
+                                        type:  "green",
                                         content: response.keterangan || 'KRS berhasil ditolak',
                                         onClose: function() {
                                             $('#modal-penolakan').modal('hide');
@@ -747,20 +772,20 @@ jQuery.persetujuan_krs_dps = {
                                     });
                                 } else {
                                     $.alert({
-                                        title: "Gagal",
+                                        title:  "Gagal",
                                         type: "red",
-                                        content:  response.keterangan || 'Gagal menolak KRS'
+                                        content: response.keterangan || 'Gagal menolak KRS'
                                     });
                                 }
                             },
                             error: function(xhr) {
                                 $.alert({
-                                    title: "Error",
+                                    title:  "Error",
                                     type: "red",
-                                    content: "Terjadi kesalahan sistem:  " + (xhr.responseJSON?.message || xhr.statusText)
+                                    content: "Terjadi kesalahan sistem: " + (xhr.responseJSON?.message || xhr.statusText)
                                 });
                             },
-                            complete: function() {
+                            complete:  function() {
                                 $("#btn-tolak-krs").prop('disabled', false).html('<i class="fas fa-ban mr-1"></i> Tolak KRS');
                             }
                         });
@@ -768,6 +793,63 @@ jQuery.persetujuan_krs_dps = {
                 },
                 batal:  {
                     text: 'Batal',
+                    btnClass: 'btn-default'
+                }
+            }
+        });
+    },
+
+    downloadKRSMahasiswa: function(id_krs, nim, nama) {
+        var self = this;
+
+        console.log('Downloading KRS untuk mahasiswa:', nim, nama);
+
+        $.confirm({
+            title: 'Download KRS',
+            content: `Apakah Anda ingin mendownload KRS untuk mahasiswa: <br/><strong>${nim} - ${nama}</strong>? `,
+            type: 'blue',
+            typeAnimated: true,
+            buttons: {
+                download: {
+                    text: 'Download',
+                    btnClass: 'btn-primary',
+                    action: function() {
+                        // Buat form dan submit untuk download
+                        var form = $('<form>', {
+                            'method': 'POST',
+                            'action': '/dosen/krs/download',
+                            'target': '_blank'
+                        });
+
+                        // Tambahkan CSRF token
+                        form.append($('<input>', {
+                            'type': 'hidden',
+                            'name': '_token',
+                            'value':  $('meta[name="csrf-token"]').attr('content')
+                        }));
+
+                        // Tambahkan id_krs
+                        form.append($('<input>', {
+                            'type': 'hidden',
+                            'name': 'id_krs',
+                            'value': id_krs
+                        }));
+
+                        // Submit form
+                        $('body').append(form);
+                        form.submit();
+                        form.remove();
+
+                        // Show success notification
+                        $.alert({
+                            title: 'Download Dimulai',
+                            content:  'File KRS sedang dipersiapkan.Jika download tidak dimulai, silakan coba lagi.',
+                            type: 'green'
+                        });
+                    }
+                },
+                batal: {
+                    text:  'Batal',
                     btnClass: 'btn-default'
                 }
             }

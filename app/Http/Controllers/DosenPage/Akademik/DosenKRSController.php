@@ -124,14 +124,19 @@ class DosenKRSController extends Controller
             // DataTable parameters
             $start = $request->input('start', 0);
             $length = $request->input('length', 10);
-            $search = $request->input('search_mahasiswa', '');
+            $search = $request->input('search_mahasiswa', null);
             $status_krs = $request->input('status_krs', null);
 
             // Convert empty string to null
-            if ($status_krs === '') {
+            if ($status_krs === '' || is_null($status_krs)) {
                 $status_krs = null;
             } else {
                 $status_krs = (int) $status_krs;
+            }
+
+            // Convert empty string to null
+            if ($search === null) {
+                $search = '';
             }
 
             $tahun_akademik = $request->tahun_akademik ?? '1';
@@ -346,7 +351,6 @@ class DosenKRSController extends Controller
 
             // Status 2 = ACC DPS / MENUNGGU KAPRODI
             $result = KRS::update_status_krs($id_krs, 2, $komentar, $nidn);
-
             if ($result && ($result->status == '1' || $result->status == 1)) {
                 return response()->json([
                     'status' => '1',
@@ -356,7 +360,7 @@ class DosenKRSController extends Controller
                 return response()->json([
                     'status' => '0',
                     'keterangan' => $result->keterangan ?? 'Gagal menyetujui KRS'
-                ], 400);
+                ]);
             }
 
         } catch (Exception $e) {

@@ -60,7 +60,7 @@ class KRS extends Model
 
     public static function get_daftar_krs_dps($nidn, $status_krs = null, $offset = -1, $limit = 10, $search = '', $tahun_akademik = '1') {
         return DB::select('SELECT * FROM akademik.daftar_krs_masuk_dps(?,?,?,?,?,?)', [
-            $nidn, $status_krs, $limit, $offset, $search, $tahun_akademik
+            $nidn, $status_krs, $offset, $limit, $search, $tahun_akademik
         ]);
     }
 

@@ -28,7 +28,7 @@
 
         .modal-title i {
             font-size: 1.2rem;
-            margin-right: 8px;
+            margin-right:  8px;
         }
 
         .close {
@@ -37,7 +37,7 @@
         }
 
         .close:hover {
-            opacity: 1;
+            opacity:  1;
         }
 
         /* Modal body compact but modern */
@@ -54,7 +54,7 @@
             font-size: 0.75rem;
             font-weight: 600;
             padding: 0.35em 0.6em;
-            border-radius: 6px;
+            border-radius:  6px;
         }
 
         .badge-warning {
@@ -74,6 +74,14 @@
             background-color: #1976d2;
         }
 
+        .badge-info {
+            background-color: #00bcd4;
+        }
+
+        .badge-danger {
+            background-color: #f44336;
+        }
+
         small.text-muted {
             font-size: 0.7rem;
             text-transform: uppercase;
@@ -81,12 +89,12 @@
             letter-spacing: 0.5px;
             margin-bottom: 2px;
             display: inline-block;
-            color: #6c757d !important;
+            color: #6c757d ! important;
         }
 
         .modal-footer {
             border-top: 1px solid #eaeaea;
-            background: #fff;
+            background:  #fff;
             padding: 0.75rem 1.5rem;
         }
 
@@ -102,8 +110,71 @@
             margin-bottom: 0.75rem;
             border-bottom: 1px dashed #e0e0e0;
         }
+
+        /* Status Message Animation */
+        #status-message,
+        #komentar-dps-message {
+            animation:  fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Button download styling */
+        #btn-download-krs {
+            display: none;
+        }
+
+        /* Komentar DPS Styling */
+        #komentar-dps-message {
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #komentar-dps-message.alert-warning {
+            border-left-color: #ff9800;
+            background-color: #fff3e0;
+        }
+
+        #komentar-dps-message.alert-info {
+            border-left-color: #2196f3;
+            background-color: #e3f2fd;
+        }
+
+        #komentar-dps-message .alert-heading {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: #333;
+        }
+
+        #komentar-dps-message hr {
+            margin: 0.75rem 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        #komentar-dps-message p {
+            font-size: 0.95rem;
+            line-height:  1.6;
+            color: #555;
+            white-space: pre-wrap;
+        }
+
+        /* Hidden by default */
+        #status-message,
+        #komentar-dps-message {
+            display: none;
+        }
     </style>
 @endsection
+
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
         <ol class="breadcrumb d-inline-flex font-weight-600 fs-13 bg-white mb-0 float-sm-right">
@@ -121,6 +192,7 @@
         </div>
     </div>
 @endsection
+
 @section('body-content')
     <div class="col-md-3">
         <div class="card card-stats statistic-box mb-4">
@@ -186,6 +258,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -196,6 +269,12 @@
                 </div>
             </div>
             <div class="card-body">
+                <!-- Status Message Placeholder -->
+                <div id="status-message" style="display: none;"></div>
+
+                <!-- Komentar DPS Placeholder -->
+                <div id="komentar-dps-message" style="display: none;"></div>
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -233,7 +312,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <h6 class="font-weight-bold mb-1">Sisa SKS</h6>
-                                            <p class="mb-0"><small>Dapat diambil: <strong><span id="sks-sisa-info">24</span> SKS</strong></small></p>
+                                            <p class="mb-0"><small>Dapat diambil:  <strong><span id="sks-sisa-info">24</span> SKS</strong></small></p>
                                         </div>
                                     </div>
                                 </div>
@@ -262,12 +341,10 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <!-- TAMBAHKAN TR KOSONG INI - SANGAT PENTING -->
                             <tr>
                                 <td colspan="11" class="text-center">Loading...</td>
                             </tr>
                             </tbody>
-                            <!-- TAMBAHKAN TFOOT JIKA TIDAK ADA -->
                             <tfoot class="thead-light">
                             <tr>
                                 <th class="text-center"><input type="checkbox" disabled></th>
@@ -297,6 +374,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="fs-17 font-weight-600 mb-0">KRS Terpilih</h6>
+                        <!-- Status badge akan ditampilkan di sini via JavaScript -->
                     </div>
                     <div>
                         <button class="btn btn-danger btn-sm" id="btn-hapus-semua">
@@ -321,14 +399,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <!-- TAMBAHKAN TR KOSONG INI -->
                         <tr>
                             <td colspan="8" class="text-center">Belum ada mata kuliah yang dipilih</td>
                         </tr>
                         </tbody>
                         <tfoot>
                         <tr class="bg-light">
-                            <th colspan="3" class="text-right">Total SKS: </th>
+                            <th colspan="3" class="text-right">Total SKS:  </th>
                             <th id="total-sks">0</th>
                             <th colspan="4"></th>
                         </tr>
@@ -337,11 +414,19 @@
                 </div>
             </div>
             <div class="card-footer text-right">
+                <!-- Tombol Simpan Draft -->
                 <button class="btn btn-success btn-lg mr-2" id="btn-simpan-krs">
                     <i class="fas fa-save mr-2"></i>Simpan Draft KRS
                 </button>
-                <button class="btn btn-primary btn-lg" id="btn-ajukan-krs">
+
+                <!-- Tombol Ajukan -->
+                <button class="btn btn-primary btn-lg mr-2" id="btn-ajukan-krs">
                     <i class="fas fa-paper-plane mr-2"></i>Ajukan KRS
+                </button>
+
+                <!-- Tombol Download - Hidden by default -->
+                <button class="btn btn-info btn-lg" id="btn-download-krs" style="display: none;">
+                    <i class="fas fa-download mr-2"></i>Download KRS
                 </button>
             </div>
         </div>
@@ -372,7 +457,7 @@
 
     <!-- Modal Detail Mata Kuliah -->
     <div class="modal fade" id="modal-detail-matkul" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document"> <!-- saya buat modal-lg biar lega -->
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
                     <h5 class="modal-title">
@@ -418,7 +503,7 @@
                                 <span class="badge badge-warning" id="detail-ruang">-</span>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12 mt-2">
                             <small class="text-muted">Nama Dosen</small>
                             <div>
                                 <span class="badge badge-warning" id="detail-nama_dosen">-</span>
@@ -427,7 +512,7 @@
                     </div>
 
                     <!-- Keterangan -->
-                    <div class="row">
+                    <div class="row mt-2">
                         <div class="col-12">
                             <small class="text-muted">Keterangan</small>
                             <p class="mb-0 text-secondary" id="detail-keterangan">-</p>
@@ -452,4 +537,3 @@
     <script src="{{ asset('adminpage/assets/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('adminpage/own-js/mahasiswa_page/akademik/krs/krs.js') }}"></script>
 @endpush
-
