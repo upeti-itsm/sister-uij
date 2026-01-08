@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminAkademikPage\Akademik\Mahasiswa;
 
 use App\Http\Controllers\Controller;
+use App\Models\Akademik\Dosen;
 use App\Models\Akademik\Mahasiswa;
 use App\Models\Akademik\ProgramStudi;
 use App\Models\PMB\Pendaftar;
@@ -25,7 +26,8 @@ class SinkronisasiMahasiswaSiakadController extends Controller
         $angkatan = Mahasiswa::get_list_angkatan();
         $angkatan_siakad = tblMahasiswa::getAngkatan();
         $tahun_pmb = Pendaftar::get_tahun_seleksi();
-        return view('admin_akademik_page.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad', compact('menu', 'program_studi', 'angkatan', 'angkatan_siakad', 'tahun_pmb'));
+        $status_mahasiswa = Mahasiswa::get_status_mahasiswa();
+        return view('admin_akademik_page.akademik.mahasiswa.sinkronisasi_mahasiswa_siakad', compact('menu', 'program_studi', 'angkatan', 'angkatan_siakad', 'tahun_pmb', 'status_mahasiswa'));
     }
 
     public function json_get_daftar_mahasiswa(Request $request)
@@ -132,7 +134,7 @@ class SinkronisasiMahasiswaSiakadController extends Controller
                 $request->alasan ??  ''
             );
 
-            if ($result->is_success) {
+            if ($result->status) {
                 return response()->json([
                     'is_success' => true,
                     'result' => $result->result ??  'Status mahasiswa berhasil diubah'
@@ -170,7 +172,7 @@ class SinkronisasiMahasiswaSiakadController extends Controller
         $pekerjaan = Pekerjaan::get_data();
         $penghasilan = Penghasilan::get_data();
         $jenis_pendanaan = JenisPendanaan::get_data();
-
+        $dosen = Dosen::get_dosen();
         return view('admin_akademik_page.akademik.mahasiswa.edit_mahasiswa', compact(
             'menu',
             'mahasiswa',
@@ -181,7 +183,8 @@ class SinkronisasiMahasiswaSiakadController extends Controller
             'jenjang_pendidikan',
             'pekerjaan',
             'penghasilan',
-            'jenis_pendanaan'
+            'jenis_pendanaan',
+            'dosen',
         ));
     }
 
@@ -194,6 +197,7 @@ class SinkronisasiMahasiswaSiakadController extends Controller
             'tanggal_lahir' => 'required|date|before: today',
             'id_agama' => 'required|integer',
             'kd_prodi' => 'required|string',
+            'dosen_wali' => 'required|string',
             'email' => 'nullable|email|max:255',
             'nik' => 'nullable|string|size:16',
             'nisn' => 'nullable|string|max:10',
@@ -207,6 +211,7 @@ class SinkronisasiMahasiswaSiakadController extends Controller
             'tanggal_lahir.before' => 'Tanggal lahir tidak boleh di masa depan',
             'id_agama.required' => 'Agama wajib dipilih',
             'kd_prodi.required' => 'Program studi wajib dipilih',
+            'dosen_wali.required' => 'Dosen Wali wajib dipilih',
             'email.email' => 'Format email tidak valid',
             'nik.size' => 'NIK harus 16 digit',
             'ipk.numeric' => 'IPK harus berupa angka',
@@ -254,6 +259,8 @@ class SinkronisasiMahasiswaSiakadController extends Controller
                 $request->kd_jenis_pendanaan,
                 $request->jenis_kelas_siakad,
                 $request->dosen_wali,
+                $request->id_jenis_tinggal,
+                $request->id_alat_transportasi,
                 // Data Pendidikan Sebelumnya
                 $request->sekolah_asal,
                 $request->jurusan_sma,

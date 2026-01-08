@@ -481,9 +481,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Dosen Wali</label>
-                                    <input type="text" class="form-control" name="dosen_wali"
-                                           value="{{old('dosen_wali', $mahasiswa->dosen_wali)}}" readonly>
-                                    <small class="text-muted">Kode Dosen Wali (tidak dapat diubah)</small>
+                                    <select class="form-control select2" name="dosen_wali">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach($dosen as $item)
+                                            <option value="{{$item->nidn}}"
+                                                {{old('dosen_wali', $mahasiswa->dosen_wali ??  '') == $item->nidn ? 'selected' : ''}}>
+                                                {{$item->nama_dosen}}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 

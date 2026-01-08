@@ -403,7 +403,7 @@ jQuery.edit_mahasiswa = {
                                 keys: ['enter'],
                                 action: function() {
                                     // Redirect to list page
-                                    window.location.href = form.find('a.btn-secondary').attr('href');
+                                    window.location.reload();
                                 }
                             }
                         }

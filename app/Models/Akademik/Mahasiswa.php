@@ -5,6 +5,7 @@ namespace App\Models\Akademik;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class Mahasiswa extends Model
 {
@@ -151,9 +152,10 @@ class Mahasiswa extends Model
 
     public static function update_status_mahasiswa($nim, $status, $alasan = '')
     {
-        return DB::select('SELECT * FROM akademik.update_status_mahasiswa(:nim, :status, :alasan)', [
+        return DB::select('SELECT * FROM akademik.update_status_kuliah_mahasiswa(:nim, :status, :id_personal, :alasan)', [
             'nim' => $nim,
             'status' => $status,
+            'id_personal' => Session::get('user')->id_personal,
             'alasan' => $alasan
         ])[0];
     }
@@ -163,7 +165,6 @@ class Mahasiswa extends Model
         $result = DB::select('SELECT * FROM akademik.get_detail_mahasiswa_by_nim(:nim)', [
             'nim' => $nim
         ]);
-
         return $result ?  $result[0] :null;
     }
 
@@ -201,6 +202,8 @@ class Mahasiswa extends Model
         $kd_jenis_pendanaan = null,
         $jenis_kelas_siakad = null,
         $dosen_wali = null,
+        $jenis_tinggal = null,
+        $alat_transportasi,
         // Data Pendidikan Sebelumnya
         $sekolah_asal = null,
         $jurusan_sma = null,
@@ -251,7 +254,9 @@ class Mahasiswa extends Model
             :p_nomor_transkrip,
             :p_tgl_lulus,
             :p_judul_skripsi,
-            :p_ipk
+            :p_ipk,
+            :p_jenis_tinggal,
+            :p_alat_transportasi
         )', [
                 'p_nim' => $nim,
                 'p_nama_mahasiswa' => $nama_mahasiswa,
@@ -280,6 +285,8 @@ class Mahasiswa extends Model
                 'p_kd_jenis_mahasiswa' => $kd_jenis_mahasiswa,
                 'p_kd_jenis_pendanaan' => $kd_jenis_pendanaan,
                 'p_jenis_kelas_siakad' => $jenis_kelas_siakad,
+                'p_jenis_tinggal' => $jenis_tinggal,
+                'p_alat_transportasi' => $alat_transportasi,
                 'p_dosen_wali' => $dosen_wali,
                 'p_sekolah_asal' => $sekolah_asal,
                 'p_jurusan_sma' => $jurusan_sma,
@@ -308,5 +315,10 @@ class Mahasiswa extends Model
                 'result' => 'Error: ' . $e->getMessage()
             ];
         }
+    }
+
+    public static function get_status_mahasiswa()
+    {
+        return DB::select("SELECT * FROM akademik.get_status_kuliah_mahasiswa()");
     }
 }
