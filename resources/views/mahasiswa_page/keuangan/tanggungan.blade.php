@@ -56,6 +56,7 @@
                                 <div class="form-group">
                                     <label class="font-weight-bold">Filter Status</label>
                                     <select class="form-control select2" id="filter-status-lunas">
+                                        <option value="0">Semua Status</option>
                                         <option value="false">Belum Lunas</option>
                                         <option value="true">Sudah Lunas</option>
                                     </select>

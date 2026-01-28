@@ -543,12 +543,14 @@
                                 @if (array_key_exists('Sinkronisasi Jadwal Kuliah dengan Siakad', $modul) ||
                                         array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul) ||
                                         array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
-                                        array_key_exists('Mengelola Kartu Rencana Studi', $modul))
+                                        array_key_exists('Mengelola Kartu Rencana Studi', $modul) ||
+                                        array_key_exists('Hasil Studi Mahasiswa', $modul))
                                     <li @if (
                                             $menu == 'Sinkronisasi Jadwal Kuliah dengan Siakad' ||
                                                 $menu == 'Sinkronisasi Tahun Akademik dengan Siakad' ||
                                                 $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
-                                                $menu == 'Mengelola Rencana Studi') class="mm-active" @endif>
+                                                $menu == 'Mengelola Rencana Studi' ||
+                                                $menu == 'Hasil Studi Mahasiswa') class="mm-active" @endif>
                                         <a class="has-arrow" href="#" aria-expanded="true">Perkuliahan</a>
                                         <ul class="nav-third-level mm-collapse" style="">
                                             @if (array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul))
@@ -570,6 +572,13 @@
                                                     <a href="{{ route('mahasiswa.akademik.krs.index') }}">Rencana
                                                         Studi
                                                         (KRS)</a>
+                                                </li>
+                                            @endif
+                                            @if (array_key_exists('Hasil Studi Mahasiswa', $modul))
+                                                <li @if ($menu == 'Hasil Studi Mahasiswa') class="mm-active" @endif>
+                                                    <a href="{{ route('mahasiswa.akademik.krs.index') }}">
+                                                        Hasil Studi
+                                                    </a>
                                                 </li>
                                             @endif
                                             @if (array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul))

@@ -101,7 +101,7 @@ jQuery.tanggungan_mahasiswa = {
                     var firstRow = data[0];
                     jQuery.tanggungan_mahasiswa.data.summary_tagihan = {
                         total_fmt: firstRow.total_tagihan_fmt,
-                        lunas_fmt: "Return ini ya fer.",
+                        lunas_fmt: firstRow.total_bayar ?? 'INI FER',
                         sisa_fmt: firstRow.sisa_tagihan_fmt
                     };
                     jQuery.tanggungan_mahasiswa.renderSummaryTagihan();

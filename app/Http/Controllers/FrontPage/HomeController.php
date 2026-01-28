@@ -7,6 +7,7 @@ use App\Models\Absensi\RekapitulasiAbsensiMengajarDosen;
 use App\Models\Akademik\DaftarHadirWisuda;
 use App\Models\MOODLE_MODEL\CourseMoodle;
 use App\Models\MOODLE_MODEL\Dosen;
+use App\Models\Sistem\TTE;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\Console\Input\Input;
@@ -164,5 +165,12 @@ class HomeController extends Controller
             $response = DaftarHadirWisuda::insert_tamu('-', $barcode[0], $barcode[1], $barcode[2]);
         Session::flash($response->status == 1 ? "success_message" : "failed_message", $response->keterangan);
         return redirect()->back()->with(['response' => $response]);
+    }
+
+    public function detail_qr($id_qr)
+    {
+        $data = TTE::cekTTE($id_qr);
+        Session::flash($data->status == 1 ? 'success_message' : 'failed_message', $data->keterangan);
+        return view('front_page.tte_validation', compact('data'));
     }
 }
