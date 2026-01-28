@@ -17,7 +17,7 @@ class JadwalMataKuliah extends Model
 
     public static function get_jadwal_matakuliah($prodi = "all", $tahun_akademik = "all", $search = "", $offset = 0, $limit = -1, $status = -1)
     {
-        return DB::select('SELECT * FROM akademik.get_daftar_jadwal_kuliah(:prodi, :tahun_akademik, :search, :offset, :limit, :status)', [
+        return DB::select('SELECT * FROM akademik.get_daftar_jadwal_kuliah_testing(:prodi, :tahun_akademik, :search, :offset, :limit, :status)', [
             'search' => $search,
             'prodi' => $prodi,
             'tahun_akademik' => $tahun_akademik,
@@ -29,9 +29,20 @@ class JadwalMataKuliah extends Model
 
     public static function get_detail_jadwal_kuliah($id)
     {
-        return DB::select('SELECT * FROM akademik.get_detail_jadwal_kuliah(:id)', [
-            'id' => $id
-        ])[0];
+        $result = DB::select('SELECT * FROM akademik.get_daftar_jadwal_kuliah_testing(:prodi, :tahun_akademik, :search, :offset, :limit, :status)', [
+            'prodi' => 'all',
+            'tahun_akademik' => 'all',
+            'search' => $id,
+            'offset' => 0,
+            'limit' => 1,
+            'status' => -1
+        ]);
+
+        if (empty($result)) {
+            return null;
+        }
+
+        return $result[0];
     }
 
     public static function set_jenis_jadwal_kuliah($id, $jenis_jadwal, $koordinator_id)
@@ -70,6 +81,61 @@ class JadwalMataKuliah extends Model
     {
         return DB::selectOne("SELECT * FROM akademik.run_set_jadwal_otomatis(?)", [
             $tahun_akademik
+        ]);
+    }
+
+    public static function update_jadwal_kuliah($id, $hari, $jam_mulai, $jam_selesai, $kapasitas, $jenis_jadwal)
+    {
+        return DB::selectOne('SELECT * FROM akademik.update_jadwal_kuliah(:id, :hari, :jam_mulai, :jam_selesai, :kapasitas, :jenis_jadwal)', [
+            'id' => $id,
+            'hari' => $hari,
+            'jam_mulai' => $jam_mulai,
+            'jam_selesai' => $jam_selesai,
+            'kapasitas' => $kapasitas,
+            'jenis_jadwal' => $jenis_jadwal
+        ]);
+    }
+
+    public static function update_jadwal_kuliah_testing(
+        $id,
+        $ruang_id = null,
+        $hari = null,
+        $jam_mulai = null,
+        $jam_selesai = null,
+        $sts_aktif = null
+    ) {
+        return DB::selectOne('SELECT * FROM akademik.update_jadwal_kuliah_testing(
+            :id, :ruang_id, :hari, :jam_mulai, :jam_selesai, :sts_aktif
+        )', [
+            'id' => $id,
+            'ruang_id' => $ruang_id,
+            'hari' => $hari,
+            'jam_mulai' => $jam_mulai,
+            'jam_selesai' => $jam_selesai,
+            'sts_aktif' => $sts_aktif
+        ]);
+    }
+
+    public static function delete_jadwal_kuliah($id)
+    {
+        return DB::selectOne('SELECT * FROM akademik.delete_jadwal_kuliah(:id)', [
+            'id' => $id
+        ]);
+    }
+
+    public static function set_status_aktif_jadwal_kuliah($id, $sts_aktif)
+    {
+        return DB::selectOne('SELECT * FROM akademik.set_status_aktif_jadwal_kuliah_testing(:id, :sts_aktif)', [
+            'id' => $id,
+            'sts_aktif' => $sts_aktif
+        ]);
+    }
+
+    public static function update_status_kuliah_mahasiswa($nim, $status_kuliah)
+    {
+        return DB::selectOne('SELECT * FROM akademik.update_status_kuliah_mahasiswa(:nim, :status_kuliah)', [
+            'nim' => $nim,
+            'status_kuliah' => $status_kuliah
         ]);
     }
 }

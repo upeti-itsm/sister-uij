@@ -5,11 +5,11 @@ jQuery.jadwal_matakuliah = {
         log_table_jadwal_kuliah: $("#log-table-jadwal-kuliah").DataTable({
             scrollY: '300px',
             columns: [
-                {width: "5%", sClass: 'text-center', searchable: false},
-                {width: "50%", searchable: false},
-                {width: "45%", sClass: 'text-center', searchable: false},
-                {searchable: true, visible: false},
-                {searchable: true, visible: false},
+                { width: "5%", sClass: 'text-center', searchable: false },
+                { width: "50%", searchable: false },
+                { width: "45%", sClass: 'text-center', searchable: false },
+                { searchable: true, visible: false },
+                { searchable: true, visible: false },
             ],
             scrollCollapse: true,
             paging: true,
@@ -74,7 +74,7 @@ jQuery.jadwal_matakuliah = {
                     data: null,
                     searchable: false,
                     sClass: 'text-left',
-                    width: "35%",
+                    width: "20%",
                     render: function (data) {
                         if (data.asisten_id) {
                             if (data.id_jenis_jadwal === 2 || data.id_jenis_jadwal === 3) {
@@ -98,7 +98,76 @@ jQuery.jadwal_matakuliah = {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "20%",
+                    width: "10%",
+                    render: function (data) {
+                        var namaHari = ['', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                        var hari = namaHari[data.hari] || '-';
+                        var jamMulai = data.jam_mulai ? data.jam_mulai.substring(0, 5) : '-';
+                        var jamSelesai = data.jam_selesai ? data.jam_selesai.substring(0, 5) : '-';
+                        return "<div style='text-align: center;'><b>" + hari + "</b><br/>" +
+                            "<div style='display: inline-flex; align-items: center; gap: 5px;'>" +
+                            "<span class='badge badge-success'>" + jamMulai + "</span>" +
+                            "<span>-</span>" +
+                            "<span class='badge badge-danger'>" + jamSelesai + "</span>" +
+                            "</div></div>";
+                    }
+                },
+                {
+                    data: 'ruang_id',
+                    searchable: false,
+                    sClass: 'text-center',
+                    width: "7%",
+                    render: function (data) {
+                        return data ? "<code>" + data + "</code>" : "-";
+                    }
+                },
+                {
+                    data: 'kapasitas',
+                    searchable: false,
+                    sClass: 'text-center',
+                    width: "7%",
+                    render: function (data) {
+                        return "<span class='badge badge-primary'>" + (data || 0) + " Mhs</span>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-center',
+                    width: "8%",
+                    render: function (data) {
+                        // Cek field 'status' dari database
+                        var isActive = false;
+
+                        if (typeof data.status !== 'undefined' && data.status !== null) {
+                            // Boolean: true/false
+                            if (data.status === true) {
+                                isActive = true;
+                            } else if (data.status === false) {
+                                isActive = false;
+                            }
+                            // String: 't'/'f', 'true'/'false', '1'/'0'
+                            else if (typeof data.status === 'string') {
+                                isActive = data.status === 't' || data.status === 'true' || data.status === '1';
+                            }
+                            // Number: 1/0
+                            else if (typeof data.status === 'number') {
+                                isActive = data.status === 1;
+                            }
+                        }
+
+                        if (isActive) {
+                            return "<span class='badge badge-success p-2'><i class='fas fa-check-circle mr-1'></i>Aktif</span>";
+                        } else {
+                            return "<span class='badge badge-danger p-2'><i class='fas fa-times-circle mr-1'></i>Nonaktif</span>";
+                        }
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-center',
+                    width: "10%",
                     render: function (data) {
                         var jenis = "Belum Ditentukan";
                         var kelas = "btn-danger-soft";
@@ -116,15 +185,40 @@ jQuery.jadwal_matakuliah = {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
-                    width: "15%",
+                    width: "10%",
                     render: function (data) {
-                        var html = "<button class='btn btn-danger-soft btn-block mb-2'>Tidak Memiliki Akses</button>";
+                        var html = "<div class='d-flex justify-content-center'><button class='btn btn-danger-soft btn-sm'>Tidak Memiliki Akses</button></div>";
                         if ($("#hak_akses").val() === "1") {
-                            if (data.asisten_id)
-                                html = "<button class='btn btn-success btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-id='" + data.id_jadwal + "' data-nama_mata_kuliah='" + data.nama_mata_kuliah + "'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.id_jadwal + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>" +
-                                    "<a href='/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/detail/" + data.id_jadwal + "' class='btn btn-info' title='Edit Status Pengajar' data-dosen_id='" + data.dosen_id + "' data-dosen='" + data.nama_dosen + "' data-asisten_id='" + data.asisten_id + "' data-asisten='" + data.nama_asisten + "' data-id='" + data.id_jadwal + "' data-nama_mata_kuliah='" + data.nama_mata_kuliah + "'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.id_jadwal + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-users'></i></a>";
-                            else
-                                html = "<button class='btn btn-success btn-block btn-sync-siakad mr-2' title='Sinkron data dengan siakad' data-id='" + data.id_jadwal + "' data-nama_mata_kuliah='" + data.nama_mata_kuliah + "'><span class='spinner-border spinner-border-sm mr-2' id='sync-siakad-loading-spin-" + data.id_jadwal + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-sync'></i></button>";
+                            // Tombol Toggle Status - gunakan field 'status'
+                            var isActive = false;
+
+                            if (typeof data.status !== 'undefined' && data.status !== null) {
+                                // Boolean: true/false
+                                if (data.status === true) {
+                                    isActive = true;
+                                } else if (data.status === false) {
+                                    isActive = false;
+                                }
+                                // String: 't'/'f', 'true'/'false', '1'/'0'
+                                else if (typeof data.status === 'string') {
+                                    isActive = data.status === 't' || data.status === 'true' || data.status === '1';
+                                }
+                                // Number: 1/0
+                                else if (typeof data.status === 'number') {
+                                    isActive = data.status === 1;
+                                }
+                            }
+
+                            // Wrap dalam div dengan display flex untuk horizontal alignment
+                            html = "<div class='d-flex justify-content-center align-items-center'>";
+                            html += "<button class='btn btn-primary btn-sm btn-edit-jadwal mr-1' title='Edit Jadwal' data-id='" + data.id_jadwal + "'><i class='fas fa-edit'></i></button>";
+
+                            if (isActive) {
+                                html += "<button class='btn btn-success btn-sm btn-toggle-status' title='Nonaktifkan Jadwal' data-id='" + data.id_jadwal + "' data-status='0' data-nama_mata_kuliah='" + data.nama_mata_kuliah + "'><i class='fas fa-toggle-on'></i></button>";
+                            } else {
+                                html += "<button class='btn btn-danger btn-sm btn-toggle-status' title='Aktifkan Jadwal' data-id='" + data.id_jadwal + "' data-status='1' data-nama_mata_kuliah='" + data.nama_mata_kuliah + "'><i class='fas fa-toggle-off'></i></button>";
+                            }
+                            html += "</div>";
                         }
                         return html;
                     }
@@ -316,87 +410,107 @@ jQuery.jadwal_matakuliah = {
                 }
             })
         });
-        $("#table-jadwal-kuliah").on('click', 'button.btn-sync-siakad', function () {
+
+        // Event handler untuk Edit Jadwal
+        $("#table-jadwal-kuliah").on('click', 'button.btn-edit-jadwal', function () {
             var id = $(this).data("id");
-            var nama_mata_kuliah = $(this).data('nama_mata_kuliah');
+
+            // Ambil data langsung dari row DataTable
+            var table = self.data.table_jadwal_kuliah;
+            var row = $(this).closest('tr');
+            var data = table.row(row).data();
+
+            console.log('Row data:', data);
+
+            if (!data) {
+                $.alert({
+                    title: 'Error!',
+                    type: 'red',
+                    content: 'Data jadwal tidak ditemukan'
+                });
+                return;
+            }
+
+            // Simpan semua data untuk update nanti
+            $("#edit_id").val(data.id_jadwal);
+            $("#edit_id").data('full-data', data); // Simpan full data untuk update
+
+            // Populate form
+            $("#edit_nama_mata_kuliah").val(data.nama_mata_kuliah);
+            $("#edit_nama_kelas").val(data.nama_kelas);
+            $("#edit_hari").val(data.hari);
+            $("#edit_jam_mulai").val(data.jam_mulai);
+            $("#edit_jam_selesai").val(data.jam_selesai);
+            $("#edit_ruang_id").val(data.ruang_id);
+
+            // Set status aktif (handle different data types)
+            var statusAktif = '0';
+            if (data.status === true || data.status === 't' || data.status === '1' || data.status === 1) {
+                statusAktif = '1';
+            }
+            $("#edit_status_aktif").val(statusAktif);
+
+            $("#modal-edit-jadwal-kuliah").modal('show');
+        });
+
+        // Event handler untuk Update Jadwal
+        $("#modal-btn-update-jadwal").click(function () {
+            // Ambil full data yang disimpan sebelumnya
+            var fullData = $("#edit_id").data('full-data');
+
             $.confirm({
                 title: 'Konfirmasi !',
                 type: 'orange',
-                columnClass: 'medium',
-                content: 'Apakah anda yakin melakukan sinkronisasi data jadwal <b>' + nama_mata_kuliah + '</b> dengan data siakad ?<br/><b class="text-danger">Semua data akan di update berdasarkan data siakad</b>',
+                content: 'Apakah anda yakin akan mengupdate jadwal kuliah ini ?',
                 buttons: {
                     confirm: {
                         text: 'Yakin',
                         btnClass: 'btn-green',
                         keys: ['enter'],
                         action: function () {
+                            // Siapkan data untuk dikirim sesuai parameter function baru
+                            var updateData = {
+                                id: $("#edit_id").val(),
+                                ruang_id: $("#edit_ruang_id").val() || null,
+                                hari: $("#edit_hari").val() || null,
+                                jam_mulai: $("#edit_jam_mulai").val() || null,
+                                jam_selesai: $("#edit_jam_selesai").val() || null,
+                                sts_aktif: $("#edit_status_aktif").val() === '1' ? true : false
+                            };
+
                             $.ajax({
-                                url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/json-by-id',
-                                method: 'POST',
-                                data: {
-                                    id: id
-                                },
-                                beforeSend: function () {
-                                    $("#sync-siakad-loading-spin-" + id).show();
-                                },
-                                success: function (response) {
-                                    if (response.p_jadwal_kuliah_id) {
-                                        $.ajax({
-                                            url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/synchron',
-                                            method: 'post',
-                                            data: {
-                                                'jadwal_kuliah_id': response.p_jadwal_kuliah_id,
-                                                'tahun_akademik': response.p_tahun_akademik,
-                                                'kelas_id': response.p_kelas_id,
-                                                'nama_kelas': response.p_nama_kelas,
-                                                'ruang_id': response.p_ruang_id,
-                                                'hari': response.p_hari,
-                                                'jam_mulai': response.p_jam_mulai,
-                                                'jam_selesai': response.p_jam_selesai,
-                                                'matakuliah_id': response.p_matakuliah_id,
-                                                'nama_mata_kuliah': response.p_nama_mata_kuliah,
-                                                'kapasitas': response.p_kapasitas,
-                                                'dosen_id': response.p_dosen_id,
-                                                'asisten_id': response.p_asisten_id,
-                                                'kd_prodi': response.p_kd_prodi,
-                                                'jumlah_sks': response.p_sks,
-                                                'is_lab': response.p_is_lab,
-                                                'jenis_kelas': response.p_id_jenis_kelas_matakuliah,
-                                                'nama_dosen': response.p_nama_dosen,
-                                                'nama_asisten': response.p_nama_asisten,
-                                                'nik_pengampu': response.p_nik_pengampu,
-                                                'nik_asisten': response.p_nik_asisten,
-                                                'kd_matkul': response.p_kd_mata_kuliah,
-                                            },
-                                            success: function (result) {
-                                                if (result.status) {
-                                                    $.alert({
-                                                        title: "Informasi",
-                                                        type: "green",
-                                                        content: result.keterangan
-                                                    });
-                                                } else {
-                                                    $.alert({
-                                                        title: "Peringatan",
-                                                        type: "red",
-                                                        content: result.keterangan
-                                                    });
-                                                }
-                                            },
-                                            complete: function () {
-                                                self.data.table_jadwal_kuliah.ajax.reload();
-                                                $("#sync-siakad-loading-spin-" + id).hide();
-                                            }
-                                        })
+                                url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/update',
+                                method: 'post',
+                                data: updateData,
+                                success: function (result) {
+                                    if (result.status === 'success') {
+                                        $.alert({
+                                            title: 'Berhasil!',
+                                            type: 'green',
+                                            content: 'Jadwal berhasil diupdate'
+                                        });
+                                        $("#modal-edit-jadwal-kuliah").modal('hide');
+                                        self.data.table_jadwal_kuliah.ajax.reload();
                                     } else {
                                         $.alert({
-                                            title: "Peringatan",
-                                            type: "red",
-                                            content: "Data Jadwal Tidak Ditemukan"
-                                        })
+                                            title: 'Gagal!',
+                                            type: 'red',
+                                            content: result.message
+                                        });
                                     }
+                                },
+                                error: function (xhr) {
+                                    var message = 'Terjadi kesalahan saat update jadwal';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        message = xhr.responseJSON.message;
+                                    }
+                                    $.alert({
+                                        title: 'Error!',
+                                        type: 'red',
+                                        content: message
+                                    });
                                 }
-                            })
+                            });
                         }
                     },
                     cancel: {
@@ -406,13 +520,136 @@ jQuery.jadwal_matakuliah = {
                 }
             });
         });
+
+        // Event handler untuk Delete Jadwal
+        $("#table-jadwal-kuliah").on('click', 'button.btn-delete-jadwal', function () {
+            var id = $(this).data("id");
+            var nama_mata_kuliah = $(this).data('nama_mata_kuliah');
+
+            $.confirm({
+                title: 'Konfirmasi !',
+                type: 'red',
+                content: 'Apakah anda yakin akan menghapus jadwal <b>' + nama_mata_kuliah + '</b> ?',
+                buttons: {
+                    confirm: {
+                        text: 'Hapus',
+                        btnClass: 'btn-red',
+                        keys: ['enter'],
+                        action: function () {
+                            $.ajax({
+                                url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/delete',
+                                method: 'post',
+                                data: { id: id },
+                                success: function (result) {
+                                    if (result.status === 'success') {
+                                        $.alert({
+                                            title: 'Berhasil!',
+                                            type: 'green',
+                                            content: result.message
+                                        });
+                                        self.data.table_jadwal_kuliah.ajax.reload();
+                                    } else {
+                                        $.alert({
+                                            title: 'Gagal!',
+                                            type: 'red',
+                                            content: result.message
+                                        });
+                                    }
+                                },
+                                error: function (xhr) {
+                                    var message = 'Terjadi kesalahan saat menghapus jadwal';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        message = xhr.responseJSON.message;
+                                    }
+                                    $.alert({
+                                        title: 'Error!',
+                                        type: 'red',
+                                        content: message
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Batal',
+                        btnClass: 'btn-secondary'
+                    }
+                }
+            });
+        });
+
+        // Event handler untuk Toggle Status Jadwal
+        $("#table-jadwal-kuliah").on('click', 'button.btn-toggle-status', function () {
+            var id = $(this).data("id");
+            var nama_mata_kuliah = $(this).data('nama_mata_kuliah');
+            var status = $(this).data('status'); // 1 untuk aktifkan, 0 untuk nonaktifkan
+
+            var stsAktif = parseInt(status);
+            var statusText = stsAktif === 1 ? 'mengaktifkan' : 'menonaktifkan';
+            var statusTextTitle = stsAktif === 1 ? 'Aktifkan' : 'Nonaktifkan';
+
+            $.confirm({
+                title: 'Konfirmasi !',
+                type: 'orange',
+                content: 'Apakah anda yakin akan ' + statusText + ' jadwal <b>' + nama_mata_kuliah + '</b> ?',
+                buttons: {
+                    confirm: {
+                        text: statusTextTitle,
+                        btnClass: stsAktif === 1 ? 'btn-green' : 'btn-orange',
+                        keys: ['enter'],
+                        action: function () {
+                            $.ajax({
+                                url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/set-status-aktif',
+                                method: 'post',
+                                data: {
+                                    id: id,
+                                    sts_aktif: stsAktif
+                                },
+                                success: function (result) {
+                                    if (result.status === 'success') {
+                                        $.alert({
+                                            title: 'Berhasil!',
+                                            type: 'green',
+                                            content: result.message
+                                        });
+                                        self.data.table_jadwal_kuliah.ajax.reload();
+                                    } else {
+                                        $.alert({
+                                            title: 'Gagal!',
+                                            type: 'red',
+                                            content: result.message
+                                        });
+                                    }
+                                },
+                                error: function (xhr) {
+                                    var message = 'Terjadi kesalahan saat mengubah status jadwal';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        message = xhr.responseJSON.message;
+                                    }
+                                    $.alert({
+                                        title: 'Error!',
+                                        type: 'red',
+                                        content: message
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Batal',
+                        btnClass: 'btn-secondary'
+                    }
+                }
+            });
+        });
+
         $("#tahun_akademik, #status_pengajar, #prodi").on('change', function () {
             self.data.table_jadwal_kuliah.ajax.reload();
         });
     },
 
     // Fungsi untuk memulai generate jadwal
-    startGenerateJadwal: function(tahunAkademik) {
+    startGenerateJadwal: function (tahunAkademik) {
         var self = this;
 
         // Reset flag cancel
@@ -436,10 +673,10 @@ jQuery.jadwal_matakuliah = {
                 _token: $('meta[name="csrf-token"]').attr('content')
             },
             timeout: 300000, // 5 menit timeout
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#keterangan-progress-generate-jadwal").text('Mengirim request ke server...');
             },
-            success: function(response) {
+            success: function (response) {
                 if (!self.isGenerateCanceled) {
                     if (response.status === 'success') {
                         $("#keterangan-progress-generate-jadwal").html('<i class="fas fa-check-circle text-success"></i> ' + response.message);
@@ -454,7 +691,7 @@ jQuery.jadwal_matakuliah = {
                         self.data.table_jadwal_kuliah.ajax.reload();
 
                         // Hide progress after 3 seconds
-                        setTimeout(function() {
+                        setTimeout(function () {
                             $("#progress-bar-generate-jadwal").hide();
                         }, 3000);
 
@@ -469,7 +706,7 @@ jQuery.jadwal_matakuliah = {
                     }
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 if (!self.isGenerateCanceled) {
                     var errorMessage = 'Terjadi kesalahan saat generate jadwal';
 
@@ -488,7 +725,7 @@ jQuery.jadwal_matakuliah = {
                     });
                 }
             },
-            complete: function() {
+            complete: function () {
                 if (!self.isGenerateCanceled) {
                     // Enable tombol kembali
                     $("#btn-generate-jadwal").prop('disabled', false).html('<i class="fas fa-calendar-plus"></i> Generate Jadwal');
@@ -583,7 +820,7 @@ jQuery.jadwal_matakuliah = {
                     }
                 }
             },
-            error: function (){
+            error: function () {
                 self.data.log_table_jadwal_kuliah.row.add([
                     (index + 1),
                     data[index].nama_mata_kuliah + " (" + data[index].kelas_id + ")",
