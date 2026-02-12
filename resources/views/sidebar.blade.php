@@ -576,7 +576,7 @@
                                             @endif
                                             @if (array_key_exists('Hasil Studi Mahasiswa', $modul))
                                                 <li @if ($menu == 'Hasil Studi Mahasiswa') class="mm-active" @endif>
-                                                    <a href="{{ route('mahasiswa.akademik.krs.index') }}">
+                                                    <a href="{{ route('mahasiswa.akademik.khs.index') }}">
                                                         Hasil Studi
                                                     </a>
                                                 </li>
