@@ -39,15 +39,14 @@ class KHSController extends Controller
             }
 
             $nim = $user->nim;
-            $tahun_akademik = $request->tahun_akademik ?? '';
-            $semester = $request->semester ?? '';
+            $tahun_akademik = $request->tahun_akademik ?? null;
+            $semester = $request->semester ?? null;
             $search = $request->search['value'] ?? $request->search ?? '';
             $start = $request->start ?? 0;
-            $length = $request->length ?? 25;
+            $length = $request->length ?? 10;
 
             // Get data dari model
             $data_ = KHS::get_daftar_nilai($nim, $tahun_akademik, $semester, $search, $start, $length);
-
             $data = [
                 'draw' => intval($request->draw ?? 1),
                 'recordsTotal' => 0,

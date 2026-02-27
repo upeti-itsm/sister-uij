@@ -22,13 +22,11 @@ jQuery.khs = {
 
         console.log('Initializing KHS module...');
 
-        // Pastikan DOM sudah ready
         if (!$('#table-khs').length) {
             console.error('Table #table-khs tidak ditemukan!');
             return;
         }
 
-        // Initialize components
         self.initSelect2();
         self.loadTahunAkademikList();
         self.initDataTable();
@@ -78,7 +76,6 @@ jQuery.khs = {
     initDataTable: function() {
         var self = this;
 
-        // Destroy existing table
         if ($.fn.DataTable.isDataTable('#table-khs')) {
             $('#table-khs').DataTable().clear().destroy();
         }
@@ -120,7 +117,6 @@ jQuery.khs = {
                             }
                         }
 
-                        // Update statistik dari response
                         if (json.statistik) {
                             self.updateStatistik(json.statistik);
                         }
@@ -153,7 +149,8 @@ jQuery.khs = {
                         }
                     },
                     {
-                        data: 'kd_mata_kuliah',
+                        // ✅ Mapping: kd_matakuliah (JSON) → kd_mata_kuliah (kolom)
+                        data: 'kd_matakuliah',
                         searchable: true,
                         className: 'text-left',
                         width: "12%",
@@ -162,7 +159,8 @@ jQuery.khs = {
                         }
                     },
                     {
-                        data: 'nama_mata_kuliah',
+                        // ✅ Mapping: matakuliah (JSON) → nama_mata_kuliah (kolom)
+                        data: 'matakuliah',
                         searchable: true,
                         className: 'text-left',
                         width: "25%",
@@ -183,15 +181,20 @@ jQuery.khs = {
                         className: 'text-center',
                         width: "10%",
                         render: function(data) {
-                            return data ? parseFloat(data).toFixed(2) : '-';
+                            // Jika nilai_angka masih "-", tampilkan "-"
+                            if (!data || data === '-') return '-';
+                            return parseFloat(data).toFixed(2);
                         }
                     },
                     {
+                        // ✅ nilai_huruf — akan diisi nanti, sementara tampilkan "-"
                         data: 'nilai_huruf',
                         searchable: false,
                         className: 'text-center',
                         width: "10%",
+                        defaultContent: '-',
                         render: function(data) {
+                            if (!data || data === '-') return '-';
                             return self.getBadgeNilai(data);
                         }
                     },
@@ -201,7 +204,8 @@ jQuery.khs = {
                         className: 'text-center',
                         width: "8%",
                         render: function(data) {
-                            return data ? parseFloat(data).toFixed(2) : '-';
+                            if (!data || data === '-') return '-';
+                            return parseFloat(data).toFixed(2);
                         }
                     },
                     {
@@ -216,18 +220,27 @@ jQuery.khs = {
                         }
                     },
                     {
-                        data: null,
+                        // ✅ Kolom Status: menggunakan sts_nilai dari JSON
+                        data: 'sts_nilai',
                         searchable: false,
                         className: 'text-center',
                         width: "10%",
                         render: function(data) {
-                            if (!data || !data.nilai_huruf) return '-';
+                            if (!data || data === '-') {
+                                return '<span class="badge badge-secondary">Belum Ada Nilai</span>';
+                            }
 
-                            var nilaiHuruf = data.nilai_huruf.toUpperCase();
-                            if (nilaiHuruf === 'E' || nilaiHuruf === 'D') {
+                            var sts = data.toUpperCase();
+                            if (sts === 'LULUS') {
+                                return '<span class="status-lulus"><i class="fas fa-check-circle mr-1"></i>Lulus</span>';
+                            } else if (sts === 'TIDAK LULUS') {
                                 return '<span class="status-tidak-lulus"><i class="fas fa-times-circle mr-1"></i>Tidak Lulus</span>';
                             } else {
-                                return '<span class="status-lulus"><i class="fas fa-check-circle mr-1"></i>Lulus</span>';
+                                // Fallback: jika sts_nilai berisi nilai huruf (E/D = tidak lulus)
+                                if (sts === 'E' || sts === 'D') {
+                                    return '<span class="status-tidak-lulus"><i class="fas fa-times-circle mr-1"></i>Tidak Lulus</span>';
+                                }
+                                return `<span class="badge badge-secondary">${data}</span>`;
                             }
                         }
                     }
@@ -236,21 +249,22 @@ jQuery.khs = {
                     var api = this.api();
                     var data = api.rows().data().toArray();
 
-                    // Calculate footer totals
                     var totalSKS = 0;
                     var totalBobot = 0;
 
                     data.forEach(function(item) {
                         totalSKS += parseInt(item.sks || 0);
-                        totalBobot += parseFloat(item.bobot || 0) * parseInt(item.sks || 0);
+                        // Hitung bobot hanya jika ada nilainya
+                        if (item.bobot && item.bobot !== '-') {
+                            totalBobot += parseFloat(item.bobot || 0) * parseInt(item.sks || 0);
+                        }
                     });
 
-                    var ips = totalSKS > 0 ? (totalBobot / totalSKS).toFixed(2) : '0.00';
+                    var ips = totalSKS > 0 && totalBobot > 0 ? (totalBobot / totalSKS).toFixed(2) : '0.00';
 
                     $('#footer-total-sks').text(totalSKS);
                     $('#footer-ips').text(ips);
 
-                    // Show empty state if no data
                     if (data.length === 0) {
                         $('#table-khs tbody').html(`
                             <tr>
@@ -304,17 +318,14 @@ jQuery.khs = {
     setEvents: function() {
         var self = this;
 
-        // Filter button
         $('#btn-filter').off('click').on('click', function() {
             self.applyFilter();
         });
 
-        // Reset filter button
         $('#btn-reset-filter').off('click').on('click', function() {
             self.resetFilter();
         });
 
-        // Enter key on search
         $('#filter-search').off('keypress').on('keypress', function(event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
@@ -322,12 +333,10 @@ jQuery.khs = {
             }
         });
 
-        // Download KHS
         $('#btn-download-khs').off('click').on('click', function() {
             self.downloadKHS();
         });
 
-        // Row click for detail
         $(document).off('click', '#table-khs tbody tr').on('click', '#table-khs tbody tr', function() {
             if ($(this).find('.empty-state').length) {
                 return;
@@ -353,7 +362,6 @@ jQuery.khs = {
             self.data.table_khs.ajax.reload();
         }
 
-        // Update semester info if specific semester selected
         self.updateSemesterInfo();
     },
 
@@ -379,8 +387,6 @@ jQuery.khs = {
 
     loadData: function() {
         var self = this;
-
-        // Load current semester data
         self.loadCurrentSemesterStats();
     },
 
@@ -481,7 +487,7 @@ jQuery.khs = {
     },
 
     getBadgeNilai: function(nilai) {
-        if (!nilai) return '-';
+        if (!nilai || nilai === '-') return '-';
 
         var nilaiUpper = nilai.toUpperCase();
         var badgeClass = '';
@@ -551,30 +557,46 @@ jQuery.khs = {
 
         if (!data) return;
 
-        $('#detail-nama-mk').text(data.nama_mata_kuliah || '-');
-        $('#detail-kode-mk').text(data.kd_mata_kuliah || '-');
+        // ✅ Mapping field sesuai JSON
+        $('#detail-nama-mk').text(data.matakuliah || '-');
+        $('#detail-kode-mk').text(data.kd_matakuliah || '-');
         $('#detail-sks').text((data.sks || 0) + ' SKS');
 
         var tahunParsed = self.parseTahunAkademik(data.tahun_akademik);
         $('#detail-semester').text(tahunParsed.semester);
         $('#detail-tahun-akademik').text(tahunParsed.nama);
 
-        $('#detail-nilai-angka').text(data.nilai_angka ? parseFloat(data.nilai_angka).toFixed(2) : '-');
-        $('#detail-nilai-huruf').html(self.getBadgeNilai(data.nilai_huruf));
-        $('#detail-bobot').text(data.bobot ? parseFloat(data.bobot).toFixed(2) : '-');
+        // nilai_angka: tampilkan "-" jika belum ada
+        $('#detail-nilai-angka').text(
+            (!data.nilai_angka || data.nilai_angka === '-') ? '-' : parseFloat(data.nilai_angka).toFixed(2)
+        );
 
+        // nilai_huruf: akan diisi nanti, sementara tampilkan "-"
+        $('#detail-nilai-huruf').html(
+            (!data.nilai_huruf || data.nilai_huruf === '-') ? '-' : self.getBadgeNilai(data.nilai_huruf)
+        );
+
+        $('#detail-bobot').text(
+            (!data.bobot || data.bobot === '-') ? '-' : parseFloat(data.bobot).toFixed(2)
+        );
+
+        // ✅ Status: menggunakan sts_nilai
         var status = '-';
-        if (data.nilai_huruf) {
-            var nilaiHuruf = data.nilai_huruf.toUpperCase();
-            if (nilaiHuruf === 'E' || nilaiHuruf === 'D') {
+        if (data.sts_nilai && data.sts_nilai !== '-') {
+            var sts = data.sts_nilai.toUpperCase();
+            if (sts === 'LULUS') {
+                status = '<span class="status-lulus"><i class="fas fa-check-circle mr-1"></i>Lulus</span>';
+            } else if (sts === 'TIDAK LULUS' || sts === 'E' || sts === 'D') {
                 status = '<span class="status-tidak-lulus"><i class="fas fa-times-circle mr-1"></i>Tidak Lulus</span>';
             } else {
-                status = '<span class="status-lulus"><i class="fas fa-check-circle mr-1"></i>Lulus</span>';
+                status = `<span class="badge badge-secondary">${data.sts_nilai}</span>`;
             }
+        } else {
+            status = '<span class="badge badge-secondary">Belum Ada Nilai</span>';
         }
         $('#detail-status').html(status);
 
-        $('#detail-dosen').text(data.nama_dosen || 'Tidak ada informasi dosen');
+        // ✅ nama_dosen dihilangkan — baris ini dihapus
 
         $('#modal-detail-nilai').modal('show');
     },

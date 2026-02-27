@@ -22,10 +22,10 @@ class KHS extends Model
      * @param int $limit Limit pagination
      * @return array
      */
-    public static function get_daftar_nilai($nim, $tahun_akademik = '1', $semester = '', $search = '', $offset = 0, $limit = 25)
+    public static function get_daftar_nilai($nim, $tahun_akademik = null, $semester = null, $search = '', $offset = 0, $limit = -1)
     {
-        return DB::select("SELECT * FROM akademik.get_daftar_nilai_mahasiswa(?,?,?,?,?,?)", [
-            $nim,
+        return DB::select("SELECT * FROM akademik.get_hasil_studi_mahasiswa(?,?,?,?,?,?)", [
+            (string) $nim,
             $tahun_akademik,
             $semester,
             $search,
