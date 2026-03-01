@@ -10,10 +10,28 @@ $(document).ready(function () {
         theme: 'bootstrap4'
     });
 
+    // Custom search handler
+    $('#btn-search').on('click', function () {
+        table.ajax.reload();
+    });
+
+    // Enter key pada search input
+    $('#search_input').on('keypress', function (e) {
+        if (e.which === 13) {
+            table.ajax.reload();
+        }
+    });
+
+    // Custom filter handler
+    $('#btn-filter').on('click', function () {
+        table.ajax.reload();
+    });
+
     var table = $('#table').DataTable({
         processing: true,
         serverSide: false,
         responsive: true,
+        searching: false,  // Disable default search
         pageLength: 10,
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         language: {
@@ -37,8 +55,10 @@ $(document).ready(function () {
             url: '/adm-akademik/perkuliahan/manajemen-fakultas/json',
             type: 'POST',
             data: function (d) {
-                d.sts_aktif = $('#filter_status').val() || null;
-                d.param_search = $('#filter_search').val() || '';
+                d.sts_aktif = $('#filter_status').val() || 2;
+                d.param_search = $('#search_input').val() || '';  // Gunakan custom search input
+                d.no_page = -1;
+                d.jml_record_perpage = 999999; // Ambil semua data untuk client-side pagination
             },
             dataSrc: function (json) {
                 console.log('Response data:', json);
@@ -64,6 +84,24 @@ $(document).ready(function () {
             {
                 data: 'nama_fakultas',
                 defaultContent: '-'
+            },
+            {
+                data: 'daftar_prodi',
+                defaultContent: '-',
+                orderable: false,
+                render: function (data, type, row) {
+                    if (!data || data.length === 0) {
+                        return '<span class="text-muted"><i>- Belum ada program studi -</i></span>';
+                    }
+
+                    var html = '<ol class="mb-0 pl-3">';
+                    data.forEach(function (prodi) {
+                        html += '<li><small>' + prodi.nama_program_studi + ' <span class="text-muted">(' + prodi.kd_jenjang_didik + ')</span></small></li>';
+                    });
+                    html += '</ol>';
+
+                    return html;
+                }
             },
             {
                 data: 'dekan',
@@ -114,10 +152,13 @@ $(document).ready(function () {
     $('#btn-tambah-data').on('click', function () {
         $('#form-collapse').collapse('show');
         $('#kd_fakultas_old').val('');
+        $('#is_data_aktif_old').val('');
         $('#kd_fakultas').val('').prop('readonly', false);
         $('#nama_fakultas').val('');
         $('#dekan').val('');
         $('#kd_nim_fak').val('');
+        // Clear prodi selection
+        $('#prodi_list').val(null).trigger('change');
     });
 
     // Cancel
@@ -132,6 +173,7 @@ $(document).ready(function () {
         var nama_fakultas = $('#nama_fakultas').val();
         var dekan = $('#dekan').val();
         var kd_nim_fak = $('#kd_nim_fak').val();
+        var is_data_aktif_old = $('#is_data_aktif_old').val();
 
         if (!kd_fakultas || !nama_fakultas || !kd_nim_fak) {
             $.alert({
@@ -147,11 +189,14 @@ $(document).ready(function () {
             kd_fakultas: kd_fakultas,
             nama_fakultas: nama_fakultas,
             dekan: dekan,
-            kd_nim_fak: kd_nim_fak
+            kd_nim_fak: kd_nim_fak,
+            prodi_list: $('#prodi_list').val() || []  // Kirim array prodi yang dipilih
         };
 
         if (kd_fakultas_old) {
             data.kd_fakultas_old = kd_fakultas_old;
+            // Kirim is_data_aktif yang sudah ada, tidak mengubahnya
+            data.is_data_aktif_old = is_data_aktif_old;
         }
 
         $('#loading-tambah-data').show();
@@ -219,6 +264,19 @@ $(document).ready(function () {
             $('#nama_fakultas').val(row.nama_fakultas || '');
             $('#dekan').val(row.dekan || '');
             $('#kd_nim_fak').val(row.kd_nim_fak ? row.kd_nim_fak.toString().trim() : '');
+
+            // Simpan is_data_aktif yang sudah ada untuk dikirim kembali saat update (tidak diubah)
+            var isAktif = row.is_data_aktif === true || row.is_data_aktif === 't' || row.is_data_aktif === 'true';
+            $('#is_data_aktif_old').val(isAktif ? '1' : '0');
+
+            // Populate prodi yang sudah assigned
+            var selected_prodi = [];
+            if (row.daftar_prodi && Array.isArray(row.daftar_prodi)) {
+                selected_prodi = row.daftar_prodi.map(function (p) {
+                    return p.kd_program_studi;
+                });
+            }
+            $('#prodi_list').val(selected_prodi).trigger('change');
 
             $('#form-collapse').collapse('show');
         } else {

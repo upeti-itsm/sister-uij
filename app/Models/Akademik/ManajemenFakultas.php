@@ -5,6 +5,7 @@ namespace App\Models\Akademik;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ManajemenFakultas extends Model
 {
@@ -15,10 +16,10 @@ class ManajemenFakultas extends Model
         $no_page = -1,
         $jml_record_perpage = 10,
         $kd_fakultas = null,
-        $sts_aktif = true
+        $sts_aktif = 2
     )
     {
-        return DB::select("SELECT * FROM akademik.get_daftar_fakultas(?::varchar, ?::integer, ?::integer, ?::varchar, ?::boolean)", [
+        return DB::select("SELECT * FROM akademik.get_daftar_fakultas(?, ?, ?, ?, ?)", [
             $param_search,
             $no_page,
             $jml_record_perpage,
@@ -35,26 +36,13 @@ class ManajemenFakultas extends Model
         $is_data_aktif = true
     )
     {
-        $pg_escape = function($val) {
-            if ($val === null) return 'NULL';
-            return "'" . str_replace("'", "''", $val) . "'";
-        };
-
-        $kd_fakultas_safe = $kd_fakultas ? $pg_escape($kd_fakultas) . '::varchar' : 'NULL::varchar';
-        $nama_fakultas_safe = $nama_fakultas ? $pg_escape($nama_fakultas) . '::varchar' : 'NULL::varchar';
-        $dekan_safe = $dekan ? $pg_escape($dekan) . '::varchar' : 'NULL::varchar';
-        $kd_nim_fak_safe = $kd_nim_fak ? $pg_escape($kd_nim_fak) . '::varchar' : 'NULL::varchar';
-        $is_data_aktif_safe = $is_data_aktif ? 'true::boolean' : 'false::boolean';
-
-        $sql = "SELECT * FROM akademik.insup_fakultas(
-            {$kd_fakultas_safe},
-            {$nama_fakultas_safe},
-            {$dekan_safe},
-            {$kd_nim_fak_safe},
-            {$is_data_aktif_safe}
-        )";
-
-        return DB::selectOne($sql);
+        return DB::selectOne("SELECT * FROM akademik.insup_fakultas(?, ?, ?, ?, ?)", [
+            $kd_fakultas,
+            $nama_fakultas,
+            $dekan,
+            $kd_nim_fak,
+            $is_data_aktif
+        ]);
     }
 
     public static function set_status_aktif_fakultas($kd_fakultas, $status)
@@ -62,8 +50,51 @@ class ManajemenFakultas extends Model
         // Trim untuk menghilangkan trailing space dari PostgreSQL character type
         $kd_fakultas = trim($kd_fakultas);
 
-        return DB::selectOne("SELECT * FROM akademik.set_status_aktif_fakultas(?::varchar, ?::boolean)", [
+        return DB::selectOne("SELECT * FROM akademik.set_status_aktif_fakultas(?, ?)", [
             $kd_fakultas, $status
         ]);
+    }
+
+    public static function get_daftar_prodi_by_fakultas($kd_fakultas)
+    {
+        // Ambil daftar program studi berdasarkan kode fakultas
+        return DB::select("SELECT kd_program_studi, nama_program_studi, kd_jenjang_didik FROM akademik.program_studi WHERE kd_fakultas = ? AND is_data_aktif = true ORDER BY nama_program_studi", [
+            $kd_fakultas
+        ]);
+    }
+
+    public static function get_all_prodi_aktif()
+    {
+        // Ambil semua program studi yang aktif untuk selection
+        return DB::select("SELECT kd_program_studi, nama_program_studi, kd_jenjang_didik, kd_fakultas FROM akademik.program_studi WHERE is_data_aktif = true ORDER BY nama_program_studi");
+    }
+
+    public static function update_prodi_fakultas($kd_program_studi, $kd_fakultas)
+    {
+        // Update kd_fakultas untuk program studi tertentu
+        try {
+            DB::update("UPDATE akademik.program_studi SET kd_fakultas = ? WHERE kd_program_studi = ?", [
+                $kd_fakultas,
+                $kd_program_studi
+            ]);
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Update prodi fakultas error:', ['message' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    public static function remove_prodi_from_fakultas($kd_program_studi)
+    {
+        // Hapus assignment fakultas dari program studi (set ke null)
+        try {
+            DB::update("UPDATE akademik.program_studi SET kd_fakultas = NULL WHERE kd_program_studi = ?", [
+                $kd_program_studi
+            ]);
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Remove prodi fakultas error:', ['message' => $e->getMessage()]);
+            return false;
+        }
     }
 }

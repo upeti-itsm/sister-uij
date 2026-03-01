@@ -14,6 +14,19 @@
                 font-size: 0.75rem;
             }
         }
+        /* Style untuk list program studi */
+        #table tbody td ol {
+            margin-bottom: 0;
+            padding-left: 1.2rem;
+            font-size: 0.9rem;
+        }
+        #table tbody td ol li {
+            padding: 2px 0;
+            color: #495057;
+        }
+        #table tbody td ol li:hover {
+            color: #007bff;
+        }
     </style>
 @endsection
 @section('content-header')
@@ -56,6 +69,7 @@
                 <div class="row">
                     <div class="col-md-12 collapse" id="form-collapse">
                         <input type="hidden" id="kd_fakultas_old">
+                        <input type="hidden" id="is_data_aktif_old">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -90,6 +104,24 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Program Studi yang Terkait</label>
+                                    <select id="prodi_list" name="prodi_list[]" class="form-control select2" multiple="multiple" style="width: 100%">
+                                        @foreach($all_prodi as $prodi)
+                                            <option value="{{ $prodi->kd_program_studi }}">
+                                                {{ $prodi->nama_program_studi }} ({{ $prodi->kd_jenjang_didik }})
+                                                @if($prodi->kd_fakultas)
+                                                    - <em class="text-muted">Sudah di fakultas lain</em>
+                                                @endif
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="form-text text-muted">Pilih program studi yang akan diklaim oleh fakultas ini. Anda dapat memilih lebih dari satu.</small>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="float-right">
                                 <a class="btn btn-danger text-white mr-2" id="btn-cancel">
@@ -103,6 +135,36 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-12 mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="font-weight-bold">Pencarian</label>
+                                <div class="input-group">
+                                    <input type="text" id="search_input" class="form-control" placeholder="Cari Nama Fakultas">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" id="btn-search">
+                                            <i class="fas fa-search"></i> Cari Data
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="font-weight-bold">Filtering</label>
+                                <div class="input-group">
+                                    <select id="filter_status" class="form-control">
+                                        <option value="2" selected>-- Semua Status --</option>
+                                        <option value="1">Aktif</option>
+                                        <option value="0">Nonaktif</option>
+                                    </select>
+                                    <div class="input-group-append mx-2">
+                                        <button class="btn btn-primary" type="button" id="btn-filter">
+                                            <i class="fas fa-filter"></i> Filter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-12 mt-3">
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover table-sm" id="table" style="width:100%">
@@ -111,6 +173,7 @@
                                         <th width="5%" class="text-center">No</th>
                                         <th>Kode Fakultas</th>
                                         <th>Nama Fakultas</th>
+                                        <th>Program Studi</th>
                                         <th>Dekan</th>
                                         <th>Kode NIM</th>
                                         <th width="8%" class="text-center">Status</th>

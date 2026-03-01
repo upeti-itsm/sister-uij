@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminAkademikPage\Perkuliahan;
 use App\Http\Controllers\Controller;
 use App\Models\Akademik\ManajemenProdi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ManajemenProdiController extends Controller
 {
@@ -26,13 +27,15 @@ class ManajemenProdiController extends Controller
             $no_page = $request->no_page ?? -1;
             $jml_record_perpage = $request->jml_record_perpage ?? 100;
             $kd_fakultas = $request->kd_fakultas ?? null;
-            $sts_aktif = $request->sts_aktif ?? true;
+            $sts_aktif = $request->sts_aktif ?? 2;
 
-            // Convert sts_aktif to boolean if needed
-            if ($sts_aktif !== null && $sts_aktif !== '') {
-                $sts_aktif = filter_var($sts_aktif, FILTER_VALIDATE_BOOLEAN);
+            // Pastikan sts_aktif adalah integer (0, 1, atau 2)
+            if ($sts_aktif === true || $sts_aktif === 'true') {
+                $sts_aktif = 1;
+            } elseif ($sts_aktif === false || $sts_aktif === 'false') {
+                $sts_aktif = 0;
             } else {
-                $sts_aktif = true;
+                $sts_aktif = intval($sts_aktif);
             }
 
             \Log::info('Get Fakultas params:', [
@@ -66,6 +69,34 @@ class ManajemenProdiController extends Controller
         }
     }
 
+    public function json_get_daftar_jenjang(Request $request)
+    {
+        try {
+            $kd_jenjang_didik = $request->kd_jenjang_didik ?? null;
+            $param_search = $request->param_search ?? '';
+            $no_page = $request->no_page ?? -1;
+            $jml_record_perpage = $request->jml_record_perpage ?? 100;
+
+            $data = ManajemenProdi::get_daftar_jenjang_didik(
+                $kd_jenjang_didik,
+                $param_search,
+                $no_page,
+                $jml_record_perpage
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Get Jenjang error:', ['message' => $e->getMessage()]);
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function json_get_daftar_program_studi(Request $request)
     {
         try {
@@ -77,13 +108,27 @@ class ManajemenProdiController extends Controller
             $no_page = $request->no_page ?? -1;
             $jml_record_perpage = $request->jml_record_perpage ?? 10;
 
-            // Convert sts_aktif to boolean if needed
+            // Clean and trim kd_fakultas
+            if ($kd_fakultas !== null) {
+                $kd_fakultas = trim($kd_fakultas);
+                if ($kd_fakultas === '') {
+                    $kd_fakultas = null;
+                }
+            }
+
+            // Clean and trim param_search
+            if ($param_search !== null) {
+                $param_search = trim($param_search);
+            }
+
+            // Convert sts_aktif to boolean for program_studi function (masih boolean)
             if ($sts_aktif !== null && $sts_aktif !== '') {
                 $sts_aktif = filter_var($sts_aktif, FILTER_VALIDATE_BOOLEAN);
             } else {
                 $sts_aktif = null;
             }
 
+            \Log::info('========== RECEIVED PARAMS ==========');
             \Log::info('ManajemenProdi params:', [
                 'kd_prodi' => $kd_prodi,
                 'kd_dikti' => $kd_dikti,
@@ -93,6 +138,7 @@ class ManajemenProdiController extends Controller
                 'no_page' => $no_page,
                 'jml_record_perpage' => $jml_record_perpage
             ]);
+            \Log::info('=====================================');
 
             $data = ManajemenProdi::get_daftar_program_studi(
                 $kd_prodi,
@@ -103,6 +149,18 @@ class ManajemenProdiController extends Controller
                 $no_page,
                 $jml_record_perpage
             );
+
+            // Get jenjang data for mapping
+            $jenjangData = ManajemenProdi::get_daftar_jenjang_didik();
+            $jenjangMap = [];
+            foreach ($jenjangData as $jenjang) {
+                $jenjangMap[$jenjang->kd_jenjang_didik] = $jenjang->jenjang_didik;
+            }
+
+            // Add nama_jenjang_didik to each prodi record
+            foreach ($data as $prodi) {
+                $prodi->nama_jenjang_didik = $jenjangMap[$prodi->kd_jenjang_didik] ?? '-';
+            }
 
             \Log::info('ManajemenProdi result count:', ['count' => count($data), 'data' => $data]);
 
@@ -143,12 +201,12 @@ class ManajemenProdiController extends Controller
                 $request->nm_prodi, // nama_program_studi
                 $request->jenjang, // kd_jenjang_didik
                 $request->kd_fakultas, // kd_fakultas
-                $request->kaprodi_id ?? null, // karyawan_id_kaprodi
-                $request->kd_nim ?? null, // kd_nim
-                $request->no_urut_wisuda ?? null, // no_urut_prodi_wisuda
+                $request->kaprodi_id, // karyawan_id_kaprodi
+                $request->kd_nim, // kd_nim
+                $request->no_urut_wisuda, // no_urut_prodi_wisuda
                 $sts_kip, // sts_kip
-                $request->kd_dikti ?? '34', // kd_dikti
-                $is_s2 // is_s2 - HANYA 11 PARAMETER!
+                $request->kd_dikti ?? '034', // kd_dikti
+                $is_s2 // is_s2
             );
 
             \Log::info('Store result:', ['result' => $result]);
@@ -198,12 +256,12 @@ class ManajemenProdiController extends Controller
                 $request->nm_prodi, // nama_program_studi
                 $request->jenjang, // kd_jenjang_didik
                 $request->kd_fakultas, // kd_fakultas
-                $request->kaprodi_id ?? null, // karyawan_id_kaprodi
-                $request->kd_nim ?? null, // kd_nim
-                $request->no_urut_wisuda ?? null, // no_urut_prodi_wisuda
+                $request->kaprodi_id, // karyawan_id_kaprodi
+                $request->kd_nim, // kd_nim
+                $request->no_urut_wisuda, // no_urut_prodi_wisuda
                 $sts_kip, // sts_kip
-                $request->kd_dikti ?? '34', // kd_dikti
-                $is_s2 // is_s2 - HANYA 11 PARAMETER!
+                $request->kd_dikti ?? '034', // kd_dikti
+                $is_s2 // is_s2
             );
 
             \Log::info('Update result:', ['result' => $result]);

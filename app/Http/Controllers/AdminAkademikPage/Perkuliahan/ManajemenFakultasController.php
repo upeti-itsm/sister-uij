@@ -12,10 +12,14 @@ class ManajemenFakultasController extends Controller
 {
     public function index()
     {
+        // Load semua prodi untuk selection
+        $all_prodi = ManajemenFakultas::get_all_prodi_aktif();
+
         $data = [
             'title' => 'Manajemen Fakultas',
             'menu' => 'Manajemen Fakultas',
             'modul' => 'Manajemen Fakultas',
+            'all_prodi' => $all_prodi,
         ];
 
         return view('admin_akademik_page.perkuliahan.manajemen_fakultas', $data);
@@ -28,14 +32,10 @@ class ManajemenFakultasController extends Controller
             $no_page = $request->no_page ?? -1;
             $jml_record_perpage = $request->jml_record_perpage ?? 10;
             $kd_fakultas = $request->kd_fakultas ?? null;
-            $sts_aktif = $request->sts_aktif ?? true;
+            $sts_aktif = $request->sts_aktif ?? 2;
 
-            // Convert sts_aktif to boolean if needed
-            if ($sts_aktif !== null && $sts_aktif !== '') {
-                $sts_aktif = filter_var($sts_aktif, FILTER_VALIDATE_BOOLEAN);
-            } else {
-                $sts_aktif = true;
-            }
+            // Pastikan sts_aktif adalah integer (0, 1, atau 2)
+            $sts_aktif = intval($sts_aktif);
 
             Log::info('Get Fakultas params:', [
                 'param_search' => $param_search,
@@ -52,6 +52,11 @@ class ManajemenFakultasController extends Controller
                 $kd_fakultas,
                 $sts_aktif
             );
+
+            // Tambahkan list prodi untuk setiap fakultas
+            foreach ($data as $fakultas) {
+                $fakultas->daftar_prodi = ManajemenFakultas::get_daftar_prodi_by_fakultas($fakultas->kd_fakultas);
+            }
 
             Log::info('Fakultas result:', ['count' => count($data), 'data' => $data]);
 
@@ -71,15 +76,23 @@ class ManajemenFakultasController extends Controller
     public function store(Request $request)
     {
         try {
+            // INSERT baru: is_data_aktif = true (otomatis aktif)
             $result = ManajemenFakultas::insup_fakultas(
                 $request->kd_fakultas,
                 $request->nama_fakultas,
                 $request->dekan,
                 $request->kd_nim_fak,
-                true
+                true  // Data baru otomatis aktif
             );
 
             if ($result && isset($result->status) && $result->status === true) {
+                // Update prodi yang dipilih
+                if ($request->has('prodi_list') && is_array($request->prodi_list)) {
+                    foreach ($request->prodi_list as $kd_prodi) {
+                        ManajemenFakultas::update_prodi_fakultas($kd_prodi, $request->kd_fakultas);
+                    }
+                }
+
                 return response()->json([
                     'status' => 'success',
                     'message' => $result->keterangan ?? 'Data fakultas berhasil disimpan',
@@ -107,17 +120,48 @@ class ManajemenFakultasController extends Controller
             // Gunakan kd_fakultas_old jika ada (untuk update key), atau kd_fakultas biasa
             $kd_fak = $request->kd_fakultas_old ?: $request->kd_fakultas;
 
-            // Untuk update, status tetap seperti semula (tidak diubah dari form)
-            // Status diubah melalui tombol toggle di table
+            // UPDATE: Kirim kembali is_data_aktif yang sudah ada (tidak mengubahnya)
+            // is_data_aktif_old dikirim dari JavaScript dengan nilai yang sama dari database
+            // Jadi status tidak berubah saat update data fakultas
+            $is_aktif_sekarang = $request->is_data_aktif_old === '1' || $request->is_data_aktif_old === 1 || $request->is_data_aktif_old === true;
+
             $result = ManajemenFakultas::insup_fakultas(
                 $kd_fak,
                 $request->nama_fakultas,
                 $request->dekan,
                 $request->kd_nim_fak,
-                null  // is_data_aktif = null, biar function database pakai nilai yang sudah ada
+                $is_aktif_sekarang  // Kirim nilai yang sama, tidak mengubah status
             );
 
             if ($result && isset($result->status) && $result->status === true) {
+                // Update prodi assignments
+                if ($request->has('prodi_list') && is_array($request->prodi_list)) {
+                    // Ambil prodi yang saat ini assigned ke fakultas ini
+                    $current_prodi = ManajemenFakultas::get_daftar_prodi_by_fakultas($kd_fak);
+                    $current_prodi_ids = array_map(function($p) { return $p->kd_program_studi; }, $current_prodi);
+
+                    // Prodi yang dipilih sekarang
+                    $selected_prodi_ids = $request->prodi_list;
+
+                    // Prodi yang perlu di-assign (yang dipilih tapi belum di fakultas ini)
+                    $to_assign = array_diff($selected_prodi_ids, $current_prodi_ids);
+                    foreach ($to_assign as $kd_prodi) {
+                        ManajemenFakultas::update_prodi_fakultas($kd_prodi, $kd_fak);
+                    }
+
+                    // Prodi yang perlu di-remove (yang sebelumnya di fakultas ini tapi tidak dipilih)
+                    $to_remove = array_diff($current_prodi_ids, $selected_prodi_ids);
+                    foreach ($to_remove as $kd_prodi) {
+                        ManajemenFakultas::remove_prodi_from_fakultas($kd_prodi);
+                    }
+                } else {
+                    // Jika tidak ada prodi yang dipilih, remove semua prodi dari fakultas ini
+                    $current_prodi = ManajemenFakultas::get_daftar_prodi_by_fakultas($kd_fak);
+                    foreach ($current_prodi as $prodi) {
+                        ManajemenFakultas::remove_prodi_from_fakultas($prodi->kd_program_studi);
+                    }
+                }
+
                 return response()->json([
                     'status' => 'success',
                     'message' => $result->keterangan ?? 'Data fakultas berhasil diperbarui',

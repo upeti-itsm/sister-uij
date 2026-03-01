@@ -13,10 +13,31 @@ $(document).ready(function () {
     // Load fakultas data
     loadFakultas();
 
+    // Load jenjang data
+    loadJenjang();
+
+    // Custom search handler
+    $('#btn-search').on('click', function () {
+        table.ajax.reload();
+    });
+
+    // Enter key pada search input
+    $('#search_input').on('keypress', function (e) {
+        if (e.which === 13) {
+            table.ajax.reload();
+        }
+    });
+
+    // Custom filter handler
+    $('#btn-filter').on('click', function () {
+        table.ajax.reload();
+    });
+
     var table = $('#table').DataTable({
         processing: true,
         serverSide: false,
         responsive: true,
+        searching: false,  // Disable default search
         pageLength: 10,
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         language: {
@@ -40,9 +61,38 @@ $(document).ready(function () {
             url: '/adm-akademik/perkuliahan/manajemen-prodi/json',
             type: 'POST',
             data: function (d) {
-                d.sts_aktif = $('#filter_status').val() || null;
-                d.kd_fakultas = $('#filter_fakultas').val() || null;
-                d.param_search = $('#filter_search').val() || '';
+                var filterStatus = $('#filter_status').val();
+                var filterFakultas = $('#filter_fakultas').val();
+                var searchInput = $('#search_input').val();
+
+                // Clean up values
+                if (filterStatus === '' || filterStatus === null) {
+                    filterStatus = null;
+                }
+
+                if (filterFakultas === '' || filterFakultas === null) {
+                    filterFakultas = null;
+                } else {
+                    filterFakultas = String(filterFakultas).trim();
+                }
+
+                if (searchInput === '' || searchInput === null) {
+                    searchInput = '';
+                } else {
+                    searchInput = String(searchInput).trim();
+                }
+
+                d.sts_aktif = filterStatus;
+                d.kd_fakultas = filterFakultas;
+                d.param_search = searchInput;
+                d.no_page = -1;
+                d.jml_record_perpage = 999999; // Ambil semua data untuk client-side pagination
+
+                console.log('========== SENDING FILTER PARAMS ==========');
+                console.log('Status Filter:', filterStatus);
+                console.log('Fakultas Filter:', filterFakultas);
+                console.log('Search Input:', searchInput);
+                console.log('==========================================');
             },
             dataSrc: function (json) {
                 console.log('Response data:', json);
@@ -67,7 +117,7 @@ $(document).ready(function () {
                 defaultContent: '-'
             },
             {
-                data: 'kd_jenjang_didik',
+                data: 'nama_jenjang_didik',
                 defaultContent: '-'
             },
             {
@@ -112,34 +162,75 @@ $(document).ready(function () {
         ]
     });
 
-    // Load fakultas for select2
+    // Load fakultas for select2 and filter
     function loadFakultas() {
         var fakultasSelect = $('#kd_fakultas');
+        var filterFakultasSelect = $('#filter_fakultas');
         fakultasSelect.empty();
+        filterFakultasSelect.empty();
         fakultasSelect.append('<option value="">-- Pilih Fakultas --</option>');
+        filterFakultasSelect.append('<option value="" selected>-- Semua Fakultas --</option>');
 
         $.ajax({
             url: '/adm-akademik/perkuliahan/manajemen-prodi/json-fakultas',
             type: 'POST',
             data: {
-                sts_aktif: true,
+                sts_aktif: 1, // 1 = Aktif only (integer, bukan boolean)
                 jml_record_perpage: 100
             },
             success: function (response) {
-                console.log('Fakultas response:', response);
+                console.log('========== FAKULTAS DATA LOADED ==========');
+                console.log('Response:', response);
                 if (response.status === 'success' && response.data && response.data.length > 0) {
                     response.data.forEach(function (item) {
+                        console.log('Adding fakultas:', item.kd_fakultas, '-', item.nama_fakultas);
                         fakultasSelect.append(`<option value="${item.kd_fakultas}">${item.nama_fakultas}</option>`);
+                        filterFakultasSelect.append(`<option value="${item.kd_fakultas}">${item.nama_fakultas}</option>`);
                     });
+                    console.log('Total fakultas loaded:', response.data.length);
                 } else {
                     console.warn('No fakultas data found');
                 }
+                console.log('==========================================');
             },
             error: function (xhr, status, error) {
                 console.error('Failed to load fakultas data:', error);
                 $.alert({
                     title: 'Error',
                     content: 'Gagal memuat data fakultas',
+                    type: 'red'
+                });
+            }
+        });
+    }
+
+    // Load jenjang for select2
+    function loadJenjang() {
+        var jenjangSelect = $('#jenjang');
+        jenjangSelect.empty();
+        jenjangSelect.append('<option value="">-- Pilih Jenjang --</option>');
+
+        $.ajax({
+            url: '/adm-akademik/perkuliahan/manajemen-prodi/json-jenjang',
+            type: 'POST',
+            data: {
+                jml_record_perpage: 100
+            },
+            success: function (response) {
+                console.log('Jenjang response:', response);
+                if (response.status === 'success' && response.data && response.data.length > 0) {
+                    response.data.forEach(function (item) {
+                        jenjangSelect.append(`<option value="${item.kd_jenjang_didik}">${item.jenjang_didik}</option>`);
+                    });
+                } else {
+                    console.warn('No jenjang data found');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Failed to load jenjang data:', error);
+                $.alert({
+                    title: 'Error',
+                    content: 'Gagal memuat data jenjang',
                     type: 'red'
                 });
             }
@@ -288,23 +379,7 @@ $(document).ready(function () {
             // Mapping kode jenjang - cek semua kemungkinan field
             var jenjang = '';
             if (row.kd_jenjang_didik) {
-                var rawJenjang = row.kd_jenjang_didik.toString().trim();
-                console.log('Raw jenjang:', rawJenjang);
-
-                // Jika kd_jenjang_didik adalah kode string (D3, S1, etc)
-                if (['D3', 'S1', 'S2', 'S3'].includes(rawJenjang)) {
-                    jenjang = rawJenjang;
-                }
-                // Jika kd_jenjang_didik adalah ID numerik, mapping ke string
-                else {
-                    var jenjangMap = {
-                        '20': 'D3',
-                        '30': 'S1',
-                        '35': 'S2',
-                        '40': 'S3'
-                    };
-                    jenjang = jenjangMap[rawJenjang] || rawJenjang;
-                }
+                jenjang = row.kd_jenjang_didik.toString().trim();
             }
 
             console.log('Setting jenjang:', jenjang);

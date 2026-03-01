@@ -5,6 +5,8 @@ namespace App\Models\Akademik;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\FacadesLog;
 
 class ManajemenProdi extends Model
 {
@@ -25,7 +27,8 @@ class ManajemenProdi extends Model
         $jml_record_perpage = 10
     )
     {
-        \Log::info('Calling PostgreSQL function with params:', [
+        Log::info('========== MODEL get_daftar_program_studi ==========');
+        Log::info('Calling PostgreSQL function with params:', [
             'kd_prodi' => $kd_prodi,
             'kd_dikti' => $kd_dikti,
             'kd_fakultas' => $kd_fakultas,
@@ -34,6 +37,7 @@ class ManajemenProdi extends Model
             'no_page' => $no_page,
             'jml_record_perpage' => $jml_record_perpage
         ]);
+        Log::info('====================================================');
 
         try {
             // Method 1: Try with explicit casting
@@ -47,13 +51,13 @@ class ManajemenProdi extends Model
                 $jml_record_perpage
             ]);
 
-            \Log::info('Method 1 (with casting) result:', ['count' => count($result), 'result' => $result]);
+            Log::info('Method 1 result count:', ['count' => count($result)]);
 
             if (!empty($result)) {
                 return $result;
             }
         } catch (\Exception $e) {
-            \Log::error('Method 1 failed: ' . $e->getMessage());
+            Log::error('Method 1 failed: ' . $e->getMessage());
         }
 
         try {
@@ -68,13 +72,13 @@ class ManajemenProdi extends Model
                 $jml_record_perpage
             ]);
 
-            \Log::info('Method 2 (without SELECT *) result:', ['count' => count($result), 'result' => $result]);
+            Log::info('Method 2 (without SELECT *) result:', ['count' => count($result), 'result' => $result]);
 
             if (!empty($result)) {
                 return $result;
             }
         } catch (\Exception $e) {
-            \Log::error('Method 2 failed: ' . $e->getMessage());
+            Log::error('Method 2 failed: ' . $e->getMessage());
         }
 
         try {
@@ -89,40 +93,58 @@ class ManajemenProdi extends Model
                 $jml_record_perpage
             ]);
 
-            \Log::info('Method 3 (original) result:', ['count' => count($result), 'result' => $result]);
+            Log::info('Method 3 (original) result:', ['count' => count($result), 'result' => $result]);
 
             if (!empty($result)) {
                 return $result;
             }
         } catch (\Exception $e) {
-            \Log::error('Method 3 failed: ' . $e->getMessage());
+            Log::error('Method 3 failed: ' . $e->getMessage());
         }
 
-        // Fallback: Direct query
-        \Log::info('All methods returned empty, trying direct query...');
+        // Fallback: Direct query with proper WHERE conditions
+        Log::warning('All DB function methods failed, using direct query fallback...');
 
         try {
-            // First, get all data without any conditions to see actual column names
-            $result = DB::select("SELECT * FROM akademik.program_studi LIMIT 5");
+            $query = "SELECT ps.*,
+                             f.nama_fakultas,
+                             jd.jenjang_didik AS nama_jenjang_didik
+                      FROM akademik.program_studi ps
+                      LEFT JOIN akademik.fakultas f ON ps.kd_fakultas = f.kd_fakultas
+                      LEFT JOIN akademik.jenjang_didik jd ON ps.kd_jenjang_didik = jd.kd_jenjang_didik
+                      WHERE 1=1";
 
-            \Log::info('Sample data from akademik.program_studi:', [
-                'count' => count($result),
-                'sample' => $result
-            ]);
+            $params = [];
 
-            if (!empty($result)) {
-                // Get column names from first row
-                $columns = array_keys((array)$result[0]);
-                \Log::info('Available columns:', $columns);
-
-                // Now get all data
-                $allData = DB::select("SELECT * FROM akademik.program_studi");
-                \Log::info('All data count:', ['count' => count($allData)]);
-
-                return $allData;
+            // Filter by kd_fakultas
+            if ($kd_fakultas !== null && $kd_fakultas !== '') {
+                $query .= " AND ps.kd_fakultas = ?";
+                $params[] = $kd_fakultas;
             }
+
+            // Filter by param_search (nama_program_studi)
+            if ($param_search !== null && $param_search !== '') {
+                $query .= " AND LOWER(ps.nama_program_studi) LIKE LOWER(?)";
+                $params[] = '%' . $param_search . '%';
+            }
+
+            // Filter by sts_aktif
+            if ($sts_aktif !== null) {
+                $query .= " AND ps.is_data_aktif = ?";
+                $params[] = $sts_aktif;
+            }
+
+            $query .= " ORDER BY ps.nama_program_studi ASC";
+
+            Log::info('Fallback query:', ['query' => $query, 'params' => $params]);
+
+            $result = DB::select($query, $params);
+
+            Log::info('Fallback query result count:', ['count' => count($result)]);
+
+            return $result;
         } catch (\Exception $e) {
-            \Log::error('Direct query error: ' . $e->getMessage());
+            Log::error('Fallback query error: ' . $e->getMessage());
         }
 
         return [];
@@ -136,56 +158,32 @@ class ManajemenProdi extends Model
     }
 
     public static function insup_prodi(
-        $id_program_studi = null,
-        $kd_program_studi = null,
-        $nama_program_studi = null,
-        $kd_jenjang_didik = null,
-        $kd_fakultas = null,
-        $karyawan_id_kaprodi = null,
-        $kd_nim = null,
-        $no_urut_prodi_wisuda = null,
-        $sts_kip = false,
-        $kd_dikti = '34',
-        $is_s2 = false
-        // Function PostgreSQL HANYA punya 11 parameter!
+        $id_program_studi,
+        $kd_program_studi,
+        $nama_program_studi,
+        $kd_jenjang_didik,
+        $kd_fakultas,
+        $karyawan_id_kaprodi,
+        $kd_nim,
+        $no_urut_prodi_wisuda,
+        $sts_kip,
+        $kd_dikti,
+        $is_s2
     )
     {
-        // Helper function untuk escape string PostgreSQL
-        $pg_escape = function($val) {
-            if ($val === null) return 'NULL';
-            return "'" . str_replace("'", "''", $val) . "'";
-        };
-
-        // Cast sesuai function signature - character bukan character(2)!
-        $id_program_studi_safe = $id_program_studi ? $pg_escape($id_program_studi) . '::uuid' : 'NULL::uuid';
-        $kd_program_studi_safe = $kd_program_studi ? $pg_escape($kd_program_studi) . '::varchar' : 'NULL::varchar';
-        $nama_program_studi_safe = $nama_program_studi ? $pg_escape($nama_program_studi) . '::varchar' : 'NULL::varchar';
-        // Cast ke 'character' (generic) bukan 'character(2)' atau 'bpchar(2)'
-        $kd_jenjang_didik_safe = $kd_jenjang_didik ? $pg_escape(substr($kd_jenjang_didik, 0, 2)) . '::character' : 'NULL::character';
-        $kd_fakultas_safe = $kd_fakultas ? $pg_escape($kd_fakultas) . '::varchar' : 'NULL::varchar';
-        $karyawan_id_kaprodi_safe = $karyawan_id_kaprodi ? $pg_escape($karyawan_id_kaprodi) . '::varchar' : 'NULL::varchar';
-        $kd_nim_safe = $kd_nim ? $pg_escape(substr($kd_nim, 0, 2)) . '::character' : 'NULL::character';
-        $no_urut_prodi_wisuda_safe = $no_urut_prodi_wisuda !== null ? $no_urut_prodi_wisuda . '::integer' : 'NULL::integer';
-        $sts_kip_safe = $sts_kip ? 'true::boolean' : 'false::boolean';
-        $kd_dikti_safe = $kd_dikti ? $pg_escape($kd_dikti) . '::varchar' : 'NULL::varchar';
-        $is_s2_safe = $is_s2 ? 'true::boolean' : 'false::boolean';
-
-        // HANYA 11 parameter - function PostgreSQL tidak punya is_data_aktif!
-        $sql = "SELECT * FROM akademik.insup_program_studi(
-            {$id_program_studi_safe},
-            {$kd_program_studi_safe},
-            {$nama_program_studi_safe},
-            {$kd_jenjang_didik_safe},
-            {$kd_fakultas_safe},
-            {$karyawan_id_kaprodi_safe},
-            {$kd_nim_safe},
-            {$no_urut_prodi_wisuda_safe},
-            {$sts_kip_safe},
-            {$kd_dikti_safe},
-            {$is_s2_safe}
-        )";
-
-        return DB::selectOne($sql);
+        return DB::selectOne("SELECT * FROM akademik.insup_program_studi(?,?,?,?,?,?,?,?,?,?,?)", [
+            $id_program_studi,
+            $kd_program_studi,
+            $nama_program_studi,
+            $kd_jenjang_didik,
+            $kd_fakultas,
+            $karyawan_id_kaprodi,
+            $kd_nim,
+            $no_urut_prodi_wisuda,
+            $sts_kip,
+            $kd_dikti,
+            $is_s2
+        ]);
     }
 
     public static function set_aktif($id, $status)
@@ -207,15 +205,30 @@ class ManajemenProdi extends Model
         $no_page = -1,
         $jml_record_perpage = 10,
         $kd_fakultas = null,
-        $sts_aktif = true
+        $sts_aktif = 2
     )
     {
-        return DB::select("SELECT * FROM akademik.get_daftar_fakultas(?::varchar, ?::integer, ?::integer, ?::varchar, ?::boolean)", [
+        return DB::select("SELECT * FROM akademik.get_daftar_fakultas(?,?,?,?,?)", [
             $param_search,
             $no_page,
             $jml_record_perpage,
             $kd_fakultas,
             $sts_aktif
+        ]);
+    }
+
+    public static function get_daftar_jenjang_didik(
+        $kd_jenjang_didik = null,
+        $param_search = '',
+        $no_page = -1,
+        $jml_record_perpage = 100
+    )
+    {
+        return DB::select("SELECT * FROM akademik.get_daftar_jenjang_didik(?,?,?,?)", [
+            $kd_jenjang_didik,
+            $param_search,
+            $no_page,
+            $jml_record_perpage
         ]);
     }
 }

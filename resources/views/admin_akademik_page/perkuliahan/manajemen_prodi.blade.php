@@ -85,10 +85,6 @@
                                     <label class="font-weight-bold">Jenjang <span class="text-danger">*</span></label>
                                     <select id="jenjang" name="jenjang" class="form-control select2">
                                         <option value="">-- Pilih Jenjang --</option>
-                                        <option value="D3">D3</option>
-                                        <option value="S1">S1</option>
-                                        <option value="S2">S2</option>
-                                        <option value="S3">S3</option>
                                     </select>
                                 </div>
                             </div>
@@ -167,6 +163,39 @@
                                         style='display: none' role='status' aria-hidden='true'></span>
                                     <i class="fas fa-save mr-2"></i>Simpan Data
                                 </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="font-weight-bold">Pencarian</label>
+                                <div class="input-group">
+                                    <input type="text" id="search_input" class="form-control" placeholder="Cari Nama Program Studi">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" id="btn-search">
+                                            <i class="fas fa-search"></i> Cari Data
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="font-weight-bold">Filtering</label>
+                                <div class="input-group">
+                                    <select id="filter_status" class="form-control">
+                                        <option value="" selected>-- Semua Status --</option>
+                                        <option value="true">Aktif</option>
+                                        <option value="false">Nonaktif</option>
+                                    </select>
+                                    <select id="filter_fakultas" class="form-control ml-2">
+                                        <option value="" selected>-- Semua Fakultas --</option>
+                                    </select>
+                                    <div class="input-group-append mx-2">
+                                        <button class="btn btn-primary" type="button" id="btn-filter">
+                                            <i class="fas fa-filter"></i> Filter
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
