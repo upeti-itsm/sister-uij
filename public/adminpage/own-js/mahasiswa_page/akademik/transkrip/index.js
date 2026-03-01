@@ -199,6 +199,7 @@ jQuery.transkrip = {
                             if (!data) return '-';
 
                             var id     = data.id_riwayat_pengajuan_nilai || '';
+                            var id_pengajuan_induk     = data.id_pengajuan_induk || '';
                             var status = String(data.status);
                             var noTrk  = data.nomor_pengajuan;
 
@@ -206,6 +207,7 @@ jQuery.transkrip = {
                             var btnDetail = `
                                 <button class="btn btn-info btn-sm btn-detail-pengajuan"
                                         data-id="${id}"
+                                        data-id_pengajuan_induk="${id_pengajuan_induk}"
                                         title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </button>`;
@@ -355,7 +357,7 @@ jQuery.transkrip = {
         $(document).off('click', '.btn-detail-pengajuan')
             .on('click', '.btn-detail-pengajuan', function (e) {
                 e.stopPropagation();
-                self.loadDetailPengajuan($(this).data('id'));
+                self.loadDetailPengajuan($(this).data('id_pengajuan_induk'));
             });
 
         // --- Ajukan dari tabel (delegasi) — status 1 → 2 ---
@@ -528,9 +530,15 @@ jQuery.transkrip = {
                 id_riwayat_pengajuan_nilai: id
             },
             success: function (response) {
-                console.log('Detail pengajuan:', response);
-
                 if (response && response.status === '1') {
+                    var detail = response.data;
+                    if (detail && typeof detail.riwayat === 'string') {
+                        try {
+                            detail.riwayat = JSON.parse(detail.riwayat);
+                        } catch (e) {
+                            detail.riwayat = [];
+                        }
+                    }
                     self.data.current_detail = response.data;
                     self.renderModalDetail(response.data);
                     $('#modal-detail-pengajuan').modal('show');
@@ -1110,8 +1118,8 @@ jQuery.transkrip = {
     renderTimeline: function (riwayat) {
         if (!riwayat || riwayat.length === 0) {
             return `<div class="text-muted text-center py-3">
-                        <i class="fas fa-info-circle mr-2"></i>Tidak ada riwayat aktivitas
-                    </div>`;
+                    <i class="fas fa-info-circle mr-2"></i>Tidak ada riwayat aktivitas
+                </div>`;
         }
 
         var html = '';
@@ -1127,21 +1135,24 @@ jQuery.transkrip = {
             };
 
             var cls     = clsMap[String(item.status)] || '';
-            var tanggal = item.tgl_aktivitas || item.tgl_updated || '-';
+            // ← gunakan tgl_created sesuai struktur DB
+            var tanggal = item.tgl_created || '-';
+            // ← gunakan komentar_persetujuan sebagai catatan
+            var catatan = item.komentar_persetujuan || '';
 
             html += `
-                <div class="timeline-item ${cls}">
-                    <div class="d-flex justify-content-between">
-                        <strong>${item.keterangan_status || item.keterangan || '-'}</strong>
-                        <small class="text-muted">${tanggal}</small>
-                    </div>
-                    ${item.nama_user
+            <div class="timeline-item ${cls}">
+                <div class="d-flex justify-content-between">
+                    <strong>${item.keterangan_status || '-'}</strong>
+                    <small class="text-muted">${tanggal}</small>
+                </div>
+                ${item.nama_user
                 ? `<small class="text-muted">oleh: ${item.nama_user}</small>`
                 : ''}
-                    ${item.catatan
-                ? `<p class="mb-0 mt-1 small text-muted">${item.catatan}</p>`
+                ${catatan
+                ? `<p class="mb-0 mt-1 small text-muted">${catatan}</p>`
                 : ''}
-                </div>`;
+            </div>`;
         });
 
         return html;

@@ -246,13 +246,12 @@ class TranskripController extends Controller
             }
 
             // --- Riwayat aktivitas ---
-//            $riwayat = PengajuanTranskrip::get_riwayat($idPengajuan);
-            $riwayat = [];
+            $riwayat = $detail->riwayat_ajuan;
 
             return response()->json([
                 'status' => '1',
                 'data'   => [
-                    'id_pengajuan'   => $detail->id_riwayat_pengajuan_nilai,
+                    'id_riwayat_pengajuan_nilai'   => $detail->id_riwayat_pengajuan_nilai,
                     'nomor_pengajuan'   => $detail->nomor_pengajuan ?? '-',
                     'keperluan'      => $detail->keperluan,
                     'status'         => $detail->status,
