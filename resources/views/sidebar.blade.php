@@ -448,6 +448,8 @@
                             array_key_exists('Perwalian Mahasiswa', $modul) ||
                             array_key_exists('Validasi KRS DPS', $modul) ||
                             array_key_exists('Validasi KRS Kaprodi', $modul) ||
+                            array_key_exists('Persetujuan Transkrip Nilai', $modul) ||
+                            array_key_exists('Pengajuan Transkrip Nilai', $modul) ||
                             array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
                             array_key_exists('Student Body', $modul))
                         <li class="nav-label">Akademik</li>
@@ -674,6 +676,15 @@
                                     <li @if ($menu == 'Validasi KRS DPS') class="mm-active" @endif>
                                         <a
                                             href="{{ route('dosen.krs.index') }}">Perwalian</a>
+                                    </li>
+                                @endif
+                                @if (array_key_exists('Persetujuan Transkrip Nilai', $modul))
+                                    <li @if ($menu == 'Persetujuan Transkrip Nilai') class="mm-active" @endif>
+                                        @if(\Illuminate\Support\Facades\Session::get('peran')['aktif'] == 69)
+                                            <a href="{{ route('kaprodi.akademik.transkrip.index') }}">Pengajuan Transkrip</a>
+                                        @elseif(\Illuminate\Support\Facades\Session::get('peran')['aktif'] == 70)
+                                            <a href="{{ route('dekan.akademik.transkrip.index') }}">Pengajuan Transkrip</a>
+                                        @endif
                                     </li>
                                 @endif
                                 @if (array_key_exists('Validasi KRS Kaprodi', $modul))
