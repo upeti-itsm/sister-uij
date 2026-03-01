@@ -65,6 +65,7 @@ Route::post('/auth', [\App\Http\Controllers\FrontPage\LoginController::class, 'a
 Route::post('/forget-password', [\App\Http\Controllers\FrontPage\LoginController::class, 'forget_password'])->name('login.forget_password');
 Route::post('/sign-out', [\App\Http\Controllers\FrontPage\LoginController::class, 'logout'])->name('login.logout');
 Route::get('/change-role/{id}', [\App\Http\Controllers\FrontPage\LoginController::class, 'gantiPeran'])->name('login.ganti_peran');
+Route::get('/tte-validation/{id}', [\App\Http\Controllers\FrontPage\HomeController::class, 'detail_qr'])->name('frontpage.detail_qr');
 /*
  * ------------------------------------------------------------------------
  * DASHBOARD PAGE
@@ -285,7 +286,6 @@ Route::post('/adm-uptti/akademik/nomor-sertifikat/store', [\App\Http\Controllers
 Route::post('/adm-uptti/akademik/nomor-sertifikat/update', [\App\Http\Controllers\AdminUpttiPage\Akademik\NomorSertifikatController::class, 'update'])->name('akademik.nomor_sertifikat.update')->middleware('modul:Pengelolaan Nomor Sertifikat');
 
 
-
 /*
  * ------------------------------------------------------------------------
  * MAHASISWA PAGE
@@ -327,6 +327,105 @@ Route::post('/mhs/krs/simpan', [\App\Http\Controllers\MahasiswaPage\Akademik\KRS
 Route::post('/mhs/krs/ajukan-krs', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'ajukan_krs'])->name('mahasiswa.akademik.krs.ajukan_krs')->middleware('modul:Mengelola Kartu Rencana Studi');
 Route::post('/mhs/krs/sks-maksimal', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'cekMaksimalKrs'])->name('mahasiswa.akademik.krs.cekMaksimalKrs')->middleware('modul:Mengelola Kartu Rencana Studi');
 Route::post('/mhs/krs/download-krs', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'downloadKRS'])->name('mahasiswa.akademik.krs.downloadKRS')->middleware('modul:Mengelola Kartu Rencana Studi');
+// Kartu Hasil Studi (KHS)
+Route::prefix('mhs/khs')
+    ->middleware('modul:Hasil Studi Mahasiswa')
+    ->name('mahasiswa.akademik.khs.')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'index'])->name('index');
+        Route::post('/json', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'json'])->name('json');
+        Route::post('/tahun-akademik-list', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getTahunAkademikList'])->name('tahun_akademik_list');
+        Route::post('/current-semester-stats', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getCurrentSemesterStats'])->name('current_semester_stats');
+        Route::post('/transkrip', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getTranskrip'])->name('transkrip');
+        Route::post('/download', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'downloadKHS'])->name('download');
+        Route::post('/rekap-semester', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getRekapPerSemester'])->name('rekap_semester');
+        Route::post('/detail-nilai', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getDetailNilai'])->name('detail_nilai');
+        Route::post('/grafik-ip', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getGrafikIP'])->name('grafik_ip');
+        Route::post('/matakuliah-belum-lulus', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getMatakuliahBelumLulus'])->name('matakuliah_belum_lulus');
+        Route::post('/statistik-nilai', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getStatistikNilai'])->name('statistik_nilai');
+    });
+// Pengajuan Transkrip
+Route::prefix('mhs/transkrip')
+    ->middleware('modul:Pengajuan Transkrip Nilai')
+    ->name('mahasiswa.akademik.transkrip.')
+    ->group(function () {
+        // --- Halaman Utama ---
+        Route::get('/', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'index'])
+            ->name('index');
+        // --- DataTable ---
+        Route::post('/json', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'json'])
+            ->name('json');
+        // --- Statistik & Info ---
+        Route::post('/statistik', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'getStatistik'])
+            ->name('statistik');
+        Route::post('/mahasiswa-info', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'getMahasiswaInfo'])
+            ->name('mahasiswa_info');
+        // --- CRUD Pengajuan ---
+        Route::post('/ajukan', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'ajukan'])
+            ->name('ajukan');
+        Route::post('/detail', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'getDetail'])
+            ->name('detail');
+        Route::post('/batalkan', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'batalkan'])
+            ->name('batalkan');
+        // --- Download PDF ---
+        Route::post('/download', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'download'])
+            ->name('download');
+    });
+// Transkrip Kaprodi
+Route::prefix('kaprodi/transkrip')
+    ->middleware('modul:Persetujuan Transkrip Nilai')
+    ->name('kaprodi.akademik.transkrip.')
+    ->group(function () {
+        // --- Halaman Utama ---
+        Route::get('/', [\App\Http\Controllers\KaprodiPage\Akademik\TranskripKaprodiController::class, 'index'])
+            ->name('index');
+        // --- DataTable ---
+        Route::post('/json', [\App\Http\Controllers\KaprodiPage\Akademik\TranskripKaprodiController::class, 'json'])
+            ->name('json');
+        // --- Statistik & Info ---
+        Route::post('/statistik', [\App\Http\Controllers\KaprodiPage\Akademik\TranskripKaprodiController::class, 'getStatistik'])
+            ->name('statistik');
+        Route::post('/prodi-list', [\App\Http\Controllers\KaprodiPage\Akademik\TranskripKaprodiController::class, 'getProdiList'])
+            ->name('prodi_list');
+        // --- Detail & Preview ---
+        Route::post('/detail', [\App\Http\Controllers\KaprodiPage\Akademik\TranskripKaprodiController::class, 'getDetail'])
+            ->name('detail');
+        Route::post('/preview-nilai', [\App\Http\Controllers\KaprodiPage\Akademik\TranskripKaprodiController::class, 'getPreviewNilai'])
+            ->name('preview_nilai');
+
+        // --- Tindakan Kaprodi ---
+        Route::post('/setujui', [\App\Http\Controllers\KaprodiPage\Akademik\TranskripKaprodiController::class, 'setujui'])
+            ->name('setujui');
+        Route::post('/tolak', [\App\Http\Controllers\KaprodiPage\Akademik\TranskripKaprodiController::class, 'tolak'])
+            ->name('tolak');
+    });
+// Transkrip Dekan
+Route::prefix('dekan/transkrip')
+    ->middleware('modul:Persetujuan Transkrip Nilai')
+    ->name('dekan.akademik.transkrip.')
+    ->group(function () {
+        // --- Halaman Utama ---
+        Route::get('/', [\App\Http\Controllers\DekanPage\Akademik\TranskripDekanController::class, 'index'])
+            ->name('index');
+        // --- DataTable ---
+        Route::post('/json', [\App\Http\Controllers\DekanPage\Akademik\TranskripDekanController::class, 'json'])
+            ->name('json');
+        // --- Statistik & Info ---
+        Route::post('/statistik', [\App\Http\Controllers\DekanPage\Akademik\TranskripDekanController::class, 'getStatistik'])
+            ->name('statistik');
+        Route::post('/prodi-list', [\App\Http\Controllers\DekanPage\Akademik\TranskripDekanController::class, 'getProdiList'])
+            ->name('prodi_list');
+        // --- Detail & Preview ---
+        Route::post('/detail', [\App\Http\Controllers\DekanPage\Akademik\TranskripDekanController::class, 'getDetail'])
+            ->name('detail');
+        Route::post('/preview-nilai', [\App\Http\Controllers\DekanPage\Akademik\TranskripDekanController::class, 'getPreviewNilai'])
+            ->name('preview_nilai');
+        // --- Tindakan Dekan ---
+        Route::post('/sahkan', [\App\Http\Controllers\DekanPage\Akademik\TranskripDekanController::class, 'sahkan'])
+            ->name('sahkan');
+        Route::post('/tolak', [\App\Http\Controllers\DekanPage\Akademik\TranskripDekanController::class, 'tolak'])
+            ->name('tolak');
+    });
 
 // Melihat Tanggungan
 Route::get('/mhs/tanggungan', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'index'])->name('mahasiswa.keuangan.tanggungan.index')->middleware('modul:Melihat Tanggungan');

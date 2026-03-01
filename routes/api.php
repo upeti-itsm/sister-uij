@@ -17,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('sahabat/callback-va', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'callback_va']);
+Route::post('sahabat/callback-payment', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'callback_payment']);

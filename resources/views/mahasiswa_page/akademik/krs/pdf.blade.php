@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<! DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -20,21 +20,41 @@
         }
 
         .header {
-            text-align: center;
+            position: relative;
             margin-bottom: 10px;
-            border-bottom: 2px solid #000;
+            border-bottom:  2px solid #000;
             padding-bottom: 8px;
+            min-height: 80px;
         }
 
-        .header h1 {
+        .header-logo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 70px;
+            height: 70px;
+        }
+
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header-content {
+            text-align: center;
+            padding: 0 80px;
+        }
+
+        .header-content h1 {
             font-size: 14pt;
             font-weight: bold;
             margin-bottom: 3px;
         }
 
-        .header p {
+        .header-content p {
             font-size: 9pt;
-            margin:  1px 0;
+            margin: 1px 0;
         }
 
         .status-badge {
@@ -59,7 +79,7 @@
         .info-box td {
             padding: 3px 8px;
             font-size: 8pt;
-            border:  1px solid #ddd;
+            border: 1px solid #ddd;
         }
 
         .info-box td.label {
@@ -69,19 +89,19 @@
         }
 
         .data-table {
-            width: 100%;
-            border-collapse:  collapse;
-            margin:  8px 0;
+            width:  100%;
+            border-collapse: collapse;
+            margin: 8px 0;
             font-size: 8pt;
         }
 
         .data-table thead {
-            background-color: #343a40;
+            background-color:  #343a40;
             color: white;
         }
 
         .data-table th {
-            border:  1px solid #000;
+            border: 1px solid #000;
             padding: 4px 3px;
             text-align: center;
             font-weight: bold;
@@ -92,19 +112,19 @@
             padding: 3px;
         }
 
-        .data-table td.center {
+        . data-table td.center {
             text-align: center;
         }
 
         .data-table tfoot td {
             background-color: #f0f0f0;
-            font-weight: bold;
+            font-weight:  bold;
             padding: 4px;
         }
 
-        .comment-box {
-            margin: 5px 0;
-            padding:  5px 8px;
+        . comment-box {
+            margin:  5px 0;
+            padding: 5px 8px;
             border: 1px solid #ccc;
             background-color: #fff8dc;
             font-size: 7.5pt;
@@ -112,7 +132,7 @@
         }
 
         .comment-box strong {
-            font-size: 8pt;
+            font-size:  8pt;
         }
 
         .signature-section {
@@ -130,7 +150,7 @@
         }
 
         .signature-section p {
-            margin: 2px 0;
+            margin:  2px 0;
             font-size: 7.5pt;
         }
 
@@ -141,7 +161,7 @@
         }
 
         .signature-section .nidn {
-            font-size:  7pt;
+            font-size: 7pt;
             color: #666;
         }
 
@@ -149,17 +169,17 @@
             width: 70px;
             height: 70px;
             margin: 5px auto;
-            display: block;
+            display:  block;
             border: 1px solid #ddd;
         }
 
         .footer {
             margin-top: 8px;
-            text-align:  center;
-            font-size:  7pt;
+            text-align: center;
+            font-size: 7pt;
             color: #666;
             border-top: 1px solid #ccc;
-            padding-top:  5px;
+            padding-top: 5px;
         }
 
         @page {
@@ -169,12 +189,19 @@
     </style>
 </head>
 <body>
-<!-- Header Compact -->
+<!-- Header dengan Logo -->
 <div class="header">
-    <h1>KARTU RENCANA STUDI (KRS)</h1>
-    <p><strong>{{ $mahasiswa->jenjang }} {{ $mahasiswa->nama_prodi }}</strong></p>
-    <p>T.A {{ $tahun_akademik->nama }} - Semester {{ $tahun_akademik->semester }}</p>
-    <span class="status-badge">TELAH DISETUJUI</span>
+    @if(!empty($logo))
+        <div class="header-logo">
+            <img src="data:image/png;base64,{{ $logo }}" alt="Logo">
+        </div>
+    @endif
+    <div class="header-content">
+        <h1>KARTU RENCANA STUDI (KRS)</h1>
+        <p><strong>{{ $mahasiswa->jenjang }} {{ $mahasiswa->nama_prodi }}</strong></p>
+        <p>T.A {{ $tahun_akademik->nama }} - Semester {{ $tahun_akademik->semester }}</p>
+        <span class="status-badge">TELAH DISETUJUI</span>
+    </div>
 </div>
 
 <!-- Info Mahasiswa Compact -->
@@ -240,25 +267,21 @@
 
 <!-- Komentar Compact -->
 <div class="comment-box">
-    <strong>Catatan DPS:</strong> {{ $komentar_dps }} <em style="color: #888;">({{ $tgl_verifikasi_dps }})</em>
-</div>
-
-<div class="comment-box">
-    <strong>Catatan Kaprodi:</strong> {{ $komentar_kaprodi }} <em style="color: #888;">({{ $tgl_verifikasi_kaprodi }})</em>
+    <strong>Catatan DPS:</strong> {{ $komentar_dps }}
 </div>
 
 <!-- Tanda Tangan dengan QR Code Base64 PNG -->
 <table class="signature-section">
     <tr>
         <td>
-            <p><strong>Mahasiswa</strong></p>
+            <p><br/><strong>Mahasiswa</strong></p>
             <img src="data:image/png;base64,{{ $qr_mahasiswa }}" class="qr-code" alt="QR Mahasiswa">
             <p class="name">{{ $mahasiswa->nama_mahasiswa }}</p>
             <p class="nidn">NIM: {{ $mahasiswa->nim }}</p>
             <p style="font-size: 6.5pt; color: #888;">{{ $tgl_pengajuan }}</p>
         </td>
         <td>
-            <p><strong>Dosen Pembimbing Akademik</strong></p>
+            <p><br/><strong>Dosen Pembimbing Akademik</strong></p>
             <img src="data:image/png;base64,{{ $qr_dps }}" class="qr-code" alt="QR DPS">
             <p class="name">{{ $mahasiswa->nama_dps }}</p>
             <p class="nidn">NIDN: {{ $mahasiswa->nidn }}</p>

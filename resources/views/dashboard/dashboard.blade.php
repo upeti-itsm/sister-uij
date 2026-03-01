@@ -63,7 +63,7 @@
         </style>
     @endsection
     @section('body-content')
-        <div class="col-md-12">
+        <div class="col-md-12" style="display: none">
             <input type="hidden" id="nim" value="{{\Illuminate\Support\Facades\Session::get('user')->nim}}">
             <div class="card mb-4">
                 <div class="card-header">

@@ -448,6 +448,8 @@
                             array_key_exists('Perwalian Mahasiswa', $modul) ||
                             array_key_exists('Validasi KRS DPS', $modul) ||
                             array_key_exists('Validasi KRS Kaprodi', $modul) ||
+                            array_key_exists('Persetujuan Transkrip Nilai', $modul) ||
+                            array_key_exists('Pengajuan Transkrip Nilai', $modul) ||
                             array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
                             array_key_exists('Student Body', $modul))
                         <li class="nav-label">Akademik</li>
@@ -543,12 +545,16 @@
                                 @if (array_key_exists('Sinkronisasi Jadwal Kuliah dengan Siakad', $modul) ||
                                         array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul) ||
                                         array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
-                                        array_key_exists('Mengelola Kartu Rencana Studi', $modul))
+                                        array_key_exists('Mengelola Kartu Rencana Studi', $modul) ||
+                                        array_key_exists('Hasil Studi Mahasiswa', $modul) ||
+                                        array_key_exists('Pengajuan Transkrip Nilai', $modul))
                                     <li @if (
                                             $menu == 'Sinkronisasi Jadwal Kuliah dengan Siakad' ||
                                                 $menu == 'Sinkronisasi Tahun Akademik dengan Siakad' ||
                                                 $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
-                                                $menu == 'Mengelola Rencana Studi') class="mm-active" @endif>
+                                                $menu == 'Mengelola Rencana Studi' ||
+                                                $menu == 'Hasil Studi Mahasiswa' ||
+                                                $menu == 'Pengajuan Transkrip Nilai') class="mm-active" @endif>
                                         <a class="has-arrow" href="#" aria-expanded="true">Perkuliahan</a>
                                         <ul class="nav-third-level mm-collapse" style="">
                                             @if (array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul))
@@ -570,6 +576,20 @@
                                                     <a href="{{ route('mahasiswa.akademik.krs.index') }}">Rencana
                                                         Studi
                                                         (KRS)</a>
+                                                </li>
+                                            @endif
+                                            @if (array_key_exists('Hasil Studi Mahasiswa', $modul))
+                                                <li @if ($menu == 'Hasil Studi Mahasiswa') class="mm-active" @endif>
+                                                    <a href="{{ route('mahasiswa.akademik.khs.index') }}">
+                                                        Hasil Studi
+                                                    </a>
+                                                </li>
+                                            @endif
+                                            @if (array_key_exists('Pengajuan Transkrip Nilai', $modul))
+                                                <li @if ($menu == 'Pengajuan Transkrip Nilai') class="mm-active" @endif>
+                                                    <a href="{{ route('mahasiswa.akademik.transkrip.index') }}">
+                                                        Transkrip Nilai
+                                                    </a>
                                                 </li>
                                             @endif
                                             @if (array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul))
@@ -656,6 +676,15 @@
                                     <li @if ($menu == 'Validasi KRS DPS') class="mm-active" @endif>
                                         <a
                                             href="{{ route('dosen.krs.index') }}">Perwalian</a>
+                                    </li>
+                                @endif
+                                @if (array_key_exists('Persetujuan Transkrip Nilai', $modul))
+                                    <li @if ($menu == 'Persetujuan Transkrip Nilai') class="mm-active" @endif>
+                                        @if(\Illuminate\Support\Facades\Session::get('peran')['aktif'] == 69)
+                                            <a href="{{ route('kaprodi.akademik.transkrip.index') }}">Pengajuan Transkrip</a>
+                                        @elseif(\Illuminate\Support\Facades\Session::get('peran')['aktif'] == 70)
+                                            <a href="{{ route('dekan.akademik.transkrip.index') }}">Pengajuan Transkrip</a>
+                                        @endif
                                     </li>
                                 @endif
                                 @if (array_key_exists('Validasi KRS Kaprodi', $modul))

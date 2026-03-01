@@ -123,117 +123,131 @@ class KRSController extends Controller
     }
 
     /**
-     * Download KRS Mahasiswa (PDF) - QR Code Base64 PNG
+     * Download KRS Mahasiswa (PDF)
      */
     public function downloadKRS(Request $request)
     {
         try {
-            // DUMMY DATA - Data Mahasiswa
+            $user = Session::get('user');
+            if (! $user) {
+                return response()->json([
+                    'status' => '0',
+                    'keterangan' => 'Session user tidak ditemukan'
+                ], 401);
+            }
+
+            // Ambil data KRS dari Model
+            $kd_prodi = $user->kd_prodi;
+            $nim = $user->nim ??  $request->nim;
+
+            $krsData = KRS::get_daftar($kd_prodi, 1, $nim);
+            if (empty($krsData) || count($krsData) == 0) {
+                return response()->json([
+                    'status' => '0',
+                    'keterangan' => 'Data KRS tidak ditemukan atau belum disetujui'
+                ], 404);
+            }
+
+            // Ambil data pertama untuk info mahasiswa dan status
+            $firstRecord = $krsData[0];
+
+            // Parse Tahun Akademik dari format "20251"
+            $tahunAkademikParsed = $this->parseTahunAkademik($firstRecord->tahun_akademik);
+
+            // Data Mahasiswa dari record pertama
             $mahasiswaData = (object) [
-                'nim' => '2021001234',
-                'nama_mahasiswa' => 'Ahmad Rizki Pratama',
-                'angkatan' => '2021',
-                'nama_prodi' => 'Teknik Informatika',
-                'jenjang' => 'S1',
-                'nama_dps' => 'Dr. Budi Santoso, M.Kom',
-                'nidn' => '0123456789',
-                'nama_kaprodi' => 'Prof. Dr. Ir. Siti Aminah, M.T',
-                'nidn_kaprodi' => '0987654321'
+                'nim' => $nim,
+                'nama_mahasiswa' => $user->nama_lengkap ?? 'Nama Mahasiswa',
+                'angkatan' => $this->getAngkatanFromNIM($nim) ?? '-',
+                'nama_prodi' => $user->nama_prodi ?? '-',
+                'jenjang' => $user->jenjang ?? 'S1',
+                'nama_dps' => $firstRecord->nama_dps ?? 'Dosen PA',
+                'nidn' => $firstRecord->nidn_dps ?? '-',
+                'nama_kaprodi' => $firstRecord->nama_kaprodi ?? 'Ketua Program Studi',
+                'nidn_kaprodi' => $firstRecord->nidn_kaprodi ?? '-',
+                'id_krs' => $firstRecord->qr_mahasiswa ?? '-',
+                'id_persetujuan_dps' => $firstRecord->qr_dps ?? '-',
+                'id_persetujuan_kaprodi' => $firstRecord->qr_kaprodi ?? '-'
             ];
 
-            // DUMMY DATA - Tahun Akademik
+            // Tahun Akademik
             $tahunAkademikAktif = (object) [
                 'id' => 1,
-                'nama' => '2024/2025',
-                'semester' => 'Ganjil',
+                'nama' => $tahunAkademikParsed['nama'], // "2024/2025"
+                'semester' => $tahunAkademikParsed['semester'], // "Ganjil", "Genap", atau "Antara"
                 'is_active' => 1
             ];
 
-            // DUMMY DATA - Mata Kuliah yang diambil
-            $mataKuliahDummy = [
-                [
-                    'kd_mata_kuliah' => 'TIF301',
-                    'nama_mata_kuliah' => 'Algoritma dan Pemrograman',
-                    'sks' => 3,
-                    'nama_kelas' => 'A',
-                    'hari' => 'Senin',
-                    'jam' => '08:00-10:30',
-                    'ruang' => 'Lab 1',
-                    'nama_dosen' => 'Dr. Andi Wijaya, M.Kom'
-                ],
-                [
-                    'kd_mata_kuliah' => 'TIF302',
-                    'nama_mata_kuliah' => 'Struktur Data',
-                    'sks' => 3,
-                    'nama_kelas' => 'A',
-                    'hari' => 'Selasa',
-                    'jam' => '13:00-15:30',
-                    'ruang' => 'Lab 2',
-                    'nama_dosen' => 'Prof. Siti Nurhaliza, M.T'
-                ],
-                [
-                    'kd_mata_kuliah' => 'TIF303',
-                    'nama_mata_kuliah' => 'Basis Data',
-                    'sks' => 3,
-                    'nama_kelas' => 'B',
-                    'hari' => 'Rabu',
-                    'jam' => '08:00-10:30',
-                    'ruang' => 'Lab DB',
-                    'nama_dosen' => 'Ir. Bambang Hartono, M.Sc'
-                ],
-                [
-                    'kd_mata_kuliah' => 'TIF304',
-                    'nama_mata_kuliah' => 'Pemrograman Web',
-                    'sks' => 3,
-                    'nama_kelas' => 'A',
-                    'hari' => 'Kamis',
-                    'jam' => '10:30-13:00',
-                    'ruang' => 'Lab MM',
-                    'nama_dosen' => 'Dra. Rina Kusumawati, M.Kom'
-                ],
-                [
-                    'kd_mata_kuliah' => 'TIF305',
-                    'nama_mata_kuliah' => 'Sistem Operasi',
-                    'sks' => 3,
-                    'nama_kelas' => 'A',
-                    'hari' => 'Jumat',
-                    'jam' => '08:00-10:30',
-                    'ruang' => 'Lab 3',
-                    'nama_dosen' => 'Dr. Hendra Saputra, M.T'
-                ],
-                [
-                    'kd_mata_kuliah' => 'UNV201',
-                    'nama_mata_kuliah' => 'Bahasa Inggris Teknik',
-                    'sks' => 2,
-                    'nama_kelas' => 'C',
-                    'hari' => 'Sabtu',
-                    'jam' => '08:00-09:40',
-                    'ruang' => 'R.  201',
-                    'nama_dosen' => 'Lisa Anderson, M.A'
-                ]
+            // Mapping hari dari angka ke nama
+            $hariNames = [
+                0 => '-',
+                1 => 'Senin',
+                2 => 'Selasa',
+                3 => 'Rabu',
+                4 => 'Kamis',
+                5 => 'Jumat',
+                6 => 'Sabtu',
+                7 => 'Minggu'
             ];
 
+            // Transform data mata kuliah untuk template
+            $mataKuliah = [];
+            foreach ($krsData as $mk) {
+                // Skip jika bukan mata kuliah yang diambil
+                if (!$mk->is_diambil && $mk->id_krs_mahasiswa === null) {
+                    continue;
+                }
+
+                $mataKuliah[] = [
+                    'kd_mata_kuliah' => $mk->kd_mata_kuliah ??  '-',
+                    'nama_mata_kuliah' => $mk->nama_mata_kuliah ??  '-',
+                    'sks' => $mk->sks ??  0,
+                    'nama_kelas' => $mk->nama_kelas ?? '-',
+                    'hari' => $hariNames[$mk->hari] ?? '-',
+                    'jam' => $this->formatJam($mk->jam_mulai, $mk->jam_selesai),
+                    'ruang' => $mk->ruang ??  '-',
+                    'nama_dosen' => $mk->nama_dosen ?? '-'
+                ];
+            }
+
+            // Jika tidak ada mata kuliah yang diambil, return error
+            if (count($mataKuliah) == 0) {
+                return response()->json([
+                    'status' => '0',
+                    'keterangan' => 'Tidak ada mata kuliah yang diambil'
+                ], 404);
+            }
+
             // Hitung total SKS
-            $totalSKS = collect($mataKuliahDummy)->sum('sks');
-            $totalMK = count($mataKuliahDummy);
+            $totalSKS = array_sum(array_column($mataKuliah, 'sks'));
+            $totalMK = count($mataKuliah);
 
-            // DUMMY DATA - Komentar
-            $komentarDPS = 'KRS sesuai IP semester lalu (3. 45). Total ' . $totalSKS . ' SKS memenuhi ketentuan.  Disetujui. ';
-            $komentarKaprodi = 'Memenuhi persyaratan kurikulum. Tidak ada konflik jadwal. Disetujui. ';
+            // Komentar dari database atau default
+            $komentarDPS = $firstRecord->komentar_dps ?? '-';
+            $komentarKaprodi = $firstRecord->komentar_kaprodi ?? '-';
 
-            // Data tanggal
-            $tglPengajuan = Carbon::now()->subDays(12)->format('d/m/Y');
-            $tglVerifikasiDPS = Carbon::now()->subDays(8)->format('d/m/Y');
-            $tglVerifikasiKaprodi = Carbon::now()->subDays(5)->format('d/m/Y');
-            $tanggalCetak = Carbon::now()->locale('id')->isoFormat('D MMMM YYYY');
+            // Format tanggal
+            $tglPengajuan = $firstRecord->tgl_pengajuan_krs ?
+                Carbon::parse($firstRecord->tgl_pengajuan_krs)->format('d/m/Y') :
+                Carbon::now()->subDays(12)->format('d/m/Y');
 
-            // Generate QR Codes sebagai PNG dan encode ke base64
+            $tglVerifikasiDPS = $firstRecord->tgl_persetujuan_dps ?
+                Carbon::parse($firstRecord->tgl_persetujuan_dps)->format('d/m/Y') :
+                Carbon::now()->subDays(8)->format('d/m/Y');
+
+            $tglVerifikasiKaprodi = $firstRecord->tgl_persetujuan_kaprodi ?
+                Carbon::parse($firstRecord->tgl_persetujuan_kaprodi)->format('d/m/Y') :
+                Carbon::now()->subDays(5)->format('d/m/Y');
+
+            $tanggalCetak = Carbon::now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY hh:mm');
+
+            // Generate QR Codes sebagai svg dan encode ke base64
             $qrMahasiswa = base64_encode(
                 QrCode::format('svg')
                     ->size(200)
                     ->margin(1)
                     ->errorCorrection('H')
-                    ->generate('MHS|' . $mahasiswaData->nim . '|' . $mahasiswaData->nama_mahasiswa . '|' . $tglPengajuan)
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($mahasiswaData->id_krs)]))
             );
 
             $qrDPS = base64_encode(
@@ -241,22 +255,29 @@ class KRSController extends Controller
                     ->size(200)
                     ->margin(1)
                     ->errorCorrection('H')
-                    ->generate('DPS|' . $mahasiswaData->nidn . '|' . $mahasiswaData->nama_dps . '|' .  $tglVerifikasiDPS)
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($mahasiswaData->id_persetujuan_dps)]))
             );
 
             $qrKaprodi = base64_encode(
-                QrCode::format('svg')
+                QrCode:: format('svg')
                     ->size(200)
                     ->margin(1)
                     ->errorCorrection('H')
-                    ->generate('KPR|' . $mahasiswaData->nidn_kaprodi . '|' . $mahasiswaData->nama_kaprodi . '|' . $tglVerifikasiKaprodi)
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($mahasiswaData->id_persetujuan_kaprodi)]))
             );
+            $logoPath = public_path('image/logo-uij.png');
+            $logoBase64 = '';
+
+            if (file_exists($logoPath)) {
+                $logoData = file_get_contents($logoPath);
+                $logoBase64 = base64_encode($logoData);
+            }
 
             // Data untuk PDF
             $data = [
                 'mahasiswa' => $mahasiswaData,
                 'tahun_akademik' => $tahunAkademikAktif,
-                'mata_kuliah' => $mataKuliahDummy,
+                'mata_kuliah' => $mataKuliah,
                 'total_sks' => $totalSKS,
                 'total_mk' => $totalMK,
                 'tanggal_cetak' => $tanggalCetak,
@@ -267,7 +288,8 @@ class KRSController extends Controller
                 'tgl_verifikasi_kaprodi' => $tglVerifikasiKaprodi,
                 'qr_mahasiswa' => $qrMahasiswa,
                 'qr_dps' => $qrDPS,
-                'qr_kaprodi' => $qrKaprodi
+                'qr_kaprodi' => $qrKaprodi,
+                'logo' => $logoBase64
             ];
 
             // Generate PDF
@@ -285,166 +307,121 @@ class KRSController extends Controller
             ]);
 
             // Download dengan nama file
-            $filename = 'KRS_' .  $mahasiswaData->nim .  '_' . str_replace('/', '-', $tahunAkademikAktif->nama) . '.pdf';
+            $filename = 'KRS_' .  $mahasiswaData->nim . '_' . str_replace('/', '-', $tahunAkademikAktif->nama) . '_' . $tahunAkademikAktif->semester . '.pdf';
 
             return $pdf->download($filename);
 
         } catch (\Exception $e) {
             return response()->json([
                 'status' => '0',
-                'keterangan' => 'Terjadi kesalahan saat generate PDF:  ' . $e->getMessage()
+                'keterangan' => 'Terjadi kesalahan saat generate PDF: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Preview KRS (untuk testing di browser)
+     * Helper function untuk parse tahun akademik
+     * Format input: "20251" -> Output: ['nama' => '2024/2025', 'semester' => 'Ganjil']
+     *
+     * @param string $tahunAkademik Format: "20251" (4 digit tahun + 1 digit semester)
+     * @return array ['nama' => string, 'semester' => string]
      */
-    public function previewKRS(Request $request)
+    private function parseTahunAkademik($tahunAkademik)
     {
-        try {
-            // DUMMY DATA - Data Mahasiswa
-            $mahasiswaData = (object) [
-                'nim' => '2021001234',
-                'nama_mahasiswa' => 'Ahmad Rizki Pratama',
-                'angkatan' => '2021',
-                'nama_prodi' => 'Teknik Informatika',
-                'jenjang' => 'S1',
-                'nama_dps' => 'Dr.  Budi Santoso, M. Kom',
-                'nidn' => '0123456789',
-                'nama_kaprodi' => 'Prof. Dr.  Ir. Siti Aminah, M.T',
-                'nidn_kaprodi' => '0987654321'
-            ];
+        // Default values
+        $result = [
+            'nama' => '2024/2025',
+            'semester' => 'Ganjil'
+        ];
 
-            $tahunAkademikAktif = (object) [
-                'id' => 1,
-                'nama' => '2024/2025',
-                'semester' => 'Ganjil',
-                'is_active' => 1
-            ];
-
-            $mataKuliahDummy = [
-                [
-                    'kd_mata_kuliah' => 'TIF301',
-                    'nama_mata_kuliah' => 'Algoritma dan Pemrograman',
-                    'sks' => 3,
-                    'nama_kelas' => 'A',
-                    'hari' => 'Senin',
-                    'jam' => '08:00-10:30',
-                    'ruang' => 'Lab 1',
-                    'nama_dosen' => 'Dr. Andi Wijaya, M.Kom'
-                ],
-                [
-                    'kd_mata_kuliah' => 'TIF302',
-                    'nama_mata_kuliah' => 'Struktur Data',
-                    'sks' => 3,
-                    'nama_kelas' => 'A',
-                    'hari' => 'Selasa',
-                    'jam' => '13:00-15:30',
-                    'ruang' => 'Lab 2',
-                    'nama_dosen' => 'Prof. Siti Nurhaliza, M. T'
-                ],
-                [
-                    'kd_mata_kuliah' => 'TIF303',
-                    'nama_mata_kuliah' => 'Basis Data',
-                    'sks' => 3,
-                    'nama_kelas' => 'B',
-                    'hari' => 'Rabu',
-                    'jam' => '08:00-10:30',
-                    'ruang' => 'Lab DB',
-                    'nama_dosen' => 'Ir.  Bambang Hartono, M.Sc'
-                ],
-                [
-                    'kd_mata_kuliah' => 'TIF304',
-                    'nama_mata_kuliah' => 'Pemrograman Web',
-                    'sks' => 3,
-                    'nama_kelas' => 'A',
-                    'hari' => 'Kamis',
-                    'jam' => '10:30-13:00',
-                    'ruang' => 'Lab MM',
-                    'nama_dosen' => 'Dra. Rina Kusumawati, M. Kom'
-                ],
-                [
-                    'kd_mata_kuliah' => 'TIF305',
-                    'nama_mata_kuliah' => 'Sistem Operasi',
-                    'sks' => 3,
-                    'nama_kelas' => 'A',
-                    'hari' => 'Jumat',
-                    'jam' => '08:00-10:30',
-                    'ruang' => 'Lab 3',
-                    'nama_dosen' => 'Dr. Hendra Saputra, M.T'
-                ],
-                [
-                    'kd_mata_kuliah' => 'UNV201',
-                    'nama_mata_kuliah' => 'Bahasa Inggris Teknik',
-                    'sks' => 2,
-                    'nama_kelas' => 'C',
-                    'hari' => 'Sabtu',
-                    'jam' => '08:00-09:40',
-                    'ruang' => 'R. 201',
-                    'nama_dosen' => 'Lisa Anderson, M. A'
-                ]
-            ];
-
-            $totalSKS = collect($mataKuliahDummy)->sum('sks');
-            $totalMK = count($mataKuliahDummy);
-
-            $komentarDPS = 'KRS sesuai IP semester lalu (3.45). Total ' . $totalSKS .  ' SKS memenuhi ketentuan. Disetujui. ';
-            $komentarKaprodi = 'Memenuhi persyaratan kurikulum. Tidak ada konflik jadwal. Disetujui. ';
-
-            $tglPengajuan = Carbon::now()->subDays(12)->format('d/m/Y');
-            $tglVerifikasiDPS = Carbon::now()->subDays(8)->format('d/m/Y');
-            $tglVerifikasiKaprodi = Carbon::now()->subDays(5)->format('d/m/Y');
-            $tanggalCetak = Carbon::now()->locale('id')->isoFormat('D MMMM YYYY');
-
-            $qrMahasiswa = base64_encode(
-                QrCode::format('svg')
-                    ->size(200)
-                    ->margin(1)
-                    ->errorCorrection('H')
-                    ->generate('MHS|' . $mahasiswaData->nim . '|' . $mahasiswaData->nama_mahasiswa . '|' . $tglPengajuan)
-            );
-
-            $qrDPS = base64_encode(
-                QrCode::format('svg')
-                    ->size(200)
-                    ->margin(1)
-                    ->errorCorrection('H')
-                    ->generate('DPS|' .  $mahasiswaData->nidn . '|' . $mahasiswaData->nama_dps .  '|' . $tglVerifikasiDPS)
-            );
-
-            $qrKaprodi = base64_encode(
-                QrCode::format('svg')
-                    ->size(200)
-                    ->margin(1)
-                    ->errorCorrection('H')
-                    ->generate('KPR|' .  $mahasiswaData->nidn_kaprodi . '|' . $mahasiswaData->nama_kaprodi . '|' . $tglVerifikasiKaprodi)
-            );
-
-            $data = [
-                'mahasiswa' => $mahasiswaData,
-                'tahun_akademik' => $tahunAkademikAktif,
-                'mata_kuliah' => $mataKuliahDummy,
-                'total_sks' => $totalSKS,
-                'total_mk' => $totalMK,
-                'tanggal_cetak' => $tanggalCetak,
-                'komentar_dps' => $komentarDPS,
-                'komentar_kaprodi' => $komentarKaprodi,
-                'tgl_pengajuan' => $tglPengajuan,
-                'tgl_verifikasi_dps' => $tglVerifikasiDPS,
-                'tgl_verifikasi_kaprodi' => $tglVerifikasiKaprodi,
-                'qr_mahasiswa' => $qrMahasiswa,
-                'qr_dps' => $qrDPS,
-                'qr_kaprodi' => $qrKaprodi
-            ];
-
-            return view('mahasiswa_page.akademik.krs.pdf', $data);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => '0',
-                'keterangan' => 'Terjadi kesalahan:  ' . $e->getMessage()
-            ], 500);
+        // Validasi input
+        if (empty($tahunAkademik) || strlen($tahunAkademik) != 5) {
+            return $result;
         }
+
+        // Parse tahun (4 digit pertama)
+        $tahun = substr($tahunAkademik, 0, 4);
+
+        // Parse semester (1 digit terakhir)
+        $semesterCode = substr($tahunAkademik, 4, 1);
+
+        // Convert tahun ke format "YYYY/(YYYY+1)"
+        $tahunInt = intval($tahun);
+        $tahunBerikutnya = $tahunInt + 1;
+        $namaTahun = $tahunInt .  '/' . $tahunBerikutnya;
+
+        // Convert semester code ke nama
+        $namaSemester = 'Ganjil'; // default
+        switch ($semesterCode) {
+            case '1':
+                $namaSemester = 'Ganjil';
+                break;
+            case '2':
+                $namaSemester = 'Genap';
+                break;
+            case '3':
+                $namaSemester = 'Antara';
+                break;
+            default:
+                $namaSemester = 'Ganjil';
+        }
+
+        return [
+            'nama' => $namaTahun,
+            'semester' => $namaSemester
+        ];
+    }
+
+    /**
+     * Helper function untuk format jam
+     *
+     * @param string $jam_mulai Format: "08:00: 00"
+     * @param string $jam_selesai Format: "10:00:00"
+     * @return string Format: "08:00-10:00"
+     */
+    private function formatJam($jam_mulai, $jam_selesai)
+    {
+        if (! $jam_mulai || !$jam_selesai) {
+            return '-';
+        }
+
+        // Format jam dari 08:00:00 menjadi 08:00
+        $mulai = substr($jam_mulai, 0, 5);
+        $selesai = substr($jam_selesai, 0, 5);
+        return $mulai . '-' . $selesai;
+    }
+
+    /**
+     * Helper function untuk parse angkatan dari NIM
+     * 2 digit pertama NIM = tahun angkatan
+     *
+     * @param string $nim NIM mahasiswa
+     * @return string Angkatan 4 digit (contoh: "2025")
+     */
+    private function getAngkatanFromNIM($nim)
+    {
+        // Default angkatan
+        $defaultAngkatan = date('Y');
+
+        // Validasi NIM minimal 2 karakter
+        if (empty($nim) || strlen($nim) < 2) {
+            return $defaultAngkatan;
+        }
+
+        // Ambil 2 digit pertama
+        $tahunDuaDigit = substr($nim, 0, 2);
+
+        // Convert ke integer
+        $tahunInt = intval($tahunDuaDigit);
+
+        // Tentukan abad (20xx atau 19xx)
+        // Asumsi: 00-50 = 2000-2050, 51-99 = 1951-1999
+        if ($tahunInt >= 0 && $tahunInt <= 50) {
+            $angkatan = 2000 + $tahunInt;
+        } else {
+            $angkatan = 1900 + $tahunInt;
+        }
+
+        return (string) $angkatan;
     }
 }

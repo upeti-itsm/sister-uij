@@ -19,14 +19,18 @@ class TanggunganController extends Controller
     {
         try {
             $request->validate([
-                'status_lunas' => 'required',
+                'status_lunas' => 'required|nullable',
             ]);
             // Set default values untuk filter
             $nim = Session::get('user')->nim;
+            $status = null;
+            if ($request->status_lunas != "0") {
+                $status = $request->status_lunas;
+            }
             $length = $request->length ?? 10;
             $start = $request->start ?? 0;
             $search = $request->search_value;
-            $data_ = TanggunganMahasiswa::get_daftar_tanggungan($nim, $search, $length, $start, $request->status_lunas);
+            $data_ = TanggunganMahasiswa::get_daftar_tanggungan($nim, $search, $length, $start, $status);
             $data = [
                 'draw' => intval($request->draw ?? 1),
                 'recordsTotal' => 0,
@@ -112,5 +116,31 @@ class TanggunganController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function callback_va(Request $request)
+    {
+        $request->validate([
+            'idTagihan' => 'required',
+            'virtualAccountNo' => 'required',
+            'virtualAccountStatus' => 'required',
+        ]);
+        $data['responseCode'] = 200;
+        $data['responseMessage'] = "Ini Pesan Callback VA";
+        $data['idTagihan'] = "Ini ID";
+        return response()->json($data);
+    }
+
+    public function callback_payment(Request $request)
+    {
+        $request->validate([
+            'idTagihan' => 'required',
+            'jumlah' => 'required',
+            'tanggalTransaksi' => 'required',
+        ]);
+        $data['responseCode'] = 200;
+        $data['responseMessage'] = "Ini Pesan Callback Payment";
+        $data['idTagihan'] = "Ini ID";
+        return response()->json($data);
     }
 }

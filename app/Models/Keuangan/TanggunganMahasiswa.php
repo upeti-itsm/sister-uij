@@ -10,7 +10,7 @@ class TanggunganMahasiswa extends Model
 {
     use HasFactory;
 
-    public static function get_daftar_tanggungan($nim, $search = "", $limit = 10, $offset = -1, $is_lunas = false)
+    public static function get_daftar_tanggungan($nim, $search = "", $limit = 10, $offset = -1, $is_lunas = null)
     {
         return DB::select("SELECT * FROM keuangan.get_tagihan_mahasiswa(?,?,?,?,?)", [
             $nim, $search, $limit, $offset, $is_lunas
