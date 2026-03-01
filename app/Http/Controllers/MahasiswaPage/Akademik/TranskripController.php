@@ -43,6 +43,7 @@ class TranskripController extends Controller
             }
 
             $nim    = $user->nim;
+            $kd_prodi    = $user->kd_prodi;
             $status = $request->status ?? null;
             $tahun  = $request->tahun  ?? null;
             $search = $request->search['value'] ?? $request->search ?? '';
@@ -50,7 +51,7 @@ class TranskripController extends Controller
             $length = $request->length ?? 10;
 
             $data_ = PengajuanTranskrip::get_daftar_pengajuan(
-                $nim, $status, $tahun, $search, $start, $length
+                $status, $tahun, $nim, $kd_prodi, $search, $start, $length
             );
 
             $data = [
@@ -184,38 +185,19 @@ class TranskripController extends Controller
                 ], 422);
             }
 
-            // --- Cek pengajuan aktif ---
-            $pengajuanAktif = PengajuanTranskrip::cek_pengajuan_aktif($user->nim);
-            if ($pengajuanAktif) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Anda masih memiliki pengajuan yang sedang diproses (' .
-                        $pengajuanAktif->no_pengajuan . '). ' .
-                        'Selesaikan atau batalkan pengajuan tersebut sebelum mengajukan yang baru.'
-                ], 422);
-            }
-
             $nim          = $user->nim;
             $keperluan    = $request->keperluan;
-            $bahasa       = $request->bahasa;
-            $jumlahLembar = intval($request->jumlah_lembar);
-            $emailTujuan  = $request->email_tujuan ?? null;
-            $catatan      = $request->catatan      ?? null;
 
             // --- Simpan ke DB ---
             $result = PengajuanTranskrip::buat_pengajuan(
                 $nim,
-                $keperluan,
-                $bahasa,
-                $jumlahLembar,
-                $emailTujuan,
-                $catatan
+                $keperluan
             );
 
-            if ($result && $result->status === '1') {
+            if ($result && $result->status === true) {
                 return response()->json([
                     'status'       => '1',
-                    'keterangan'   => 'Pengajuan transkrip berhasil dikirim',
+                    'keterangan'   => $result->keterangan ?? 'Pengajuan transkrip berhasil dikirim',
                     'no_pengajuan' => $result->no_pengajuan ?? '-'
                 ], 200);
             }
@@ -247,7 +229,7 @@ class TranskripController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
             if (!$idPengajuan) {
                 return response()->json([
                     'status'     => '0',
@@ -255,8 +237,7 @@ class TranskripController extends Controller
                 ], 422);
             }
 
-            $detail = PengajuanTranskrip::get_detail($idPengajuan, $user->nim);
-
+            $detail = PengajuanTranskrip::get_detail($idPengajuan);
             if (!$detail) {
                 return response()->json([
                     'status'     => '0',
@@ -265,26 +246,101 @@ class TranskripController extends Controller
             }
 
             // --- Riwayat aktivitas ---
-            $riwayat = PengajuanTranskrip::get_riwayat($idPengajuan);
+//            $riwayat = PengajuanTranskrip::get_riwayat($idPengajuan);
+            $riwayat = [];
 
             return response()->json([
                 'status' => '1',
                 'data'   => [
-                    'id_pengajuan'   => $detail->id_pengajuan,
-                    'no_pengajuan'   => $detail->no_pengajuan,
+                    'id_pengajuan'   => $detail->id_riwayat_pengajuan_nilai,
+                    'nomor_pengajuan'   => $detail->nomor_pengajuan ?? '-',
                     'keperluan'      => $detail->keperluan,
-                    'bahasa'         => $detail->bahasa,
-                    'jumlah_lembar'  => $detail->jumlah_lembar,
-                    'email_tujuan'   => $detail->email_tujuan  ?? '-',
-                    'catatan'        => $detail->catatan        ?? '-',
                     'status'         => $detail->status,
                     'alasan_tolak'   => $detail->alasan_tolak  ?? null,
-                    'tgl_pengajuan'  => $detail->tgl_pengajuan,
+                    'tgl_pengajuan'  => $detail->tgl_created,
                     'tgl_kaprodi'    => $detail->tgl_kaprodi   ?? null,
                     'tgl_dekan'      => $detail->tgl_dekan     ?? null,
                     'tgl_selesai'    => $detail->tgl_selesai   ?? null,
                     'riwayat'        => $riwayat
                 ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'     => '0',
+                'keterangan' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function ajukan_draft(Request $request)
+    {
+        try {
+            $user = Session::get('user');
+            if (!$user) {
+                return response()->json([
+                    'status'     => '0',
+                    'keterangan' => 'Session user tidak ditemukan'
+                ], 401);
+            }
+
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
+            if (!$idPengajuan) {
+                return response()->json([
+                    'status'     => '0',
+                    'keterangan' => 'ID pengajuan tidak valid'
+                ], 422);
+            }
+            $result = PengajuanTranskrip::ajukan_draft($idPengajuan);
+            if ($result && $result->status === 1) {
+                return response()->json([
+                    'status'     => '1',
+                    'keterangan' => $result->keterangan ?? 'Pengajuan transkrip berhasil dibatalkan'
+                ], 200);
+            }
+
+            return response()->json([
+                'status'     => '0',
+                'keterangan' => $result->keterangan ?? 'Gagal membatalkan pengajuan'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'     => '0',
+                'keterangan' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function hapus_draft(Request $request)
+    {
+        try {
+            $user = Session::get('user');
+            if (!$user) {
+                return response()->json([
+                    'status'     => '0',
+                    'keterangan' => 'Session user tidak ditemukan'
+                ], 401);
+            }
+
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
+            if (!$idPengajuan) {
+                return response()->json([
+                    'status'     => '0',
+                    'keterangan' => 'ID pengajuan tidak valid'
+                ], 422);
+            }
+            $result = PengajuanTranskrip::hapus_draft($idPengajuan);
+            if ($result && $result->status === 1) {
+                return response()->json([
+                    'status'     => '1',
+                    'keterangan' => $result->keterangan ?? 'Pengajuan transkrip berhasil dibatalkan'
+                ], 200);
+            }
+
+            return response()->json([
+                'status'     => '0',
+                'keterangan' => $result->keterangan ?? 'Gagal membatalkan pengajuan'
             ], 200);
 
         } catch (\Exception $e) {
@@ -309,46 +365,25 @@ class TranskripController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
             if (!$idPengajuan) {
                 return response()->json([
                     'status'     => '0',
                     'keterangan' => 'ID pengajuan tidak valid'
                 ], 422);
             }
-
-            // --- Pastikan pengajuan milik mahasiswa ini & statusnya bisa dibatalkan ---
-            $detail = PengajuanTranskrip::get_detail($idPengajuan, $user->nim);
-
-            if (!$detail) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak ditemukan'
-                ], 404);
-            }
-
-            $statusBisaBatal = ['draft', 'diajukan'];
-            if (!in_array($detail->status, $statusBisaBatal)) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak dapat dibatalkan karena sudah dalam proses persetujuan (' .
-                        $detail->status . ')'
-                ], 422);
-            }
-
-            $result = PengajuanTranskrip::batalkan_pengajuan($idPengajuan, $user->nim);
-
-            if ($result && $result->status === '1') {
+            $result = PengajuanTranskrip::batalkan_pengajuan($idPengajuan);
+            if ($result && $result->status === 1) {
                 return response()->json([
                     'status'     => '1',
-                    'keterangan' => 'Pengajuan transkrip berhasil dibatalkan'
+                    'keterangan' => $result->keterangan ?? 'Pengajuan transkrip berhasil dibatalkan'
                 ], 200);
             }
 
             return response()->json([
                 'status'     => '0',
                 'keterangan' => $result->keterangan ?? 'Gagal membatalkan pengajuan'
-            ], 500);
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -519,20 +554,6 @@ class TranskripController extends Controller
         if (empty($keperluan) || !in_array($keperluan, $keperluanValid)) {
             return 'Keperluan tidak valid';
         }
-
-        if (empty($bahasa) || !in_array($bahasa, $bahasaValid)) {
-            return 'Bahasa tidak valid';
-        }
-
-        if ($jumlahLembar < 1 || $jumlahLembar > 10) {
-            return 'Jumlah lembar harus antara 1 sampai 10';
-        }
-
-        $emailTujuan = $request->email_tujuan ?? null;
-        if (!empty($emailTujuan) && !filter_var($emailTujuan, FILTER_VALIDATE_EMAIL)) {
-            return 'Format email tujuan tidak valid';
-        }
-
         return true;
     }
 
