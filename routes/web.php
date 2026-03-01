@@ -326,6 +326,33 @@ Route::prefix('mhs/khs')
         Route::post('/matakuliah-belum-lulus', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getMatakuliahBelumLulus'])->name('matakuliah_belum_lulus');
         Route::post('/statistik-nilai', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getStatistikNilai'])->name('statistik_nilai');
     });
+// Pengajuan Transkrip
+Route::prefix('mhs/transkrip')
+    ->middleware('modul:Pengajuan Transkrip Nilai')
+    ->name('mahasiswa.akademik.transkrip.')
+    ->group(function () {
+        // --- Halaman Utama ---
+        Route::get('/', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'index'])
+            ->name('index');
+        // --- DataTable ---
+        Route::post('/json', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'json'])
+            ->name('json');
+        // --- Statistik & Info ---
+        Route::post('/statistik', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'getStatistik'])
+            ->name('statistik');
+        Route::post('/mahasiswa-info', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'getMahasiswaInfo'])
+            ->name('mahasiswa_info');
+        // --- CRUD Pengajuan ---
+        Route::post('/ajukan', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'ajukan'])
+            ->name('ajukan');
+        Route::post('/detail', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'getDetail'])
+            ->name('detail');
+        Route::post('/batalkan', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'batalkan'])
+            ->name('batalkan');
+        // --- Download PDF ---
+        Route::post('/download', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'download'])
+            ->name('download');
+    });
 // Melihat Tanggungan
 Route::get('/mhs/tanggungan', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'index'])->name('mahasiswa.keuangan.tanggungan.index')->middleware('modul:Melihat Tanggungan');
 Route::post('/mhs/tanggungan/json', [\App\Http\Controllers\MahasiswaPage\Akademik\TanggunganController::class, 'json'])->name('mahasiswa.keuangan.tanggungan.json')->middleware('modul:Melihat Tanggungan');
