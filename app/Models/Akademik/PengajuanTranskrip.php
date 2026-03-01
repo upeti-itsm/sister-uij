@@ -5,6 +5,7 @@ namespace App\Models\Akademik;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class PengajuanTranskrip extends Model
 {
@@ -27,19 +28,21 @@ class PengajuanTranskrip extends Model
      * @return array
      */
     public static function get_daftar_pengajuan(
-        $nim,
         $status = null,
         $tahun  = null,
+        $nim = null,
+        $kd_prodi = null,
         $search = '',
-        $offset = 0,
+        $offset = -1,
         $limit  = 10
     ) {
         return DB::select(
-            "SELECT * FROM akademik.get_daftar_pengajuan_transkrip(?,?,?,?,?,?)",
+            "SELECT * FROM akademik.get_list_pengajuan_transkrip_nilai(?,?,?,?,?,?,?)",
             [
-                (string) $nim,
                 $status,
                 $tahun,
+                $nim,
+                $kd_prodi,
                 $search,
                 $offset,
                 $limit
@@ -76,7 +79,7 @@ class PengajuanTranskrip extends Model
     public static function get_info_mahasiswa($nim)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.get_transkrip_mahasiswa(?)",
+            "SELECT * FROM akademik.get_ipk_mahasiswa_by_nim(?)",
             [(string) $nim]
         );
     }
@@ -99,21 +102,15 @@ class PengajuanTranskrip extends Model
      */
     public static function buat_pengajuan(
         $nim,
-        $keperluan,
-        $bahasa,
-        $jumlahLembar,
-        $emailTujuan = null,
-        $catatan     = null
+        $keperluan
     ) {
         return DB::selectOne(
-            "SELECT * FROM akademik.buat_pengajuan_transkrip(?,?,?,?,?,?)",
+            "SELECT * FROM akademik.insup_pengajuan_transkrip_nilai(?,?,?,?)",
             [
+                null,
                 (string) $nim,
                 (string) $keperluan,
-                (string) $bahasa,
-                (int)    $jumlahLembar,
-                $emailTujuan,
-                $catatan
+                '1'
             ]
         );
     }
@@ -123,20 +120,43 @@ class PengajuanTranskrip extends Model
      * Ownership check dilakukan di level DB function (nim harus cocok)
      *
      * @param string|int $idPengajuan
-     * @param string     $nim
      * @return object|null
      */
-    public static function get_detail($idPengajuan, $nim)
+    public static function get_detail($idPengajuan)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.get_detail_pengajuan_transkrip(?,?)",
+            "SELECT * FROM akademik.get_detail_riwayat_transkrip_nilai(?)",
             [
-                $idPengajuan,
-                (string) $nim
+                $idPengajuan
             ]
         );
     }
 
+    public static function ajukan_draft($idPengajuan)
+    {
+        return DB::selectOne(
+            "SELECT * FROM akademik.set_status_pengajuan_transkrip_nilai(?::uuid, ?::character varying, ?::uuid, ?::character varying)",
+            [
+                $idPengajuan,
+                '2',
+                null,
+                ''
+            ]
+        );
+    }
+
+    public static function hapus_draft($idPengajuan)
+    {
+        return DB::selectOne(
+            "SELECT * FROM akademik.set_status_pengajuan_transkrip_nilai(?::uuid, ?::character varying, ?::uuid, ?::character varying)",
+            [
+                $idPengajuan,
+                '0',
+                null,
+                ''
+            ]
+        );
+    }
     /**
      * Batalkan pengajuan transkrip
      * Mengembalikan object dengan field: status, keterangan
@@ -145,13 +165,15 @@ class PengajuanTranskrip extends Model
      * @param string     $nim
      * @return object|null
      */
-    public static function batalkan_pengajuan($idPengajuan, $nim)
+    public static function batalkan_pengajuan($idPengajuan)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.batalkan_pengajuan_transkrip(?,?)",
+            "SELECT * FROM akademik.set_status_pengajuan_transkrip_nilai(?::uuid, ?::character varying, ?::uuid, ?::character varying)",
             [
                 $idPengajuan,
-                (string) $nim
+                '1',
+                null,
+                ''
             ]
         );
     }

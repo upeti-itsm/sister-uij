@@ -212,6 +212,17 @@
             border-radius: 8px;
             margin-bottom: 20px;
         }
+        /* Loading Overlay */
+        #global-loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 @endsection
 
@@ -476,7 +487,7 @@
                     <form id="form-ajukan-transkrip" novalidate>
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="font-weight-bold">
                                         <i class="fas fa-tag mr-1"></i>Keperluan Transkrip
@@ -492,55 +503,6 @@
                                         <option value="Lainnya">Lainnya</option>
                                     </select>
                                     <div class="invalid-feedback">Keperluan wajib dipilih</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">
-                                        <i class="fas fa-language mr-1"></i>Bahasa Transkrip
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-control select2" id="bahasa" name="bahasa" required>
-                                        <option value="">-- Pilih Bahasa --</option>
-                                        <option value="Indonesia">Bahasa Indonesia</option>
-                                        <option value="Inggris">Bahasa Inggris</option>
-                                    </select>
-                                    <div class="invalid-feedback">Bahasa wajib dipilih</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">
-                                        <i class="fas fa-copy mr-1"></i>Jumlah Lembar
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="number" class="form-control" id="jumlah_lembar"
-                                           name="jumlah_lembar" min="1" max="10" value="1" required>
-                                    <small class="text-muted">Maksimal 10 lembar per pengajuan</small>
-                                    <div class="invalid-feedback">Jumlah lembar wajib diisi (1–10)</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">
-                                        <i class="fas fa-envelope mr-1"></i>Email Tujuan
-                                        <span class="text-muted">(Opsional)</span>
-                                    </label>
-                                    <input type="email" class="form-control" id="email_tujuan"
-                                           name="email_tujuan"
-                                           placeholder="email@contoh.com">
-                                    <small class="text-muted">Jika diisi, transkrip akan dikirim via email</small>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">
-                                        <i class="fas fa-sticky-note mr-1"></i>Catatan Tambahan
-                                        <span class="text-muted">(Opsional)</span>
-                                    </label>
-                                    <textarea class="form-control" id="catatan" name="catatan"
-                                              rows="3"
-                                              placeholder="Tuliskan catatan atau informasi tambahan jika diperlukan..."></textarea>
                                 </div>
                             </div>
                         </div>
@@ -613,45 +575,24 @@
 
                     <hr>
 
-                    {{-- Info Detail --}}
+                    <!-- Informasi Detail (Rapi & Sejajar) -->
                     <div class="row">
-                        <div class="col-md-6">
-                            <table class="table table-borderless table-sm">
+                        <div class="col-12">
+                            <table class="table table-borderless table-sm mb-0">
                                 <tr>
-                                    <td width="45%"><strong>Keperluan</strong></td>
-                                    <td width="5%">:</td>
-                                    <td id="detail-keperluan">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Bahasa</strong></td>
-                                    <td>:</td>
-                                    <td id="detail-bahasa">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Jumlah Lembar</strong></td>
-                                    <td>:</td>
-                                    <td id="detail-jumlah-lembar">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Email Tujuan</strong></td>
-                                    <td>:</td>
-                                    <td id="detail-email-tujuan">-</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <table class="table table-borderless table-sm">
-                                <tr>
-                                    <td width="45%"><strong>Tanggal Ajuan</strong></td>
-                                    <td width="5%">:</td>
-                                    <td id="detail-tgl-ajuan">-</td>
+                                    <td width="20%"><strong>Keperluan</strong></td>
+                                    <td width="2%">:</td>
+                                    <td width="28%" id="detail-keperluan">-</td>
+
+                                    <td width="20%"><strong>Tanggal Ajuan</strong></td>
+                                    <td width="2%">:</td>
+                                    <td width="28%" id="detail-tgl-ajuan">-</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Tgl. Kaprodi</strong></td>
                                     <td>:</td>
                                     <td id="detail-tgl-kaprodi">-</td>
-                                </tr>
-                                <tr>
+
                                     <td><strong>Tgl. Dekan</strong></td>
                                     <td>:</td>
                                     <td id="detail-tgl-dekan">-</td>
@@ -660,16 +601,12 @@
                                     <td><strong>Tgl. Selesai</strong></td>
                                     <td>:</td>
                                     <td id="detail-tgl-selesai">-</td>
+
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             </table>
-                        </div>
-                    </div>
-
-                    {{-- Catatan --}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="font-weight-bold">Catatan Mahasiswa:</label>
-                            <p class="text-muted border rounded p-2" id="detail-catatan">-</p>
                         </div>
                     </div>
 
@@ -717,7 +654,30 @@
             </div>
         </div>
     </div>
-
+    {{-- ==================== GLOBAL LOADING OVERLAY ==================== --}}
+    <div id="global-loading-overlay" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+">
+        <div style="
+        background: white;
+        border-radius: 12px;
+        padding: 30px 40px;
+        text-align: center;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    ">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <p class="mt-3 mb-0 font-weight-bold text-dark" id="loading-message">Sedang memproses...</p>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')

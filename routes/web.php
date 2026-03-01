@@ -366,6 +366,10 @@ Route::prefix('mhs/transkrip')
             ->name('ajukan');
         Route::post('/detail', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'getDetail'])
             ->name('detail');
+        Route::post('/ajukan-draft', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'ajukan_draft'])
+            ->name('ajukan-draft');
+        Route::post('/hapus-draft', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'hapus_draft'])
+            ->name('hapus-draft');
         Route::post('/batalkan', [\App\Http\Controllers\MahasiswaPage\Akademik\TranskripController::class, 'batalkan'])
             ->name('batalkan');
         // --- Download PDF ---

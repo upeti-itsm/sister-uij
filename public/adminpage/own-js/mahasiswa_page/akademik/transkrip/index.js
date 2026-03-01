@@ -26,6 +26,7 @@ jQuery.transkrip = {
         }
 
         self.initSelect2();
+        self.initLoadingOverlay();
         self.initDataTable();
         self.setEvents();
         self.loadStatistik();
@@ -43,6 +44,19 @@ jQuery.transkrip = {
                 theme: 'bootstrap4'
             });
         }
+    },
+
+    initLoadingOverlay: function () {
+        var $overlay = $('#global-loading-overlay');
+        $overlay.css('display', 'none');
+
+        $(document)
+            .ajaxStart(function () {
+                $overlay.css('display', 'flex');
+            })
+            .ajaxStop(function () {
+                $overlay.css('display', 'none');
+            });
     },
 
     initDataTable: function () {
@@ -63,9 +77,9 @@ jQuery.transkrip = {
                     type: 'POST',
                     data: function (d) {
                         d._token = $('meta[name="csrf-token"]').attr('content');
-                        d.status  = self.data.filter.status;
-                        d.tahun   = self.data.filter.tahun;
-                        d.search  = self.data.filter.search;
+                        d.status = self.data.filter.status;
+                        d.tahun  = self.data.filter.tahun;
+                        d.search = self.data.filter.search;
                         return d;
                     },
                     dataSrc: function (json) {
@@ -97,8 +111,6 @@ jQuery.transkrip = {
                     },
                     error: function (xhr, error, thrown) {
                         console.error('DataTable Error:', error, thrown);
-                        console.error('Response:', xhr.responseText);
-
                         $.alert({
                             title: 'Error',
                             content: 'Gagal memuat data pengajuan transkrip: ' + (thrown || error),
@@ -109,7 +121,7 @@ jQuery.transkrip = {
                 columns: [
                     // No
                     {
-                        data: null,
+                        data: 'nomor',
                         searchable: false,
                         className: 'text-center',
                         width: '5%',
@@ -119,12 +131,13 @@ jQuery.transkrip = {
                     },
                     // No. Pengajuan
                     {
-                        data: 'no_pengajuan',
+                        data: 'nomor_pengajuan',
                         searchable: true,
                         className: 'text-left',
                         width: '15%',
                         render: function (data) {
-                            return `<strong class="text-primary">${data || '-'}</strong>`;
+                            if (!data) return '-';
+                            return `<strong class="text-primary" title="${data}">${data}</strong>`;
                         }
                     },
                     // Keperluan
@@ -132,30 +145,28 @@ jQuery.transkrip = {
                         data: 'keperluan',
                         searchable: true,
                         className: 'text-left',
-                        width: '20%',
+                        width: '25%',
                         defaultContent: '-'
                     },
-                    // Bahasa
+                    // Program Studi
                     {
-                        data: 'bahasa',
+                        data: 'nama_prodi',
                         searchable: false,
-                        className: 'text-center',
-                        width: '10%',
+                        className: 'text-left',
+                        width: '15%',
                         render: function (data) {
-                            if (!data || data === '-') return '-';
-                            var badgeClass = data === 'Inggris' ? 'badge-info' : 'badge-secondary';
-                            return `<span class="badge ${badgeClass}">${data}</span>`;
+                            if (!data) return '-';
+                            return `<small>${data}</small>`;
                         }
                     },
                     // Tanggal Ajuan
                     {
-                        data: 'tgl_pengajuan',
+                        data: 'tgl_created',
                         searchable: false,
                         className: 'text-center',
                         width: '12%',
                         render: function (data) {
-                            if (!data) return '-';
-                            return self.formatTanggal(data);
+                            return data || '-';
                         }
                     },
                     // Status
@@ -164,18 +175,18 @@ jQuery.transkrip = {
                         searchable: false,
                         className: 'text-center',
                         width: '13%',
-                        render: function (data) {
-                            return self.getBadgeStatus(data);
+                        render: function (data, type, row) {
+                            return self.getBadgeStatus(data, row.keterangan_status);
                         }
                     },
                     // Progress
                     {
-                        data: null,
+                        data: 'status',
                         searchable: false,
                         className: 'text-center',
-                        width: '15%',
+                        width: '10%',
                         render: function (data) {
-                            return self.renderProgressMini(data ? data.status : null);
+                            return self.renderProgressMini(data);
                         }
                     },
                     // Aksi
@@ -187,35 +198,70 @@ jQuery.transkrip = {
                         render: function (data) {
                             if (!data) return '-';
 
+                            var id     = data.id_riwayat_pengajuan_nilai || '';
+                            var id_pengajuan_induk     = data.id_pengajuan_induk || '';
+                            var status = String(data.status);
+                            var noTrk  = data.nomor_pengajuan;
+
+                            // Tombol Detail — selalu tampil
                             var btnDetail = `
                                 <button class="btn btn-info btn-sm btn-detail-pengajuan"
-                                        data-id="${data.id_pengajuan || ''}"
+                                        data-id="${id}"
+                                        data-id_pengajuan_induk="${id_pengajuan_induk}"
                                         title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </button>`;
 
+                            // Tombol Ajukan — hanya status 1 (Draft)
+                            var btnAjukan = '';
+                            if (status === '1') {
+                                btnAjukan = `
+                                    <button class="btn btn-primary btn-sm btn-ajukan-row ml-1"
+                                            data-id="${id}"
+                                            data-no="${noTrk}"
+                                            title="Ajukan Draft">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>`;
+                            }
+
+                            // Tombol Hapus Draft — hanya status 1 (Draft)
+                            var btnHapus = '';
+                            if (status === '1') {
+                                btnHapus = `
+                                    <button class="btn btn-danger btn-sm btn-hapus-draft ml-1"
+                                            data-id="${id}"
+                                            data-no="${noTrk}"
+                                            title="Hapus Draft">
+                                        <i class="fas fa-trash"></i>
+                                    </button>`;
+                            }
+
+                            // Tombol Batalkan — hanya status 2 (Diajukan)
                             var btnBatal = '';
-                            if (data.status === 'diajukan' || data.status === 'draft') {
+                            if (status === '2') {
                                 btnBatal = `
-                                    <button class="btn btn-danger btn-sm btn-batalkan ml-1"
-                                            data-id="${data.id_pengajuan || ''}"
-                                            data-no="${data.no_pengajuan || ''}"
+                                    <button class="btn btn-warning btn-sm btn-batalkan ml-1"
+                                            data-id="${id}"
+                                            data-no="${noTrk}"
                                             title="Batalkan Pengajuan">
                                         <i class="fas fa-ban"></i>
                                     </button>`;
                             }
 
+                            // Tombol Download — hanya status 5 (Disetujui)
                             var btnDownload = '';
-                            if (data.status === 'disetujui') {
+                            if (status === '5') {
                                 btnDownload = `
                                     <button class="btn btn-success btn-sm btn-download-row ml-1"
-                                            data-id="${data.id_pengajuan || ''}"
+                                            data-id="${id}"
                                             title="Download Transkrip">
                                         <i class="fas fa-download"></i>
                                     </button>`;
                             }
 
-                            return `<div class="d-flex justify-content-center">${btnDetail}${btnBatal}${btnDownload}</div>`;
+                            return `<div class="d-flex justify-content-center flex-wrap" style="gap:2px;">
+                                        ${btnDetail}${btnAjukan}${btnHapus}${btnBatal}${btnDownload}
+                                    </div>`;
                         }
                     }
                 ],
@@ -243,8 +289,9 @@ jQuery.transkrip = {
                 processing: true,
                 pageLength: 10,
                 ordering: false,
+                sDom: 'ltipr',
                 lengthChange: true,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
+                lengthMenu: [[10, 25, 50], [10, 25, 50]],
                 autoWidth: false,
                 language: {
                     emptyTable:     "Tidak ada data pengajuan transkrip",
@@ -262,8 +309,6 @@ jQuery.transkrip = {
                     }
                 }
             });
-
-            console.log('DataTable Transkrip initialized successfully');
 
         } catch (e) {
             console.error('Error initializing DataTable:', e);
@@ -298,53 +343,88 @@ jQuery.transkrip = {
             }
         });
 
-        // --- Buka Modal Ajukan ---
+        // --- Buka Modal Buat Draft ---
         $('#btn-ajukan-transkrip').off('click').on('click', function () {
             self.openModalAjukan();
         });
 
-        // --- Simpan Pengajuan ---
+        // --- Simpan sebagai Draft ---
         $('#btn-simpan-ajuan').off('click').on('click', function () {
             self.simpanPengajuan();
         });
 
-        // --- Detail (delegasi — tombol dalam tabel) ---
-        $(document).off('click', '.btn-detail-pengajuan').on('click', '.btn-detail-pengajuan', function (e) {
-            e.stopPropagation();
-            var id = $(this).data('id');
-            self.loadDetailPengajuan(id);
-        });
+        // --- Detail (delegasi) ---
+        $(document).off('click', '.btn-detail-pengajuan')
+            .on('click', '.btn-detail-pengajuan', function (e) {
+                e.stopPropagation();
+                self.loadDetailPengajuan($(this).data('id_pengajuan_induk'));
+            });
 
-        // --- Batalkan (delegasi — tombol dalam tabel) ---
-        $(document).off('click', '.btn-batalkan').on('click', '.btn-batalkan', function (e) {
-            e.stopPropagation();
-            var id = $(this).data('id');
-            var no = $(this).data('no');
-            self.konfirmasiBatalkan(id, no);
-        });
+        // --- Ajukan dari tabel (delegasi) — status 1 → 2 ---
+        $(document).off('click', '.btn-ajukan-row')
+            .on('click', '.btn-ajukan-row', function (e) {
+                e.stopPropagation();
+                var id = $(this).data('id');
+                var no = $(this).data('no');
+                self.konfirmasiAjukan(id, no);
+            });
 
-        // --- Download (delegasi — tombol dalam tabel) ---
-        $(document).off('click', '.btn-download-row').on('click', '.btn-download-row', function (e) {
-            e.stopPropagation();
-            var id = $(this).data('id');
-            self.downloadTranskrip(id);
-        });
+        // --- Hapus Draft dari tabel (delegasi) — status 1 ---
+        $(document).off('click', '.btn-hapus-draft')
+            .on('click', '.btn-hapus-draft', function (e) {
+                e.stopPropagation();
+                var id = $(this).data('id');
+                var no = $(this).data('no');
+                self.konfirmasiHapusDraft(id, no);
+            });
 
-        // --- Download dari modal detail ---
+        // --- Batalkan Pengajuan dari tabel (delegasi) — status 2 ---
+        $(document).off('click', '.btn-batalkan')
+            .on('click', '.btn-batalkan', function (e) {
+                e.stopPropagation();
+                var id = $(this).data('id');
+                var no = $(this).data('no');
+                self.konfirmasiBatalkan(id, no);
+            });
+
+        // --- Download dari tabel (delegasi) ---
+        $(document).off('click', '.btn-download-row')
+            .on('click', '.btn-download-row', function (e) {
+                e.stopPropagation();
+                self.downloadTranskrip($(this).data('id'));
+            });
+
+        // --- Tombol aksi di footer modal detail ---
         $('#btn-download-transkrip').off('click').on('click', function () {
             if (self.data.current_detail) {
-                self.downloadTranskrip(self.data.current_detail.id_pengajuan);
+                self.downloadTranskrip(self.data.current_detail.id_riwayat_pengajuan_nilai);
             }
         });
 
-        // --- Batalkan dari modal detail ---
+        $('#btn-ajukan-pengajuan').off('click').on('click', function () {
+            if (self.data.current_detail) {
+                var d  = self.data.current_detail;
+                var no = d.nomor_pengajuan;
+                $('#modal-detail-pengajuan').modal('hide');
+                self.konfirmasiAjukan(d.id_riwayat_pengajuan_nilai, no);
+            }
+        });
+
+        $('#btn-hapus-draft-pengajuan').off('click').on('click', function () {
+            if (self.data.current_detail) {
+                var d  = self.data.current_detail;
+                var no = 'TRK-' + d.id_riwayat_pengajuan_nilai.substring(0, 8).toUpperCase();
+                $('#modal-detail-pengajuan').modal('hide');
+                self.konfirmasiHapusDraft(d.id_riwayat_pengajuan_nilai, no);
+            }
+        });
+
         $('#btn-batalkan-pengajuan').off('click').on('click', function () {
             if (self.data.current_detail) {
+                var d  = self.data.current_detail;
+                var no = d.nomor_pengajuan ?? '-';
                 $('#modal-detail-pengajuan').modal('hide');
-                self.konfirmasiBatalkan(
-                    self.data.current_detail.id_pengajuan,
-                    self.data.current_detail.no_pengajuan
-                );
+                self.konfirmasiBatalkan(d.id_riwayat_pengajuan_nilai, no);
             }
         });
 
@@ -379,11 +459,7 @@ jQuery.transkrip = {
         $('#filter-tahun').val('').trigger('change');
         $('#filter-search').val('');
 
-        self.data.filter = {
-            status: '',
-            tahun: '',
-            search: ''
-        };
+        self.data.filter = {status: '', tahun: '', search: ''};
 
         if (self.data.table_transkrip) {
             self.data.table_transkrip.ajax.reload();
@@ -400,24 +476,14 @@ jQuery.transkrip = {
         $.ajax({
             url: '/mhs/transkrip/statistik',
             method: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content')
-            },
+            data: {_token: $('meta[name="csrf-token"]').attr('content')},
             success: function (response) {
                 console.log('Statistik transkrip:', response);
-
                 if (response) {
                     $('#stat-total-pengajuan').text(response.total_pengajuan || 0);
-                    $('#stat-diproses').text(response.diproses || 0);
-                    $('#stat-disetujui').text(response.disetujui || 0);
-                    $('#stat-ditolak').text(response.ditolak || 0);
-
-                    self.data.statistik = {
-                        total_pengajuan: response.total_pengajuan || 0,
-                        diproses:        response.diproses        || 0,
-                        disetujui:       response.disetujui       || 0,
-                        ditolak:         response.ditolak         || 0
-                    };
+                    $('#stat-diproses').text(response.diproses             || 0);
+                    $('#stat-disetujui').text(response.disetujui           || 0);
+                    $('#stat-ditolak').text(response.ditolak               || 0);
                 }
             },
             error: function (xhr, status, error) {
@@ -432,16 +498,13 @@ jQuery.transkrip = {
         $.ajax({
             url: '/mhs/transkrip/mahasiswa-info',
             method: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content')
-            },
+            data: {_token: $('meta[name="csrf-token"]').attr('content')},
             success: function (response) {
                 console.log('Mahasiswa info:', response);
-
                 if (response) {
-                    $('#form-nim').text(response.nim  || '-');
-                    $('#form-nama').text(response.nama || '-');
-                    $('#form-prodi').text(response.nama_prodi || '-');
+                    $('#form-nim').text(response.nim           || '-');
+                    $('#form-nama').text(response.nama         || '-');
+                    $('#form-prodi').text(response.nama_prodi  || '-');
                     $('#form-ipk').text(parseFloat(response.ipk || 0).toFixed(2));
                 }
             },
@@ -455,7 +518,7 @@ jQuery.transkrip = {
         var self = this;
 
         if (!id) {
-            $.alert({ title: 'Error', content: 'ID pengajuan tidak valid', type: 'red' });
+            $.alert({title: 'Error', content: 'ID pengajuan tidak valid', type: 'red'});
             return;
         }
 
@@ -463,13 +526,19 @@ jQuery.transkrip = {
             url: '/mhs/transkrip/detail',
             method: 'POST',
             data: {
-                _token:       $('meta[name="csrf-token"]').attr('content'),
-                id_pengajuan: id
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                id_riwayat_pengajuan_nilai: id
             },
             success: function (response) {
-                console.log('Detail pengajuan:', response);
-
                 if (response && response.status === '1') {
+                    var detail = response.data;
+                    if (detail && typeof detail.riwayat === 'string') {
+                        try {
+                            detail.riwayat = JSON.parse(detail.riwayat);
+                        } catch (e) {
+                            detail.riwayat = [];
+                        }
+                    }
                     self.data.current_detail = response.data;
                     self.renderModalDetail(response.data);
                     $('#modal-detail-pengajuan').modal('show');
@@ -482,7 +551,6 @@ jQuery.transkrip = {
                 }
             },
             error: function (xhr, status, error) {
-                console.error('Gagal memuat detail pengajuan:', error);
                 $.alert({
                     title: 'Error',
                     content: 'Gagal memuat detail pengajuan: ' + error,
@@ -493,7 +561,7 @@ jQuery.transkrip = {
     },
 
     // ============================================================
-    // MODAL AJUKAN
+    // MODAL BUAT / EDIT DRAFT
     // ============================================================
 
     openModalAjukan: function () {
@@ -503,61 +571,164 @@ jQuery.transkrip = {
 
     resetFormAjukan: function () {
         $('#form-ajukan-transkrip')[0].reset();
-
-        // Reset select2
         $('#keperluan').val('').trigger('change');
-        $('#bahasa').val('').trigger('change');
-
-        // Reset validation state
         $('#form-ajukan-transkrip .form-control').removeClass('is-invalid is-valid');
-
-        // Reset jumlah lembar default
-        $('#jumlah_lembar').val(1);
     },
 
+    /**
+     * Menyimpan data sebagai DRAFT (status 1).
+     * Endpoint: POST /mhs/transkrip/ajukan
+     */
     simpanPengajuan: function () {
         var self = this;
 
-        // --- Validasi ---
-        if (!self.validateFormAjukan()) {
-            return;
-        }
+        if (!self.validateFormAjukan()) return;
 
         var $btn = $('#btn-simpan-ajuan');
-        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i>Mengirim...');
-
-        var formData = {
-            _token:        $('meta[name="csrf-token"]').attr('content'),
-            keperluan:     $('#keperluan').val(),
-            bahasa:        $('#bahasa').val(),
-            jumlah_lembar: $('#jumlah_lembar').val(),
-            email_tujuan:  $('#email_tujuan').val().trim(),
-            catatan:       $('#catatan').val().trim()
-        };
+        $btn.prop('disabled', true)
+            .html('<i class="fas fa-spinner fa-spin mr-1"></i>Menyimpan...');
 
         $.ajax({
             url: '/mhs/transkrip/ajukan',
             method: 'POST',
-            data: formData,
+            data: {
+                _token:    $('meta[name="csrf-token"]').attr('content'),
+                keperluan: $('#keperluan').val()
+            },
             success: function (response) {
-                $btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i>Kirim Pengajuan');
+                $btn.prop('disabled', false)
+                    .html('<i class="fas fa-save mr-1"></i>Simpan Draft');
 
                 if (response && response.status === '1') {
                     $('#modal-ajukan-transkrip').modal('hide');
 
                     $.alert({
-                        title: 'Berhasil!',
+                        title: 'Draft Tersimpan!',
+                        content: `
+                            <div class="text-center">
+                                <i class="fas fa-file-alt text-primary" style="font-size:3rem;"></i>
+                                <p class="mt-3">Draft pengajuan berhasil disimpan.</p>
+                                <p class="text-muted small">
+                                    Silakan klik tombol <strong>Ajukan</strong>
+                                    pada tabel untuk mengirimkan ke Kaprodi.
+                                </p>
+                            </div>`,
+                        type: 'blue',
+                        onClose: function () {
+                            if (self.data.table_transkrip) {
+                                self.data.table_transkrip.ajax.reload();
+                            }
+                            self.loadStatistik();
+                        }
+                    });
+                } else {
+                    $.alert({
+                        title: 'Gagal',
+                        content: response.keterangan || 'Terjadi kesalahan saat menyimpan draft',
+                        type: 'red'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                $btn.prop('disabled', false)
+                    .html('<i class="fas fa-save mr-1"></i>Simpan Draft');
+
+                var msg = error;
+                try {
+                    var res = JSON.parse(xhr.responseText);
+                    msg = res.keterangan || res.message || error;
+                } catch (e) {}
+
+                $.alert({
+                    title: 'Error',
+                    content: 'Gagal menyimpan draft: ' + msg,
+                    type: 'red'
+                });
+            }
+        });
+    },
+
+    validateFormAjukan: function () {
+        var isValid = true;
+
+        $('#form-ajukan-transkrip .form-control').removeClass('is-invalid');
+
+        if (!$('#keperluan').val()) {
+            $('#keperluan').addClass('is-invalid');
+            isValid = false;
+        }
+
+        if (!isValid) {
+            $.alert({
+                title: 'Perhatian',
+                content: 'Harap lengkapi semua field yang wajib diisi',
+                type: 'orange'
+            });
+        }
+
+        return isValid;
+    },
+
+    // ============================================================
+    // AJUKAN DRAFT → DIAJUKAN (status 1 → 2)
+    // ============================================================
+
+    konfirmasiAjukan: function (id, noPengajuan) {
+        var self = this;
+
+        $.confirm({
+            title: 'Konfirmasi Pengajuan',
+            content: `
+                <div class="text-center">
+                    <i class="fas fa-paper-plane text-primary" style="font-size:2.5rem;"></i>
+                    <p class="mt-3">Ajukan transkrip ini ke Kaprodi?</p>
+                    <p class="text-muted small">
+                        No. Pengajuan: <strong>${noPengajuan || id}</strong>
+                    </p>
+                    <p class="text-info small">
+                        Setelah diajukan, pengajuan tidak dapat diedit.
+                    </p>
+                </div>`,
+            type: 'blue',
+            buttons: {
+                ajukan: {
+                    text: '<i class="fas fa-paper-plane mr-1"></i>Ya, Ajukan',
+                    btnClass: 'btn-primary',
+                    action: function () {
+                        self.ajukanDraft(id);
+                    }
+                },
+                batal: {
+                    text: '<i class="fas fa-times mr-1"></i>Batal',
+                    btnClass: 'btn-secondary'
+                }
+            }
+        });
+    },
+
+    /**
+     * Mengubah status Draft (1) → Diajukan (2).
+     * Endpoint: POST /mhs/transkrip/ajukan-draft
+     */
+    ajukanDraft: function (id) {
+        var self = this;
+
+        $.ajax({
+            url: '/mhs/transkrip/ajukan-draft',
+            method: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                id_riwayat_pengajuan_nilai: id
+            },
+            success: function (response) {
+                if (response && response.status === '1') {
+                    $.alert({
+                        title: 'Berhasil Diajukan!',
                         content: `
                             <div class="text-center">
                                 <i class="fas fa-check-circle text-success" style="font-size:3rem;"></i>
-                                <p class="mt-3">Pengajuan transkrip berhasil dikirim!</p>
-                                <p class="text-muted">
-                                    Nomor Pengajuan: <strong>${response.no_pengajuan || '-'}</strong>
-                                </p>
-                                <p class="text-muted small">
-                                    Pengajuan Anda akan diproses oleh Kaprodi dan Dekan.
-                                    Pantau status di halaman ini.
-                                </p>
+                                <p class="mt-3">Pengajuan transkrip berhasil dikirim ke Kaprodi.</p>
+                                <p class="text-muted small">${response.keterangan || ''}</p>
                             </div>`,
                         type: 'green',
                         onClose: function () {
@@ -570,155 +741,126 @@ jQuery.transkrip = {
                 } else {
                     $.alert({
                         title: 'Gagal',
-                        content: response.keterangan || 'Terjadi kesalahan saat menyimpan pengajuan',
+                        content: response.keterangan || 'Gagal mengajukan draft',
                         type: 'red'
                     });
                 }
             },
             error: function (xhr, status, error) {
-                $btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i>Kirim Pengajuan');
-
-                var msg = error;
-                try {
-                    var res = JSON.parse(xhr.responseText);
-                    msg = res.keterangan || res.message || error;
-                } catch (e) {}
-
                 $.alert({
                     title: 'Error',
-                    content: 'Gagal mengirim pengajuan: ' + msg,
+                    content: 'Gagal mengajukan: ' + error,
                     type: 'red'
                 });
             }
         });
     },
 
-    validateFormAjukan: function () {
-        var isValid = true;
-
-        // Reset
-        $('#form-ajukan-transkrip .form-control').removeClass('is-invalid');
-
-        // Keperluan
-        if (!$('#keperluan').val()) {
-            $('#keperluan').addClass('is-invalid');
-            isValid = false;
-        }
-
-        // Bahasa
-        if (!$('#bahasa').val()) {
-            $('#bahasa').addClass('is-invalid');
-            isValid = false;
-        }
-
-        // Jumlah lembar
-        var jumlah = parseInt($('#jumlah_lembar').val());
-        if (!jumlah || jumlah < 1 || jumlah > 10) {
-            $('#jumlah_lembar').addClass('is-invalid');
-            isValid = false;
-        }
-
-        // Email (opsional, tapi jika diisi harus valid)
-        var email = $('#email_tujuan').val().trim();
-        if (email && !self.isValidEmail(email)) {
-            $('#email_tujuan').addClass('is-invalid');
-            isValid = false;
-        }
-
-        if (!isValid) {
-            $.alert({
-                title: 'Perhatian',
-                content: 'Harap lengkapi semua field yang wajib diisi dengan benar',
-                type: 'orange'
-            });
-        }
-
-        return isValid;
-    },
-
     // ============================================================
-    // MODAL DETAIL
+    // HAPUS DRAFT (status 1)
     // ============================================================
 
-    renderModalDetail: function (data) {
+    konfirmasiHapusDraft: function (id, noPengajuan) {
         var self = this;
 
-        if (!data) return;
+        $.confirm({
+            title: 'Hapus Draft',
+            content: `
+                <div class="text-center">
+                    <i class="fas fa-trash-alt text-danger" style="font-size:2.5rem;"></i>
+                    <p class="mt-3">Hapus draft pengajuan ini secara permanen?</p>
+                    <p class="text-muted small">
+                        No. Pengajuan: <strong>${noPengajuan || id}</strong>
+                    </p>
+                    <p class="text-danger small">Tindakan ini tidak dapat dibatalkan.</p>
+                </div>`,
+            type: 'red',
+            buttons: {
+                hapus: {
+                    text: '<i class="fas fa-trash mr-1"></i>Ya, Hapus',
+                    btnClass: 'btn-danger',
+                    action: function () {
+                        self.hapusDraft(id);
+                    }
+                },
+                batal: {
+                    text: '<i class="fas fa-times mr-1"></i>Batal',
+                    btnClass: 'btn-secondary'
+                }
+            }
+        });
+    },
 
-        // Nomor & status
-        $('#detail-no-pengajuan').text(data.no_pengajuan || '-');
-        $('#detail-status-badge').html(self.getBadgeStatus(data.status));
+    /**
+     * Menghapus draft secara permanen.
+     * Endpoint: POST /mhs/transkrip/hapus-draft
+     */
+    hapusDraft: function (id) {
+        var self = this;
 
-        // Info dasar
-        $('#detail-keperluan').text(data.keperluan || '-');
-        $('#detail-bahasa').text(data.bahasa || '-');
-        $('#detail-jumlah-lembar').text((data.jumlah_lembar || 0) + ' lembar');
-        $('#detail-email-tujuan').text(data.email_tujuan || '-');
-
-        // Tanggal
-        $('#detail-tgl-ajuan').text(self.formatTanggal(data.tgl_pengajuan));
-        $('#detail-tgl-kaprodi').text(data.tgl_kaprodi ? self.formatTanggal(data.tgl_kaprodi) : '-');
-        $('#detail-tgl-dekan').text(data.tgl_dekan ? self.formatTanggal(data.tgl_dekan) : '-');
-        $('#detail-tgl-selesai').text(data.tgl_selesai ? self.formatTanggal(data.tgl_selesai) : '-');
-
-        // Catatan
-        $('#detail-catatan').text(data.catatan || '-');
-
-        // Alasan tolak
-        if (data.status === 'ditolak' && data.alasan_tolak) {
-            $('#detail-alasan-tolak').text(data.alasan_tolak);
-            $('#section-alasan-tolak').show();
-        } else {
-            $('#section-alasan-tolak').hide();
-        }
-
-        // Step indicator
-        $('#detail-step-indicator').html(self.renderStepIndicator(data.status));
-
-        // Timeline
-        $('#detail-timeline').html(self.renderTimeline(data.riwayat || []));
-
-        // Tombol aksi di footer modal
-        if (data.status === 'disetujui') {
-            $('#btn-download-transkrip').removeClass('d-none');
-        } else {
-            $('#btn-download-transkrip').addClass('d-none');
-        }
-
-        if (data.status === 'diajukan' || data.status === 'draft') {
-            $('#btn-batalkan-pengajuan').removeClass('d-none');
-        } else {
-            $('#btn-batalkan-pengajuan').addClass('d-none');
-        }
+        $.ajax({
+            url: '/mhs/transkrip/hapus-draft',
+            method: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                id_riwayat_pengajuan_nilai: id
+            },
+            success: function (response) {
+                if (response && response.status === '1') {
+                    $.alert({
+                        title: 'Draft Dihapus',
+                        content: response.keterangan || 'Draft berhasil dihapus.',
+                        type: 'green',
+                        onClose: function () {
+                            if (self.data.table_transkrip) {
+                                self.data.table_transkrip.ajax.reload();
+                            }
+                            self.loadStatistik();
+                        }
+                    });
+                } else {
+                    $.alert({
+                        title: 'Gagal',
+                        content: response.keterangan || 'Gagal menghapus draft',
+                        type: 'red'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                $.alert({
+                    title: 'Error',
+                    content: 'Gagal menghapus draft: ' + error,
+                    type: 'red'
+                });
+            }
+        });
     },
 
     // ============================================================
-    // BATALKAN PENGAJUAN
+    // BATALKAN PENGAJUAN (status 2 → kembali ke draft / hapus)
     // ============================================================
 
     konfirmasiBatalkan: function (id, noPengajuan) {
         var self = this;
 
         $.confirm({
-            title: 'Konfirmasi Pembatalan',
+            title: 'Batalkan Pengajuan',
             content: `
                 <div class="text-center">
                     <i class="fas fa-exclamation-triangle text-warning" style="font-size:2.5rem;"></i>
-                    <p class="mt-3">
-                        Apakah Anda yakin ingin membatalkan pengajuan transkrip?
-                    </p>
+                    <p class="mt-3">Batalkan pengajuan transkrip ini?</p>
                     <p class="text-muted small">
                         No. Pengajuan: <strong>${noPengajuan || id}</strong>
                     </p>
-                    <p class="text-danger small">
-                        Tindakan ini tidak dapat dibatalkan.
+                    <p class="text-warning small">
+                        Pengajuan akan kembali ke status <strong>Draft</strong>.
                     </p>
                 </div>`,
             type: 'orange',
             buttons: {
-                batal: {
+                batalkan: {
                     text: '<i class="fas fa-ban mr-1"></i>Ya, Batalkan',
-                    btnClass: 'btn-danger',
+                    btnClass: 'btn-warning',
                     action: function () {
                         self.batalkanPengajuan(id);
                     }
@@ -738,14 +880,14 @@ jQuery.transkrip = {
             url: '/mhs/transkrip/batalkan',
             method: 'POST',
             data: {
-                _token:       $('meta[name="csrf-token"]').attr('content'),
-                id_pengajuan: id
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                id_riwayat_pengajuan_nilai: id
             },
             success: function (response) {
                 if (response && response.status === '1') {
                     $.alert({
-                        title: 'Berhasil',
-                        content: 'Pengajuan transkrip berhasil dibatalkan.',
+                        title: 'Pengajuan Dibatalkan',
+                        content: response.keterangan || 'Pengajuan dikembalikan ke status Draft.',
                         type: 'green',
                         onClose: function () {
                             if (self.data.table_transkrip) {
@@ -773,18 +915,14 @@ jQuery.transkrip = {
     },
 
     // ============================================================
-    // DOWNLOAD TRANSKRIP
+    // DOWNLOAD (status 5)
     // ============================================================
 
     downloadTranskrip: function (id) {
-        var self = this;
-
         if (!id) {
-            $.alert({ title: 'Error', content: 'ID pengajuan tidak valid', type: 'red' });
+            $.alert({title: 'Error', content: 'ID pengajuan tidak valid', type: 'red'});
             return;
         }
-
-        console.log('Downloading transkrip for id:', id);
 
         var form = $('<form>', {
             method: 'POST',
@@ -792,17 +930,10 @@ jQuery.transkrip = {
             target: '_blank'
         });
 
-        form.append($('<input>', {
-            type:  'hidden',
-            name:  '_token',
-            value: $('meta[name="csrf-token"]').attr('content')
-        }));
-
-        form.append($('<input>', {
-            type:  'hidden',
-            name:  'id_pengajuan',
-            value: id
-        }));
+        form.append($('<input>', {type: 'hidden', name: '_token',
+            value: $('meta[name="csrf-token"]').attr('content')}));
+        form.append($('<input>', {type: 'hidden', name: 'id_riwayat_pengajuan_nilai',
+            value: id}));
 
         $('body').append(form);
         form.submit();
@@ -810,77 +941,127 @@ jQuery.transkrip = {
 
         setTimeout(function () {
             $.alert({
-                title:   'Download Dimulai',
-                content: 'File transkrip sedang dipersiapkan. Jika download tidak dimulai, silakan coba lagi.',
-                type:    'green'
+                title: 'Download Dimulai',
+                content: 'File transkrip sedang dipersiapkan.',
+                type: 'green'
             });
         }, 1500);
+    },
+
+    // ============================================================
+    // MODAL DETAIL
+    // ============================================================
+
+    renderModalDetail: function (data) {
+        var self = this;
+        if (!data) return;
+
+        var noPengajuan = data.nomor_pengajuan;
+
+        $('#detail-no-pengajuan').text(noPengajuan);
+        $('#detail-status-badge').html(self.getBadgeStatus(data.status, data.keterangan_status));
+
+        $('#detail-keperluan').text(data.keperluan   || '-');
+        $('#detail-tgl-ajuan').text(data.tgl_created || '-');
+        $('#detail-tgl-kaprodi').text(data.tgl_kaprodi || '-');
+        $('#detail-tgl-dekan').text(data.tgl_dekan   || '-');
+        $('#detail-tgl-selesai').text(data.tgl_updated || '-');
+
+        // Alasan tolak
+        if (data.status === '6' && data.alasan_tolak) {
+            $('#detail-alasan-tolak').text(data.alasan_tolak);
+            $('#section-alasan-tolak').show();
+        } else {
+            $('#section-alasan-tolak').hide();
+        }
+
+        $('#detail-step-indicator').html(self.renderStepIndicator(data.status));
+        $('#detail-timeline').html(self.renderTimeline(data.riwayat || []));
+
+        // ---- Tombol footer modal ----
+        var status = String(data.status);
+
+        // Draft (1): tampilkan Ajukan + Hapus Draft
+        $('#btn-ajukan-pengajuan').toggleClass('d-none',      status !== '1');
+        $('#btn-hapus-draft-pengajuan').toggleClass('d-none', status !== '1');
+
+        // Diajukan (2): tampilkan Batalkan
+        $('#btn-batalkan-pengajuan').toggleClass('d-none',    status !== '2');
+
+        // Disetujui (5): tampilkan Download
+        $('#btn-download-transkrip').toggleClass('d-none',    status !== '5');
     },
 
     // ============================================================
     // RENDER HELPERS
     // ============================================================
 
-    getBadgeStatus: function (status) {
-        if (!status) return '<span class="badge badge-secondary">-</span>';
+    /**
+     * Status:
+     * 1 = Draft
+     * 2 = Diajukan
+     * 3 = Proses Kaprodi
+     * 4 = Proses Dekan
+     * 5 = Disetujui
+     * 6 = Ditolak
+     */
+    getBadgeStatus: function (statusKode, keteranganStatus) {
+        if (!statusKode) return '<span class="badge badge-secondary">-</span>';
 
         var map = {
-            'draft':          { cls: 'badge-status-draft',     label: 'Draft',            icon: 'fa-pencil-alt' },
-            'diajukan':       { cls: 'badge-status-diajukan',  label: 'Diajukan',         icon: 'fa-paper-plane' },
-            'proses_kaprodi': { cls: 'badge-status-kaprodi',   label: 'Proses Kaprodi',   icon: 'fa-user-tie' },
-            'proses_dekan':   { cls: 'badge-status-dekan',     label: 'Proses Dekan',     icon: 'fa-user-shield' },
-            'disetujui':      { cls: 'badge-status-disetujui', label: 'Disetujui',        icon: 'fa-check-circle' },
-            'ditolak':        { cls: 'badge-status-ditolak',   label: 'Ditolak',          icon: 'fa-times-circle' }
+            '1': {cls: 'badge-status-draft',      icon: 'fa-file-alt'},
+            '2': {cls: 'badge-status-diajukan',   icon: 'fa-paper-plane'},
+            '3': {cls: 'badge-status-kaprodi',    icon: 'fa-user-tie'},
+            '4': {cls: 'badge-status-dekan',      icon: 'fa-user-shield'},
+            '5': {cls: 'badge-status-disetujui',  icon: 'fa-check-circle'},
+            '6': {cls: 'badge-status-ditolak',    icon: 'fa-times-circle'}
         };
 
-        var s = map[status];
-        if (!s) return `<span class="badge badge-secondary">${status}</span>`;
+        var s     = map[String(statusKode)];
+        var label = keteranganStatus || statusKode;
 
-        return `<span class="badge ${s.cls}"><i class="fas ${s.icon} mr-1"></i>${s.label}</span>`;
+        if (!s) return `<span class="badge badge-secondary">${label}</span>`;
+
+        return `<span class="badge ${s.cls}">
+                    <i class="fas ${s.icon} mr-1"></i>${label}
+                </span>`;
     },
 
-    renderProgressMini: function (status) {
-        // 4 lingkaran kecil: Mahasiswa -> Kaprodi -> Dekan -> Selesai
-        var steps = [
-            { key: 'diajukan',       label: 'M' },
-            { key: 'proses_kaprodi', label: 'K' },
-            { key: 'proses_dekan',   label: 'D' },
-            { key: 'disetujui',      label: '✓' }
-        ];
-
-        var order = ['draft', 'diajukan', 'proses_kaprodi', 'proses_dekan', 'disetujui'];
-        var currentIdx = order.indexOf(status);
-        var isDitolak  = status === 'ditolak';
+    renderProgressMini: function (statusKode) {
+        var steps     = ['M', 'K', 'D', '✓'];
+        // Draft (1) belum ada progress → index -1, Diajukan (2) → step M selesai, dst.
+        var doneUntil = {'1': -1, '2': 0, '3': 1, '4': 2, '5': 3};
+        var doneIdx   = (doneUntil[String(statusKode)] !== undefined)
+            ? doneUntil[String(statusKode)] : -1;
+        var isDitolak = String(statusKode) === '6';
 
         var html = '<div class="d-flex align-items-center justify-content-center" style="gap:2px;">';
 
-        steps.forEach(function (step, i) {
-            var stepIdx = order.indexOf(step.key);
-            var cls, title;
+        steps.forEach(function (label, i) {
+            var cls, color;
 
             if (isDitolak) {
                 cls   = i === 0 ? 'bg-danger' : 'bg-light border';
-                title = i === 0 ? 'Ditolak' : step.label;
-            } else if (currentIdx >= stepIdx) {
+                color = i === 0 ? 'white' : '#999';
+            } else if (i <= doneIdx) {
                 cls   = 'bg-success';
-                title = 'Selesai';
-            } else if (currentIdx === stepIdx - 1) {
+                color = 'white';
+            } else if (i === doneIdx + 1) {
                 cls   = 'bg-primary';
-                title = 'Proses';
+                color = 'white';
             } else {
                 cls   = 'bg-light border';
-                title = 'Menunggu';
+                color = '#999';
             }
 
-            html += `
-                <div class="${cls} rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:22px;height:22px;font-size:0.6rem;color:${cls === 'bg-light border' ? '#999' : 'white'};"
-                     title="${step.label} - ${title}">
-                    ${step.label}
-                </div>`;
+            html += `<div class="${cls} rounded-circle d-flex align-items-center justify-content-center"
+                          style="width:22px;height:22px;font-size:0.6rem;color:${color};">
+                         ${label}
+                     </div>`;
 
             if (i < steps.length - 1) {
-                html += `<div style="width:8px;height:2px;background:${currentIdx > stepIdx ? '#4caf50' : '#e0e0e0'};"></div>`;
+                var lineColor = i < doneIdx ? '#4caf50' : '#e0e0e0';
+                html += `<div style="width:8px;height:2px;background:${lineColor};"></div>`;
             }
         });
 
@@ -888,36 +1069,43 @@ jQuery.transkrip = {
         return html;
     },
 
-    renderStepIndicator: function (status) {
+    renderStepIndicator: function (statusKode) {
         var steps = [
-            { key: 'diajukan',       label: 'Mahasiswa',  icon: 'fa-user' },
-            { key: 'proses_kaprodi', label: 'Kaprodi',    icon: 'fa-user-tie' },
-            { key: 'proses_dekan',   label: 'Dekan',      icon: 'fa-user-shield' },
-            { key: 'disetujui',      label: 'Selesai',    icon: 'fa-check' }
+            {key: '2', label: 'Diajukan', icon: 'fa-paper-plane'},
+            {key: '3', label: 'Kaprodi',  icon: 'fa-user-tie'},
+            {key: '4', label: 'Dekan',    icon: 'fa-user-shield'},
+            {key: '5', label: 'Selesai',  icon: 'fa-check'}
         ];
 
-        var order     = ['diajukan', 'proses_kaprodi', 'proses_dekan', 'disetujui'];
-        var currentIdx = order.indexOf(status);
-        var isDitolak  = status === 'ditolak';
+        var order      = ['2', '3', '4', '5'];
+        var kode       = String(statusKode);
+        var currentIdx = order.indexOf(kode);   // -1 jika Draft / Ditolak
+        var isDitolak  = kode === '6';
+        var isDraft    = kode === '1';
 
-        var html = '<div class="step-indicator">';
+        var html = '<div class="step-indicator" style="padding:0 12px;gap:4px;">';
 
         steps.forEach(function (step, i) {
             var stepIdx = order.indexOf(step.key);
             var cls;
 
-            if (isDitolak && i === 0) {
-                cls = 'reject';
-            } else if (!isDitolak && currentIdx >= stepIdx) {
+            if (isDraft) {
+                // Semua step belum aktif
+                cls = '';
+            } else if (isDitolak) {
+                cls = stepIdx < currentIdx  ? 'done'
+                    : stepIdx === currentIdx ? 'reject'
+                        : '';
+            } else if (currentIdx >= stepIdx) {
                 cls = 'done';
-            } else if (!isDitolak && currentIdx === stepIdx - 1) {
+            } else if (currentIdx === stepIdx - 1) {
                 cls = 'active';
             } else {
                 cls = '';
             }
 
             html += `
-                <div class="step-item ${cls}">
+                <div class="step-item ${cls}" style="min-width:60px;">
                     <div class="step-circle"><i class="fas ${step.icon}"></i></div>
                     <div class="step-label">${step.label}</div>
                 </div>`;
@@ -929,34 +1117,42 @@ jQuery.transkrip = {
 
     renderTimeline: function (riwayat) {
         if (!riwayat || riwayat.length === 0) {
-            return '<div class="text-muted text-center py-3"><i class="fas fa-info-circle mr-2"></i>Tidak ada riwayat aktivitas</div>';
+            return `<div class="text-muted text-center py-3">
+                    <i class="fas fa-info-circle mr-2"></i>Tidak ada riwayat aktivitas
+                </div>`;
         }
 
-        var self = this;
         var html = '';
 
         riwayat.forEach(function (item) {
             var clsMap = {
-                'diajukan':       'active',
-                'proses_kaprodi': 'warning',
-                'proses_dekan':   'warning',
-                'disetujui':      'success',
-                'ditolak':        'danger',
-                'dibatalkan':     'danger'
+                '1': '',
+                '2': 'active',
+                '3': 'warning',
+                '4': 'warning',
+                '5': 'success',
+                '6': 'danger'
             };
 
-            var cls     = clsMap[item.status] || '';
-            var tanggal = item.tgl_aktivitas ? self.formatTanggal(item.tgl_aktivitas, true) : '-';
+            var cls     = clsMap[String(item.status)] || '';
+            // ← gunakan tgl_created sesuai struktur DB
+            var tanggal = item.tgl_created || '-';
+            // ← gunakan komentar_persetujuan sebagai catatan
+            var catatan = item.komentar_persetujuan || '';
 
             html += `
-                <div class="timeline-item ${cls}">
-                    <div class="d-flex justify-content-between">
-                        <strong>${item.keterangan || item.status || '-'}</strong>
-                        <small class="text-muted">${tanggal}</small>
-                    </div>
-                    ${item.nama_user ? `<small class="text-muted">oleh: ${item.nama_user}</small>` : ''}
-                    ${item.catatan   ? `<p class="mb-0 mt-1 small text-muted">${item.catatan}</p>` : ''}
-                </div>`;
+            <div class="timeline-item ${cls}">
+                <div class="d-flex justify-content-between">
+                    <strong>${item.keterangan_status || '-'}</strong>
+                    <small class="text-muted">${tanggal}</small>
+                </div>
+                ${item.nama_user
+                ? `<small class="text-muted">oleh: ${item.nama_user}</small>`
+                : ''}
+                ${catatan
+                ? `<p class="mb-0 mt-1 small text-muted">${catatan}</p>`
+                : ''}
+            </div>`;
         });
 
         return html;
@@ -966,35 +1162,6 @@ jQuery.transkrip = {
     // UTILITY
     // ============================================================
 
-    formatTanggal: function (tanggal, withTime) {
-        if (!tanggal) return '-';
-
-        try {
-            if (typeof moment !== 'undefined') {
-                var fmt = withTime ? 'D MMM YYYY HH:mm' : 'D MMM YYYY';
-                return moment(tanggal).locale('id').format(fmt);
-            }
-
-            // Fallback tanpa moment
-            var d = new Date(tanggal);
-            if (isNaN(d.getTime())) return tanggal;
-
-            var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-            var result = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-
-            if (withTime) {
-                var hh = String(d.getHours()).padStart(2, '0');
-                var mm = String(d.getMinutes()).padStart(2, '0');
-                result += ' ' + hh + ':' + mm;
-            }
-
-            return result;
-
-        } catch (e) {
-            return tanggal;
-        }
-    },
-
     isValidEmail: function (email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
@@ -1002,6 +1169,5 @@ jQuery.transkrip = {
 
 // Initialize when document ready
 jQuery(document).ready(function () {
-    console.log('Document ready, initializing Transkrip module...');
     jQuery.transkrip.init();
 });
