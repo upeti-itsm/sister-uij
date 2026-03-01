@@ -674,7 +674,9 @@
                             array_key_exists('Konsentrasi Jurusan', $modul) ||
                             array_key_exists('Pengelolaan Jenis Matakuliah', $modul) ||
                             array_key_exists('Pengelolaan Jenis Pengajaran', $modul) ||
-                            array_key_exists('Pengaturan SKS', $modul))
+                            array_key_exists('Pengaturan SKS', $modul) ||
+                            array_key_exists('Manajemen Fakultas', $modul) ||
+                            array_key_exists('Manajemen Prodi', $modul))
                         <li @if (
                                 $menu == 'Pengelolaan Matakuliah' ||
                                     $menu == 'Manajemen Kurikulum' ||
@@ -683,7 +685,9 @@
                                     $menu == 'Konsentrasi Jurusan' ||
                                     $menu == 'Pengelolaan Jenis Matakuliah' ||
                                     $menu == 'Pengelolaan Jenis Pengajaran' ||
-                                    $menu == 'Pengaturan SKS') class="mm-active" @endif>
+                                    $menu == 'Pengaturan SKS' ||
+                                    $menu == 'Manajemen Fakultas' ||
+                                    $menu == 'Manajemen Prodi') class="mm-active" @endif>
                             <a class="has-arrow material-ripple" href="#">
                                 <i class="typcn typcn-edit mr-2"></i>
                                 Data Referensi
@@ -734,6 +738,16 @@
                                 @if (array_key_exists('Pengaturan SKS', $modul))
                                     <li @if ($menu == 'Pengaturan SKS') class="mm-active" @endif>
                                         <a href="{{ route('pengaturan_sks.index') }}">Pengaturan SKS</a>
+                                    </li>
+                                @endif
+                                @if (array_key_exists('Manajemen Fakultas', $modul))
+                                    <li @if ($menu == 'Manajemen Fakultas') class="mm-active" @endif>
+                                        <a href="{{ route('manajemen_fakultas.index') }}">Manajemen Fakultas</a>
+                                    </li>
+                                @endif
+                                @if (array_key_exists('Manajemen Prodi', $modul))
+                                    <li @if ($menu == 'Manajemen Prodi') class="mm-active" @endif>
+                                        <a href="{{ route('manajemen_prodi.index') }}">Manajemen Prodi</a>
                                     </li>
                                 @endif
                             </ul>

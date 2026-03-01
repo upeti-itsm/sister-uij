@@ -199,6 +199,24 @@ Route::post('/adm-akademik/perkuliahan/pengaturan-sks/store', [\App\Http\Control
 Route::post('/adm-akademik/perkuliahan/pengaturan-sks/update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\PengaturanSKSController::class, 'update'])->name('pengaturan_sks.update')->middleware('modul:Pengaturan SKS');
 Route::post('/adm-akademik/perkuliahan/pengaturan-sks/delete', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\PengaturanSKSController::class, 'delete'])->name('pengaturan_sks.delete')->middleware('modul:Pengaturan SKS');
 
+// Manajemen Fakultas
+Route::get('/adm-akademik/perkuliahan/manajemen-fakultas', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenProdiController::class, 'index'])->name('manajemen_fakultas.index')->middleware('modul:Manajemen Fakultas');
+
+// Manajemen Prodi
+Route::get('/adm-akademik/perkuliahan/manajemen-prodi', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenProdiController::class, 'index'])->name('manajemen_prodi.index')->middleware('modul:Manajemen Prodi');
+Route::post('/adm-akademik/perkuliahan/manajemen-prodi/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenProdiController::class, 'json_get_daftar_program_studi'])->name('manajemen_prodi.json_get_daftar_program_studi')->middleware('modul:Manajemen Prodi');
+Route::post('/adm-akademik/perkuliahan/manajemen-prodi/json-fakultas', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenProdiController::class, 'json_get_daftar_fakultas'])->name('manajemen_prodi.json_get_daftar_fakultas')->middleware('modul:Manajemen Prodi');
+Route::post('/adm-akademik/perkuliahan/manajemen-prodi/store', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenProdiController::class, 'store'])->name('manajemen_prodi.store')->middleware('modul:Manajemen Prodi');
+Route::post('/adm-akademik/perkuliahan/manajemen-prodi/update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenProdiController::class, 'update'])->name('manajemen_prodi.update')->middleware('modul:Manajemen Prodi');
+Route::post('/adm-akademik/perkuliahan/manajemen-prodi/toggle-status', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenProdiController::class, 'toggle_status'])->name('manajemen_prodi.toggle_status')->middleware('modul:Manajemen Prodi');
+
+// Manajemen Fakultas
+Route::get('/adm-akademik/perkuliahan/manajemen-fakultas', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenFakultasController::class, 'index'])->name('manajemen_fakultas.index')->middleware('modul:Manajemen Fakultas');
+Route::post('/adm-akademik/perkuliahan/manajemen-fakultas/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenFakultasController::class, 'json_get_daftar_fakultas'])->name('manajemen_fakultas.json_get_daftar_fakultas')->middleware('modul:Manajemen Fakultas');
+Route::post('/adm-akademik/perkuliahan/manajemen-fakultas/store', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenFakultasController::class, 'store'])->name('manajemen_fakultas.store')->middleware('modul:Manajemen Fakultas');
+Route::post('/adm-akademik/perkuliahan/manajemen-fakultas/update', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenFakultasController::class, 'update'])->name('manajemen_fakultas.update')->middleware('modul:Manajemen Fakultas');
+Route::post('/adm-akademik/perkuliahan/manajemen-fakultas/toggle-status', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\ManajemenFakultasController::class, 'toggle_status'])->name('manajemen_fakultas.toggle_status')->middleware('modul:Manajemen Fakultas');
+
 // Pengelolaan Matakuliah
 Route::get('/adm-akadmik/perkuliahan/matakuliah', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'index'])->name('matakuliah.index')->middleware('modul:Pengelolaan Matakuliah');
 Route::post('/adm-akadmik/perkuliahan/matakuliah/json', [\App\Http\Controllers\AdminAkademikPage\Perkuliahan\MatakuliahCont::class, 'json'])->name('matakuliah.json')->middleware('modul:Pengelolaan Matakuliah');
