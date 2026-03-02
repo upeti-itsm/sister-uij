@@ -29,13 +29,14 @@ jQuery.khs = {
 
         self.initSelect2();
         self.loadTahunAkademikList();
+        self.loadSemesterList();
         self.initDataTable();
         self.setEvents();
         self.loadData();
         self.loadTranskrip();
     },
 
-    initSelect2: function() {
+    initSelect2: function () {
         if (typeof $.fn.select2 !== 'undefined') {
             $(".select2").select2({
                 width: '100%',
@@ -44,7 +45,7 @@ jQuery.khs = {
         }
     },
 
-    loadTahunAkademikList: function() {
+    loadTahunAkademikList: function () {
         var self = this;
 
         $.ajax({
@@ -53,27 +54,57 @@ jQuery.khs = {
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content')
             },
-            success: function(response) {
+            success: function (response) {
                 console.log('Tahun Akademik List:', response);
 
                 if (response && Array.isArray(response)) {
                     self.data.tahun_akademik_list = response;
 
                     var options = '<option value="">-- Semua Tahun Akademik --</option>';
-                    response.forEach(function(item) {
-                        options += `<option value="${item.id}">${item.nama}</option>`;
+                    response.forEach(function (item) {
+                        options += `<option value="${item.id}">${item.tahun}</option>`;
                     });
 
                     $('#filter-tahun-akademik').html(options);
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.warn('Gagal memuat daftar tahun akademik:', error);
             }
         });
     },
 
-    initDataTable: function() {
+    loadSemesterList: function () {
+        var self = this;
+
+        $.ajax({
+            url: '/mhs/khs/semester-list',
+            method: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                console.log('Semester List:', response);
+
+                if (response && Array.isArray(response)) {
+                    self.data.semester_list = response;
+
+                    var options = '<option value="">-- Semua Semester --</option>';
+                    response.forEach(function (item) {
+                        // item: { id, nama }
+                        options += `<option value="${item.id}">${item.nama}</option>`;
+                    });
+
+                    $('#filter-semester').html(options).trigger('change.select2');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.warn('Gagal memuat daftar semester:', error);
+            }
+        });
+    },
+
+    initDataTable: function () {
         var self = this;
 
         if ($.fn.DataTable.isDataTable('#table-khs')) {
@@ -96,7 +127,7 @@ jQuery.khs = {
                         d.search = self.data.filter.search;
                         return d;
                     },
-                    dataSrc: function(json) {
+                    dataSrc: function (json) {
                         console.log('Received KHS data:', json);
 
                         if (!json || typeof json !== 'object') {
@@ -127,7 +158,7 @@ jQuery.khs = {
 
                         return json.data || [];
                     },
-                    error: function(xhr, error, thrown) {
+                    error: function (xhr, error, thrown) {
                         console.error('DataTable Error:', error, thrown);
                         console.error('Response:', xhr.responseText);
 
@@ -142,58 +173,54 @@ jQuery.khs = {
                     {
                         data: null,
                         searchable: false,
-                        className: 'text-center',
+                        className: 'text-center align-middle',
                         width: "5%",
                         render: function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        // ✅ Mapping: kd_matakuliah (JSON) → kd_mata_kuliah (kolom)
                         data: 'kd_matakuliah',
                         searchable: true,
-                        className: 'text-left',
+                        className: 'text-left align-middle',
                         width: "12%",
-                        render: function(data) {
+                        render: function (data) {
                             return `<strong>${data || '-'}</strong>`;
                         }
                     },
                     {
-                        // ✅ Mapping: matakuliah (JSON) → nama_mata_kuliah (kolom)
                         data: 'matakuliah',
                         searchable: true,
-                        className: 'text-left',
+                        className: 'text-left align-middle',
                         width: "25%",
                         defaultContent: '-'
                     },
                     {
                         data: 'sks',
                         searchable: false,
-                        className: 'text-center',
+                        className: 'text-center align-middle',
                         width: "8%",
-                        render: function(data) {
-                            return `<span class="badge badge-primary">${data || 0}</span>`;
+                        render: function (data) {
+                            return `<span class="font-weight-bold">${data || 0}</span>`;
                         }
                     },
                     {
                         data: 'nilai_angka',
                         searchable: false,
-                        className: 'text-center',
+                        className: 'text-center align-middle',
                         width: "10%",
-                        render: function(data) {
-                            // Jika nilai_angka masih "-", tampilkan "-"
+                        render: function (data) {
                             if (!data || data === '-') return '-';
                             return parseFloat(data).toFixed(2);
                         }
                     },
                     {
-                        // ✅ nilai_huruf — akan diisi nanti, sementara tampilkan "-"
                         data: 'nilai_huruf',
                         searchable: false,
-                        className: 'text-center',
+                        className: 'text-center align-middle',
                         width: "10%",
                         defaultContent: '-',
-                        render: function(data) {
+                        render: function (data) {
                             if (!data || data === '-') return '-';
                             return self.getBadgeNilai(data);
                         }
@@ -201,9 +228,9 @@ jQuery.khs = {
                     {
                         data: 'bobot',
                         searchable: false,
-                        className: 'text-center',
+                        className: 'text-center align-middle',
                         width: "8%",
-                        render: function(data) {
+                        render: function (data) {
                             if (!data || data === '-') return '-';
                             return parseFloat(data).toFixed(2);
                         }
@@ -211,21 +238,20 @@ jQuery.khs = {
                     {
                         data: null,
                         searchable: false,
-                        className: 'text-center',
+                        className: 'text-center align-middle',
                         width: "12%",
-                        render: function(data) {
+                        render: function (data) {
                             if (!data) return '-';
                             var tahunNama = self.parseTahunAkademik(data.tahun_akademik);
                             return `${tahunNama.nama}<br/><small class="text-muted">${tahunNama.semester}</small>`;
                         }
                     },
                     {
-                        // ✅ Kolom Status: menggunakan sts_nilai dari JSON
                         data: 'sts_nilai',
                         searchable: false,
-                        className: 'text-center',
+                        className: 'text-center align-middle',
                         width: "10%",
-                        render: function(data) {
+                        render: function (data) {
                             if (!data || data === '-') {
                                 return '<span class="badge badge-secondary">Belum Ada Nilai</span>';
                             }
@@ -236,7 +262,6 @@ jQuery.khs = {
                             } else if (sts === 'TIDAK LULUS') {
                                 return '<span class="status-tidak-lulus"><i class="fas fa-times-circle mr-1"></i>Tidak Lulus</span>';
                             } else {
-                                // Fallback: jika sts_nilai berisi nilai huruf (E/D = tidak lulus)
                                 if (sts === 'E' || sts === 'D') {
                                     return '<span class="status-tidak-lulus"><i class="fas fa-times-circle mr-1"></i>Tidak Lulus</span>';
                                 }
@@ -245,16 +270,15 @@ jQuery.khs = {
                         }
                     }
                 ],
-                drawCallback: function(settings) {
+                drawCallback: function (settings) {
                     var api = this.api();
                     var data = api.rows().data().toArray();
 
                     var totalSKS = 0;
                     var totalBobot = 0;
 
-                    data.forEach(function(item) {
+                    data.forEach(function (item) {
                         totalSKS += parseInt(item.sks || 0);
-                        // Hitung bobot hanya jika ada nilainya
                         if (item.bobot && item.bobot !== '-') {
                             totalBobot += parseFloat(item.bobot || 0) * parseInt(item.sks || 0);
                         }
@@ -279,13 +303,18 @@ jQuery.khs = {
                         `);
                     }
                 },
+                scrollX: true,
+                autoWidth: false,
+                responsive: false,
                 paging: true,
                 processing: true,
-                pageLength: 25,
-                ordering: false,
-                lengthChange: true,
-                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]],
+                pageLength: 10,
+                ordering: true,
+                order: [[0, 'asc']],
+                lengthChange: false,
+                searching: false,
                 autoWidth: false,
+                dom: 'ltipr',
                 language: {
                     "emptyTable": "Tidak ada data hasil studi",
                     "processing": "Sedang memuat data...",
@@ -315,29 +344,29 @@ jQuery.khs = {
         }
     },
 
-    setEvents: function() {
+    setEvents: function () {
         var self = this;
 
-        $('#btn-filter').off('click').on('click', function() {
+        $('#btn-filter').off('click').on('click', function () {
             self.applyFilter();
         });
 
-        $('#btn-reset-filter').off('click').on('click', function() {
+        $('#btn-reset-filter').off('click').on('click', function () {
             self.resetFilter();
         });
 
-        $('#filter-search').off('keypress').on('keypress', function(event) {
+        $('#filter-search').off('keypress').on('keypress', function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 self.applyFilter();
             }
         });
 
-        $('#btn-download-khs').off('click').on('click', function() {
-            self.downloadKHS();
+        $('#btn-download-lhs').off('click').on('click', function () {
+            self.downloadLHS();
         });
 
-        $(document).off('click', '#table-khs tbody tr').on('click', '#table-khs tbody tr', function() {
+        $(document).off('click', '#table-khs tbody tr').on('click', '#table-khs tbody tr', function () {
             if ($(this).find('.empty-state').length) {
                 return;
             }
@@ -349,7 +378,7 @@ jQuery.khs = {
         });
     },
 
-    applyFilter: function() {
+    applyFilter: function () {
         var self = this;
 
         self.data.filter.tahun_akademik = $('#filter-tahun-akademik').val();
@@ -365,7 +394,7 @@ jQuery.khs = {
         self.updateSemesterInfo();
     },
 
-    resetFilter: function() {
+    resetFilter: function () {
         var self = this;
 
         $('#filter-tahun-akademik').val('').trigger('change');
@@ -385,21 +414,22 @@ jQuery.khs = {
         $('#semester-info').hide();
     },
 
-    loadData: function() {
+    loadData: function () {
         var self = this;
         self.loadCurrentSemesterStats();
     },
 
-    loadCurrentSemesterStats: function() {
+    loadCurrentSemesterStats: function () {
         var self = this;
 
         $.ajax({
             url: '/mhs/khs/current-semester-stats',
             method: 'POST',
             data: {
-                _token: $('meta[name="csrf-token"]').attr('content')
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                tahun_akademik: self.data.filter.tahun_akademik
             },
-            success: function(response) {
+            success: function (response) {
                 console.log('Current semester stats:', response);
 
                 if (response) {
@@ -409,22 +439,23 @@ jQuery.khs = {
                     $('#ipk').text(parseFloat(response.ipk || 0).toFixed(2));
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.warn('Gagal memuat statistik semester:', error);
             }
         });
     },
 
-    loadTranskrip: function() {
+    loadTranskrip: function () {
         var self = this;
 
         $.ajax({
             url: '/mhs/khs/transkrip',
             method: 'POST',
             data: {
-                _token: $('meta[name="csrf-token"]').attr('content')
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                tahun_akademik: self.data.filter.tahun_akademik + self.data.filter.semester
             },
-            success: function(response) {
+            success: function (response) {
                 console.log('Transkrip data:', response);
 
                 if (response) {
@@ -434,13 +465,13 @@ jQuery.khs = {
                     $('#transkrip-ipk').text(parseFloat(response.ipk || 0).toFixed(2));
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.warn('Gagal memuat transkrip:', error);
             }
         });
     },
 
-    updateStatistik: function(data) {
+    updateStatistik: function (data) {
         var self = this;
 
         if (!data) return;
@@ -455,7 +486,7 @@ jQuery.khs = {
         };
     },
 
-    updateSemesterInfo: function() {
+    updateSemesterInfo: function () {
         var self = this;
 
         if (self.data.filter.tahun_akademik || self.data.filter.semester) {
@@ -486,13 +517,13 @@ jQuery.khs = {
         }
     },
 
-    getBadgeNilai: function(nilai) {
+    getBadgeNilai: function (nilai) {
         if (!nilai || nilai === '-') return '-';
 
         var nilaiUpper = nilai.toUpperCase();
         var badgeClass = '';
 
-        switch(nilaiUpper) {
+        switch (nilaiUpper) {
             case 'A':
                 badgeClass = 'badge-nilai-a';
                 break;
@@ -524,7 +555,7 @@ jQuery.khs = {
         return `<span class="badge ${badgeClass}">${nilaiUpper}</span>`;
     },
 
-    parseTahunAkademik: function(tahunAkademik) {
+    parseTahunAkademik: function (tahunAkademik) {
         var result = {
             nama: '-',
             semester: '-'
@@ -552,7 +583,7 @@ jQuery.khs = {
         return result;
     },
 
-    showDetailNilai: function(data) {
+    showDetailNilai: function (data) {
         var self = this;
 
         if (!data) return;
@@ -601,7 +632,7 @@ jQuery.khs = {
         $('#modal-detail-nilai').modal('show');
     },
 
-    downloadKHS: function() {
+    downloadLHS: function () {
         var self = this;
 
         console.log('Downloading KHS...');
@@ -637,7 +668,7 @@ jQuery.khs = {
         form.submit();
         form.remove();
 
-        setTimeout(function() {
+        setTimeout(function () {
             $btn.prop('disabled', false).html('<i class="fas fa-download mr-2"></i>Download KHS');
 
             $.alert({

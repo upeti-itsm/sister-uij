@@ -39,14 +39,40 @@ class KHSController extends Controller
             }
 
             $nim = $user->nim;
-            $tahun_akademik = $request->tahun_akademik ?? null;
-            $semester = $request->semester ?? null;
-            $search = $request->search['value'] ?? $request->search ?? '';
-            $start = $request->start ?? 0;
-            $length = $request->length ?? 10;
 
-            // Get data dari model
-            $data_ = KHS::get_daftar_nilai($nim, $tahun_akademik, $semester, $search, $start, $length);
+            // Ambil filter mentah dari request (default string kosong)
+            $tahun = trim((string) ($request->tahun_akademik ?? ''));
+            $sem   = trim((string) ($request->semester ?? ''));
+
+            /**
+             * Bentuk parameter tahun_akademik untuk function DB:
+             * - Jika tahun & semester kosong => NULL (agar sesuai harapan)
+             * - Jika tahun terisi dan semester terisi => gabung (contoh: 2024 + 1 => 20241)
+             * - Jika hanya tahun terisi (semester kosong) => kirim NULL (umumnya function butuh 5 digit)
+             *   Jika function DB kamu bisa terima tahun saja, ganti jadi: $tahun_akademik = $tahun;
+             */
+            if ($tahun === '' && $sem === '') {
+                $tahun_akademik = "";
+            } elseif ($tahun !== '' && $sem !== '') {
+                $tahun_akademik = $tahun . $sem;
+            } else {
+                // Salah satu kosong -> default null supaya tidak mengirim "" atau format tidak valid
+                $tahun_akademik = null;
+            }
+
+            // Search: kamu handle 2 tipe (DataTables object atau string)
+            $search = '';
+            if (is_array($request->search)) {
+                $search = $request->search['value'] ?? '';
+            } else {
+                $search = $request->search ?? '';
+            }
+
+            $start  = intval($request->start ?? 0);
+            $length = intval($request->length ?? 10);
+
+            $data_ = KHS::get_daftar_nilai($nim, $tahun_akademik, $search, $start, $length);
+
             $data = [
                 'draw' => intval($request->draw ?? 1),
                 'recordsTotal' => 0,
@@ -55,17 +81,16 @@ class KHSController extends Controller
                 'error' => null
             ];
 
-            if (count($data_) > 0) {
+            if (is_array($data_) && count($data_) > 0) {
+                // Kalau function DB mengembalikan jml_record di setiap row
                 $data['recordsTotal'] = $data_[0]->jml_record ?? count($data_);
                 $data['recordsFiltered'] = $data['recordsTotal'];
 
-                // Hitung statistik untuk response
-                $statistik = $this->hitungStatistik($data_);
-                $data['statistik'] = $statistik;
+                // Statistik untuk response (sesuai kode kamu)
+                $data['statistik'] = $this->hitungStatistik($data_);
             }
 
             return response()->json($data, 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'draw' => intval($request->draw ?? 1),
@@ -107,7 +132,38 @@ class KHSController extends Controller
             }
 
             return response()->json($result, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => '0',
+                'keterangan' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
+    public function getSemesterList(Request $request)
+    {
+        try {
+            $user = Session::get('user');
+            if (!$user) {
+                return response()->json([
+                    'status' => '0',
+                    'keterangan' => 'Session user tidak ditemukan'
+                ], 401);
+            }
+
+            $nim = $user->nim;
+
+            $data = KHS::get_semester_list($nim);
+
+            $result = [];
+            foreach ($data as $item) {
+                $result[] = [
+                    'id' => $item->id_semester,
+                    'nama' => $item->semester
+                ];
+            }
+
+            return response()->json($result, 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => '0',
@@ -131,14 +187,14 @@ class KHSController extends Controller
             }
 
             $nim = $user->nim;
+            $tahun_akademik = $request->tahun_akademik ?? null;
 
-            // Get data semester aktif (tahun_akademik = 1 berarti aktif)
-            $data = KHS::get_statistik_semester($nim, '1');
+            $data = KHS::get_statistik_semester($nim, $tahun_akademik);
 
             if ($data) {
                 return response()->json([
-                    'total_mk' => $data->total_mk ?? 0,
-                    'total_sks' => $data->total_sks ?? 0,
+                    'total_mk' => $data->jumlah_matkul ?? 0,
+                    'total_sks' => $data->sks_total ?? 0,
                     'ips' => $data->ips ?? 0.00,
                     'ipk' => $data->ipk ?? 0.00
                 ], 200);
@@ -150,7 +206,6 @@ class KHSController extends Controller
                 'ips' => 0.00,
                 'ipk' => 0.00
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => '0',
@@ -174,15 +229,15 @@ class KHSController extends Controller
             }
 
             $nim = $user->nim;
-            $data = KHS::get_transkrip($nim);
+            $tahun_akademik = $request->tahun_akademik ?? null;
+            $data = KHS::get_statistik_semester($nim, $tahun_akademik);
 
             if ($data) {
                 return response()->json([
-                    'total_sks' => $data->total_sks ?? 0,
-                    'sks_lulus' => $data->sks_lulus ?? 0,
-                    'total_mk' => $data->total_mk ?? 0,
-                    'ipk' => $data->ipk ?? 0.00,
-                    'total_bobot' => $data->total_bobot ?? 0
+                    'total_sks' => $data->sks_semester ?? 0,
+                    'sks_lulus' => $data->sks_total ?? 0,
+                    'total_mk' => $data->jumlah_matkul ?? 0,
+                    'ipk' => $data->ipk ?? 0.00
                 ], 200);
             }
 
@@ -190,10 +245,8 @@ class KHSController extends Controller
                 'total_sks' => 0,
                 'sks_lulus' => 0,
                 'total_mk' => 0,
-                'ipk' => 0.00,
-                'total_bobot' => 0
+                'ipk' => 0.00
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => '0',
@@ -210,132 +263,92 @@ class KHSController extends Controller
         try {
             $user = Session::get('user');
             if (!$user) {
-                return response()->json([
-                    'status' => '0',
-                    'keterangan' => 'Session user tidak ditemukan'
-                ], 401);
+                return response()->json(['status' => '0', 'keterangan' => 'Session user tidak ditemukan'], 401);
             }
 
             $nim = $user->nim;
-            $tahun_akademik = $request->tahun_akademik ?? '1'; // Default semester aktif
-            $semester = $request->semester ?? '';
+            $tahun_akademik = $request->tahun_akademik . $request->semester ?? null;
 
-            // Get data KHS
-            $khsData = KHS::get_daftar_nilai($nim, $tahun_akademik, $semester, '', 0, 10000);
+            $khsData = KHS::get_daftar_nilai($nim, $tahun_akademik);
 
             if (empty($khsData) || count($khsData) == 0) {
-                return response()->json([
-                    'status' => '0',
-                    'keterangan' => 'Data KHS tidak ditemukan'
-                ], 404);
+                return response()->json(['status' => '0', 'keterangan' => 'Data KHS tidak ditemukan'], 404);
             }
 
-            // Data mahasiswa
+            $first = $khsData[0];
+
             $mahasiswaData = (object) [
-                'nim' => $nim,
-                'nama_mahasiswa' => $user->nama_lengkap ?? 'Nama Mahasiswa',
-                'angkatan' => $this->getAngkatanFromNIM($nim) ?? '-',
-                'nama_prodi' => $user->nama_prodi ?? '-',
-                'jenjang' => $user->jenjang ?? 'S1',
-                'nama_dps' => $khsData[0]->nama_dps ?? 'Dosen PA',
-                'nidn' => $khsData[0]->nidn_dps ?? '-'
+                'nim'             => $first->nim,
+                'nama_mahasiswa'  => $first->nama_mahasiswa,
+                'nama_prodi'      => $first->nama_prodi,
+                'nama_fakultas'   => $first->nama_fakultas,
+                'tahun_ajaran'    => $first->tahun_ajaran,
+                'semester'        => $first->semester,
+                'nama_semester'   => $first->nama_semester,
+                'ips'             => $first->ips ?? 0,
+                'ipk'             => $first->ipk ?? 0,
+                'sks_semester'    => $first->sks_semester ?? 0,
+                'sks_total'       => $first->sks_total ?? 0,
+                'beban_maks_sks'  => $first->beban_maks_sks ?? 0,
+                'nama_wakil_dekan' => $first->nama_wakil_dekan ?? '-',
+                'nidn_wakil_dekan' => $first->nidn_wakil_dekan ?? '-',
+                'jumlah_matakuliah' => $first->jumlah_matakuliah ?? 0,
             ];
 
-            // Parse tahun akademik
-            $tahunAkademikParsed = $this->parseTahunAkademik($khsData[0]->tahun_akademik ?? '20251');
-
-            $tahunAkademikInfo = (object) [
-                'id' => $khsData[0]->tahun_akademik ?? '1',
-                'nama' => $tahunAkademikParsed['nama'],
-                'semester' => $tahunAkademikParsed['semester']
-            ];
-
-            // Transform data mata kuliah
             $mataKuliah = [];
             $totalSKS = 0;
-            $totalBobot = 0;
 
             foreach ($khsData as $mk) {
                 $sks = intval($mk->sks ?? 0);
-                $bobot = floatval($mk->bobot ?? 0);
-
                 $mataKuliah[] = [
-                    'kd_mata_kuliah' => $mk->kd_mata_kuliah ?? '-',
-                    'nama_mata_kuliah' => $mk->nama_mata_kuliah ?? '-',
-                    'sks' => $sks,
-                    'nilai_angka' => $mk->nilai_angka ? number_format($mk->nilai_angka, 2) : '-',
-                    'nilai_huruf' => $mk->nilai_huruf ?? '-',
-                    'bobot' => number_format($bobot, 2),
-                    'nama_dosen' => $mk->nama_dosen ?? '-'
+                    'kd_matakuliah'  => $mk->kd_matakuliah ?? '-',
+                    'matakuliah'     => $mk->matakuliah ?? '-',
+                    'sks'            => $sks,
+                    'nilai_angka'    => $mk->nilai_angka ?? '-',
+                    'sts_nilai'      => $mk->sts_nilai ?? '-',
                 ];
-
                 $totalSKS += $sks;
-                $totalBobot += ($bobot * $sks);
             }
 
-            // Hitung IPS
-            $ips = $totalSKS > 0 ? ($totalBobot / $totalSKS) : 0;
-
-            // Get IPK
-            $transkrip = KHS::get_transkrip($nim);
-            $ipk = $transkrip->ipk ?? 0;
-
-            // Generate QR Code
             $qrCode = base64_encode(
                 QrCode::format('svg')
-                    ->size(200)
+                    ->size(150)
                     ->margin(1)
                     ->errorCorrection('H')
-                    ->generate(route('frontpage.verifikasi_khs', ['nim' => base64_encode($nim)]))
+                    ->generate('Halo')
             );
 
-            // Logo
-            $logoPath = public_path('image/logo-uij.png');
+            $logoPath = public_path('image/uij.png');
             $logoBase64 = '';
             if (file_exists($logoPath)) {
-                $logoData = file_get_contents($logoPath);
-                $logoBase64 = base64_encode($logoData);
+                $logoBase64 = base64_encode(file_get_contents($logoPath));
             }
 
-            // Tanggal cetak
-            $tanggalCetak = Carbon::now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY HH:mm');
+            $tanggalCetak = Carbon::now()->timezone('Asia/Jakarta');
 
-            // Data untuk PDF
             $data = [
-                'mahasiswa' => $mahasiswaData,
-                'tahun_akademik' => $tahunAkademikInfo,
-                'mata_kuliah' => $mataKuliah,
-                'total_sks' => $totalSKS,
-                'total_mk' => count($mataKuliah),
-                'ips' => number_format($ips, 2),
-                'ipk' => number_format($ipk, 2),
+                'mahasiswa'    => $mahasiswaData,
+                'mata_kuliah'  => $mataKuliah,
+                'total_sks'    => $totalSKS,
+                'qr_code'      => $qrCode,
+                'logo'         => $logoBase64,
                 'tanggal_cetak' => $tanggalCetak,
-                'qr_code' => $qrCode,
-                'logo' => $logoBase64
             ];
 
-            // Generate PDF
             $pdf = Facade::loadView('mahasiswa_page.akademik.khs.pdf', $data);
             $pdf->setPaper('A4', 'portrait');
             $pdf->setOptions([
                 'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true,
-                'defaultFont' => 'sans-serif',
-                'enable_php' => false
+                'isRemoteEnabled'      => true,
+                'defaultFont'          => 'serif',
+                'enable_php'           => false,
             ]);
 
-            // Nama file
-            $filename = 'KHS_' . $mahasiswaData->nim . '_' .
-                str_replace('/', '-', $tahunAkademikInfo->nama) . '_' .
-                $tahunAkademikInfo->semester . '.pdf';
+            $filename = 'KHS_' . $mahasiswaData->nim . '_' . $mahasiswaData->tahun_ajaran . '.pdf';
 
             return $pdf->download($filename);
-
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => '0',
-                'keterangan' => 'Terjadi kesalahan saat generate PDF: ' . $e->getMessage()
-            ], 500);
+            return response()->json(['status' => '0', 'keterangan' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
 

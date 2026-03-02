@@ -336,6 +336,7 @@ Route::prefix('mhs/khs')
         Route::get('/', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'index'])->name('index');
         Route::post('/json', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'json'])->name('json');
         Route::post('/tahun-akademik-list', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getTahunAkademikList'])->name('tahun_akademik_list');
+        Route::post('/semester-list', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getSemesterList'])->name('semester_list');
         Route::post('/current-semester-stats', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getCurrentSemesterStats'])->name('current_semester_stats');
         Route::post('/transkrip', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getTranskrip'])->name('transkrip');
         Route::post('/download', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'downloadKHS'])->name('download');

@@ -144,7 +144,6 @@
 
         /* Print button */
         #btn-download-khs {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             color: white;
             transition: all 0.3s;
@@ -152,7 +151,6 @@
 
         #btn-download-khs:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
         /* Empty state */
@@ -190,7 +188,7 @@
         <div class="media">
             <div class="header-icon text-success mr-3"><i class="fas fa-chart-line"></i></div>
             <div class="media-body">
-                <h1 class="font-weight-bold">Kartu Hasil Studi</h1>
+                <h1 class="font-weight-bold">Hasil Studi</h1>
                 <small>Halaman ini menampilkan hasil studi dan nilai mata kuliah yang telah diambil</small>
             </div>
         </div>
@@ -198,44 +196,9 @@
 @endsection
 
 @section('body-content')
-    <!-- Statistik Cards -->
-    <div class="col-md-3">
+    <div class="col-md-6">
         <div class="card card-stats statistic-box mb-4">
             <div class="card-header card-header-info card-header-icon position-relative border-0 text-right px-3 py-0">
-                <div class="card-icon d-flex align-items-center justify-content-center">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Total Mata Kuliah</p>
-                <h3 class="card-title fs-21 font-weight-bold" id="total_matakuliah">0</h3>
-            </div>
-            <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-list mr-2 ml-2"></i>Semester Ini
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card card-stats statistic-box mb-4">
-            <div class="card-header card-header-success card-header-icon position-relative border-0 text-right px-3 py-0">
-                <div class="card-icon d-flex align-items-center justify-content-center">
-                    <i class="fas fa-calculator"></i>
-                </div>
-                <p class="card-category text-uppercase fs-10 font-weight-bold text-muted">Total SKS</p>
-                <h3 class="card-title fs-21 font-weight-bold" id="total_sks">0</h3>
-            </div>
-            <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-graduation-cap mr-2 ml-2"></i>Semester Ini
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card card-stats statistic-box mb-4">
-            <div class="card-header card-header-warning card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
                     <i class="fas fa-star"></i>
                 </div>
@@ -243,16 +206,17 @@
                 <h3 class="card-title fs-21 font-weight-bold" id="ips">0.00</h3>
             </div>
             <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-chart-line mr-2 ml-2"></i>IPS
+                <div class="stats d-flex align-items-center">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    <span>IPS</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-6">
         <div class="card card-stats statistic-box mb-4">
-            <div class="card-header card-header-primary card-header-icon position-relative border-0 text-right px-3 py-0">
+            <div class="card-header card-header-success card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
                     <i class="fas fa-trophy"></i>
                 </div>
@@ -260,8 +224,9 @@
                 <h3 class="card-title fs-21 font-weight-bold" id="ipk">0.00</h3>
             </div>
             <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-chart-bar mr-2 ml-2"></i>IPK
+                <div class="stats d-flex align-items-center">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    <span>IPK</span>
                 </div>
             </div>
         </div>
@@ -269,52 +234,56 @@
 
     <!-- Filter Section -->
     <div class="col-md-12">
-        <div class="card">
+        <div class="card mb-2">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="font-weight-bold text-dark">
-                                <i class="fas fa-calendar-alt mr-2"></i>Tahun Akademik
-                            </label>
-                            <select class="form-control select2" id="filter-tahun-akademik">
-                                <option value="">-- Semua Tahun Akademik --</option>
-                                <!-- Will be populated via JavaScript -->
-                            </select>
+
+                <div class="form-row align-items-end">
+
+                    <!-- Tahun Akademik -->
+                    <div class="col-md-3 mb-3">
+                        <label class="font-weight-bold text-dark">
+                            <i class="fas fa-calendar-alt mr-2"></i>Tahun Akademik
+                        </label>
+                        <select class="form-control select2" id="filter-tahun-akademik">
+                            <option value="">-- Semua Tahun Akademik --</option>
+                            <!-- populated via JS -->
+                        </select>
+                    </div>
+
+                    <!-- Semester -->
+                    <div class="col-md-3 mb-3">
+                        <label class="font-weight-bold text-dark">
+                            <i class="fas fa-layer-group mr-2"></i>Semester
+                        </label>
+                        <select class="form-control select2" id="filter-semester">
+                            <option value="">-- Semua Semester --</option>
+                            <!-- populated via JS -->
+                        </select>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="col-md-3 mb-3">
+                        <label class="font-weight-bold text-dark">
+                            <i class="fas fa-search mr-2"></i>Cari Mata Kuliah
+                        </label>
+                        <input type="text" class="form-control" id="filter-search"
+                            placeholder="Cari nama/kode mata kuliah...">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex">
+                            <button class="btn btn-primary flex-fill mr-2" id="btn-filter">
+                                <i class="fas fa-filter mr-1"></i>Terapkan
+                            </button>
+
+                            <button class="btn btn-secondary flex-fill" id="btn-reset-filter">
+                                <i class="fas fa-redo mr-1"></i>Reset
+                            </button>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="font-weight-bold text-dark">
-                                <i class="fas fa-layer-group mr-2"></i>Semester
-                            </label>
-                            <select class="form-control select2" id="filter-semester">
-                                <option value="">-- Semua Semester --</option>
-                                <option value="1">Ganjil</option>
-                                <option value="2">Genap</option>
-                                <option value="3">Antara</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="font-weight-bold text-dark">
-                                <i class="fas fa-search mr-2"></i>Cari Mata Kuliah
-                            </label>
-                            <input type="text" class="form-control" id="filter-search" placeholder="Cari nama/kode mata kuliah...">
-                        </div>
-                    </div>
+
                 </div>
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <button class="btn btn-primary" id="btn-filter">
-                            <i class="fas fa-filter mr-2"></i>Terapkan Filter
-                        </button>
-                        <button class="btn btn-secondary" id="btn-reset-filter">
-                            <i class="fas fa-redo mr-2"></i>Reset
-                        </button>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -344,18 +313,18 @@
     </div>
 
     <!-- Tabel Hasil Studi -->
-    <div class="col-md-12">
+    <div class="col-md-12 mb-4">
         <div class="card">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="fs-17 font-weight-600 mb-0">
-                            <i class="fas fa-table mr-2"></i>Daftar Mata Kuliah & Nilai
+                            <i class="fas fa-table mr-2"></i>Mata Kuliah & Nilai
                         </h6>
                     </div>
                     <div>
-                        <button class="btn btn-success btn-sm" id="btn-download-khs">
-                            <i class="fas fa-download mr-2"></i>Download KHS
+                        <button class="btn btn-sm btn-success" id="btn-download-lhs">
+                            <i class="fas fa-download mr-2"></i>Unduh LHS
                         </button>
                     </div>
                 </div>
@@ -364,36 +333,36 @@
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover table-khs" id="table-khs">
                         <thead class="thead-light">
-                        <tr>
-                            <th class="text-center" width="5%">No</th>
-                            <th width="12%">Kode MK</th>
-                            <th width="25%">Nama Mata Kuliah</th>
-                            <th class="text-center" width="8%">SKS</th>
-                            <th class="text-center" width="10%">Nilai Angka</th>
-                            <th class="text-center" width="10%">Nilai Huruf</th>
-                            <th class="text-center" width="8%">Bobot</th>
-                            <th class="text-center" width="12%">Tahun Akademik</th>
-                            <th class="text-center" width="10%">Status</th>
-                        </tr>
+                            <tr>
+                                <th class="text-center" width="5%">No</th>
+                                <th width="12%">Kode MK</th>
+                                <th width="25%">Nama Mata Kuliah</th>
+                                <th class="text-center" width="8%">SKS</th>
+                                <th class="text-center" width="10%">Nilai Angka</th>
+                                <th class="text-center" width="10%">Nilai Huruf</th>
+                                <th class="text-center" width="8%">Bobot</th>
+                                <th class="text-center" width="12%">Tahun Akademik</th>
+                                <th class="text-center" width="10%">Status</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td colspan="9" class="text-center">
-                                <div class="empty-state">
-                                    <i class="fas fa-inbox"></i>
-                                    <p>Memuat data...</p>
-                                </div>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>Memuat data...</p>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                         <tfoot class="thead-light">
-                        <tr>
-                            <th colspan="3" class="text-right">Total</th>
-                            <th class="text-center" id="footer-total-sks">0</th>
-                            <th colspan="2" class="text-center">IP Semester</th>
-                            <th class="text-center" id="footer-ips">0.00</th>
-                            <th colspan="2"></th>
-                        </tr>
+                            <tr>
+                                <th colspan="3" class="text-right">Total</th>
+                                <th class="text-center" id="footer-total-sks">0</th>
+                                <th colspan="2" class="text-center">IP Semester</th>
+                                <th class="text-center" id="footer-ips">0.00</th>
+                                <th colspan="2"></th>
+                            </tr>
                         </tfoot>
                     </table>
                 </div>
@@ -404,42 +373,47 @@
     <!-- Transkrip Lengkap -->
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header">
                 <h6 class="fs-17 font-weight-600 mb-0">
-                    <i class="fas fa-file-alt mr-2"></i>Transkrip Nilai Lengkap
+                    <i class="fas fa-file-alt mr-2"></i>Transkrip Nilai
                 </h6>
             </div>
+
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
-                        <table class="table table-borderless table-sm">
-                            <tr>
-                                <td width="40%"><strong>Total SKS Tempuh</strong></td>
-                                <td width="5%">:</td>
-                                <td id="transkrip-total-sks">0 SKS</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Total SKS Lulus</strong></td>
-                                <td>:</td>
-                                <td id="transkrip-sks-lulus">0 SKS</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Jumlah Mata Kuliah</strong></td>
-                                <td>:</td>
-                                <td id="transkrip-total-mk">0 Mata Kuliah</td>
-                            </tr>
-                        </table>
+                    <div class="col-md-7">
+                        <div class="border rounded p-3">
+                            <h6 class="mb-3">Ringkasan</h6>
+                            <table class="table table-borderless table-sm mb-0">
+                                <tr>
+                                    <td width="45%"><strong>Total SKS Saat Ini</strong></td>
+                                    <td width="5%">:</td>
+                                    <td id="transkrip-total-sks">0 SKS</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total SKS</strong></td>
+                                    <td>:</td>
+                                    <td id="transkrip-sks-lulus">0 SKS</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Jumlah Mata Kuliah</strong></td>
+                                    <td>:</td>
+                                    <td id="transkrip-total-mk">0 Mata Kuliah</td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="ip-card text-center">
-                            <small>INDEKS PRESTASI KUMULATIF</small>
-                            <h2 id="transkrip-ipk">0.00</h2>
-                            <small>dari skala 4.00</small>
+
+                    <div class="col-md-5 mt-3 mt-md-0">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <small class="text-muted">INDEKS PRESTASI KUMULATIF</small>
+                            <div id="transkrip-ipk" class="display-3 mb-1" style="line-height:1;">0.00</div>
+                            <small class="text-muted">dari skala 4.00</small>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div><!-- /card-body -->
+        </div><!-- /card -->
     </div>
 @endsection
 
