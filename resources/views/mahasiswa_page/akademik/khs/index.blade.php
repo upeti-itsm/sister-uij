@@ -335,12 +335,11 @@
                         <thead class="thead-light">
                             <tr>
                                 <th class="text-center" width="5%">No</th>
-                                <th width="12%">Kode MK</th>
-                                <th width="25%">Nama Mata Kuliah</th>
+                                <th width="16%">Kode MK</th>
+                                <th width="29%">Nama Mata Kuliah</th>
                                 <th class="text-center" width="8%">SKS</th>
                                 <th class="text-center" width="10%">Nilai Angka</th>
                                 <th class="text-center" width="10%">Nilai Huruf</th>
-                                <th class="text-center" width="8%">Bobot</th>
                                 <th class="text-center" width="12%">Tahun Akademik</th>
                                 <th class="text-center" width="10%">Status</th>
                             </tr>
@@ -359,9 +358,8 @@
                             <tr>
                                 <th colspan="3" class="text-right">Total</th>
                                 <th class="text-center" id="footer-total-sks">0</th>
-                                <th colspan="2" class="text-center">IP Semester</th>
+                                <th colspan="3" class="text-center">IP Semester</th>
                                 <th class="text-center" id="footer-ips">0.00</th>
-                                <th colspan="2"></th>
                             </tr>
                         </tfoot>
                     </table>

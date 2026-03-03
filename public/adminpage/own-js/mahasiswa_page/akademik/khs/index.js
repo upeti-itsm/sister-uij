@@ -152,6 +152,21 @@ jQuery.khs = {
                             self.updateStatistik(json.statistik);
                         }
 
+                        // ✅ Hitung total SKS langsung dari data (karena field bobot tidak ada)
+                        var totalSKS = 0;
+                        (json.data || []).forEach(function (item) {
+                            totalSKS += parseInt(item.sks || 0);
+                        });
+
+                        // ✅ IPS dari statistik server
+                        var ips = parseFloat((json.statistik && json.statistik.ips) || 0).toFixed(2);
+
+                        // ✅ Simpan untuk drawCallback
+                        self._footerData = {
+                            totalSKS: totalSKS,
+                            ips: ips
+                        };
+
                         json.recordsTotal = json.recordsTotal || (json.data ? json.data.length : 0);
                         json.recordsFiltered = json.recordsFiltered || json.recordsTotal;
                         json.draw = json.draw || 1;
@@ -183,7 +198,7 @@ jQuery.khs = {
                         data: 'kd_matakuliah',
                         searchable: true,
                         className: 'text-left align-middle',
-                        width: "12%",
+                        width: "16%",
                         render: function (data) {
                             return `<strong>${data || '-'}</strong>`;
                         }
@@ -192,7 +207,7 @@ jQuery.khs = {
                         data: 'matakuliah',
                         searchable: true,
                         className: 'text-left align-middle',
-                        width: "25%",
+                        width: "29%",
                         defaultContent: '-'
                     },
                     {
@@ -223,16 +238,6 @@ jQuery.khs = {
                         render: function (data) {
                             if (!data || data === '-') return '-';
                             return self.getBadgeNilai(data);
-                        }
-                    },
-                    {
-                        data: 'bobot',
-                        searchable: false,
-                        className: 'text-center align-middle',
-                        width: "8%",
-                        render: function (data) {
-                            if (!data || data === '-') return '-';
-                            return parseFloat(data).toFixed(2);
                         }
                     },
                     {
@@ -274,25 +279,15 @@ jQuery.khs = {
                     var api = this.api();
                     var data = api.rows().data().toArray();
 
-                    var totalSKS = 0;
-                    var totalBobot = 0;
+                    var footerData = self._footerData || { totalSKS: 0, ips: '0.00' };
 
-                    data.forEach(function (item) {
-                        totalSKS += parseInt(item.sks || 0);
-                        if (item.bobot && item.bobot !== '-') {
-                            totalBobot += parseFloat(item.bobot || 0) * parseInt(item.sks || 0);
-                        }
-                    });
-
-                    var ips = totalSKS > 0 && totalBobot > 0 ? (totalBobot / totalSKS).toFixed(2) : '0.00';
-
-                    $('#footer-total-sks').text(totalSKS);
-                    $('#footer-ips').text(ips);
+                    $('#footer-total-sks').text(footerData.totalSKS);
+                    $('#footer-ips').text(footerData.ips);
 
                     if (data.length === 0) {
                         $('#table-khs tbody').html(`
                             <tr>
-                                <td colspan="9" class="text-center">
+                                <td colspan="8" class="text-center">
                                     <div class="empty-state">
                                         <i class="fas fa-inbox"></i>
                                         <p>Tidak ada data hasil studi</p>
