@@ -250,7 +250,6 @@ class PengajuanTranskrip extends Model
      * @return array
      */
     public static function get_daftar_pengajuan_kaprodi(
-        $idProdi,
         $status = null,
         $tahun  = null,
         $prodi  = null,
@@ -259,11 +258,11 @@ class PengajuanTranskrip extends Model
         $limit  = 10
     ) {
         return DB::select(
-            "SELECT * FROM akademik.get_daftar_pengajuan_transkrip_kaprodi(?,?,?,?,?,?,?)",
+            "SELECT * FROM akademik.get_list_pengajuan_transkrip_nilai(?,?,?,?,?,?,?)",
             [
-                $idProdi,
                 $status,
                 $tahun,
+                null,
                 $prodi,
                 $search,
                 $offset,
@@ -350,13 +349,14 @@ class PengajuanTranskrip extends Model
      * @param string|null $catatan     Catatan kaprodi (opsional)
      * @return object|null
      */
-    public static function setujui_kaprodi($idPengajuan, $idUser, $catatan = null)
+    public static function setujui_kaprodi($idPengajuan, $catatan = null)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.setujui_pengajuan_transkrip_kaprodi(?,?,?)",
+            "SELECT * FROM akademik.set_status_pengajuan_transkrip_nilai(?::uuid, ?::character varying, ?::uuid, ?::character varying)",
             [
                 $idPengajuan,
-                $idUser,
+                '3',
+                Session::get('user')->id_personal ?? null,
                 $catatan
             ]
         );
@@ -372,14 +372,15 @@ class PengajuanTranskrip extends Model
      * @param string     $alasanTolak Alasan penolakan (wajib)
      * @return object|null
      */
-    public static function tolak_kaprodi($idPengajuan, $idUser, $alasanTolak)
+    public static function tolak_kaprodi($idPengajuan, $alasanTolak)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.tolak_pengajuan_transkrip_kaprodi(?,?,?)",
+            "SELECT * FROM akademik.set_status_pengajuan_transkrip_nilai(?::uuid, ?::character varying, ?::uuid, ?::character varying)",
             [
                 $idPengajuan,
-                $idUser,
-                (string) $alasanTolak
+                '6',
+                Session::get('user')->id_personal ?? null,
+                $alasanTolak
             ]
         );
     }

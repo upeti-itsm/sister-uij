@@ -673,6 +673,5 @@ jQuery.persetujuan_krs_kaprodi = {
 };
 
 jQuery(document).ready(function () {
-    console.log('Document ready, initializing Persetujuan KRS Kaprodi...');
     jQuery.persetujuan_krs_kaprodi.init();
 });

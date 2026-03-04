@@ -40,18 +40,16 @@ class TranskripKaprodiController extends Controller
                 ], 401);
             }
 
-            $idProdi = $user->id_prodi ?? null;
             $status  = $request->status ?? null;
             $tahun   = $request->tahun  ?? null;
-            $prodi   = $request->prodi  ?? null;
+            $prodi   = $user->id_personal  ?? null;
             $search  = $request->search['value'] ?? $request->search ?? '';
             $start   = $request->start  ?? 0;
             $length  = $request->length ?? 10;
 
             $data_ = PengajuanTranskrip::get_daftar_pengajuan_kaprodi(
-                $idProdi, $status, $tahun, $prodi, $search, $start, $length
+                $status, $tahun, $prodi, $search, $start, $length
             );
-
             $data = [
                 'draw'            => intval($request->draw ?? 1),
                 'recordsTotal'    => 0,
@@ -179,7 +177,7 @@ class TranskripKaprodiController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
             if (!$idPengajuan) {
                 return response()->json([
                     'status'     => '0',
@@ -190,7 +188,7 @@ class TranskripKaprodiController extends Controller
             $idProdi = $user->id_prodi ?? null;
 
             // Ownership check: pengajuan harus dari prodi yang diampu kaprodi ini
-            $detail = PengajuanTranskrip::get_detail_kaprodi($idPengajuan, $idProdi);
+            $detail = PengajuanTranskrip::get_detail($idPengajuan);
 
             if (!$detail) {
                 return response()->json([
@@ -199,29 +197,23 @@ class TranskripKaprodiController extends Controller
                 ], 404);
             }
 
-            $riwayat = PengajuanTranskrip::get_riwayat($idPengajuan);
-
             return response()->json([
                 'status' => '1',
                 'data'   => [
-                    'id_pengajuan'   => $detail->id_pengajuan,
-                    'no_pengajuan'   => $detail->no_pengajuan,
+                    'id_riwayat_pengajuan_nilai'   => $detail->id_riwayat_pengajuan_nilai,
+                    'nomor_pengajuan'   => $detail->nomor_pengajuan,
                     'nim'            => $detail->nim,
                     'nama_mahasiswa' => $detail->nama_mahasiswa  ?? '-',
                     'nama_prodi'     => $detail->nama_prodi      ?? '-',
                     'ipk'            => $detail->ipk             ?? 0.00,
                     'keperluan'      => $detail->keperluan,
-                    'bahasa'         => $detail->bahasa,
-                    'jumlah_lembar'  => $detail->jumlah_lembar,
-                    'email_tujuan'   => $detail->email_tujuan    ?? '-',
-                    'catatan'        => $detail->catatan          ?? '-',
                     'status'         => $detail->status,
                     'alasan_tolak'   => $detail->alasan_tolak    ?? null,
-                    'tgl_pengajuan'  => $detail->tgl_pengajuan,
+                    'tgl_pengajuan'  => $detail->tgl_created,
                     'tgl_kaprodi'    => $detail->tgl_kaprodi     ?? null,
                     'tgl_dekan'      => $detail->tgl_dekan       ?? null,
                     'tgl_selesai'    => $detail->tgl_selesai     ?? null,
-                    'riwayat'        => $riwayat
+                    'riwayat'        => $detail->riwayat_ajuan
                 ]
             ], 200);
 
@@ -301,7 +293,7 @@ class TranskripKaprodiController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
             if (!$idPengajuan) {
                 return response()->json([
                     'status'     => '0',
@@ -309,34 +301,13 @@ class TranskripKaprodiController extends Controller
                 ], 422);
             }
 
-            $idProdi = $user->id_prodi  ?? null;
-            $idUser  = $user->id_user   ?? null;
             $catatan = $request->catatan ?? null;
+            $result = PengajuanTranskrip::setujui_kaprodi($idPengajuan, $catatan);
 
-            // Ownership + status check
-            $detail = PengajuanTranskrip::get_detail_kaprodi($idPengajuan, $idProdi);
-
-            if (!$detail) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak ditemukan atau bukan wewenang Anda'
-                ], 404);
-            }
-
-            if ($detail->status !== 'diajukan') {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak dapat disetujui karena status saat ini adalah "' .
-                        $detail->status . '"'
-                ], 422);
-            }
-
-            $result = PengajuanTranskrip::setujui_kaprodi($idPengajuan, $idUser, $catatan);
-
-            if ($result && $result->status === '1') {
+            if ($result && $result->status === 1) {
                 return response()->json([
                     'status'     => '1',
-                    'keterangan' => 'Pengajuan berhasil disetujui dan diteruskan ke Dekan'
+                    'keterangan' => $result->keterangan ?? 'Pengajuan berhasil disetujui dan diteruskan ke Dekan'
                 ], 200);
             }
 
@@ -368,7 +339,7 @@ class TranskripKaprodiController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
             $alasanTolak = trim($request->alasan_tolak ?? '');
 
             if (!$idPengajuan) {
@@ -385,40 +356,19 @@ class TranskripKaprodiController extends Controller
                 ], 422);
             }
 
-            $idProdi = $user->id_prodi ?? null;
-            $idUser  = $user->id_user  ?? null;
-
-            // Ownership + status check
-            $detail = PengajuanTranskrip::get_detail_kaprodi($idPengajuan, $idProdi);
-
-            if (!$detail) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak ditemukan atau bukan wewenang Anda'
-                ], 404);
-            }
-
-            if ($detail->status !== 'diajukan') {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak dapat ditolak karena status saat ini adalah "' .
-                        $detail->status . '"'
-                ], 422);
-            }
-
-            $result = PengajuanTranskrip::tolak_kaprodi($idPengajuan, $idUser, $alasanTolak);
+            $result = PengajuanTranskrip::tolak_kaprodi($idPengajuan, $alasanTolak);
 
             if ($result && $result->status === '1') {
                 return response()->json([
                     'status'     => '1',
-                    'keterangan' => 'Pengajuan berhasil ditolak'
+                    'keterangan' => $result->keterangan ?? 'Pengajuan berhasil ditolak'
                 ], 200);
             }
 
             return response()->json([
                 'status'     => '0',
                 'keterangan' => $result->keterangan ?? 'Gagal menolak pengajuan'
-            ], 500);
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([

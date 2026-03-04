@@ -5,233 +5,154 @@
     <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
 
     <style>
-        /* Card Stats */
-        .card-stats {
-            transition: transform 0.2s;
+        /* ===== Loading Overlay ===== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .loading-overlay .spinner-box {
+            background: white;
+            border-radius: 12px;
+            padding: 32px 48px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,.2);
+        }
+        .loading-overlay .spinner-box p {
+            margin: 12px 0 0;
+            font-weight: 600;
+            color: #555;
         }
 
+        /* ===== Card Stats ===== */
+        .card-stats { transition: transform .2s; }
         .card-stats:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,.1);
         }
 
-        /* Badge Status */
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.35em 0.6em;
-            border-radius: 6px;
-        }
+        /* ===== Badge Status ===== */
+        .badge { font-size:.75rem; font-weight:600; padding:.35em .6em; border-radius:6px; }
+        .badge-status-draft      { background-color:#607d8b; color:white; }
+        .badge-status-diajukan   { background-color:#2196f3; color:white; }
+        .badge-status-kaprodi    { background-color:#ff9800; color:white; }
+        .badge-status-dekan      { background-color:#9c27b0; color:white; }
+        .badge-status-disetujui  { background-color:#4caf50; color:white; }
+        .badge-status-ditolak    { background-color:#f44336; color:white; }
+        .badge-status-dibatalkan { background-color:#9e9e9e; color:white; }
 
-        .badge-status-diajukan    { background-color: #2196f3; color: white; }
-        .badge-status-kaprodi     { background-color: #ff9800; color: white; }
-        .badge-status-dekan       { background-color: #9c27b0; color: white; }
-        .badge-status-disetujui   { background-color: #4caf50; color: white; }
-        .badge-status-ditolak     { background-color: #f44336; color: white; }
-        .badge-status-dibatalkan  { background-color: #9e9e9e; color: white; }
-
-        /* Modal styling */
+        /* ===== Modal ===== */
         .modal-content {
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+            border-radius:12px; border:none;
+            box-shadow:0 6px 25px rgba(0,0,0,.15);
         }
-
         .modal-header {
-            border-bottom: none;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 12px 12px 0 0;
+            border-bottom:none; padding:1.5rem;
+            background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            color:white; border-radius:12px 12px 0 0;
         }
+        .modal-title { font-weight:700; }
+        .modal-body  { padding:1.5rem; }
 
-        .modal-title { font-weight: 700; }
-        .modal-body  { padding: 1.5rem; }
-
-        /* Step indicator */
+        /* ===== Step Indicator ===== */
         .step-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-            margin: 20px 0;
+            display:flex; align-items:center; justify-content:center;
+            gap:0; margin:20px 0;
         }
-
         .step-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-            position: relative;
+            display:flex; flex-direction:column; align-items:center;
+            flex:1; position:relative;
         }
-
         .step-item:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            top: 18px;
-            left: 50%;
-            width: 100%;
-            height: 2px;
-            background: #e0e0e0;
-            z-index: 0;
+            content:''; position:absolute; top:18px; left:50%;
+            width:100%; height:2px; background:#e0e0e0; z-index:0;
         }
-
-        .step-item.done:not(:last-child)::after   { background: #4caf50; }
-        .step-item.active:not(:last-child)::after { background: #e0e0e0; }
+        .step-item.done:not(:last-child)::after   { background:#4caf50; }
+        .step-item.active:not(:last-child)::after { background:#e0e0e0; }
 
         .step-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #e0e0e0;
-            color: #999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.85rem;
-            z-index: 1;
-            border: 3px solid #e0e0e0;
+            width:36px; height:36px; border-radius:50%;
+            background:#e0e0e0; color:#999;
+            display:flex; align-items:center; justify-content:center;
+            font-weight:700; font-size:.85rem; z-index:1;
+            border:3px solid #e0e0e0;
         }
+        .step-item.done   .step-circle { background:#4caf50; color:white; border-color:#4caf50; }
+        .step-item.active .step-circle { background:#ff9800; color:white; border-color:#ff9800; }
+        .step-item.reject .step-circle { background:#f44336; color:white; border-color:#f44336; }
 
-        .step-item.done   .step-circle { background: #4caf50; color: white; border-color: #4caf50; }
-        .step-item.active .step-circle { background: #ff9800; color: white; border-color: #ff9800; }
-        .step-item.reject .step-circle { background: #f44336; color: white; border-color: #f44336; }
+        .step-label { font-size:.75rem; margin-top:6px; color:#999; text-align:center; }
+        .step-item.done   .step-label { color:#4caf50; font-weight:600; }
+        .step-item.active .step-label { color:#ff9800; font-weight:600; }
+        .step-item.reject .step-label { color:#f44336; font-weight:600; }
 
-        .step-label {
-            font-size: 0.75rem;
-            margin-top: 6px;
-            color: #999;
-            text-align: center;
-        }
-
-        .step-item.done   .step-label { color: #4caf50; font-weight: 600; }
-        .step-item.active .step-label { color: #ff9800; font-weight: 600; }
-        .step-item.reject .step-label { color: #f44336; font-weight: 600; }
-
-        /* Timeline */
-        .timeline-wrapper {
-            position: relative;
-            padding-left: 30px;
-        }
-
+        /* ===== Timeline ===== */
+        .timeline-wrapper { position:relative; padding-left:30px; }
         .timeline-wrapper::before {
-            content: '';
-            position: absolute;
-            left: 12px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #e0e0e0;
+            content:''; position:absolute; left:12px; top:0; bottom:0;
+            width:2px; background:#e0e0e0;
         }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
+        .timeline-item { position:relative; margin-bottom:20px; }
         .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -24px;
-            top: 6px;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #ccc;
-            border: 2px solid white;
-            box-shadow: 0 0 0 2px #ccc;
+            content:''; position:absolute; left:-24px; top:6px;
+            width:14px; height:14px; border-radius:50%;
+            background:#ccc; border:2px solid white; box-shadow:0 0 0 2px #ccc;
         }
+        .timeline-item.active::before  { background:#2196f3; box-shadow:0 0 0 2px #2196f3; }
+        .timeline-item.success::before { background:#4caf50; box-shadow:0 0 0 2px #4caf50; }
+        .timeline-item.danger::before  { background:#f44336; box-shadow:0 0 0 2px #f44336; }
+        .timeline-item.warning::before { background:#ff9800; box-shadow:0 0 0 2px #ff9800; }
 
-        .timeline-item.active::before  { background: #2196f3; box-shadow: 0 0 0 2px #2196f3; }
-        .timeline-item.success::before { background: #4caf50; box-shadow: 0 0 0 2px #4caf50; }
-        .timeline-item.danger::before  { background: #f44336; box-shadow: 0 0 0 2px #f44336; }
-        .timeline-item.warning::before { background: #ff9800; box-shadow: 0 0 0 2px #ff9800; }
+        /* ===== Empty State ===== */
+        .empty-state { text-align:center; padding:40px; color:#999; }
+        .empty-state i { font-size:4rem; margin-bottom:20px; opacity:.3; }
 
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        /* Action buttons */
+        /* ===== Action Buttons ===== */
         .btn-setujui {
-            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
-            border: none;
-            color: white;
-            transition: all 0.3s;
+            background:linear-gradient(135deg,#43a047 0%,#2e7d32 100%);
+            border:none; color:white; transition:all .3s;
         }
-
         .btn-setujui:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
-            color: white;
+            transform:translateY(-2px);
+            box-shadow:0 4px 15px rgba(46,125,50,.4); color:white;
         }
-
         .btn-tolak {
-            background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
-            border: none;
-            color: white;
-            transition: all 0.3s;
+            background:linear-gradient(135deg,#e53935 0%,#b71c1c 100%);
+            border:none; color:white; transition:all .3s;
         }
-
         .btn-tolak:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(183, 28, 28, 0.4);
-            color: white;
+            transform:translateY(-2px);
+            box-shadow:0 4px 15px rgba(183,28,28,.4); color:white;
         }
 
-        /* Info card mahasiswa di modal */
+        /* ===== Info Card ===== */
         .info-mahasiswa-card {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            border-radius: 6px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
+            background:#f8f9fa; border-left:4px solid #667eea;
+            border-radius:6px; padding:12px 16px; margin-bottom:16px;
         }
 
-        /* Filter section */
+        /* ===== Filter ===== */
         .filter-active-badge {
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            background: #667eea;
-            color: white;
-            margin-left: 6px;
-            vertical-align: middle;
+            font-size:.7rem; padding:2px 8px; border-radius:10px;
+            background:#667eea; color:white; margin-left:6px; vertical-align:middle;
         }
 
-        /* Highlight baris menunggu */
-        .row-menunggu td {
-            background-color: #fff8e1 !important;
-        }
+        /* ===== Highlight Menunggu ===== */
+        .row-menunggu td { background-color:#fff8e1 !important; }
 
-        /* Preview nilai di modal */
+        /* ===== Preview Nilai ===== */
         .preview-nilai-wrapper {
-            max-height: 250px;
-            overflow-y: auto;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
+            max-height:250px; overflow-y:auto;
+            border:1px solid #e0e0e0; border-radius:6px;
         }
-
-        .table-preview-nilai {
-            font-size: 0.8rem;
-            margin-bottom: 0;
-        }
-
+        .table-preview-nilai { font-size:.8rem; margin-bottom:0; }
         .table-preview-nilai thead th {
-            background: #e8eaf6;
-            color: #1a237e;
-            font-size: 0.75rem;
-            position: sticky;
-            top: 0;
+            background:#e8eaf6; color:#1a237e; font-size:.75rem;
+            position:sticky; top:0;
         }
     </style>
 @endsection
@@ -256,6 +177,16 @@
 
 @section('body-content')
 
+    {{-- ==================== LOADING OVERLAY ==================== --}}
+    <div class="loading-overlay" id="global-loading" style="display:none;">
+        <div class="spinner-box">
+            <div class="spinner-border text-primary" style="width:3rem;height:3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <p id="global-loading-text">Memuat data...</p>
+        </div>
+    </div>
+
     {{-- ==================== STATISTIK CARDS ==================== --}}
     <div class="col-md-3">
         <div class="card card-stats statistic-box mb-4">
@@ -267,9 +198,7 @@
                 <h3 class="card-title fs-21 font-weight-bold" id="stat-menunggu">0</h3>
             </div>
             <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-clock mr-2 ml-2"></i>Perlu Ditindaklanjuti
-                </div>
+                <div class="stats"><i class="fas fa-clock mr-2 ml-2"></i>Perlu Ditindaklanjuti</div>
             </div>
         </div>
     </div>
@@ -284,9 +213,7 @@
                 <h3 class="card-title fs-21 font-weight-bold" id="stat-disetujui">0</h3>
             </div>
             <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-check mr-2 ml-2"></i>Diteruskan ke Dekan
-                </div>
+                <div class="stats"><i class="fas fa-check mr-2 ml-2"></i>Diteruskan ke Dekan</div>
             </div>
         </div>
     </div>
@@ -301,9 +228,7 @@
                 <h3 class="card-title fs-21 font-weight-bold" id="stat-ditolak">0</h3>
             </div>
             <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-ban mr-2 ml-2"></i>Dikembalikan ke Mahasiswa
-                </div>
+                <div class="stats"><i class="fas fa-ban mr-2 ml-2"></i>Dikembalikan ke Mahasiswa</div>
             </div>
         </div>
     </div>
@@ -318,9 +243,7 @@
                 <h3 class="card-title fs-21 font-weight-bold" id="stat-total">0</h3>
             </div>
             <div class="card-footer p-1">
-                <div class="stats">
-                    <i class="fas fa-list mr-2 ml-2"></i>Semua Status
-                </div>
+                <div class="stats"><i class="fas fa-list mr-2 ml-2"></i>Semua Status</div>
             </div>
         </div>
     </div>
@@ -330,21 +253,23 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label class="font-weight-bold text-dark">
                                 <i class="fas fa-filter mr-2"></i>Status
                             </label>
                             <select class="form-control select2" id="filter-status">
                                 <option value="">-- Semua Status --</option>
-                                <option value="diajukan" selected>Menunggu Kaprodi</option>
-                                <option value="proses_dekan">Proses Dekan</option>
-                                <option value="disetujui">Disetujui</option>
-                                <option value="ditolak">Ditolak</option>
+                                <option value="1">Draft</option>
+                                <option value="2" selected>Diajukan</option>
+                                <option value="3">Proses Kaprodi</option>
+                                <option value="4">Proses Dekan</option>
+                                <option value="5">Disetujui</option>
+                                <option value="6">Ditolak</option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label class="font-weight-bold text-dark">
                                 <i class="fas fa-calendar-alt mr-2"></i>Tahun Pengajuan
@@ -360,11 +285,10 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="font-weight-bold text-dark">
-                                <i class="fas fa-graduation-cap mr-2"></i>Program Studi
+                                <i class="fas fa-university mr-2"></i>Program Studi
                             </label>
                             <select class="form-control select2" id="filter-prodi">
                                 <option value="">-- Semua Prodi --</option>
-                                {{-- Di-populate via JS --}}
                             </select>
                         </div>
                     </div>
@@ -377,14 +301,12 @@
                                    placeholder="Cari NIM / nama / no. pengajuan...">
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <button class="btn btn-primary" id="btn-filter">
-                            <i class="fas fa-filter mr-2"></i>Terapkan Filter
+                    <div class="col-md-2 d-flex align-items-end pb-3">
+                        <button class="btn btn-primary mr-2" id="btn-filter">
+                            <i class="fas fa-filter mr-1"></i>Filter
                         </button>
                         <button class="btn btn-secondary" id="btn-reset-filter">
-                            <i class="fas fa-redo mr-2"></i>Reset
+                            <i class="fas fa-redo mr-1"></i>Reset
                         </button>
                     </div>
                 </div>
@@ -418,14 +340,14 @@
                         <thead class="thead-light">
                         <tr>
                             <th class="text-center" width="4%">No</th>
-                            <th width="13%">No. Pengajuan</th>
+                            <th width="14%">No. Pengajuan</th>
                             <th width="10%">NIM</th>
-                            <th width="18%">Nama Mahasiswa</th>
+                            <th width="20%">Nama Mahasiswa</th>
+                            <th width="15%">Program Studi</th>
                             <th width="14%">Keperluan</th>
-                            <th width="8%" class="text-center">Bahasa</th>
-                            <th width="10%" class="text-center">Tgl. Ajuan</th>
-                            <th width="11%" class="text-center">Status</th>
-                            <th width="12%" class="text-center">Aksi</th>
+                            <th class="text-center" width="10%">Tgl. Ajuan</th>
+                            <th class="text-center" width="10%">Status</th>
+                            <th class="text-center" width="8%">Aksi</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -467,6 +389,7 @@
                         <div class="col-md-8">
                             <small class="text-muted">Nomor Pengajuan</small>
                             <h5 class="font-weight-bold text-primary mb-0" id="kpd-no-pengajuan">-</h5>
+                            <small class="text-muted" id="kpd-id-pengajuan">-</small>
                         </div>
                         <div class="col-md-4 text-right">
                             <div id="kpd-status-badge"></div>
@@ -527,9 +450,14 @@
                                     <td>:</td>
                                     <td id="kpd-tgl-ajuan">-</td>
                                 </tr>
+                                <tr>
+                                    <td><strong>Terakhir Diperbarui</strong></td>
+                                    <td>:</td>
+                                    <td id="kpd-tgl-updated">-</td>
+                                </tr>
                             </table>
                             <label class="font-weight-bold">Catatan Mahasiswa:</label>
-                            <p class="text-muted border rounded p-2" id="kpd-catatan">-</p>
+                            <p class="text-muted border rounded p-2" id="kpd-catatan-mhs">-</p>
                         </div>
 
                         {{-- Progress --}}
@@ -593,29 +521,26 @@
                         </div>
                     </div>
 
-                    {{-- Form Tindakan (hanya tampil jika status = diajukan) --}}
-                    <div id="section-tindakan-kaprodi" class="mt-4" style="display: none;">
+                    {{-- Form Tindakan (hanya tampil jika status = 2 / Diajukan) --}}
+                    <div id="section-tindakan-kaprodi" class="mt-4" style="display:none;">
                         <hr>
                         <h6 class="font-weight-bold mb-3">
                             <i class="fas fa-gavel text-warning mr-2"></i>Tindakan Kaprodi
                         </h6>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">
-                                        Catatan / Keterangan
-                                        <span class="text-muted">(Opsional untuk persetujuan, wajib untuk penolakan)</span>
-                                    </label>
-                                    <textarea class="form-control" id="kaprodi-catatan" rows="3"
-                                              placeholder="Tuliskan catatan atau alasan penolakan jika diperlukan..."></textarea>
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <label class="font-weight-bold">
+                                Catatan / Keterangan
+                                <span class="text-muted font-weight-normal">
+                                    (Opsional untuk persetujuan, wajib untuk penolakan)
+                                </span>
+                            </label>
+                            <textarea class="form-control" id="kaprodi-catatan" rows="3"
+                                      placeholder="Tuliskan catatan atau alasan penolakan jika diperlukan..."></textarea>
                         </div>
                     </div>
 
                 </div>
-                <div class="modal-footer" id="kpd-modal-footer">
-                    {{-- Tombol aksi (conditional) --}}
+                <div class="modal-footer">
                     <button type="button" class="btn btn-setujui d-none" id="btn-setujui-kaprodi">
                         <i class="fas fa-check mr-1"></i>Setujui & Teruskan ke Dekan
                     </button>
@@ -634,7 +559,8 @@
     <div class="modal fade" id="modal-konfirmasi-setujui" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);">
+                <div class="modal-header"
+                     style="background:linear-gradient(135deg,#43a047 0%,#2e7d32 100%);">
                     <h5 class="modal-title text-white">
                         <i class="fas fa-check-circle mr-2"></i>Konfirmasi Persetujuan
                     </h5>
@@ -643,14 +569,15 @@
                     </button>
                 </div>
                 <div class="modal-body text-center">
-                    <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                    <i class="fas fa-check-circle text-success" style="font-size:3rem;"></i>
                     <p class="mt-3 font-weight-bold">Setujui pengajuan ini?</p>
                     <p class="text-muted small">
                         Pengajuan akan diteruskan ke <strong>Dekan</strong>
                         untuk persetujuan selanjutnya.
                     </p>
                     <p class="text-muted small">
-                        No: <strong id="konfirmasi-no-pengajuan">-</strong>
+                        No: <strong id="konfirmasi-no-pengajuan">-</strong><br>
+                        Nama: <strong id="konfirmasi-nama-mahasiswa">-</strong>
                     </p>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -669,7 +596,8 @@
     <div class="modal fade" id="modal-konfirmasi-tolak" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);">
+                <div class="modal-header"
+                     style="background:linear-gradient(135deg,#e53935 0%,#b71c1c 100%);">
                     <h5 class="modal-title text-white">
                         <i class="fas fa-times-circle mr-2"></i>Konfirmasi Penolakan
                     </h5>
@@ -678,10 +606,11 @@
                     </button>
                 </div>
                 <div class="modal-body text-center">
-                    <i class="fas fa-times-circle text-danger" style="font-size: 3rem;"></i>
+                    <i class="fas fa-times-circle text-danger" style="font-size:3rem;"></i>
                     <p class="mt-3 font-weight-bold">Tolak pengajuan ini?</p>
                     <p class="text-muted small">
-                        No: <strong id="konfirmasi-tolak-no">-</strong>
+                        No: <strong id="konfirmasi-tolak-no">-</strong><br>
+                        Nama: <strong id="konfirmasi-tolak-nama">-</strong>
                     </p>
                     <div class="text-left mt-2">
                         <label class="font-weight-bold text-danger small">
@@ -690,7 +619,8 @@
                         <textarea class="form-control form-control-sm" id="alasan-tolak-final"
                                   rows="3"
                                   placeholder="Tuliskan alasan penolakan..."></textarea>
-                        <div class="invalid-feedback" id="alasan-tolak-error">
+                        <div class="invalid-feedback" id="alasan-tolak-error"
+                             style="display:none;">
                             Alasan penolakan wajib diisi
                         </div>
                     </div>

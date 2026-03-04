@@ -43,7 +43,7 @@ class TranskripController extends Controller
             }
 
             $nim    = $user->nim;
-            $kd_prodi    = $user->kd_prodi;
+            $kd_prodi    = $user->id_personal;
             $status = $request->status ?? null;
             $tahun  = $request->tahun  ?? null;
             $search = $request->search['value'] ?? $request->search ?? '';
