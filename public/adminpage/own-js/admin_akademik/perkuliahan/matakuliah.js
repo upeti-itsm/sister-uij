@@ -913,71 +913,50 @@ jQuery.matakuliah = {
     populateForm: function (data) {
         var self = this;
 
-        if (!data || typeof data !== 'object') {
-            console.warn('Data tidak valid untuk populate form', data);
-            return;
-        }
+        if (!data || typeof data !== 'object') return;
 
-        // Set ID
-        $("#insup-id").val(data.id || data.id_matakuliah || "00000000-0000-0000-0000-000000000000");
+        // Set ID & field statis
+        $("#insup-id").val(data.id || "00000000-0000-0000-0000-000000000000");
+        $("#insup-kode_matakuliah").val(data.kode_matakuliah || data.kd_matakuliah || '');
+        $("#insup-nama_matakuliah").val(data.nama_matakuliah || data.matakuliah || '');
+        $("#insup-jumlah_sks").val(data.jumlah_sks || data.sks || '');
+        $("#insup-semester").val(data.semester || '');
+        $("#insup-id_jenis_matakuliah").val(data.id_jenis_matakuliah || data.kd_jenis_matakuliah || '').trigger('change');
+        $("#insup-id_jenis_pelaksanaan").val(data.id_jenis_pelaksanaan || data.kd_jenis_pelaksanaan || '').trigger('change');
 
-        // Set basic fields yang tidak bergantung cascade
-        if (data.kode_matakuliah || data.kd_matakuliah) {
-            $("#insup-kode_matakuliah").val(data.kode_matakuliah || data.kd_matakuliah);
-        }
-        if (data.nama_matakuliah || data.matakuliah) {
-            $("#insup-nama_matakuliah").val(data.nama_matakuliah || data.matakuliah);
-        }
-        if (data.jumlah_sks || data.sks) {
-            $("#insup-jumlah_sks").val(data.jumlah_sks || data.sks);
-        }
-        if (data.semester) {
-            $("#insup-semester").val(data.semester);
-        }
-        if (data.id_jenis_matakuliah || data.kd_jenis_matakuliah) {
-            $("#insup-id_jenis_matakuliah").val(data.id_jenis_matakuliah || data.kd_jenis_matakuliah).trigger('change');
-        }
-        if (data.id_jenis_pelaksanaan || data.kd_jenis_pelaksanaan) {
-            $("#insup-id_jenis_pelaksanaan").val(data.id_jenis_pelaksanaan || data.kd_jenis_pelaksanaan).trigger('change');
-        }
+        var prodiValue = data.kd_prodi || data.kd_program_studi;
+        var konsentrasiValue = data.id_konsentrasi || data.id_konsentrasi_jurusan;
+        var kurikulumValue = data.id_kurikulum;
+        var prasyaratValue = data.prasyarat || data.id_matakuliah_prasyarat || data.matakuliah_prasyarat;
 
-        // CASCADE POPULATION 1: Program Studi -> Konsentrasi
-        if (data.kd_prodi || data.kd_program_studi) {
-            var prodiValue = data.kd_prodi || data.kd_program_studi;
+        if (prodiValue) {
             $("#insup-kd_prodi").val(prodiValue).trigger('change');
 
-            // Wait for prodi change to load konsentrasi, then set konsentrasi
-            setTimeout(function () {
-                if (data.id_konsentrasi || data.id_konsentrasi_jurusan) {
-                    var konsentrasiValue = data.id_konsentrasi || data.id_konsentrasi_jurusan;
+            // ✅ Gunakan callback — set nilai SETELAH AJAX selesai
+            self.loadKonsentrasiByProdi(prodiValue, function () {
+                if (konsentrasiValue) {
                     $("#insup-id_konsentrasi").val(konsentrasiValue).trigger('change');
                 }
-            }, 1000); // Wait 1 second for konsentrasi AJAX to complete
-        }
+            });
 
-        // CASCADE POPULATION 2: Kurikulum -> Prasyarat
-        if (data.id_kurikulum) {
-            $("#insup-id_kurikulum").val(data.id_kurikulum).trigger('change');
+            self.loadKurikulumByProdi(prodiValue, '#insup-id_kurikulum', function () {
+                if (kurikulumValue) {
+                    $("#insup-id_kurikulum").val(kurikulumValue).trigger('change');
 
-            // Wait for kurikulum change to load matakuliah, then set prasyarat
-            setTimeout(function () {
-                var prasyaratData = data.prasyarat || data.id_matakuliah_prasyarat || data.matakuliah_prasyarat;
-                if (prasyaratData) {
+                    // ✅ Load prasyarat SETELAH kurikulum ter-set
+                    self.loadMatakuliahByKurikulum(kurikulumValue, function () {
+                        if (prasyaratValue) {
+                            var prasyaratArr = typeof prasyaratValue === 'string'
+                                ? prasyaratValue.split(',').map(p => p.trim()).filter(p => p !== '' && p !== '-')
+                                : prasyaratValue;
 
-                    var prasyaratValues = prasyaratData;
-                    if (typeof prasyaratValues === 'string') {
-                        prasyaratValues = prasyaratValues.split(',').map(function (p) {
-                            return p.trim();
-                        }).filter(function (p) {
-                            return p !== '' && p !== '-';
-                        });
-                    }
-
-                    if (prasyaratValues && prasyaratValues.length > 0) {
-                        $("#insup-id_matakuliah_prasyarat").val(prasyaratValues).trigger('change');
-                    }
+                            if (prasyaratArr && prasyaratArr.length > 0) {
+                                $("#insup-id_matakuliah_prasyarat").val(prasyaratArr).trigger('change');
+                            }
+                        }
+                    });
                 }
-            }, 2000); // Wait 2 seconds for prasyarat AJAX to complete
+            });
         }
     },
 
@@ -1195,9 +1174,7 @@ jQuery.matakuliah = {
     },
 
     // AJAX CASCADE FUNCTIONS
-
-    // Load konsentrasi berdasarkan program studi
-    loadKonsentrasiByProdi: function (kdProdi) {
+    loadKonsentrasiByProdi: function (kdProdi, callback) { // ✅ tambah callback
         var self = this;
         const $konsentrasi = $("#insup-id_konsentrasi");
 
@@ -1206,82 +1183,61 @@ jQuery.matakuliah = {
             return;
         }
 
-        // Show loading
         $konsentrasi.html('<option value="">Memuat konsentrasi...</option>').prop('disabled', true);
 
         $.ajax({
             url: '/adm-akadmik/perkuliahan/matakuliah/json-konsentrasi-by-prodi',
             type: 'POST',
-            data: {
-                kd_prodi: kdProdi,
-            },
+            data: { kd_prodi: kdProdi },
             success: function (response) {
                 var options = '<option value="">-- Pilih Konsentrasi --</option>';
-
                 if (response.status === 'success' && response.data && response.data.length > 0) {
                     response.data.forEach(function (item) {
-                        const namaKonsentrasi = self.safeString(item.nama_konsentrasi_jurusan, 'Konsentrasi');
-                        options += '<option value="' + item.id_konsentrasi_jurusan + '">' + namaKonsentrasi + '</option>';
+                        options += '<option value="' + item.id_konsentrasi_jurusan + '">'
+                            + self.safeString(item.nama_konsentrasi_jurusan, 'Konsentrasi') + '</option>';
                     });
-                } else {
-                    options += '<option value="">Tidak ada konsentrasi</option>';
                 }
-
                 $konsentrasi.html(options).prop('disabled', false).trigger('change');
+
+                if (typeof callback === 'function') callback(); // ✅ panggil callback
             },
             error: function (xhr, status, error) {
                 $konsentrasi.html('<option value="">Error memuat konsentrasi</option>').prop('disabled', false);
-
-                $.alert({
-                    title: 'Error',
-                    type: 'red',
-                    content: 'Gagal memuat data konsentrasi. Silakan coba lagi.<br>Error: ' + error
-                });
+                if (typeof callback === 'function') callback(); // ✅ tetap panggil agar tidak stuck
             }
         });
     },
 
-    // Load kurikulum berdasarkan program studi (untuk filter)
-    loadKurikulumByProdi: function (kdProdi, targetSelector) {
+    // ✅ Tambah parameter callback di loadKurikulumByProdi
+    loadKurikulumByProdi: function (kdProdi, targetSelector, callback) {
         var self = this;
-
-        // Show loading
         $(targetSelector).html('<option value="">Memuat kurikulum...</option>').prop('disabled', true);
 
         $.ajax({
             url: '/adm-akadmik/perkuliahan/matakuliah/json-kurikulum-by-prodi',
             type: 'POST',
-            data: {
-                kd_prodi: kdProdi,
-            },
+            data: { kd_prodi: kdProdi },
             success: function (response) {
                 var options = '<option value="">-- Semua Kurikulum --</option>';
-
                 if (response.status === 'success' && response.data && response.data.length > 0) {
                     response.data.forEach(function (item) {
-                        const namaKurikulum = self.safeString(item.nama_kurikulum, 'Kurikulum');
-                        options += '<option value="' + item.id_kurikulum + '">' + namaKurikulum + '</option>';
+                        options += '<option value="' + item.id_kurikulum + '">'
+                            + self.safeString(item.nama_kurikulum, 'Kurikulum') + '</option>';
                     });
-                } else {
-                    options += '<option value="">Tidak ada kurikulum</option>';
                 }
-
                 $(targetSelector).html(options).prop('disabled', false).trigger('change');
+
+                if (typeof callback === 'function') callback(); // ✅ panggil callback
             },
             error: function (xhr, status, error) {
                 $(targetSelector).html('<option value="">Error memuat kurikulum</option>').prop('disabled', false);
-
-                $.alert({
-                    title: 'Error',
-                    type: 'red',
-                    content: 'Gagal memuat data kurikulum. Silakan coba lagi.<br>Error: ' + error
-                });
+                if (typeof callback === 'function') callback();
             }
         });
     },
 
-    // Load matakuliah berdasarkan kurikulum untuk prasyarat
-    loadMatakuliahByKurikulum: function (idKurikulum) {
+    // ✅ Tambah parameter callback di loadMatakuliahByKurikulum
+    loadMatakuliahByKurikulum: function (idKurikulum, callback) {
         var self = this;
         const $prasyarat = $("#insup-id_matakuliah_prasyarat");
 
@@ -1290,41 +1246,31 @@ jQuery.matakuliah = {
             return;
         }
 
-        // Show loading
         $prasyarat.html('<option value="">Memuat matakuliah...</option>').prop('disabled', true);
 
         $.ajax({
             url: '/adm-akadmik/perkuliahan/matakuliah/json-by-kurikulum',
             type: 'POST',
-            data: {
-                id_kurikulum: idKurikulum,
-            },
+            data: { id_kurikulum: idKurikulum },
             success: function (response) {
-
                 var options = '';
-
                 if (response.status === 'success' && response.data && response.data.length > 0) {
                     response.data.forEach(function (item) {
                         const namaMK = self.safeString(item.nama_matakuliah || item.matakuliah, 'Matakuliah');
                         const kodeMK = self.safeString(item.kode_matakuliah || item.kd_matakuliah, '');
-                        const displayText = kodeMK ? namaMK + ' (' + kodeMK + ')' : namaMK;
-
-                        options += '<option value="' + item.id_matakuliah + '">' + displayText + '</option>';
+                        options += '<option value="' + item.id_matakuliah + '">'
+                            + (kodeMK ? namaMK + ' (' + kodeMK + ')' : namaMK) + '</option>';
                     });
                 } else {
                     options = '<option value="">Belum ada matakuliah</option>';
                 }
-
                 $prasyarat.html(options).prop('disabled', false).trigger('change');
+
+                if (typeof callback === 'function') callback(); // ✅ panggil callback
             },
             error: function (xhr, status, error) {
                 $prasyarat.html('<option value="">Error memuat matakuliah</option>').prop('disabled', false);
-
-                $.alert({
-                    title: 'Error',
-                    type: 'red',
-                    content: 'Gagal memuat data matakuliah. Silakan coba lagi.<br>Error: ' + error
-                });
+                if (typeof callback === 'function') callback();
             }
         });
     },

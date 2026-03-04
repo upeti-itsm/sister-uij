@@ -2,8 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kartu Hasil Studi</title>
+    <title>Lembar Hasil Studi</title>
     <style>
         * {
             margin: 0;
@@ -13,340 +12,352 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 11px;
-            line-height: 1.4;
-            color: #333;
+            font-size: 11pt;
+            color: #000;
+            background: #fff;
         }
 
-        .container {
+        .page {
             width: 100%;
-            padding: 20px;
+            padding: 20px 35px 80px 35px;
         }
 
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #333;
-            padding-bottom: 10px;
+        /* ===== HEADER ===== */
+        .header-wrap {
+            display: table;
+            width: 100%;
+            margin-bottom: 5px;
         }
-
-        .header-logo {
-            width: 60px;
+        .header-logo-cell {
+            display: table-cell;
+            width: 85px;
+            vertical-align: middle;
+            padding-right: 12px;
+        }
+        .header-logo-cell img {
+            width: 80px;
             height: auto;
-            margin-bottom: 10px;
+        }
+        .header-text-cell {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .header-yayasan {
+            font-size: 11pt;
+            font-weight: bold;
+        }
+        .header-univ {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+        .header-address {
+            font-size: 9pt;
+            margin-top: 2px;
+            line-height: 1.55;
         }
 
-        .header h1 {
-            font-size: 16px;
-            margin-bottom: 3px;
-            text-transform: uppercase;
+        .header-line {
+            border: none;
+            border-top: 2.5px solid #000;
+            margin: 8px 0 18px 0;
         }
 
-        .header h2 {
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-
-        .header p {
-            font-size: 10px;
-            color: #666;
-        }
-
-        /* Document Title */
+        /* ===== DOCUMENT TITLE ===== */
         .doc-title {
             text-align: center;
-            margin: 20px 0;
-            padding: 10px;
-            background: #f0f0f0;
-            border-left: 4px solid #667eea;
-        }
-
-        .doc-title h3 {
-            font-size: 14px;
+            font-size: 12pt;
             font-weight: bold;
-            text-transform: uppercase;
+            text-decoration: underline;
+            margin-bottom: 16px;
         }
 
-        .doc-title p {
-            font-size: 11px;
-            margin-top: 3px;
-        }
-
-        /* Student Info */
-        .student-info {
-            margin-bottom: 15px;
-        }
-
-        .student-info table {
-            width: 100%;
+        /* ===== STUDENT INFO ===== */
+        .info-table {
+            width: auto;
             border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .info-table td {
+            padding: 2px 0;
+            font-size: 10.5pt;
+            vertical-align: top;
+        }
+        .info-table .lbl {
+            width: 115px;
+        }
+        .info-table .sep {
+            width: 15px;
+            text-align: center;
+        }
+        .info-table .val {
+            /* auto */
         }
 
-        .student-info td {
-            padding: 3px 5px;
-            font-size: 10px;
-        }
-
-        .student-info td:first-child {
-            width: 150px;
-            font-weight: bold;
-        }
-
-        .student-info td:nth-child(2) {
-            width: 10px;
-        }
-
-        /* Nilai Table */
+        /* ===== NILAI TABLE ===== */
         .nilai-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin-bottom: 14px;
         }
-
-        .nilai-table th,
-        .nilai-table td {
-            border: 1px solid #333;
-            padding: 5px;
-            text-align: center;
-            font-size: 10px;
-        }
-
         .nilai-table th {
-            background: #667eea;
-            color: white;
+            border: 1px solid #000;
+            padding: 5px 7px;
+            font-size: 10.5pt;
             font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .nilai-table td:nth-child(2),
-        .nilai-table td:nth-child(3) {
+            background: #fff;
             text-align: left;
-            padding-left: 8px;
         }
-
-        .nilai-table tfoot {
+        .nilai-table td {
+            border: 1px solid #000;
+            padding: 4px 7px;
+            font-size: 10.5pt;
+            text-align: left;
+        }
+        .nilai-table .col-no   { width: 6%;  }
+        .nilai-table .col-kode { width: 13%; }
+        .nilai-table .col-mk   { width: 57%; }
+        .nilai-table .col-sks  { width: 12%; text-align: center; }
+        .nilai-table .col-nilai{ width: 12%; text-align: center; }
+        .nilai-table tfoot td {
+            text-align: center;
             font-weight: bold;
-            background: #f0f0f0;
+        }
+        .nilai-table tfoot .total-label {
+            text-align: center;
         }
 
-        /* Summary */
-        .summary {
-            margin-top: 20px;
-            padding: 10px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
+        /* ===== SUMMARY ===== */
+        .summary-table {
+            border-collapse: collapse;
+            margin-bottom: 18px;
+        }
+        .summary-table td {
+            padding: 2px 0;
+            font-size: 10.5pt;
+        }
+        .summary-table .lbl { width: 175px; }
+        .summary-table .sep { width: 15px; text-align: center; }
+
+        /* ===== BOTTOM SECTION ===== */
+        .bottom-wrap {
+            display: table;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .bottom-left {
+            display: table-cell;
+            width: 55%;
+            vertical-align: top;
+        }
+        .bottom-right {
+            display: table-cell;
+            width: 45%;
+            vertical-align: top;
+            text-align: center;
         }
 
-        .summary table {
+        .catatan-label {
+            font-size: 10.5pt;
+            margin-bottom: 8px;
+        }
+        .catatan-line {
+            border-bottom: 1px dotted #555;
+            height: 20px;
+            margin-bottom: 4px;
+            width: 90%;
+        }
+
+        .sign-city {
+            font-size: 10.5pt;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .sign-qr {
+            width: 95px;
+            height: 95px;
+            display: block;
+            margin: 0 auto 6px auto;
+        }
+        .sign-name {
+            font-size: 10.5pt;
+            font-weight: bold;
+            text-align: center;
+        }
+        .sign-nidn {
+            font-size: 10.5pt;
+            text-align: center;
+        }
+
+        /* ===== RANGKAP ===== */
+        .rangkap {
+            margin-top: 28px;
+            font-size: 10.5pt;
+            line-height: 1.75;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            position: fixed;
+            bottom: 15px;
+            left: 35px;
+            right: 35px;
+            border-top: 1.5px solid #000;
+            padding-top: 5px;
+        }
+        .footer-inner {
+            display: table;
             width: 100%;
         }
-
-        .summary td {
-            padding: 5px;
-            font-size: 11px;
+        .footer-inner td {
+            display: table-cell;
+            font-size: 9pt;
         }
-
-        .summary td:first-child {
-            width: 200px;
-            font-weight: bold;
-        }
-
-        .summary td:nth-child(2) {
-            width: 10px;
-        }
-
-        /* QR Code */
-        .qr-section {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .qr-code {
-            width: 100px;
-            height: 100px;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: 20px;
-            font-size: 9px;
-            text-align: center;
-            color: #666;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-        }
-
-        /* Signature */
-        .signature {
-            margin-top: 40px;
-            text-align: right;
-        }
-
-        .signature-box {
-            display: inline-block;
-            text-align: center;
-            min-width: 200px;
-        }
-
-        .signature-box p {
-            margin: 5px 0;
-            font-size: 10px;
-        }
-
-        .signature-line {
-            margin-top: 60px;
-            border-top: 1px solid #333;
-            padding-top: 3px;
-        }
-
-        /* Page Break */
-        .page-break {
-            page-break-after: always;
-        }
+        .footer-left  { width: 30%; text-align: left; font-weight: bold; }
+        .footer-center{ width: 40%; text-align: center; font-style: italic; }
+        .footer-right { width: 30%; text-align: right; font-weight: bold; }
     </style>
 </head>
 <body>
-<div class="container">
-    <!-- Header -->
-    <div class="header">
-        @if($logo)
-            <img src="data:image/png;base64,{{ $logo }}" alt="Logo" class="header-logo">
-        @endif
-        <h1>UNIVERSITAS ISLAM JAKARTA</h1>
-        <h2>FAKULTAS {{ strtoupper($mahasiswa->jenjang) }}</h2>
-        <p>Jl. Raya Cipondoh No.77, Kota Tangerang - Indonesia</p>
+
+<div class="page">
+
+    {{-- ===== HEADER ===== --}}
+    <div class="header-wrap">
+        <div class="header-logo-cell">
+            @if($logo)
+                <img src="data:image/png;base64,{{ $logo }}" alt="Logo UIJ">
+            @endif
+        </div>
+        <div class="header-text-cell">
+            <div class="header-yayasan">YAYASAN PENDIDIKAN NAHDLATUL ULAMA' JEMBER</div>
+            <div class="header-univ">UNIVERSITAS ISLAM JEMBER</div>
+            <div class="header-address">
+                Jl. Kyai Mojo 101<br>
+                Telp. (0331) 488675 Fax. (0331) 428732<br>
+                Jember (68133)
+            </div>
+        </div>
     </div>
 
-    <!-- Document Title -->
-    <div class="doc-title">
-        <h3>KARTU HASIL STUDI (KHS)</h3>
-        <p>Semester {{ $tahun_akademik->semester }} - Tahun Akademik {{ $tahun_akademik->nama }}</p>
-    </div>
+    <hr class="header-line">
 
-    <!-- Student Info -->
-    <div class="student-info">
-        <table>
-            <tr>
-                <td>NIM</td>
-                <td>:</td>
-                <td>{{ $mahasiswa->nim }}</td>
-            </tr>
-            <tr>
-                <td>Nama Mahasiswa</td>
-                <td>:</td>
-                <td>{{ $mahasiswa->nama_mahasiswa }}</td>
-            </tr>
-            <tr>
-                <td>Program Studi</td>
-                <td>:</td>
-                <td>{{ $mahasiswa->nama_prodi }}</td>
-            </tr>
-            <tr>
-                <td>Angkatan</td>
-                <td>:</td>
-                <td>{{ $mahasiswa->angkatan }}</td>
-            </tr>
-            <tr>
-                <td>Dosen Pembimbing Akademik</td>
-                <td>:</td>
-                <td>{{ $mahasiswa->nama_dps }} ({{ $mahasiswa->nidn }})</td>
-            </tr>
-        </table>
-    </div>
+    {{-- ===== JUDUL ===== --}}
+    <div class="doc-title">LEMBAR HASIL STUDI</div>
 
-    <!-- Nilai Table -->
+    {{-- ===== INFO MAHASISWA ===== --}}
+    <table class="info-table">
+        <tr>
+            <td class="lbl">Nama</td>
+            <td class="sep">:</td>
+            <td class="val">{{ $mahasiswa->nim }} - {{ strtoupper($mahasiswa->nama_mahasiswa) }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Tahun Ajaran</td>
+            <td class="sep">:</td>
+            <td class="val">{{ $mahasiswa->tahun_ajaran }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Fakultas</td>
+            <td class="sep">:</td>
+            <td class="val">{{ $mahasiswa->nama_fakultas }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Program Studi</td>
+            <td class="sep">:</td>
+            <td class="val">{{ $mahasiswa->nama_prodi }}</td>
+        </tr>
+    </table>
+
+    {{-- ===== TABEL NILAI ===== --}}
     <table class="nilai-table">
         <thead>
-        <tr>
-            <th style="width: 5%;">NO</th>
-            <th style="width: 12%;">KODE MK</th>
-            <th style="width: 35%;">NAMA MATA KULIAH</th>
-            <th style="width: 8%;">SKS</th>
-            <th style="width: 12%;">NILAI ANGKA</th>
-            <th style="width: 10%;">NILAI HURUF</th>
-            <th style="width: 10%;">BOBOT</th>
-            <th style="width: 8%;">SKS x BOBOT</th>
-        </tr>
+            <tr>
+                <th class="col-no">No.</th>
+                <th class="col-kode">Kode</th>
+                <th class="col-mk">Matakuliah</th>
+                <th class="col-sks">SKS</th>
+                <th class="col-nilai">Nilai</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach($mata_kuliah as $index => $mk)
+            @foreach($mata_kuliah as $index => $mk)
             <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ $mk['kd_mata_kuliah'] }}</td>
-                <td style="text-align: left; padding-left: 8px;">{{ $mk['nama_mata_kuliah'] }}</td>
-                <td>{{ $mk['sks'] }}</td>
-                <td>{{ $mk['nilai_angka'] }}</td>
-                <td><strong>{{ $mk['nilai_huruf'] }}</strong></td>
-                <td>{{ $mk['bobot'] }}</td>
-                <td>{{ number_format($mk['sks'] * floatval($mk['bobot']), 2) }}</td>
+                <td class="col-no">{{ $index + 1 }}.</td>
+                <td class="col-kode">{{ $mk['kd_matakuliah'] }}</td>
+                <td class="col-mk">{{ $mk['matakuliah'] }}</td>
+                <td class="col-sks">{{ $mk['sks'] }}</td>
+                <td class="col-nilai">
+                    @if($mk['sts_nilai'] != '-' && $mk['sts_nilai'] != '')
+                        {{ $mk['sts_nilai'] }}
+                    @elseif($mk['nilai_angka'] != '-' && $mk['nilai_angka'] != '')
+                        {{ $mk['nilai_angka'] }}
+                    @endif
+                </td>
             </tr>
-        @endforeach
+            @endforeach
         </tbody>
         <tfoot>
-        <tr>
-            <td colspan="3" style="text-align: right; padding-right: 10px;">TOTAL</td>
-            <td>{{ $total_sks }}</td>
-            <td colspan="3">INDEKS PRESTASI SEMESTER (IPS)</td>
-            <td>{{ $ips }}</td>
-        </tr>
+            <tr>
+                <td colspan="3" class="total-label"><strong>Total SKS</strong></td>
+                <td class="col-sks"><strong>{{ $total_sks }}</strong></td>
+                <td class="col-nilai"></td>
+            </tr>
         </tfoot>
     </table>
 
-    <!-- Summary -->
-    <div class="summary">
-        <table>
-            <tr>
-                <td>Jumlah Mata Kuliah</td>
-                <td>:</td>
-                <td>{{ $total_mk }} Mata Kuliah</td>
-            </tr>
-            <tr>
-                <td>Total SKS Semester Ini</td>
-                <td>:</td>
-                <td>{{ $total_sks }} SKS</td>
-            </tr>
-            <tr>
-                <td>Indeks Prestasi Semester (IPS)</td>
-                <td>:</td>
-                <td><strong>{{ $ips }}</strong></td>
-            </tr>
-            <tr>
-                <td>Indeks Prestasi Kumulatif (IPK)</td>
-                <td>:</td>
-                <td><strong>{{ $ipk }}</strong></td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- QR Code & Signature -->
-    <table style="width: 100%; margin-top: 30px;">
+    {{-- ===== RINGKASAN ===== --}}
+    <table class="summary-table">
         <tr>
-            <td style="width: 50%; text-align: center; vertical-align: top;">
-                <div class="qr-section">
-                    <p style="font-size: 9px; margin-bottom: 5px;">Verifikasi Dokumen:</p>
-                    <img src="data:image/svg+xml;base64,{{ $qr_code }}" alt="QR Code" class="qr-code">
-                    <p style="font-size: 8px; margin-top: 5px; color: #666;">Scan untuk verifikasi keaslian dokumen</p>
-                </div>
-            </td>
-            <td style="width: 50%; text-align: center; vertical-align: top;">
-                <div class="signature">
-                    <p>Tangerang, {{ date('d F Y') }}</p>
-                    <p style="margin-top: 5px;">Dosen Pembimbing Akademik</p>
-                    <div class="signature-line">
-                        <p><strong>{{ $mahasiswa->nama_dps }}</strong></p>
-                        <p>NIDN. {{ $mahasiswa->nidn }}</p>
-                    </div>
-                </div>
-            </td>
+            <td class="lbl">IP Semester</td>
+            <td class="sep">:</td>
+            <td>{{ $mahasiswa->ips }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Beban Maksimum y.a.d</td>
+            <td class="sep">:</td>
+            <td>{{ $mahasiswa->beban_maks_sks }} SKS</td>
         </tr>
     </table>
 
-    <!-- Footer -->
-    <div class="footer">
-        <p>Dicetak pada: {{ $tanggal_cetak }} WIB</p>
-        <p>Dokumen ini dicetak secara otomatis dan sah tanpa tanda tangan basah</p>
+    {{-- ===== CATATAN + TTD ===== --}}
+    <div class="bottom-wrap">
+        <div class="bottom-left">
+            <p class="catatan-label">Catatan :</p>
+            <div class="catatan-line"></div>
+            <div class="catatan-line"></div>
+            <div class="catatan-line"></div>
+            <div class="catatan-line"></div>
+        </div>
+        <div class="bottom-right">
+            <p class="sign-city">Jember, {{ $tanggal_cetak->locale('id')->isoFormat('D MMMM YYYY') }}</p>
+            <img src="data:image/svg+xml;base64,{{ $qr_code }}" alt="QR Code" class="sign-qr">
+            <p class="sign-name">{{ $mahasiswa->nama_wakil_dekan }}</p>
+            <p class="sign-nidn">{{ $mahasiswa->nidn_wakil_dekan }}</p>
+        </div>
     </div>
+
+    {{-- ===== RANGKAP ===== --}}
+    <div class="rangkap">
+        <p>Rangkap 4</p>
+        <p>Masing-masing untuk :</p>
+        <p>1. Mahasiswa yang Bersangkutan</p>
+        <p>2. Dosen Pembimbing Akademik</p>
+        <p>3. Fakultas/Program Studi</p>
+        <p>4. Orang Tua / Wali</p>
+    </div>
+
 </div>
+
+{{-- ===== FOOTER FIXED ===== --}}
+<div class="footer">
+    <table class="footer-inner">
+        <tr>
+            <td class="footer-left">{{ $tanggal_cetak->format('d-m-Y H:i') }}</td>
+            <td class="footer-center">SIAKAD - Copyright (c) 2015 Universitas<br>Islam Jember</td>
+            <td class="footer-right">Halaman 1/1</td>
+        </tr>
+    </table>
+</div>
+
 </body>
 </html>

@@ -22,12 +22,11 @@ class KHS extends Model
      * @param int $limit Limit pagination
      * @return array
      */
-    public static function get_daftar_nilai($nim, $tahun_akademik = null, $semester = null, $search = '', $offset = 0, $limit = -1)
+    public static function get_daftar_nilai($nim, $tahun_akademik = null, $search = '', $offset = 0, $limit = -1)
     {
-        return DB::select("SELECT * FROM akademik.get_hasil_studi_mahasiswa(?,?,?,?,?,?)", [
+        return DB::select("SELECT * FROM akademik.export_lembar_hasil_studi_mahasiswa(?,?,?,?,?)", [
             (string) $nim,
             $tahun_akademik,
-            $semester,
             $search,
             $offset,
             $limit
@@ -42,7 +41,14 @@ class KHS extends Model
      */
     public static function get_tahun_akademik_list($nim)
     {
-        return DB::select('SELECT DISTINCT tahun_akademik FROM akademik.get_tahun_akademik_mahasiswa(?) ORDER BY tahun_akademik DESC', [
+        return DB::select('SELECT * FROM akademik.get_tahun_akademik_by_mahasiswa(?) ORDER BY tahun_akademik DESC', [
+            $nim
+        ]);
+    }
+
+    public static function get_semester_list($nim)
+    {
+        return DB::select('SELECT * FROM akademik.get_semester_by_mahasiswa(?)', [
             $nim
         ]);
     }
