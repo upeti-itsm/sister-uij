@@ -404,21 +404,20 @@ class PengajuanTranskrip extends Model
      * @return array
      */
     public static function get_daftar_pengajuan_dekan(
-        $idFakultas,
         $status = null,
         $tahun  = null,
-        $prodi  = null,
+        $kd_prodi  = null,
         $search = '',
         $offset = 0,
         $limit  = 10
     ) {
         return DB::select(
-            "SELECT * FROM akademik.get_daftar_pengajuan_transkrip_dekan(?,?,?,?,?,?,?)",
+            "SELECT * FROM akademik.get_list_pengajuan_transkrip_nilai(?,?,?,?,?,?,?)",
             [
-                $idFakultas,
                 $status,
                 $tahun,
-                $prodi,
+                null,
+                $kd_prodi,
                 $search,
                 $offset,
                 $limit
@@ -505,13 +504,14 @@ class PengajuanTranskrip extends Model
      * @param string|null $catatan     Catatan dekan (opsional)
      * @return object|null
      */
-    public static function sahkan_dekan($idPengajuan, $idUser, $catatan = null)
+    public static function sahkan_dekan($idPengajuan, $catatan = null)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.sahkan_pengajuan_transkrip_dekan(?,?,?)",
+            "SELECT * FROM akademik.set_status_pengajuan_transkrip_nilai(?::uuid, ?::character varying, ?::uuid, ?::character varying)",
             [
                 $idPengajuan,
-                $idUser,
+                '5',
+                Session::get('user')->id_personal ?? null,
                 $catatan
             ]
         );
@@ -527,14 +527,15 @@ class PengajuanTranskrip extends Model
      * @param string     $alasanTolak Alasan penolakan (wajib)
      * @return object|null
      */
-    public static function tolak_dekan($idPengajuan, $idUser, $alasanTolak)
+    public static function tolak_dekan($idPengajuan, $alasanTolak)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.tolak_pengajuan_transkrip_dekan(?,?,?)",
+            "SELECT * FROM akademik.set_status_pengajuan_transkrip_nilai(?::uuid, ?::character varying, ?::uuid, ?::character varying)",
             [
                 $idPengajuan,
-                $idUser,
-                (string) $alasanTolak
+                '6',
+                Session::get('user')->id_personal ?? null,
+                $alasanTolak
             ]
         );
     }

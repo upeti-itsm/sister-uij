@@ -41,16 +41,15 @@ class TranskripDekanController extends Controller
                 ], 401);
             }
 
-            $idFakultas = $user->id_fakultas ?? null;
             $status     = $request->status   ?? null;
             $tahun      = $request->tahun    ?? null;
-            $prodi      = $request->prodi    ?? null;
+            $prodi      = $user->id_personal   ?? null;
             $search     = $request->search['value'] ?? $request->search ?? '';
             $start      = $request->start    ?? 0;
             $length     = $request->length   ?? 10;
 
             $data_ = PengajuanTranskrip::get_daftar_pengajuan_dekan(
-                $idFakultas, $status, $tahun, $prodi, $search, $start, $length
+                $status, $tahun, $prodi, $search, $start, $length
             );
 
             $data = [
@@ -180,7 +179,7 @@ class TranskripDekanController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
             if (!$idPengajuan) {
                 return response()->json([
                     'status'     => '0',
@@ -188,25 +187,19 @@ class TranskripDekanController extends Controller
                 ], 422);
             }
 
-            $idFakultas = $user->id_fakultas ?? null;
-
-            // Ownership check: pengajuan harus dari fakultas yang dipimpin dekan ini
-            $detail = PengajuanTranskrip::get_detail_dekan($idPengajuan, $idFakultas);
-
+            $detail = PengajuanTranskrip::get_detail($idPengajuan);
+//            dd($detail);
             if (!$detail) {
                 return response()->json([
                     'status'     => '0',
                     'keterangan' => 'Data pengajuan tidak ditemukan atau bukan wewenang Anda'
                 ], 404);
             }
-
-            $riwayat = PengajuanTranskrip::get_riwayat($idPengajuan);
-
             return response()->json([
                 'status' => '1',
                 'data'   => [
-                    'id_pengajuan'     => $detail->id_pengajuan,
-                    'no_pengajuan'     => $detail->no_pengajuan,
+                    'id_riwayat_pengajuan'     => $detail->id_riwayat_pengajuan_nilai,
+                    'nomor_pengajuan'     => $detail->nomor_pengajuan,
                     'nim'              => $detail->nim,
                     'nama_mahasiswa'   => $detail->nama_mahasiswa   ?? '-',
                     'nama_prodi'       => $detail->nama_prodi       ?? '-',
@@ -218,16 +211,12 @@ class TranskripDekanController extends Controller
                     'catatan_kaprodi'  => $detail->catatan_kaprodi  ?? '-',
                     // Detail pengajuan
                     'keperluan'        => $detail->keperluan,
-                    'bahasa'           => $detail->bahasa,
-                    'jumlah_lembar'    => $detail->jumlah_lembar,
-                    'email_tujuan'     => $detail->email_tujuan     ?? '-',
-                    'catatan'          => $detail->catatan           ?? '-',
                     'status'           => $detail->status,
                     'alasan_tolak'     => $detail->alasan_tolak     ?? null,
-                    'tgl_pengajuan'    => $detail->tgl_pengajuan,
+                    'tgl_pengajuan'    => $detail->tgl_created,
                     'tgl_dekan'        => $detail->tgl_dekan        ?? null,
                     'tgl_selesai'      => $detail->tgl_selesai      ?? null,
-                    'riwayat'          => $riwayat
+                    'riwayat'          => $detail->riwayat_ajuan          ?? null,
                 ]
             ], 200);
 
@@ -307,7 +296,7 @@ class TranskripDekanController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan;
             if (!$idPengajuan) {
                 return response()->json([
                     'status'     => '0',
@@ -315,41 +304,20 @@ class TranskripDekanController extends Controller
                 ], 422);
             }
 
-            $idFakultas = $user->id_fakultas ?? null;
-            $idUser     = $user->id_user     ?? null;
             $catatan    = $request->catatan  ?? null;
+            $result = PengajuanTranskrip::sahkan_dekan($idPengajuan, $catatan);
 
-            // Ownership + status check
-            $detail = PengajuanTranskrip::get_detail_dekan($idPengajuan, $idFakultas);
-
-            if (!$detail) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak ditemukan atau bukan wewenang Anda'
-                ], 404);
-            }
-
-            if ($detail->status !== 'proses_dekan') {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak dapat disahkan karena status saat ini adalah "' .
-                        $detail->status . '"'
-                ], 422);
-            }
-
-            $result = PengajuanTranskrip::sahkan_dekan($idPengajuan, $idUser, $catatan);
-
-            if ($result && $result->status === '1') {
+            if ($result && $result->status === 1) {
                 return response()->json([
                     'status'     => '1',
-                    'keterangan' => 'Transkrip berhasil disahkan'
+                    'keterangan' => $result->keterangan ?? 'Transkrip berhasil disahkan'
                 ], 200);
             }
 
             return response()->json([
                 'status'     => '0',
                 'keterangan' => $result->keterangan ?? 'Gagal mengesahkan transkrip'
-            ], 500);
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -374,7 +342,7 @@ class TranskripDekanController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan;
             $alasanTolak = trim($request->alasan_tolak ?? '');
 
             if (!$idPengajuan) {
@@ -391,40 +359,19 @@ class TranskripDekanController extends Controller
                 ], 422);
             }
 
-            $idFakultas = $user->id_fakultas ?? null;
-            $idUser     = $user->id_user     ?? null;
+            $result = PengajuanTranskrip::tolak_dekan($idPengajuan, $alasanTolak);
 
-            // Ownership + status check
-            $detail = PengajuanTranskrip::get_detail_dekan($idPengajuan, $idFakultas);
-
-            if (!$detail) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak ditemukan atau bukan wewenang Anda'
-                ], 404);
-            }
-
-            if ($detail->status !== 'proses_dekan') {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Pengajuan tidak dapat ditolak karena status saat ini adalah "' .
-                        $detail->status . '"'
-                ], 422);
-            }
-
-            $result = PengajuanTranskrip::tolak_dekan($idPengajuan, $idUser, $alasanTolak);
-
-            if ($result && $result->status === '1') {
+            if ($result && $result->status === 1) {
                 return response()->json([
                     'status'     => '1',
-                    'keterangan' => 'Pengajuan berhasil ditolak'
+                    'keterangan' => $result->keterangan ?? 'Pengajuan berhasil ditolak'
                 ], 200);
             }
 
             return response()->json([
                 'status'     => '0',
                 'keterangan' => $result->keterangan ?? 'Gagal menolak pengajuan'
-            ], 500);
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([

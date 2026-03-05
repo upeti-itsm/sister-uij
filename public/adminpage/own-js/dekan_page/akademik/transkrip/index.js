@@ -2,7 +2,7 @@ jQuery.transkripDekan = {
     data: {
         table_transkrip: null,
         filter: {
-            status: 'proses_dekan',
+            status: '3',
             tahun: '',
             prodi: '',
             search: ''
@@ -34,6 +34,61 @@ jQuery.transkripDekan = {
         self.initDataTable();
         self.setEvents();
         self.loadStatistik();
+    },
+
+    // ============================================================
+    // LOADING HELPERS
+    // ============================================================
+
+    showOverlay: function (text) {
+        $('#loading-overlay-text').text(text || 'Memproses...');
+        $('#loading-overlay').addClass('show');
+    },
+
+    hideOverlay: function () {
+        $('#loading-overlay').removeClass('show');
+    },
+
+    showModalLoading: function () {
+        $('#modal-detail-loading').addClass('show');
+        $('#modal-detail-content').hide();
+        $('#btn-sahkan-dekan').addClass('d-none');
+        $('#btn-tolak-dekan').addClass('d-none');
+    },
+
+    hideModalLoading: function () {
+        $('#modal-detail-loading').removeClass('show');
+        $('#modal-detail-content').show();
+    },
+
+    showPreviewLoading: function () {
+        $('#preview-nilai-loading').addClass('show');
+        $('#preview-nilai-wrapper-content').hide();
+    },
+
+    hidePreviewLoading: function () {
+        $('#preview-nilai-loading').removeClass('show');
+        $('#preview-nilai-wrapper-content').show();
+    },
+
+    setStatLoading: function () {
+        var ids = ['#stat-menunggu', '#stat-disahkan', '#stat-ditolak', '#stat-total'];
+        ids.forEach(function (id) {
+            $(id).addClass('stat-loading')
+                .html('<i class="fas fa-spinner fa-spin fa-sm"></i>');
+        });
+    },
+
+    setStatValue: function (menunggu, disahkan, ditolak, total) {
+        var map = {
+            '#stat-menunggu': menunggu,
+            '#stat-disahkan': disahkan,
+            '#stat-ditolak':  ditolak,
+            '#stat-total':    total
+        };
+        Object.keys(map).forEach(function (id) {
+            $(id).removeClass('stat-loading').text(map[id]);
+        });
     },
 
     // ============================================================
@@ -143,9 +198,8 @@ jQuery.transkripDekan = {
                     }
                 },
                 columns: [
-                    // No
                     {
-                        data: null,
+                        data: 'nomor',
                         searchable: false,
                         className: 'text-center',
                         width: '4%',
@@ -153,17 +207,20 @@ jQuery.transkripDekan = {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
-                    // No. Pengajuan
                     {
-                        data: 'no_pengajuan',
+                        data: 'nomor_pengajuan',
                         searchable: true,
                         className: 'text-left',
-                        width: '13%',
-                        render: function (data) {
-                            return `<strong style="color:#4a148c;">${data || '-'}</strong>`;
+                        width: '14%',
+                        render: function (data, type, row) {
+                            var no      = data || '-';
+                            var idShort = row.id_riwayat_pengajuan_nilai
+                                ? row.id_riwayat_pengajuan_nilai.substring(0, 8).toUpperCase()
+                                : '-';
+                            return `<strong style="color:#4a148c;" class="d-block">${no}</strong>
+                                    <small class="text-muted">${idShort}</small>`;
                         }
                     },
-                    // NIM
                     {
                         data: 'nim',
                         searchable: true,
@@ -173,7 +230,6 @@ jQuery.transkripDekan = {
                             return `<code>${data || '-'}</code>`;
                         }
                     },
-                    // Nama Mahasiswa
                     {
                         data: 'nama_mahasiswa',
                         searchable: true,
@@ -181,57 +237,50 @@ jQuery.transkripDekan = {
                         width: '17%',
                         defaultContent: '-'
                     },
-                    // Program Studi
                     {
                         data: 'nama_prodi',
                         searchable: true,
                         className: 'text-left',
-                        width: '12%',
+                        width: '13%',
                         render: function (data) {
-                            if (!data) return '-';
-                            return `<small>${data}</small>`;
+                            return data ? `<small>${data}</small>` : '-';
                         }
                     },
-                    // Keperluan
                     {
                         data: 'keperluan',
                         searchable: true,
                         className: 'text-left',
-                        width: '10%',
+                        width: '12%',
                         defaultContent: '-'
                     },
-                    // Tanggal Ajuan
                     {
-                        data: 'tgl_pengajuan',
+                        data: 'tgl_created',
                         searchable: false,
                         className: 'text-center',
-                        width: '9%',
+                        width: '10%',
                         render: function (data) {
-                            return data ? self.formatTanggal(data) : '-';
+                            return data || '-';
                         }
                     },
-                    // Tanggal Kaprodi
                     {
-                        data: 'tgl_kaprodi',
+                        data: 'tgl_updated',
                         searchable: false,
                         className: 'text-center',
-                        width: '9%',
+                        width: '10%',
                         render: function (data) {
                             if (!data) return '<span class="text-muted">-</span>';
-                            return `<span class="text-success">${self.formatTanggal(data)}</span>`;
+                            return `<span class="text-success">${data}</span>`;
                         }
                     },
-                    // Status
                     {
                         data: 'status',
                         searchable: false,
                         className: 'text-center',
                         width: '10%',
-                        render: function (data) {
-                            return self.getBadgeStatus(data);
+                        render: function (data, type, row) {
+                            return self.getBadgeStatus(data, row.keterangan_status);
                         }
                     },
-                    // Aksi
                     {
                         data: null,
                         searchable: false,
@@ -240,27 +289,29 @@ jQuery.transkripDekan = {
                         render: function (data) {
                             if (!data) return '-';
 
-                            var btnDetail = `
+                            var idRiwayat        = data.id_riwayat_pengajuan_nilai || '';
+                            var idPengajuanInduk = data.id_pengajuan_induk || idRiwayat;
+
+                            return `
                                 <button class="btn btn-info btn-sm btn-detail-dekan"
-                                        data-id="${data.id_pengajuan || ''}"
+                                        data-id="${idPengajuanInduk}"
+                                        data-riwayat="${idRiwayat}"
                                         title="Lihat Detail & Tindakan">
                                     <i class="fas fa-eye mr-1"></i>Detail
                                 </button>`;
-
-                            return btnDetail;
                         }
                     }
                 ],
                 rowCallback: function (row, data) {
-                    if (data.status === 'proses_dekan') {
+                    if (String(data.status) === '3') {
                         $(row).addClass('row-menunggu-dekan');
                     }
                 },
                 drawCallback: function (settings) {
                     var api  = this.api();
-                    var data = api.rows().data().toArray();
+                    var rows = api.rows().data().toArray();
 
-                    if (data.length === 0) {
+                    if (rows.length === 0) {
                         $('#table-transkrip-dekan tbody').html(`
                             <tr>
                                 <td colspan="10" class="text-center">
@@ -287,7 +338,11 @@ jQuery.transkripDekan = {
                 autoWidth: false,
                 language: {
                     emptyTable:   "Tidak ada data pengajuan transkrip",
-                    processing:   "Sedang memuat data...",
+                    processing:   `<div class="text-center py-3">
+                                       <i class="fas fa-spinner fa-spin mr-2"
+                                          style="color:#9c27b0;"></i>
+                                       Sedang memuat data...
+                                   </div>`,
                     zeroRecords:  "Tidak ditemukan data yang sesuai",
                     info:         "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                     infoEmpty:    "Menampilkan 0 sampai 0 dari 0 data",
@@ -321,7 +376,6 @@ jQuery.transkripDekan = {
     setEvents: function () {
         var self = this;
 
-        // --- Filter ---
         $('#btn-filter').off('click').on('click', function () {
             self.applyFilter();
         });
@@ -337,22 +391,28 @@ jQuery.transkripDekan = {
             }
         });
 
-        // --- Refresh ---
         $('#btn-refresh').off('click').on('click', function () {
+            var $btn = $(this);
+            $btn.prop('disabled', true)
+                .html('<i class="fas fa-spinner fa-spin mr-1"></i>Refresh');
+
             if (self.data.table_transkrip) {
-                self.data.table_transkrip.ajax.reload();
+                self.data.table_transkrip.ajax.reload(function () {
+                    $btn.prop('disabled', false)
+                        .html('<i class="fas fa-sync-alt mr-1"></i>Refresh');
+                });
             }
+
             self.loadStatistik();
         });
 
-        // --- Detail (dari tombol di tabel) ---
-        $(document).off('click', '.btn-detail-dekan').on('click', '.btn-detail-dekan', function (e) {
-            e.stopPropagation();
-            var id = $(this).data('id');
-            self.loadDetail(id);
-        });
+        $(document).off('click', '.btn-detail-dekan')
+            .on('click', '.btn-detail-dekan', function (e) {
+                e.stopPropagation();
+                var idRiwayat = $(this).data('id');
+                self.loadDetail(idRiwayat);
+            });
 
-        // --- Sahkan dari modal detail ---
         $('#btn-sahkan-dekan').off('click').on('click', function () {
             if (!self.data.current_id) return;
             var catatan = $('#dekan-catatan').val().trim();
@@ -365,7 +425,6 @@ jQuery.transkripDekan = {
             );
         });
 
-        // --- Tolak dari modal detail ---
         $('#btn-tolak-dekan').off('click').on('click', function () {
             if (!self.data.current_id) return;
             var catatan = $('#dekan-catatan').val().trim();
@@ -373,26 +432,27 @@ jQuery.transkripDekan = {
             self.openKonfirmasiTolak(
                 self.data.current_id,
                 self.data.current_no,
+                self.data.current_nama,
                 catatan
             );
         });
 
-        // --- Konfirmasi Sahkan ---
         $('#btn-konfirmasi-sahkan').off('click').on('click', function () {
             self.prosesSahkan();
         });
 
-        // --- Konfirmasi Tolak ---
         $('#btn-konfirmasi-tolak-dekan').off('click').on('click', function () {
             self.prosesTolak();
         });
 
-        // --- Reset modal detail saat ditutup ---
+        // ✅ FIX UTAMA: gunakan flag _isProcessing untuk mencegah
+        //    resetModalDetail() menghapus current_id saat proses sedang berjalan
         $('#modal-detail-dekan').on('hidden.bs.modal', function () {
-            self.resetModalDetail();
+            if (!self._isProcessing) {
+                self.resetModalDetail();
+            }
         });
 
-        // --- Reset modal tolak saat ditutup ---
         $('#modal-konfirmasi-tolak-dekan').on('hidden.bs.modal', function () {
             $('#alasan-tolak-dekan-final').val('').removeClass('is-invalid');
             $('#alasan-tolak-dekan-error').hide();
@@ -411,8 +471,6 @@ jQuery.transkripDekan = {
         self.data.filter.prodi  = $('#filter-prodi').val();
         self.data.filter.search = $('#filter-search').val().trim();
 
-        console.log('Applying filter dekan:', self.data.filter);
-
         if (self.data.table_transkrip) {
             self.data.table_transkrip.ajax.reload();
         }
@@ -421,13 +479,13 @@ jQuery.transkripDekan = {
     resetFilter: function () {
         var self = this;
 
-        $('#filter-status').val('proses_dekan').trigger('change');
+        $('#filter-status').val('3').trigger('change');
         $('#filter-tahun').val('').trigger('change');
         $('#filter-prodi').val('').trigger('change');
         $('#filter-search').val('');
 
         self.data.filter = {
-            status: 'proses_dekan',
+            status: '3',
             tahun: '',
             prodi: '',
             search: ''
@@ -442,7 +500,7 @@ jQuery.transkripDekan = {
         var self  = this;
         var f     = self.data.filter;
         var aktif = f.tahun || f.prodi || f.search ||
-            (f.status && f.status !== 'proses_dekan');
+            (f.status && f.status !== '3');
 
         if (aktif) {
             $('#badge-filter-aktif').removeClass('d-none');
@@ -458,6 +516,8 @@ jQuery.transkripDekan = {
     loadStatistik: function () {
         var self = this;
 
+        self.setStatLoading();
+
         $.ajax({
             url: '/dekan/transkrip/statistik',
             method: 'POST',
@@ -467,55 +527,73 @@ jQuery.transkripDekan = {
             success: function (response) {
                 console.log('Statistik dekan:', response);
 
-                if (response) {
-                    $('#stat-menunggu').text(response.menunggu  || 0);
-                    $('#stat-disahkan').text(response.disahkan  || 0);
-                    $('#stat-ditolak').text(response.ditolak    || 0);
-                    $('#stat-total').text(response.total        || 0);
+                self.setStatValue(
+                    response.menunggu || 0,
+                    response.disahkan || 0,
+                    response.ditolak  || 0,
+                    response.total    || 0
+                );
 
-                    self.data.statistik = {
-                        menunggu: response.menunggu || 0,
-                        disahkan: response.disahkan || 0,
-                        ditolak:  response.ditolak  || 0,
-                        total:    response.total     || 0
-                    };
-                }
+                self.data.statistik = {
+                    menunggu: response.menunggu || 0,
+                    disahkan: response.disahkan || 0,
+                    ditolak:  response.ditolak  || 0,
+                    total:    response.total    || 0
+                };
             },
             error: function (xhr, status, error) {
                 console.warn('Gagal memuat statistik dekan:', error);
+                self.setStatValue('-', '-', '-', '-');
             }
         });
     },
 
-    loadDetail: function (id) {
+    loadDetail: function (idRiwayat) {
         var self = this;
 
-        if (!id) {
-            $.alert({ title: 'Error', content: 'ID pengajuan tidak valid', type: 'red' });
+        if (!idRiwayat) {
+            $.alert({ title: 'Error', content: 'ID riwayat pengajuan tidak valid', type: 'red' });
             return;
         }
 
         self.resetModalDetail();
+        self.showModalLoading();
         $('#modal-detail-dekan').modal('show');
 
         $.ajax({
             url: '/dekan/transkrip/detail',
             method: 'POST',
             data: {
-                _token:       $('meta[name="csrf-token"]').attr('content'),
-                id_pengajuan: id
+                _token:                    $('meta[name="csrf-token"]').attr('content'),
+                id_riwayat_pengajuan_nilai: idRiwayat
             },
             success: function (response) {
                 console.log('Detail pengajuan dekan:', response);
 
-                if (response && response.status === '1') {
-                    self.data.current_detail = response.data;
-                    self.data.current_id     = response.data.id_pengajuan;
-                    self.data.current_no     = response.data.no_pengajuan;
-                    self.data.current_nama   = response.data.nama_mahasiswa;
+                self.hideModalLoading();
 
-                    self.renderModalDetail(response.data);
-                    self.loadPreviewNilai(response.data.nim);
+                if (response && response.status === '1') {
+                    var d = response.data;
+
+                    if (d.riwayat && typeof d.riwayat === 'string') {
+                        try {
+                            d.riwayat = JSON.parse(d.riwayat);
+                        } catch (e) {
+                            console.warn('Gagal parse riwayat JSON:', e);
+                            d.riwayat = [];
+                        }
+                    }
+
+                    self.data.current_detail = d;
+                    self.data.current_id     = d.id_riwayat_pengajuan || idRiwayat;
+                    self.data.current_no     = d.nomor_pengajuan;
+                    self.data.current_nama   = d.nama_mahasiswa;
+
+                    console.log('current_id set to:', self.data.current_id);
+
+                    self.renderModalDetail(d);
+                    self.showPreviewLoading();
+                    self.loadPreviewNilai(d.nim);
                 } else {
                     $('#modal-detail-dekan').modal('hide');
                     $.alert({
@@ -526,6 +604,7 @@ jQuery.transkripDekan = {
                 }
             },
             error: function (xhr, status, error) {
+                self.hideModalLoading();
                 $('#modal-detail-dekan').modal('hide');
                 $.alert({
                     title: 'Error',
@@ -540,9 +619,12 @@ jQuery.transkripDekan = {
         var self = this;
 
         if (!nim) {
+            self.hidePreviewLoading();
             $('#dkn-preview-nilai').html(`
                 <tr>
-                    <td colspan="8" class="text-center text-muted py-3">NIM tidak valid</td>
+                    <td colspan="8" class="text-center text-muted py-3">
+                        NIM tidak valid
+                    </td>
                 </tr>`);
             return;
         }
@@ -556,6 +638,7 @@ jQuery.transkripDekan = {
             },
             success: function (response) {
                 console.log('Preview nilai dekan:', response);
+                self.hidePreviewLoading();
 
                 if (response && response.status === '1' && Array.isArray(response.data)) {
                     self.renderPreviewNilai(response.data);
@@ -569,6 +652,7 @@ jQuery.transkripDekan = {
                 }
             },
             error: function () {
+                self.hidePreviewLoading();
                 $('#dkn-preview-nilai').html(`
                     <tr>
                         <td colspan="8" class="text-center text-danger py-3">
@@ -589,45 +673,47 @@ jQuery.transkripDekan = {
 
         if (!data) return;
 
-        // Header
-        $('#dkn-no-pengajuan').text(data.no_pengajuan || '-');
-        $('#dkn-status-badge').html(self.getBadgeStatus(data.status));
-
-        // Info mahasiswa
-        $('#dkn-nim').text(data.nim                  || '-');
-        $('#dkn-nama').text(data.nama_mahasiswa       || '-');
-        $('#dkn-prodi').text(data.nama_prodi          || '-');
-        $('#dkn-angkatan').text(data.angkatan         || '-');
-
-        // Mini IPK card
-        var ipk       = parseFloat(data.ipk || 0);
-        var predikat  = self.getPredikat(ipk);
-        $('#dkn-ipk').text(ipk.toFixed(2));
-        $('#dkn-predikat').text(predikat);
-
-        // Info persetujuan kaprodi
-        $('#dkn-nama-kaprodi').text(data.nama_kaprodi     || '-');
-        $('#dkn-tgl-kaprodi').text(
-            data.tgl_kaprodi ? self.formatTanggal(data.tgl_kaprodi, true) : '-'
+        $('#dkn-no-pengajuan').text(data.nomor_pengajuan            || '-');
+        $('#dkn-id-riwayat').text(data.id_riwayat_pengajuan_nilai   || data.id_riwayat_pengajuan || '-');
+        $('#dkn-status-badge').html(
+            self.getBadgeStatus(data.status, data.keterangan_status)
         );
-        $('#dkn-catatan-kaprodi').text(data.catatan_kaprodi || '-');
 
-        // Detail pengajuan
-        $('#dkn-keperluan').text(data.keperluan              || '-');
-        $('#dkn-bahasa').text(data.bahasa                    || '-');
-        $('#dkn-jumlah-lembar').text((data.jumlah_lembar || 0) + ' lembar');
-        $('#dkn-email-tujuan').text(data.email_tujuan        || '-');
-        $('#dkn-tgl-ajuan').text(self.formatTanggal(data.tgl_pengajuan));
-        $('#dkn-catatan').text(data.catatan                  || '-');
+        $('#dkn-nim').text(data.nim            || '-');
+        $('#dkn-nama').text(data.nama_mahasiswa || '-');
+        $('#dkn-prodi').text(data.nama_prodi    || '-');
+        $('#dkn-angkatan').text(
+            (!data.angkatan || data.angkatan === '-') ? '-' : data.angkatan
+        );
 
-        // Step indicator
+        var ipk = parseFloat(data.ipk || 0);
+        $('#dkn-ipk').text(ipk > 0 ? ipk.toFixed(2) : '0.00');
+        $('#dkn-predikat').text(ipk > 0 ? self.getPredikat(ipk) : '-');
+
+        $('#dkn-nama-kaprodi').text(
+            (!data.nama_kaprodi || data.nama_kaprodi === '-') ? '-' : data.nama_kaprodi
+        );
+        $('#dkn-tgl-kaprodi').text(data.tgl_kaprodi || '-');
+        $('#dkn-catatan-kaprodi').text(
+            (!data.catatan_kaprodi || data.catatan_kaprodi === '-') ? '-' : data.catatan_kaprodi
+        );
+
+        $('#dkn-keperluan').text(data.keperluan     || '-');
+        $('#dkn-tgl-ajuan').text(data.tgl_pengajuan || '-');
+        $('#dkn-tgl-dekan').text(data.tgl_dekan     || '-');
+        $('#dkn-tgl-selesai').text(data.tgl_selesai || '-');
+
+        if (String(data.status) === '6' && data.alasan_tolak) {
+            $('#dkn-alasan-tolak').text(data.alasan_tolak);
+            $('#section-alasan-tolak').show();
+        } else {
+            $('#section-alasan-tolak').hide();
+        }
+
         $('#dkn-step-indicator').html(self.renderStepIndicator(data.status));
+        $('#dkn-timeline').html(self.renderTimeline(data.riwayat));
 
-        // Timeline
-        $('#dkn-timeline').html(self.renderTimeline(data.riwayat || []));
-
-        // Tombol & form tindakan — hanya tampil jika status = proses_dekan
-        if (data.status === 'proses_dekan') {
+        if (String(data.status) === '3') {
             $('#section-tindakan-dekan').show();
             $('#btn-sahkan-dekan').removeClass('d-none');
             $('#btn-tolak-dekan').removeClass('d-none');
@@ -692,19 +778,18 @@ jQuery.transkripDekan = {
                 </tr>`;
         });
 
-        $('#dkn-preview-nilai').html(html);
-
         var ipk = totalSks > 0 ? (totalBobot / totalSks) : 0;
+
+        $('#dkn-preview-nilai').html(html);
         $('#dkn-preview-total-sks').text(totalSks);
         $('#dkn-preview-ipk').text(ipk.toFixed(2));
     },
 
     resetModalDetail: function () {
-        // Header
         $('#dkn-no-pengajuan').text('-');
+        $('#dkn-id-riwayat').text('-');
         $('#dkn-status-badge').html('');
 
-        // Info mahasiswa
         $('#dkn-nim').text('-');
         $('#dkn-nama').text('-');
         $('#dkn-prodi').text('-');
@@ -712,42 +797,32 @@ jQuery.transkripDekan = {
         $('#dkn-ipk').text('0.00');
         $('#dkn-predikat').text('-');
 
-        // Info kaprodi
         $('#dkn-nama-kaprodi').text('-');
         $('#dkn-tgl-kaprodi').text('-');
         $('#dkn-catatan-kaprodi').text('-');
 
-        // Detail
         $('#dkn-keperluan').text('-');
-        $('#dkn-bahasa').text('-');
-        $('#dkn-jumlah-lembar').text('-');
-        $('#dkn-email-tujuan').text('-');
         $('#dkn-tgl-ajuan').text('-');
-        $('#dkn-catatan').text('-');
+        $('#dkn-tgl-dekan').text('-');
+        $('#dkn-tgl-selesai').text('-');
 
-        // Step & timeline
+        $('#section-alasan-tolak').hide();
+        $('#dkn-alasan-tolak').text('-');
+
         $('#dkn-step-indicator').html('');
         $('#dkn-timeline').html(
             '<div class="text-muted text-center py-3">Tidak ada riwayat</div>'
         );
 
-        // Preview nilai
-        $('#dkn-preview-nilai').html(`
-            <tr>
-                <td colspan="8" class="text-center text-muted py-3">
-                    <i class="fas fa-spinner fa-spin mr-2"></i>Memuat data nilai...
-                </td>
-            </tr>`);
+        $('#dkn-preview-nilai').html('');
         $('#dkn-preview-total-sks').text(0);
         $('#dkn-preview-ipk').text('0.00');
 
-        // Form tindakan
         $('#dekan-catatan').val('');
         $('#section-tindakan-dekan').hide();
         $('#btn-sahkan-dekan').addClass('d-none');
         $('#btn-tolak-dekan').addClass('d-none');
 
-        // Reset state
         this.data.current_detail = null;
         this.data.current_id     = null;
         this.data.current_no     = null;
@@ -761,10 +836,14 @@ jQuery.transkripDekan = {
     openKonfirmasiSahkan: function (id, no, nama, catatan) {
         var self = this;
 
-        self.data.current_id   = id;
-        self.data.current_no   = no;
-        self.data.current_nama = nama;
-        self._pendingCatatan   = catatan || '';
+        // ✅ Simpan ke _pending sebelum apapun di-hide
+        self._pendingId      = id;
+        self._pendingNo      = no;
+        self._pendingNama    = nama;
+        self._pendingCatatan = catatan || '';
+
+        // Tandai sedang dalam proses agar hidden.bs.modal tidak reset state
+        self._isProcessing = true;
 
         $('#konfirmasi-sahkan-no').text(no    || id);
         $('#konfirmasi-sahkan-nama').text(nama || '-');
@@ -775,33 +854,50 @@ jQuery.transkripDekan = {
     prosesSahkan: function () {
         var self = this;
 
+        // ✅ Ambil dari _pending — aman dari reset oleh hidden.bs.modal
+        var idToProcess   = self._pendingId;
+        var noToProcess   = self._pendingNo;
+        var namaToProcess = self._pendingNama;
+        var catatan       = self._pendingCatatan || '';
+
+        if (!idToProcess) {
+            $.alert({ title: 'Error', content: 'ID pengajuan tidak valid', type: 'red' });
+            return;
+        }
+
         var $btn = $('#btn-konfirmasi-sahkan');
         $btn.prop('disabled', true)
             .html('<i class="fas fa-spinner fa-spin mr-1"></i>Memproses...');
+
+        $('#modal-konfirmasi-sahkan').modal('hide');
+        self.showOverlay('Mengesahkan transkrip...');
 
         $.ajax({
             url: '/dekan/transkrip/sahkan',
             method: 'POST',
             data: {
-                _token:       $('meta[name="csrf-token"]').attr('content'),
-                id_pengajuan: self.data.current_id,
-                catatan:      self._pendingCatatan || ''
+                _token:               $('meta[name="csrf-token"]').attr('content'),
+                id_riwayat_pengajuan: idToProcess,
+                catatan:              catatan
             },
             success: function (response) {
+                self.hideOverlay();
                 $btn.prop('disabled', false)
                     .html('<i class="fas fa-stamp mr-1"></i>Ya, Sahkan');
-                $('#modal-konfirmasi-sahkan').modal('hide');
 
                 if (response && response.status === '1') {
                     $.alert({
                         title: 'Berhasil Disahkan!',
                         content: `
                             <div class="text-center">
-                                <i class="fas fa-stamp text-success" style="font-size:3rem;"></i>
-                                <p class="mt-3 font-weight-bold">Transkrip berhasil disahkan!</p>
+                                <i class="fas fa-stamp text-success"
+                                   style="font-size:3rem;"></i>
+                                <p class="mt-3 font-weight-bold">
+                                    Transkrip berhasil disahkan!
+                                </p>
                                 <p class="text-muted small">
-                                    Pengajuan <strong>${self.data.current_no}</strong>
-                                    atas nama <strong>${self.data.current_nama}</strong>
+                                    Pengajuan <strong>${noToProcess}</strong>
+                                    atas nama <strong>${namaToProcess}</strong>
                                     telah disahkan.
                                 </p>
                                 <p class="text-muted small">
@@ -822,6 +918,7 @@ jQuery.transkripDekan = {
                 }
             },
             error: function (xhr, status, error) {
+                self.hideOverlay();
                 $btn.prop('disabled', false)
                     .html('<i class="fas fa-stamp mr-1"></i>Ya, Sahkan');
 
@@ -844,14 +941,20 @@ jQuery.transkripDekan = {
     // PROSES TOLAK
     // ============================================================
 
-    openKonfirmasiTolak: function (id, no, catatan) {
+    openKonfirmasiTolak: function (id, no, nama, catatan) {
         var self = this;
 
-        self.data.current_id  = id;
-        self.data.current_no  = no;
-        self._pendingCatatan  = catatan || '';
+        // ✅ Simpan ke _pending sebelum apapun di-hide
+        self._pendingId      = id;
+        self._pendingNo      = no;
+        self._pendingNama    = nama;
+        self._pendingCatatan = catatan || '';
 
-        $('#konfirmasi-tolak-dekan-no').text(no || id);
+        // Tandai sedang dalam proses agar hidden.bs.modal tidak reset state
+        self._isProcessing = true;
+
+        $('#konfirmasi-tolak-dekan-no').text(no    || id);
+        $('#konfirmasi-tolak-dekan-nama').text(nama || '-');
         $('#alasan-tolak-dekan-final').val(catatan || '');
         $('#alasan-tolak-dekan-final').removeClass('is-invalid');
         $('#alasan-tolak-dekan-error').hide();
@@ -869,34 +972,50 @@ jQuery.transkripDekan = {
             return;
         }
 
+        // ✅ Ambil dari _pending — aman dari reset oleh hidden.bs.modal
+        var idToProcess   = self._pendingId;
+        var noToProcess   = self._pendingNo;
+        var namaToProcess = self._pendingNama;
+
+        if (!idToProcess) {
+            $.alert({ title: 'Error', content: 'ID pengajuan tidak valid', type: 'red' });
+            return;
+        }
+
         var $btn = $('#btn-konfirmasi-tolak-dekan');
         $btn.prop('disabled', true)
             .html('<i class="fas fa-spinner fa-spin mr-1"></i>Memproses...');
+
+        $('#modal-konfirmasi-tolak-dekan').modal('hide');
+        self.showOverlay('Menolak pengajuan...');
 
         $.ajax({
             url: '/dekan/transkrip/tolak',
             method: 'POST',
             data: {
-                _token:        $('meta[name="csrf-token"]').attr('content'),
-                id_pengajuan:  self.data.current_id,
-                alasan_tolak:  alasan
+                _token:               $('meta[name="csrf-token"]').attr('content'),
+                id_riwayat_pengajuan: idToProcess,
+                alasan_tolak:         alasan
             },
             success: function (response) {
+                self.hideOverlay();
                 $btn.prop('disabled', false)
                     .html('<i class="fas fa-ban mr-1"></i>Ya, Tolak');
-                $('#modal-konfirmasi-tolak-dekan').modal('hide');
 
                 if (response && response.status === '1') {
                     $.alert({
                         title: 'Pengajuan Ditolak',
                         content: `
                             <div class="text-center">
-                                <i class="fas fa-times-circle text-danger" style="font-size:3rem;"></i>
-                                <p class="mt-3 font-weight-bold">Pengajuan berhasil ditolak</p>
+                                <i class="fas fa-times-circle text-danger"
+                                   style="font-size:3rem;"></i>
+                                <p class="mt-3 font-weight-bold">
+                                    Pengajuan berhasil ditolak
+                                </p>
                                 <p class="text-muted small">
-                                    Pengajuan <strong>${self.data.current_no}</strong>
+                                    Pengajuan <strong>${noToProcess}</strong>
+                                    atas nama <strong>${namaToProcess}</strong>
                                     telah ditolak oleh Dekan.
-                                    Mahasiswa akan diberitahu.
                                 </p>
                             </div>`,
                         type: 'red',
@@ -913,6 +1032,7 @@ jQuery.transkripDekan = {
                 }
             },
             error: function (xhr, status, error) {
+                self.hideOverlay();
                 $btn.prop('disabled', false)
                     .html('<i class="fas fa-ban mr-1"></i>Ya, Tolak');
 
@@ -938,11 +1058,17 @@ jQuery.transkripDekan = {
     refreshAfterAction: function () {
         var self = this;
 
+        // ✅ Bersihkan semua _pending state + flag processing
+        self._isProcessing   = false;
+        self._pendingId      = null;
+        self._pendingNo      = null;
+        self._pendingNama    = null;
+        self._pendingCatatan = '';
+
         if (self.data.table_transkrip) {
             self.data.table_transkrip.ajax.reload();
         }
         self.loadStatistik();
-        self._pendingCatatan = '';
     },
 
     getPredikat: function (ipk) {
@@ -952,29 +1078,32 @@ jQuery.transkripDekan = {
         return 'Cukup';
     },
 
-    getBadgeStatus: function (status) {
-        if (!status) return '<span class="badge badge-secondary">-</span>';
+    getBadgeStatus: function (statusKode, keteranganStatus) {
+        if (!statusKode) return '<span class="badge badge-secondary">-</span>';
 
         var map = {
-            'diajukan':       { cls: 'badge-status-diajukan',   label: 'Menunggu Kaprodi', icon: 'fa-clock' },
-            'proses_kaprodi': { cls: 'badge-status-kaprodi',    label: 'Proses Kaprodi',   icon: 'fa-user-tie' },
-            'proses_dekan':   { cls: 'badge-status-dekan',      label: 'Menunggu Dekan',   icon: 'fa-user-shield' },
-            'disetujui':      { cls: 'badge-status-disetujui',  label: 'Disahkan',         icon: 'fa-stamp' },
-            'ditolak':        { cls: 'badge-status-ditolak',    label: 'Ditolak',          icon: 'fa-times-circle' },
-            'dibatalkan':     { cls: 'badge-status-dibatalkan', label: 'Dibatalkan',       icon: 'fa-ban' }
+            '1': { cls: 'badge-status-draft',     icon: 'fa-pencil-alt' },
+            '2': { cls: 'badge-status-diajukan',  icon: 'fa-clock' },
+            '3': { cls: 'badge-status-dekan',     icon: 'fa-user-shield' },
+            '4': { cls: 'badge-status-disetujui', icon: 'fa-stamp' },
+            '6': { cls: 'badge-status-ditolak',   icon: 'fa-times-circle' }
         };
 
-        var s = map[status];
-        if (!s) return `<span class="badge badge-secondary">${status}</span>`;
+        var s     = map[String(statusKode)];
+        var label = keteranganStatus || statusKode;
 
-        return `<span class="badge ${s.cls}"><i class="fas ${s.icon} mr-1"></i>${s.label}</span>`;
+        if (!s) return `<span class="badge badge-secondary">${label}</span>`;
+
+        return `<span class="badge ${s.cls}">
+                    <i class="fas ${s.icon} mr-1"></i>${label}
+                </span>`;
     },
 
     getBadgeNilai: function (nilai) {
         if (!nilai || nilai === '-') return '-';
 
         var nilaiUpper = nilai.toUpperCase();
-        var badgeMap = {
+        var badgeMap   = {
             'A':  'badge-success',
             'AB': 'badge-success',
             'B':  'badge-primary',
@@ -988,32 +1117,35 @@ jQuery.transkripDekan = {
         return `<span class="badge ${cls}">${nilaiUpper}</span>`;
     },
 
-    renderStepIndicator: function (status) {
+    renderStepIndicator: function (statusKode) {
         var steps = [
-            { key: 'diajukan',       label: 'Mahasiswa', icon: 'fa-user' },
-            { key: 'proses_kaprodi', label: 'Kaprodi',   icon: 'fa-user-tie' },
-            { key: 'proses_dekan',   label: 'Dekan',     icon: 'fa-user-shield' },
-            { key: 'disetujui',      label: 'Selesai',   icon: 'fa-check' }
+            { label: 'Mahasiswa', icon: 'fa-user' },
+            { label: 'Kaprodi',   icon: 'fa-user-tie' },
+            { label: 'Dekan',     icon: 'fa-user-shield' },
+            { label: 'Selesai',   icon: 'fa-check' }
         ];
 
-        var order      = ['diajukan', 'proses_kaprodi', 'proses_dekan', 'disetujui'];
-        var currentIdx = order.indexOf(status);
-        var isDitolak  = status === 'ditolak';
+        var kode      = String(statusKode);
+        var isDitolak = kode === '6';
+        var isDone    = kode === '4';
+
+        var activeMap = { '1': 0, '2': 0, '3': 1 };
+        var activeIdx = activeMap[kode] !== undefined ? activeMap[kode] : -1;
 
         var html = '<div class="step-indicator">';
 
         steps.forEach(function (step, i) {
-            var stepIdx = order.indexOf(step.key);
             var cls;
 
-            if (isDitolak) {
-                // Tentukan di mana ditolak berdasarkan step
-                cls = stepIdx < currentIdx ? 'done'
-                    : stepIdx === currentIdx ? 'reject'
-                        : '';
-            } else if (currentIdx >= stepIdx) {
+            if (isDone) {
                 cls = 'done';
-            } else if (currentIdx === stepIdx - 1) {
+            } else if (isDitolak) {
+                cls = i < 1  ? 'done'
+                    : i === 1 ? 'reject'
+                        : '';
+            } else if (i < activeIdx) {
+                cls = 'done';
+            } else if (i === activeIdx) {
                 cls = 'active';
             } else {
                 cls = '';
@@ -1033,41 +1165,41 @@ jQuery.transkripDekan = {
     },
 
     renderTimeline: function (riwayat) {
-        if (!riwayat || riwayat.length === 0) {
+        if (!riwayat || !Array.isArray(riwayat) || riwayat.length === 0) {
             return `<div class="text-muted text-center py-3">
-                        <i class="fas fa-info-circle mr-2"></i>Tidak ada riwayat
+                        <i class="fas fa-info-circle mr-2"></i>Tidak ada riwayat aktivitas
                     </div>`;
         }
 
-        var self = this;
         var html = '';
 
         riwayat.forEach(function (item) {
             var clsMap = {
-                'diajukan':       'active',
-                'proses_kaprodi': 'warning',
-                'proses_dekan':   'purple',
-                'disetujui':      'success',
-                'ditolak':        'danger',
-                'dibatalkan':     'danger'
+                '1': 'active',
+                '2': 'active',
+                '3': 'purple',
+                '4': 'success',
+                '6': 'danger'
             };
 
-            var cls     = clsMap[item.status] || '';
-            var tanggal = item.tgl_aktivitas
-                ? self.formatTanggal(item.tgl_aktivitas, true)
-                : '-';
+            var cls         = clsMap[String(item.status)] || '';
+            var tanggal     = item.tgl_persetujuan || item.tgl_created || '-';
+            var noPengajuan = item.nomor_pengajuan || '';
+            var komentar    = item.komentar_persetujuan || '';
 
             html += `
                 <div class="timeline-item ${cls}">
-                    <div class="d-flex justify-content-between">
-                        <strong>${item.keterangan || item.status || '-'}</strong>
-                        <small class="text-muted">${tanggal}</small>
-                    </div>
-                    ${item.nama_user
-                ? `<small class="text-muted">oleh: ${item.nama_user}</small>`
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>${item.keterangan_status || '-'}</strong>
+                            ${noPengajuan
+                ? `<br><small class="text-muted">No: ${noPengajuan}</small>`
                 : ''}
-                    ${item.catatan
-                ? `<p class="mb-0 mt-1 small text-muted">${item.catatan}</p>`
+                        </div>
+                        <small class="text-muted text-right ml-2">${tanggal}</small>
+                    </div>
+                    ${komentar
+                ? `<p class="mb-0 mt-1 small text-muted">${komentar}</p>`
                 : ''}
                 </div>`;
         });
@@ -1086,43 +1218,13 @@ jQuery.transkripDekan = {
 
         result.nama = tahunInt + '/' + (tahunInt + 1);
 
-        var semesterMap = { '1': 'Ganjil', '2': 'Genap', '3': 'Antara' };
-        result.semester = semesterMap[semesterCode] || 'Ganjil';
+        var semesterMap  = { '1': 'Ganjil', '2': 'Genap', '3': 'Antara' };
+        result.semester  = semesterMap[semesterCode] || 'Ganjil';
 
         return result;
-    },
-
-    formatTanggal: function (tanggal, withTime) {
-        if (!tanggal) return '-';
-
-        try {
-            if (typeof moment !== 'undefined') {
-                var fmt = withTime ? 'D MMM YYYY HH:mm' : 'D MMM YYYY';
-                return moment(tanggal).locale('id').format(fmt);
-            }
-
-            var d = new Date(tanggal);
-            if (isNaN(d.getTime())) return tanggal;
-
-            var months = ['Jan','Feb','Mar','Apr','Mei','Jun',
-                'Jul','Agu','Sep','Okt','Nov','Des'];
-            var result = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-
-            if (withTime) {
-                var hh = String(d.getHours()).padStart(2, '0');
-                var mm = String(d.getMinutes()).padStart(2, '0');
-                result += ' ' + hh + ':' + mm;
-            }
-
-            return result;
-
-        } catch (e) {
-            return tanggal;
-        }
     }
 };
 
-// Initialize when document ready
 jQuery(document).ready(function () {
     console.log('Document ready, initializing Transkrip Dekan module...');
     jQuery.transkripDekan.init();

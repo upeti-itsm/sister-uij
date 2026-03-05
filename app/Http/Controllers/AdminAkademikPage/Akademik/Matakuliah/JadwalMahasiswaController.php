@@ -81,9 +81,10 @@ class JadwalMahasiswaController extends Controller
         ]);
         //$elearning = JadwalMahasiswa::sync_jadwal_mahasiswa($request->jadwal_kuliah_id, $request->nim, $request->nama_mata_kuliah, $request->kelas_id, $request->nama_dosen, $request->tahun_akademik);
         $data = JadwalKuliahMahasiswa::insert_jadwal_matakuliah_mahasiswa($request->nim, $request->jadwal_kuliah_id);
-        if ($data->status)
-            return response()->json($data);
-        else
-            return response()->json($data, 500);
+        return response()->json($data);
+//        if ($data->status)
+//            return response()->json($data);
+//        else
+//            return response()->json($data, 500);
     }
 }

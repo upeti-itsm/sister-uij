@@ -222,7 +222,7 @@
                                     <select class="form-control select2" id="id_matakuliah" style="width: 100%" required>
                                         <option value="">Pilih Mata Kuliah</option>
                                         @foreach($matakuliah as $item)
-                                            <option value="{{$item->id_matakuliah}}">{{$item->kd_matakuliah}} - {{$item->nama_matakuliah}} ({{$item->sks}} SKS)</option>
+                                            <option value="{{$item->id_matakuliah}}">{{$item->kd_matakuliah}} - {{$item->matakuliah}} ({{$item->sks}} SKS)</option>
                                         @endforeach
                                     </select>
                                 </div>
