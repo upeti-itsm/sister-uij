@@ -104,7 +104,7 @@ class TranskripController extends Controller
             if ($data) {
                 return response()->json([
                     'total_pengajuan' => $data->total_pengajuan ?? 0,
-                    'diproses'        => $data->diproses        ?? 0,
+                    'diproses'        => $data->sedang_diproses        ?? 0,
                     'disetujui'       => $data->disetujui       ?? 0,
                     'ditolak'         => $data->ditolak         ?? 0
                 ], 200);

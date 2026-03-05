@@ -97,15 +97,15 @@ class TranskripDekanController extends Controller
                 ], 401);
             }
 
-            $idFakultas = $user->id_fakultas ?? null;
+            $idFakultas = $user->id_personal ?? null;
             $data       = PengajuanTranskrip::get_statistik_dekan($idFakultas);
 
             if ($data) {
                 return response()->json([
-                    'menunggu' => $data->menunggu ?? 0,
+                    'menunggu' => $data->sedang_diproses ?? 0,
                     'disahkan' => $data->disahkan ?? 0,
                     'ditolak'  => $data->ditolak  ?? 0,
-                    'total'    => $data->total     ?? 0
+                    'total'    => $data->total_pengajuan     ?? 0
                 ], 200);
             }
 

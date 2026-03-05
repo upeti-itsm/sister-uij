@@ -95,15 +95,15 @@ class TranskripKaprodiController extends Controller
                 ], 401);
             }
 
-            $idProdi = $user->id_prodi ?? null;
+            $idProdi = $user->id_personal ?? null;
             $data    = PengajuanTranskrip::get_statistik_kaprodi($idProdi);
-
+//dd($data);
             if ($data) {
                 return response()->json([
-                    'menunggu'  => $data->menunggu  ?? 0,
+                    'menunggu'  => $data->sedang_diproses  ?? 0,
                     'disetujui' => $data->disetujui ?? 0,
                     'ditolak'   => $data->ditolak   ?? 0,
-                    'total'     => $data->total      ?? 0
+                    'total'     => $data->total_pengajuan      ?? 0
                 ], 200);
             }
 

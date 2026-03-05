@@ -64,8 +64,8 @@ class PengajuanTranskrip extends Model
     public static function get_statistik($nim)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.get_statistik_pengajuan_transkrip(?)",
-            [(string) $nim]
+            "SELECT * FROM akademik.get_statistik_transkrip(?,?)",
+            [(string) $nim, null]
         );
     }
 
@@ -278,11 +278,11 @@ class PengajuanTranskrip extends Model
      * @param string|int $idProdi ID prodi kaprodi
      * @return object|null
      */
-    public static function get_statistik_kaprodi($idProdi)
+    public static function get_statistik_kaprodi($id_personal)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.get_statistik_pengajuan_transkrip_kaprodi(?)",
-            [$idProdi]
+            "SELECT * FROM akademik.get_statistik_transkrip(?,?)",
+            [null, $id_personal]
         );
     }
 
@@ -432,11 +432,11 @@ class PengajuanTranskrip extends Model
      * @param string|int $idFakultas ID fakultas dekan
      * @return object|null
      */
-    public static function get_statistik_dekan($idFakultas)
+    public static function get_statistik_dekan($id_personal)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.get_statistik_pengajuan_transkrip_dekan(?)",
-            [$idFakultas]
+            "SELECT * FROM akademik.get_statistik_transkrip(?,?)",
+            [null, $id_personal]
         );
     }
 
