@@ -7,11 +7,11 @@ jQuery.jadwal_matakuliah = {
         log_table_jadwal_kuliah: $("#log-table-jadwal-kuliah").DataTable({
             scrollY: '300px',
             columns: [
-                {width: "5%", sClass: 'text-center', searchable: false},
-                {width: "50%", searchable: false},
-                {width: "45%", sClass: 'text-center', searchable: false},
-                {searchable: true, visible: false},
-                {searchable: true, visible: false},
+                { width: "5%", sClass: 'text-center', searchable: false },
+                { width: "50%", searchable: false },
+                { width: "45%", sClass: 'text-center', searchable: false },
+                { searchable: true, visible: false },
+                { searchable: true, visible: false },
             ],
             scrollCollapse: true,
             paging: true,
@@ -64,7 +64,7 @@ jQuery.jadwal_matakuliah = {
                     data: null,
                     searchable: false,
                     sClass: 'text-left',
-                    width: "45%",
+                    width: "30%",
                     render: function (data) {
                         return "<p>" + data.nama_mata_kuliah + " (" + data.nama_kelas + ") - " + data.nama_prodi + "</p>";
                     }
@@ -100,6 +100,17 @@ jQuery.jadwal_matakuliah = {
                     width: "15%",
                     render: function (data) {
                         return "<button class='btn btn-sm btn-info-soft'>" + data.persentase_absensi + "</button>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-center',
+                    width: "16%",
+                    render: function (data) {
+                        return "<button class='btn btn-sm btn-success btn-rekap-kehadiran' data-id='" + data.id_jadwal_kuliah + "' data-nama='" + data.nama_mata_kuliah + "' title='Rekap Kehadiran'>" +
+                            "<i class='fas fa-clipboard-list'></i> Rekap Kehadiran" +
+                            "</button>";
                     }
                 },
                 {
@@ -221,6 +232,61 @@ jQuery.jadwal_matakuliah = {
         });
         $("#tahun_akademik, #prodi").on('change', function () {
             self.data.table_jadwal_kuliah.ajax.reload();
+        });
+
+        $(document).on('click', '.btn-rekap-kehadiran', function () {
+            var id_jadwal = $(this).data('id');
+            var nama_matkul = $(this).data('nama');
+            $('#modal-rekap-kehadiran').modal('show');
+            $('#rekap-matkul-title').text(nama_matkul);
+            $('#rekap-kehadiran-loading').show();
+            $('#rekap-kehadiran-content').hide().html('');
+            $.ajax({
+                url: '/mhs/akademik/perkuliahan/jadwal-mahasiswa/rekap-kehadiran',
+                method: 'post',
+                data: { id_jadwal_kuliah: id_jadwal },
+                success: function (result) {
+                    $('#rekap-kehadiran-loading').hide();
+                    $('#rekap-kehadiran-content').show();
+                    if (result.length === 0) {
+                        $('#rekap-kehadiran-content').html('<p class="text-center text-muted">Belum ada data rekap kehadiran.</p>');
+                        return;
+                    }
+                    var d = result[0];
+                    var html = '<div class="row mb-3">';
+                    html += '<div class="col-md-6"><strong>Mata Kuliah:</strong> ' + d.nama_mata_kuliah + '</div>';
+                    html += '<div class="col-md-6"><strong>Kelas:</strong> ' + d.nama_kelas + '</div>';
+                    html += '<div class="col-md-6 mt-1"><strong>Dosen:</strong> ' + d.nama_dosen + '</div>';
+                    html += '<div class="col-md-6 mt-1"><strong>SKS:</strong> ' + d.sks + '</div>';
+                    html += '</div>';
+                    html += '<div class="row mb-3">';
+                    html += '<div class="col-md-3"><div class="card bg-success text-white text-center p-2"><div class="font-weight-bold">Hadir</div><div class="h4 mb-0">' + (d.total_hadir || 0) + '</div></div></div>';
+                    html += '<div class="col-md-3"><div class="card bg-warning text-white text-center p-2"><div class="font-weight-bold">Izin</div><div class="h4 mb-0">' + (d.total_izin || 0) + '</div></div></div>';
+                    html += '<div class="col-md-3"><div class="card bg-info text-white text-center p-2"><div class="font-weight-bold">Sakit</div><div class="h4 mb-0">' + (d.total_sakit || 0) + '</div></div></div>';
+                    html += '<div class="col-md-3"><div class="card bg-danger text-white text-center p-2"><div class="font-weight-bold">Tidak Hadir</div><div class="h4 mb-0">' + (d.total_tidak_hadir || 0) + '</div></div></div>';
+                    html += '</div>';
+                    html += '<div class="table-responsive"><table class="table table-bordered table-sm text-center"><thead class="thead-dark"><tr><th>Pertemuan</th><th>Tanggal</th><th>Kehadiran</th><th>Materi Ajar</th></tr></thead><tbody>';
+                    for (var i = 1; i <= 16; i++) {
+                        var tgl = d['tgl_pertemuan_' + i];
+                        if (!tgl) continue;
+                        var hadir = d['pertemuan_' + i];
+                        var path = d['path_bukti_ajar_' + i];
+                        var badge = '';
+                        if (hadir === 1) badge = '<span class="badge badge-success">Hadir</span>';
+                        else if (hadir === 2) badge = '<span class="badge badge-info">Sakit</span>';
+                        else if (hadir === 3) badge = '<span class="badge badge-warning">Izin</span>';
+                        else badge = '<span class="badge badge-danger">Tidak Hadir</span>';
+                        var materi = path ? '<a href="' + path + '" target="_blank" class="btn btn-xs btn-primary-soft btn-sm"><i class="fas fa-file-alt mr-1"></i>Lihat Materi</a>' : '<span class="text-muted">-</span>';
+                        html += '<tr><td>' + i + '</td><td>' + tgl + '</td><td>' + badge + '</td><td>' + materi + '</td></tr>';
+                    }
+                    html += '</tbody></table></div>';
+                    $('#rekap-kehadiran-content').html(html);
+                },
+                error: function () {
+                    $('#rekap-kehadiran-loading').hide();
+                    $('#rekap-kehadiran-content').show().html('<p class="text-center text-danger">Gagal memuat data rekap kehadiran.</p>');
+                }
+            });
         });
     },
     next_data: function (data, index = 0, progres = 0, failed = 0, inserted = 0, updated = 0) {

@@ -43,4 +43,14 @@ class JadwalKuliahMahasiswa extends Model
             $id_rekap, $id_mhs, $ip
         ]);
     }
+
+    public static function rekap_presensi_mahasiswa_per_jadwal($id_jadwal_kuliah, $search = '' , $offset = 0, $limit = -1)
+    {
+        return DB::select('SELECT * FROM absensi.rekap_presensi_mahasiswa_per_jadwal_new(:id_jadwal_kuliah, :search, :limit, :offset)', [
+            'id_jadwal_kuliah' => $id_jadwal_kuliah,
+            'search'          => $search,
+            'limit'           => $limit,
+            'offset'          => $offset
+        ]);
+    }
 }

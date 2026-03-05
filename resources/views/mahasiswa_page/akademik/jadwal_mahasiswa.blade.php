@@ -208,6 +208,7 @@
                                     <th>Hari</th>
                                     <th>Jam</th>
                                     <th>Presensi</th>
+                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -219,6 +220,29 @@
     </div>
 @endsection
 @section('modal')
+    {{-- Modal Rekap Kehadiran --}}
+    <div class="modal fade" id="modal-rekap-kehadiran" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title font-weight-600"><i class="fas fa-clipboard-list mr-2"></i>Rekap Kehadiran - <span id="rekap-matkul-title"></span></h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="rekap-kehadiran-loading" class="text-center py-4">
+                        <span class="spinner-border spinner-border-sm mr-2" role="status"></span> Memuat data rekap kehadiran...
+                    </div>
+                    <div id="rekap-kehadiran-content" style="display:none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal modal-primary fade" id="modal-scanner" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">

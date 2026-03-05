@@ -79,4 +79,16 @@ class JadwalMahasiswaController extends Controller
         Session::flash($result->status == 1 ? 'success_message' : 'failed_message', $result->keterangan);
         return redirect()->back();
     }
+
+    public function json_rekap_kehadiran(Request $request)
+    {
+        $request->validate([
+            'id_jadwal_kuliah' => 'required',
+        ]);
+        $data = JadwalKuliahMahasiswa::rekap_presensi_mahasiswa_per_jadwal(
+            $request->id_jadwal_kuliah,
+            $request->search ?? ''
+        );
+        return response()->json($data);
+    }
 }

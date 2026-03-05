@@ -38,7 +38,7 @@ class ManajemenProdiController extends Controller
                 $sts_aktif = intval($sts_aktif);
             }
 
-            \Log::info('Get Fakultas params:', [
+            Log::info('Get Fakultas params:', [
                 'param_search' => $param_search,
                 'no_page' => $no_page,
                 'jml_record_perpage' => $jml_record_perpage,
@@ -54,14 +54,14 @@ class ManajemenProdiController extends Controller
                 $sts_aktif
             );
 
-            \Log::info('Fakultas result count:', ['count' => count($data)]);
+            Log::info('Fakultas result count:', ['count' => count($data)]);
 
             return response()->json([
                 'status' => 'success',
                 'data' => $data
             ]);
         } catch (\Exception $e) {
-            \Log::error('Get Fakultas error:', ['message' => $e->getMessage()]);
+            Log::error('Get Fakultas error:', ['message' => $e->getMessage()]);
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
@@ -89,7 +89,7 @@ class ManajemenProdiController extends Controller
                 'data' => $data
             ]);
         } catch (\Exception $e) {
-            \Log::error('Get Jenjang error:', ['message' => $e->getMessage()]);
+            Log::error('Get Jenjang error:', ['message' => $e->getMessage()]);
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
@@ -128,8 +128,8 @@ class ManajemenProdiController extends Controller
                 $sts_aktif = null;
             }
 
-            \Log::info('========== RECEIVED PARAMS ==========');
-            \Log::info('ManajemenProdi params:', [
+            Log::info('========== RECEIVED PARAMS ==========');
+            Log::info('ManajemenProdi params:', [
                 'kd_prodi' => $kd_prodi,
                 'kd_dikti' => $kd_dikti,
                 'kd_fakultas' => $kd_fakultas,
@@ -138,7 +138,7 @@ class ManajemenProdiController extends Controller
                 'no_page' => $no_page,
                 'jml_record_perpage' => $jml_record_perpage
             ]);
-            \Log::info('=====================================');
+            Log::info('=====================================');
 
             $data = ManajemenProdi::get_daftar_program_studi(
                 $kd_prodi,
@@ -162,7 +162,7 @@ class ManajemenProdiController extends Controller
                 $prodi->nama_jenjang_didik = $jenjangMap[$prodi->kd_jenjang_didik] ?? '-';
             }
 
-            \Log::info('ManajemenProdi result count:', ['count' => count($data), 'data' => $data]);
+            Log::info('ManajemenProdi result count:', ['count' => count($data), 'data' => $data]);
 
             return response()->json([
                 'status' => 'success',
@@ -178,7 +178,7 @@ class ManajemenProdiController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
-            \Log::error('ManajemenProdi error:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            Log::error('ManajemenProdi error:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
@@ -189,7 +189,7 @@ class ManajemenProdiController extends Controller
     public function store(Request $request)
     {
         try {
-            \Log::info('Store request:', $request->all());
+            Log::info('Store request:', $request->all());
 
             // Convert boolean values properly
             $sts_kip = $request->sts_kip === '1' || $request->sts_kip === 1 || $request->sts_kip === true || $request->sts_kip === 'on';
@@ -209,7 +209,7 @@ class ManajemenProdiController extends Controller
                 $is_s2 // is_s2
             );
 
-            \Log::info('Store result:', ['result' => $result]);
+            Log::info('Store result:', ['result' => $result]);
 
             // Check if result is successful (status = true)
             if ($result && isset($result->status) && $result->status === true) {
@@ -229,7 +229,7 @@ class ManajemenProdiController extends Controller
                 'message' => $result->keterangan ?? 'Gagal menyimpan data program studi'
             ], 400);
         } catch (\Exception $e) {
-            \Log::error('Store error:', [
+            Log::error('Store error:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -244,7 +244,7 @@ class ManajemenProdiController extends Controller
     public function update(Request $request)
     {
         try {
-            \Log::info('Update request:', $request->all());
+            Log::info('Update request:', $request->all());
 
             // Convert boolean values properly
             $sts_kip = $request->sts_kip === '1' || $request->sts_kip === 1 || $request->sts_kip === true || $request->sts_kip === 'on';
@@ -264,7 +264,7 @@ class ManajemenProdiController extends Controller
                 $is_s2 // is_s2
             );
 
-            \Log::info('Update result:', ['result' => $result]);
+            Log::info('Update result:', ['result' => $result]);
 
             // Check if result is successful (status = true)
             if ($result && isset($result->status) && $result->status === true) {
@@ -284,7 +284,7 @@ class ManajemenProdiController extends Controller
                 'message' => $result->keterangan ?? 'Gagal memperbarui data program studi'
             ], 400);
         } catch (\Exception $e) {
-            \Log::error('Update error:', [
+            Log::error('Update error:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -299,7 +299,7 @@ class ManajemenProdiController extends Controller
     public function toggle_status(Request $request)
     {
         try {
-            \Log::info('Toggle status request:', [
+            Log::info('Toggle status request:', [
                 'id' => $request->id,
                 'status' => $request->status
             ]);
@@ -309,7 +309,7 @@ class ManajemenProdiController extends Controller
                 $request->status === 'true' || $request->status === true || $request->status === '1'
             );
 
-            \Log::info('Toggle status result:', ['result' => $result]);
+            Log::info('Toggle status result:', ['result' => $result]);
 
             // Check if result is successful (status = 1 means success)
             if ($result && isset($result->status) && $result->status == 1) {
@@ -325,7 +325,7 @@ class ManajemenProdiController extends Controller
                 'message' => $result->keterangan ?? 'Gagal mengubah status program studi'
             ], 400);
         } catch (\Exception $e) {
-            \Log::error('Toggle status error:', [
+            Log::error('Toggle status error:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
