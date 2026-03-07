@@ -265,19 +265,21 @@ jQuery.jadwal_matakuliah = {
                     html += '<div class="col-md-3"><div class="card bg-info text-white text-center p-2"><div class="font-weight-bold">Sakit</div><div class="h4 mb-0">' + (d.total_sakit || 0) + '</div></div></div>';
                     html += '<div class="col-md-3"><div class="card bg-danger text-white text-center p-2"><div class="font-weight-bold">Tidak Hadir</div><div class="h4 mb-0">' + (d.total_tidak_hadir || 0) + '</div></div></div>';
                     html += '</div>';
-                    html += '<div class="table-responsive"><table class="table table-bordered table-sm text-center"><thead class="thead-dark"><tr><th>Pertemuan</th><th>Tanggal</th><th>Kehadiran</th><th>Materi Ajar</th></tr></thead><tbody>';
+                    html += '<div class="table-responsive"><table class="table table-bordered table-sm text-center"><thead class="thead-dark"><tr><th>Pertemuan</th><th>Tanggal</th><th>Kehadiran</th><th>Nama Materi</th><th>Link Materi</th></tr></thead><tbody>';
                     for (var i = 1; i <= 16; i++) {
                         var tgl = d['tgl_pertemuan_' + i];
                         if (!tgl) continue;
                         var hadir = d['pertemuan_' + i];
                         var path = d['path_bukti_ajar_' + i];
+                        var nama_materi = d['materi_' + i];
                         var badge = '';
                         if (hadir === 1) badge = '<span class="badge badge-success">Hadir</span>';
                         else if (hadir === 2) badge = '<span class="badge badge-info">Sakit</span>';
                         else if (hadir === 3) badge = '<span class="badge badge-warning">Izin</span>';
                         else badge = '<span class="badge badge-danger">Tidak Hadir</span>';
-                        var materi = path ? '<a href="' + path + '" target="_blank" class="btn btn-xs btn-primary-soft btn-sm"><i class="fas fa-file-alt mr-1"></i>Lihat Materi</a>' : '<span class="text-muted">-</span>';
-                        html += '<tr><td>' + i + '</td><td>' + tgl + '</td><td>' + badge + '</td><td>' + materi + '</td></tr>';
+                        var namaMateriHtml = nama_materi ? nama_materi : '<span class="text-muted">-</span>';
+                        var linkMateri = path ? '<a href="' + path + '" target="_blank" class="btn btn-xs btn-primary-soft btn-sm"><i class="fas fa-file-alt mr-1"></i>Lihat Materi</a>' : '<span class="text-muted">-</span>';
+                        html += '<tr><td>' + i + '</td><td>' + tgl + '</td><td>' + badge + '</td><td>' + namaMateriHtml + '</td><td>' + linkMateri + '</td></tr>';
                     }
                     html += '</tbody></table></div>';
                     $('#rekap-kehadiran-content').html(html);
