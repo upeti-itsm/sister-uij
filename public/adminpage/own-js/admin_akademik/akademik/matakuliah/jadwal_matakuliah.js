@@ -113,7 +113,7 @@ jQuery.jadwal_matakuliah = {
                     }
                 },
                 {
-                    data: 'ruang_id',
+                    data: 'nama_ruang',
                     searchable: false,
                     sClass: 'text-center',
                     width: "7%",

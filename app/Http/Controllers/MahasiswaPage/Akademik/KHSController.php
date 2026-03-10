@@ -344,7 +344,7 @@ class KHSController extends Controller
                 'enable_php'           => false,
             ]);
 
-            $filename = 'KHS_' . $mahasiswaData->nim . '_' . $mahasiswaData->tahun_ajaran . '.pdf';
+            $filename = 'LHS_' . $mahasiswaData->nim . '_' . $mahasiswaData->tahun_ajaran . '.pdf';
 
             return $pdf->download($filename);
         } catch (\Exception $e) {
