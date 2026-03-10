@@ -328,6 +328,12 @@ Route::post('/mhs/krs/simpan', [\App\Http\Controllers\MahasiswaPage\Akademik\KRS
 Route::post('/mhs/krs/ajukan-krs', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'ajukan_krs'])->name('mahasiswa.akademik.krs.ajukan_krs')->middleware('modul:Mengelola Kartu Rencana Studi');
 Route::post('/mhs/krs/sks-maksimal', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'cekMaksimalKrs'])->name('mahasiswa.akademik.krs.cekMaksimalKrs')->middleware('modul:Mengelola Kartu Rencana Studi');
 Route::post('/mhs/krs/download-krs', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'downloadKRS'])->name('mahasiswa.akademik.krs.downloadKRS')->middleware('modul:Mengelola Kartu Rencana Studi');
+Route::get('/mhs/krs/riwayat', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'riwayat'])
+    ->name('mahasiswa.akademik.krs.riwayat')
+    ->middleware('modul:Mengelola Kartu Rencana Studi');
+Route::post('/mhs/krs/riwayat/json', [\App\Http\Controllers\MahasiswaPage\Akademik\KRSController::class, 'json_riwayat'])
+    ->name('mahasiswa.akademik.krs.json_riwayat')
+    ->middleware('modul:Mengelola Kartu Rencana Studi');
 // Kartu Hasil Studi (KHS)
 Route::prefix('mhs/khs')
     ->middleware('modul:Hasil Studi Mahasiswa')

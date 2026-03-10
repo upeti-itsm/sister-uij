@@ -573,7 +573,7 @@
                                             @endif
                                             @if (array_key_exists('Mengelola Kartu Rencana Studi', $modul))
                                                 <li @if ($menu == 'Mengelola Kartu Rencana Studi') class="mm-active" @endif>
-                                                    <a href="{{ route('mahasiswa.akademik.krs.index') }}">Rencana
+                                                    <a href="{{ route('mahasiswa.akademik.krs.riwayat') }}">Rencana
                                                         Studi
                                                         (KRS)</a>
                                                 </li>

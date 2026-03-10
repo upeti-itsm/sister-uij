@@ -84,4 +84,11 @@ class KRS extends Model
             $nidn_kaprodi, $tahun_akademik
         ]);
     }
+
+    public static function get_riwayat_krs_mahasiswa($nim, $tahun_akademik = null, $search = '', $offset = -1, $limit = 10)
+    {
+        return DB::select('SELECT * FROM akademik.get_list_krs_by_mahasiswa(?,?,?,?,?)', [
+            $nim, $tahun_akademik, $search, $offset, $limit
+        ]);
+    }
 }
