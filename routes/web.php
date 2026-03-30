@@ -72,6 +72,16 @@ Route::get('/tte-validation/{id}', [\App\Http\Controllers\FrontPage\HomeControll
  * ------------------------------------------------------------------------
 */
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'dashboard'])->name('dashboard.dashboard')->middleware('modul:Dashboard');
+
+/*
+ * ------------------------------------------------------------------------
+ * ACCOUNT (PROFILE & PASSWORD)
+ * ------------------------------------------------------------------------
+*/
+Route::get('/account/profile', [\App\Http\Controllers\Account\AccountController::class, 'profile'])->name('account.profile')->middleware('modul:Dashboard');
+Route::post('/account/profile', [\App\Http\Controllers\Account\AccountController::class, 'update_profile'])->name('account.profile.update')->middleware('modul:Dashboard');
+Route::get('/account/change-password', [\App\Http\Controllers\Account\AccountController::class, 'change_password'])->name('account.password')->middleware('modul:Dashboard');
+Route::post('/account/change-password', [\App\Http\Controllers\Account\AccountController::class, 'update_password'])->name('account.password.update')->middleware('modul:Dashboard');
 /*
  * ------------------------------------------------------------------------
  * ADMIN PAGE

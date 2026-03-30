@@ -1074,15 +1074,13 @@
                                         {{ \Illuminate\Support\Facades\Session::get('user')->nama_lengkap }}</p>
                                 </div><!-- user-header -->
                                 @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
-                                    <a href="{{ isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs) ? route('mahasiswa.dashboard.sync_password_mahasiswa') : '' }}"
+                                    <a href="{{ route('mahasiswa.dashboard.sync_password_mahasiswa') }}"
                                        class="dropdown-item"><i class="typcn typcn-arrow-sync mr-2"></i>Sync
-                                        Profil</a>
-                                @else
-                                    <a href="" class="dropdown-item"><i
-                                            class="typcn typcn-user mr-2"></i>Profil</a>
+                                    Profil</a>
                                 @endif
-                                <a href="{{ isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs) ? route('mahasiswa.dashboard.sync_password_mahasiswa') : '' }}"
-                                   class="dropdown-item"><i class="typcn typcn-cog mr-2"></i>Ganti Password</a>
+                                <a href="{{ route('account.profile') }}" class="dropdown-item"><i
+                                    class="typcn typcn-user mr-2"></i>Profil</a>
+                                <a href="{{ route('account.password') }}" class="dropdown-item"><i class="typcn typcn-cog mr-2"></i>Ganti Password</a>
                                 <a href="{{ route('login.logout') }}" class="dropdown-item" id="btn-logout"
                                    onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
                                         class="typcn typcn-key mr-2"></i>Keluar</a>
