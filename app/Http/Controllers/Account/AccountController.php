@@ -18,12 +18,14 @@ class AccountController extends Controller
         $menu = 'Profil';
         $user = Session::get('user');
 
+        $detail = AkunMahasiswa::getProfilByNim($user->nim)[0] ?? null;
+
         $karyawan = null;
         if ($user && isset($user->id_personal)) {
             $karyawan = Karyawan::get_detail_karyawan_by_id_personal($user->id_personal);
         }
 
-        return view('account.profile', compact('menu', 'user', 'karyawan'));
+        return view('account.profile', compact('menu', 'user', 'karyawan', 'detail'));
     }
 
     public function update_profile(Request $request)

@@ -13,7 +13,7 @@ class AkunMahasiswa extends Model
     protected $primaryKey = 'id_akun';
     protected $table = 'pengguna.akun_mahasiswa';
     protected $fillable =
-        ['tgl_created', 'tgl_updated', 'is_data_aktif', 'id_registrasi_mahasiswa', 'username', 'password'];
+    ['tgl_created', 'tgl_updated', 'is_data_aktif', 'id_registrasi_mahasiswa', 'username', 'password'];
     public $timestamps = false;
     protected $casts = [
         'id_akun' => 'string'
@@ -42,5 +42,10 @@ class AkunMahasiswa extends Model
             'old_pass' => $old_pass,
             'new_pass' => $new_pass
         ]);
+    }
+
+    public static function getProfilByNim($nim)
+    {
+        return DB::select('select * from akademik.get_profil_mahasiswa_by_nim(:nim)', ['nim' => $nim]);
     }
 }

@@ -27,64 +27,156 @@
                         <div class="text-center">
                             <div class="mb-3">
                                 @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
-                                    <img
-                                        src="http://siakad.stie-mandala.ac.id/_report/photo_m/{{ \Illuminate\Support\Facades\Session::get('user')->nim }}.jpg"
+                                    <img src="http://siakad.stie-mandala.ac.id/_report/photo_m/{{ \Illuminate\Support\Facades\Session::get('user')->nim }}.jpg"
                                         class="img-fluid rounded-circle" style="width:120px;height:120px;object-fit:cover"
                                         onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
                                         alt="">
                                 @else
-                                    <img
-                                        src="/files/profil_karyawan/{{ \Illuminate\Support\Facades\Session::get('user')->id_personal }}/{{ \Illuminate\Support\Facades\Session::get('karyawan')->path_photo ?? '' }}"
+                                    <img src="/files/profil_karyawan/{{ \Illuminate\Support\Facades\Session::get('user')->id_personal }}/{{ \Illuminate\Support\Facades\Session::get('karyawan')->path_photo ?? '' }}"
                                         class="img-fluid rounded-circle" style="width:120px;height:120px;object-fit:cover"
                                         onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
                                         alt="">
                                 @endif
                             </div>
-                            <h6 class="mb-1">{{ $user->nama_lengkap ?? '-' }}</h6>
-                            <small class="text-muted">{{ \Illuminate\Support\Facades\Session::get('peran')['aktif_'] ?? '' }}</small>
+                            <h6 class="mb-1">{{ ucfirst($detail->nama ?? '-') }}</h6>
+                            <small class="text-muted">
+                                {{ \Illuminate\Support\Facades\Session::get('peran')['aktif_'] ?? '' }}
+                            </small>
                         </div>
                     </div>
 
                     <div class="col-md-8">
-                        @if (!isset($user->id_personal))
-                            <div class="alert alert-info mb-0">
-                                Profil mahasiswa ditampilkan dari data akun. Untuk memperbarui data, gunakan menu <b>Sync Profil</b>.
-                            </div>
-                        @else
-                            <form method="POST" action="{{ route('account.profile.update') }}">
-                                @csrf
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bold">Nomor HP</label>
-                                            <input type="text" class="form-control" name="no_hp"
-                                                   value="{{ old('no_hp') ?? ($karyawan->no_hp ?? '') }}"
-                                                   placeholder="Nomor HP">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bold">Email</label>
-                                            <input type="email" class="form-control" name="email"
-                                                   value="{{ old('email') ?? ($karyawan->email ?? '') }}"
-                                                   placeholder="Email">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="font-weight-bold">Alamat</label>
-                                            <textarea class="form-control" name="alamat" rows="3" placeholder="Alamat">{{ old('alamat') ?? ($karyawan->alamat ?? '') }}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab"
+                                    aria-controls="info" aria-selected="true">
+                                    <i class="fas fa-info-circle mr-2"></i>Informasi Pribadi
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="kontak-tab" data-toggle="tab" href="#kontak" role="tab"
+                                    aria-controls="kontak" aria-selected="false">
+                                    <i class="fas fa-phone mr-2"></i>Kontak & Alamat
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="keluarga-tab" data-toggle="tab" href="#keluarga" role="tab"
+                                    aria-controls="keluarga" aria-selected="false">
+                                    <i class="fas fa-home mr-2"></i>Keluarga
+                                </a>
+                            </li>
+                        </ul>
 
-                                <div class="text-right">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save mr-2"></i>Simpan
-                                    </button>
+                        <!-- Tab content -->
+                        <div class="tab-content" id="profileTabsContent">
+                            <!-- Tab: Informasi Pribadi -->
+                            <div class="tab-pane fade show active" id="info" role="tabpanel"
+                                aria-labelledby="info-tab">
+                                <div class="pt-3">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">Nama</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">{{ $detail->nama ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">NIM</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">{{ $detail->nim ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">Jenis Kelamin</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">{{ $detail->jenis_kelamin ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">Tempat, Tanggal Lahir</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">{{ $detail->ttl ?? '-' }}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </form>
-                        @endif
+                            </div>
+
+                            <!-- Tab: Kontak & Alamat -->
+                            <div class="tab-pane fade" id="kontak" role="tabpanel" aria-labelledby="kontak-tab">
+                                <div class="pt-3">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">Email</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">
+                                                <a href="mailto:{{ $detail->email }}">{{ $detail->email ?? '-' }}</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">No. Telepon</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">
+                                                <a href="tel:{{ $detail->telp }}">{{ $detail->telp ?? '-' }}</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">Alamat</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">{{ $detail->alamat ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab: Keluarga -->
+                            <div class="tab-pane fade" id="keluarga" role="tabpanel" aria-labelledby="keluarga-tab">
+                                <div class="pt-3">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">Nama Ibu</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">{{ $detail->nama_ibu ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+
+                                    <div class="row mb-3">
+                                        <div class="col-sm-5">
+                                            <h6 class="mb-0 font-weight-600">Nama Wali</h6>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <p class="text-muted mb-0">{{ $detail->nama_wali ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
