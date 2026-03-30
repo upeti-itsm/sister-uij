@@ -73,7 +73,7 @@ jQuery.jadwal_kuliah_mahasiswa = {
                     sClass: 'text-left',
                     width: "40%",
                     render: function (data) {
-                        return data.nama_mata_kuliah + " (" + data.kelas_id + ")";
+                        return data.nama_mata_kuliah + " (Kelas " + data.nama_kelas + ")";
                     }
                 },
                 {

@@ -230,28 +230,6 @@ jQuery.khs = {
                         }
                     },
                     {
-                        data: 'nilai_huruf',
-                        searchable: false,
-                        className: 'text-center align-middle',
-                        width: "10%",
-                        defaultContent: '-',
-                        render: function (data) {
-                            if (!data || data === '-') return '-';
-                            return self.getBadgeNilai(data);
-                        }
-                    },
-                    {
-                        data: null,
-                        searchable: false,
-                        className: 'text-center align-middle',
-                        width: "12%",
-                        render: function (data) {
-                            if (!data) return '-';
-                            var tahunNama = self.parseTahunAkademik(data.tahun_akademik);
-                            return `${tahunNama.nama}<br/><small class="text-muted">${tahunNama.semester}</small>`;
-                        }
-                    },
-                    {
                         data: 'sts_nilai',
                         searchable: false,
                         className: 'text-center align-middle',
@@ -273,7 +251,30 @@ jQuery.khs = {
                                 return `<span class="badge badge-secondary">${data}</span>`;
                             }
                         }
-                    }
+                    },
+                    {
+                        data: null,
+                        searchable: false,
+                        className: 'text-center align-middle',
+                        width: "12%",
+                        render: function (data) {
+                            if (!data) return '-';
+                            var tahunNama = self.parseTahunAkademik(data.tahun_akademik);
+                            return `${tahunNama.nama}<br/><small class="text-muted">${tahunNama.semester}</small>`;
+                        }
+                    },
+                    {
+                        data: 'nilai_huruf',
+                        searchable: false,
+                        className: 'text-center align-middle',
+                        width: "10%",
+                        defaultContent: '-',
+                        render: function (data) {
+                            if (!data || data === '-') return '-';
+                            return self.getBadgeNilai(data);
+                        }
+                    },
+
                 ],
                 drawCallback: function (settings) {
                     var api = this.api();

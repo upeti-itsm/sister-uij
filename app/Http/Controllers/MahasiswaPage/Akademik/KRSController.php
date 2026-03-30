@@ -167,6 +167,7 @@ class KRSController extends Controller
             // Hitung summary — ambil semua data tanpa limit untuk akurasi
             $allData = KRS::get_riwayat_krs_mahasiswa($nim, '', 0, 999999);
             $summary = $this->hitungSummaryRiwayat($allData);
+            dd($allData, $summary);
 
             return response()->json([
                 'draw'            => intval($request->draw ?? 1),

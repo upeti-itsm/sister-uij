@@ -40,27 +40,17 @@ class KHSController extends Controller
 
             $nim = $user->nim;
 
-            // Ambil filter mentah dari request (default string kosong)
             $tahun = trim((string) ($request->tahun_akademik ?? ''));
             $sem   = trim((string) ($request->semester ?? ''));
 
-            /**
-             * Bentuk parameter tahun_akademik untuk function DB:
-             * - Jika tahun & semester kosong => NULL (agar sesuai harapan)
-             * - Jika tahun terisi dan semester terisi => gabung (contoh: 2024 + 1 => 20241)
-             * - Jika hanya tahun terisi (semester kosong) => kirim NULL (umumnya function butuh 5 digit)
-             *   Jika function DB kamu bisa terima tahun saja, ganti jadi: $tahun_akademik = $tahun;
-             */
             if ($tahun === '' && $sem === '') {
                 $tahun_akademik = "";
             } elseif ($tahun !== '' && $sem !== '') {
                 $tahun_akademik = $tahun . $sem;
             } else {
-                // Salah satu kosong -> default null supaya tidak mengirim "" atau format tidak valid
                 $tahun_akademik = null;
             }
 
-            // Search: kamu handle 2 tipe (DataTables object atau string)
             $search = '';
             if (is_array($request->search)) {
                 $search = $request->search['value'] ?? '';
@@ -72,6 +62,7 @@ class KHSController extends Controller
             $length = intval($request->length ?? 10);
 
             $data_ = KHS::get_daftar_nilai($nim, $tahun_akademik, $search, $start, $length);
+            // dd($data_);
 
             $data = [
                 'draw' => intval($request->draw ?? 1),
