@@ -26,51 +26,57 @@
                     <div class="col-md-4">
                         <div class="text-center">
                             <div class="mb-3">
-                                @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
-                                    <form method="POST" action="{{ route('account.profile.update') }}"
-                                        enctype="multipart/form-data" id="form-upload-avatar-mahasiswa">
-                                        @csrf
-                                        <div class="position-relative d-inline-block" style="width:120px;height:120px;">
-                                            @php
-                                                $nimMahasiswa = \Illuminate\Support\Facades\Session::get('user')->nim;
-                                                $avatarMahasiswa = 'http://siakad.stie-mandala.ac.id/_report/photo_m/' . $nimMahasiswa . '.jpg';
+                                @php
+                                    $isMahasiswa = isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs);
+                                    $avatarInputId = $isMahasiswa ? 'avatar-mahasiswa-input' : 'avatar-karyawan-input';
+                                    $formUploadAvatarId = $isMahasiswa ? 'form-upload-avatar-mahasiswa' : 'form-upload-avatar-karyawan';
+                                    $avatarProfil = asset('adminpage/assets/dist/img/avatar-1.jpg');
 
-                                                $photoUrl = trim($detail->photo_url ?? '');
-                                                if (!empty($photoUrl) && $photoUrl !== '-') {
-                                                    if (filter_var($photoUrl, FILTER_VALIDATE_URL)) {
-                                                        $avatarMahasiswa = $photoUrl;
-                                                    } else {
-                                                        $avatarMahasiswa = asset('files/profil_mahasiswa/' . $nimMahasiswa . '/' . ltrim($photoUrl, '/'));
-                                                    }
-                                                } elseif (!empty($detail->path_photo ?? null)) {
-                                                    $avatarMahasiswa = asset('files/profil_mahasiswa/' . $nimMahasiswa . '/' . $detail->path_photo);
-                                                }
-                                            @endphp
-                                            <img src="{{ $avatarMahasiswa }}" class="img-fluid rounded-circle"
-                                                style="width:120px;height:120px;object-fit:cover"
-                                                onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
-                                                alt="Foto Profil">
+                                    if ($isMahasiswa) {
+                                        $nimMahasiswa = \Illuminate\Support\Facades\Session::get('user')->nim;
+                                        $avatarProfil = 'http://siakad.stie-mandala.ac.id/_report/photo_m/' . $nimMahasiswa . '.jpg';
 
-                                            <label for="avatar-mahasiswa-input"
-                                                class="position-absolute d-flex align-items-center justify-content-center"
-                                                style="right:0;bottom:0;width:34px;height:34px;border-radius:50%;background:#28a745;color:#fff;cursor:pointer;border:2px solid #fff;"
-                                                title="Ubah foto profil">
-                                                <i class="fas fa-camera"></i>
-                                            </label>
-                                            <input id="avatar-mahasiswa-input" type="file" name="path_photo"
-                                                accept=".jpg,.jpeg,.png,image/jpeg,image/png" class="d-none"
-                                                onchange="handleAvatarFileChange(this)">
-                                        </div>
-                                    </form>
-                                    <small class="d-block text-muted mt-2">Klik ikon kamera untuk upload foto</small>
-                                @else
-                                    <img src="/files/profil_karyawan/{{ \Illuminate\Support\Facades\Session::get('user')->id_personal }}/{{ \Illuminate\Support\Facades\Session::get('karyawan')->path_photo ?? '' }}"
-                                        class="img-fluid rounded-circle" style="width:120px;height:120px;object-fit:cover"
-                                        onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
-                                        alt="">
-                                @endif
+                                        $photoUrl = trim($detail->photo_url ?? '');
+                                        if (!empty($photoUrl) && $photoUrl !== '-') {
+                                            if (filter_var($photoUrl, FILTER_VALIDATE_URL)) {
+                                                $avatarProfil = $photoUrl;
+                                            } else {
+                                                $avatarProfil = asset('files/profil_mahasiswa/' . $nimMahasiswa . '/' . ltrim($photoUrl, '/'));
+                                            }
+                                        } elseif (!empty($detail->path_photo ?? null)) {
+                                            $avatarProfil = asset('files/profil_mahasiswa/' . $nimMahasiswa . '/' . $detail->path_photo);
+                                        }
+                                    } else {
+                                        $pathPhotoKaryawan = \Illuminate\Support\Facades\Session::get('karyawan')->path_photo ?? ($detail->path_photo ?? null);
+                                        if (!empty($pathPhotoKaryawan)) {
+                                            $avatarProfil = asset('files/profil_karyawan/' . \Illuminate\Support\Facades\Session::get('user')->id_personal . '/' . ltrim($pathPhotoKaryawan, '/'));
+                                        }
+                                    }
+                                @endphp
+
+                                <form method="POST" action="{{ route('account.profile.update') }}"
+                                    enctype="multipart/form-data" id="{{ $formUploadAvatarId }}">
+                                    @csrf
+                                    <div class="position-relative d-inline-block" style="width:120px;height:120px;">
+                                        <img src="{{ $avatarProfil }}" class="img-fluid rounded-circle"
+                                            style="width:120px;height:120px;object-fit:cover"
+                                            onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
+                                            alt="Foto Profil">
+
+                                        <label for="{{ $avatarInputId }}"
+                                            class="position-absolute d-flex align-items-center justify-content-center"
+                                            style="right:0;bottom:0;width:34px;height:34px;border-radius:50%;background:#28a745;color:#fff;cursor:pointer;border:2px solid #fff;"
+                                            title="Ubah foto profil">
+                                            <i class="fas fa-camera"></i>
+                                        </label>
+                                        <input id="{{ $avatarInputId }}" type="file" name="path_photo"
+                                            accept=".jpg,.jpeg,.png,image/jpeg,image/png" class="d-none"
+                                            onchange="handleAvatarFileChange(this, '{{ $formUploadAvatarId }}')">
+                                    </div>
+                                </form>
+                                <small class="d-block text-muted mt-2">Klik ikon kamera untuk upload foto</small>
                             </div>
-                            <h6 class="mb-1 text-capitalize">{{ ucfirst($detail->nama ?? ($detail->nama_mahasiswa ?? '-')) }}</h6>
+                            <h6 class="mb-1 text-capitalize">{{ ucfirst($detail->nama ?? ($detail->nama_lengkap ?? ($detail->nama_mahasiswa ?? '-'))) }}</h6>
                             <small class="text-muted">
                                 {{ \Illuminate\Support\Facades\Session::get('peran')['aktif_'] ?? '' }}
                             </small>
@@ -166,77 +172,39 @@
                             <!-- Tab: Kontak & Alamat -->
                             <div class="tab-pane fade" id="kontak" role="tabpanel" aria-labelledby="kontak-tab">
                                 <div class="pt-3">
-                                    @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
-                                        <form method="POST" action="{{ route('account.profile.update') }}"
-                                            enctype="multipart/form-data">
-                                            @csrf
+                                    <form method="POST" action="{{ route('account.profile.update') }}"
+                                        enctype="multipart/form-data">
+                                        @csrf
 
-                                            <div class="form-group mb-1">
-                                                <label class="col-form-label font-weight-600">Email</label>
-                                                <div class="col-sm-12">
-                                                    <input type="email" class="form-control" name="email"
-                                                        value="{{ old('email', $detail->email ?? '') }}"
-                                                        placeholder="Masukkan email aktif">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group mb-1">
-                                                <label class="col-form-label font-weight-600">No. Telepon</label>
-                                                <div class="col-sm-12">
-                                                    <input type="text" class="form-control" name="no_hp"
-                                                        value="{{ old('no_hp', $detail->telp ?? ($detail->handphone ?? ($detail->telepon ?? '')) ) }}"
-                                                        placeholder="Masukkan nomor telepon">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group mb-1">
-                                                <label class="col-form-label font-weight-600">Alamat</label>
-                                                <div class="col-sm-12">
-                                                    <textarea class="form-control" name="alamat" rows="3" placeholder="Masukkan alamat lengkap">{{ old('alamat', $detail->alamat ?? '') }}</textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="text-right mt-3">
-                                                <button type="submit" class="btn btn-success">Simpan Perubahan</button>
-                                            </div>
-                                        </form>
-                                    @else
-                                        <div class="row mb-3">
-                                            <div class="col-sm-5">
-                                                <h6 class="mb-0 font-weight-600">Email</h6>
-                                            </div>
+                                        <div class="form-group mb-1">
+                                            <label class="col-form-label font-weight-600">Email</label>
                                             <div class="col-sm-12">
-                                                <p class="text-muted mb-0">
-                                                    <a href="mailto:{{ $detail->email }}">{{ $detail->email ?? '-' }}</a>
-                                                </p>
+                                                <input type="email" class="form-control" name="email"
+                                                    value="{{ old('email', $detail->email ?? '') }}"
+                                                    placeholder="Masukkan email aktif">
                                             </div>
                                         </div>
-                                        <hr class="my-2">
 
-                                        <div class="row mb-3">
-                                            <div class="col-sm-5">
-                                                <h6 class="mb-0 font-weight-600">No. Telepon</h6>
-                                            </div>
-                                            <div class="col-sm-7">
-                                                <p class="text-muted mb-0">
-                                                    @php
-                                                        $telp = $detail->telp ?? ($detail->handphone ?? ($detail->telepon ?? null));
-                                                    @endphp
-                                                    <a href="tel:{{ $telp }}">{{ $telp ?? '-' }}</a>
-                                                </p>
+                                        <div class="form-group mb-1">
+                                            <label class="col-form-label font-weight-600">No. Telepon</label>
+                                            <div class="col-sm-12">
+                                                <input type="text" class="form-control" name="no_hp"
+                                                    value="{{ old('no_hp', $detail->no_hp ?? ($detail->telp ?? ($detail->handphone ?? ($detail->telepon ?? '')))) }}"
+                                                    placeholder="Masukkan nomor telepon">
                                             </div>
                                         </div>
-                                        <hr class="my-2">
 
-                                        <div class="row mb-3">
-                                            <div class="col-sm-5">
-                                                <h6 class="mb-0 font-weight-600">Alamat</h6>
-                                            </div>
-                                            <div class="col-sm-7">
-                                                <p class="text-muted mb-0">{{ $detail->alamat ?? '-' }}</p>
+                                        <div class="form-group mb-1">
+                                            <label class="col-form-label font-weight-600">Alamat</label>
+                                            <div class="col-sm-12">
+                                                <textarea class="form-control" name="alamat" rows="3" placeholder="Masukkan alamat lengkap">{{ old('alamat', $detail->alamat ?? '') }}</textarea>
                                             </div>
                                         </div>
-                                    @endif
+
+                                        <div class="text-right mt-3">
+                                            <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
 
@@ -301,7 +269,7 @@
 
 @push('scripts')
     <script>
-        function handleAvatarFileChange(input) {
+        function handleAvatarFileChange(input, formId) {
             if (!input || !input.files || !input.files.length) {
                 return;
             }
@@ -322,31 +290,66 @@
                 fileName.textContent = file.name;
             }
 
+            var modal = document.getElementById('modal-konfirmasi-upload-avatar');
+            if (modal) {
+                modal.setAttribute('data-avatar-form-id', formId || (input.form ? input.form.id : ''));
+                modal.setAttribute('data-avatar-input-id', input.id || '');
+            }
+
             $('#modal-konfirmasi-upload-avatar').modal('show');
         }
 
         (function() {
             var btnConfirm = document.getElementById('btn-konfirmasi-upload-avatar');
             var btnCancel = document.getElementById('btn-batal-upload-avatar');
-            var fileInput = document.getElementById('avatar-mahasiswa-input');
-            var form = document.getElementById('form-upload-avatar-mahasiswa');
+            var modal = document.getElementById('modal-konfirmasi-upload-avatar');
+            var isSubmitting = false;
 
-            if (btnConfirm && form) {
+            function resetSelectedInput() {
+                if (!modal) {
+                    return;
+                }
+
+                var inputId = modal.getAttribute('data-avatar-input-id');
+                if (!inputId) {
+                    return;
+                }
+
+                var input = document.getElementById(inputId);
+                if (input) {
+                    input.value = '';
+                }
+            }
+
+            if (btnConfirm && modal) {
                 btnConfirm.addEventListener('click', function() {
+                    var formId = modal.getAttribute('data-avatar-form-id');
+                    var form = formId ? document.getElementById(formId) : null;
+                    if (!form) {
+                        return;
+                    }
+
+                    isSubmitting = true;
                     $('#modal-konfirmasi-upload-avatar').modal('hide');
                     form.submit();
                 });
             }
 
-            if (btnCancel && fileInput) {
+            if (btnCancel) {
                 btnCancel.addEventListener('click', function() {
-                    fileInput.value = '';
+                    resetSelectedInput();
                 });
             }
 
             $('#modal-konfirmasi-upload-avatar').on('hidden.bs.modal', function() {
-                if (fileInput && document.activeElement !== btnConfirm) {
-                    fileInput.value = '';
+                if (!isSubmitting) {
+                    resetSelectedInput();
+                }
+
+                isSubmitting = false;
+                if (modal) {
+                    modal.setAttribute('data-avatar-form-id', '');
+                    modal.setAttribute('data-avatar-input-id', '');
                 }
             });
         })();

@@ -33,11 +33,6 @@ class AccountController extends Controller
 
     public function update_profile(Request $request)
     {
-        if (!isset(Session::get('user')->id_mhs)) {
-            Session::flash('failed_message', 'Update profil hanya tersedia untuk mahasiswa.');
-            return redirect()->back();
-        }
-
         $request->validate([
             'email' => 'nullable|email|max:100',
             'no_hp' => 'nullable|string|max:30',
@@ -45,6 +40,30 @@ class AccountController extends Controller
             'path_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        try {
+            if (isset(Session::get('user')->id_mhs)) {
+                $result = $this->updateProfilMahasiswa($request);
+            } elseif (isset(Session::get('user')->id_personal)) {
+                $result = $this->updateProfilKaryawan($request);
+            } else {
+                Session::flash('failed_message', 'Gagal memperbarui profil. Data pengguna tidak ditemukan.');
+                return redirect()->back();
+            }
+
+            if ($result['success']) {
+                Session::flash('success_message', $result['message']);
+            } else {
+                Session::flash('failed_message', $result['message'] ?: 'Gagal memperbarui profil.');
+            }
+        } catch (\Throwable $th) {
+            Session::flash('failed_message', 'Gagal memperbarui profil: ' . $th->getMessage());
+        }
+
+        return redirect()->back();
+    }
+
+    private function updateProfilMahasiswa(Request $request)
+    {
         $nim = Session::get('user')->nim;
         $detailMahasiswa = Mahasiswa::get_mahasiswa_by_nim($nim);
         $detailProfil = AkunMahasiswa::getProfilByNim($nim);
@@ -74,38 +93,128 @@ class AccountController extends Controller
             $pathPhoto = $fileName;
         }
 
-        try {
-            $result = Mahasiswa::update_profil_mahasiswa_by_mhs($nim, $email, $telp, $pathPhoto, $alamat);
+        $result = Mahasiswa::update_profil_mahasiswa_by_mhs($nim, $email, $telp, $pathPhoto, $alamat);
+        return $this->normalizeUpdateResult($result, 'Profil berhasil diperbarui.');
+    }
 
-            $isSuccess = false;
-            $message = 'Profil berhasil diperbarui.';
+    private function updateProfilKaryawan(Request $request)
+    {
+        $idPersonal = Session::get('user')->id_personal;
+        $detailKaryawan = Karyawan::get_detail_karyawan_by_id_personal($idPersonal);
 
-            if (is_object($result)) {
-                if (property_exists($result, 'is_success')) {
-                    $isSuccess = (bool) $result->is_success;
-                } elseif (property_exists($result, 'status')) {
-                    $isSuccess = (bool) $result->status;
-                } else {
-                    $isSuccess = true;
-                }
+        $hasContactUpdate = $request->exists('email') || $request->exists('no_hp') || $request->exists('alamat');
+        $hasPhotoUpdate = $request->hasFile('path_photo');
 
-                if (property_exists($result, 'result') && !empty($result->result)) {
-                    $message = $result->result;
-                } elseif (property_exists($result, 'keterangan') && !empty($result->keterangan)) {
-                    $message = $result->keterangan;
-                }
-            }
-
-            if ($isSuccess) {
-                Session::flash('success_message', $message);
-            } else {
-                Session::flash('failed_message', $message ?: 'Gagal memperbarui profil.');
-            }
-        } catch (\Throwable $th) {
-            Session::flash('failed_message', 'Gagal memperbarui profil: ' . $th->getMessage());
+        if (!$hasContactUpdate && !$hasPhotoUpdate) {
+            return [
+                'success' => false,
+                'message' => 'Tidak ada data yang diperbarui.',
+            ];
         }
 
-        return redirect()->back();
+        if ($hasPhotoUpdate) {
+            $photo = $request->file('path_photo');
+            $baseName = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeBaseName = Str::slug($baseName);
+            $fileName = date('YmdHis') . '_' . ($safeBaseName ?: 'foto') . '.' . $photo->getClientOriginalExtension();
+
+            $destinationPath = public_path('files/profil_karyawan/' . $idPersonal);
+            if (!File::isDirectory($destinationPath)) {
+                File::makeDirectory($destinationPath, 0755, true);
+            }
+
+            if (!empty($detailKaryawan->path_photo ?? null)) {
+                $oldPhotoPath = $destinationPath . DIRECTORY_SEPARATOR . $detailKaryawan->path_photo;
+                if (File::exists($oldPhotoPath)) {
+                    File::delete($oldPhotoPath);
+                }
+            }
+
+            $photo->move($destinationPath, $fileName);
+            $photoResult = Karyawan::update_path_photo($idPersonal, $fileName);
+            $photoUpdate = $this->normalizeUpdateResult($photoResult, 'Foto profil berhasil diperbarui.', 'Gagal memperbarui foto profil.');
+            if (!$photoUpdate['success']) {
+                return $photoUpdate;
+            }
+        }
+
+        if ($hasContactUpdate) {
+            $email = $request->exists('email') ? $request->input('email') : ($detailKaryawan->email ?? null);
+            $telp = $request->exists('no_hp') ? $request->input('no_hp') : ($detailKaryawan->no_hp ?? ($detailKaryawan->telp ?? null));
+            $alamat = $request->exists('alamat') ? $request->input('alamat') : ($detailKaryawan->alamat ?? null);
+
+            $nama = $detailKaryawan->nama ?? ($detailKaryawan->nama_lengkap ?? null);
+            $jenisKelamin = $detailKaryawan->kd_jenis_kelamin ?? null;
+
+            if (empty($jenisKelamin) && !empty($detailKaryawan->jenis_kelamin ?? null)) {
+                $jenisKelaminText = strtolower($detailKaryawan->jenis_kelamin);
+                if (strpos($jenisKelaminText, 'laki') !== false) {
+                    $jenisKelamin = 'lk';
+                } elseif (strpos($jenisKelaminText, 'perempuan') !== false || strpos($jenisKelaminText, 'wanita') !== false) {
+                    $jenisKelamin = 'pr';
+                }
+            }
+
+            $result = Karyawan::update_data_personal_on_karyawan(
+                $idPersonal,
+                $detailKaryawan->no_ktp ?? null,
+                $nama,
+                $detailKaryawan->gelar_depan ?? null,
+                $detailKaryawan->gelar_belakang ?? null,
+                $detailKaryawan->tempat_lahir ?? null,
+                $detailKaryawan->tanggal_lahir ?? null,
+                $telp,
+                $email,
+                $jenisKelamin,
+                $detailKaryawan->id_agama ?? null,
+                $alamat
+            );
+
+            $profileUpdate = $this->normalizeUpdateResult($result, 'Profil berhasil diperbarui.');
+            if (!$profileUpdate['success']) {
+                return $profileUpdate;
+            }
+        }
+
+        $karyawan = Karyawan::get_detail_karyawan_by_id_personal($idPersonal);
+        Session::forget('karyawan');
+        Session::put('karyawan', $karyawan);
+
+        return [
+            'success' => true,
+            'message' => $hasContactUpdate ? 'Profil berhasil diperbarui.' : 'Foto profil berhasil diperbarui.',
+        ];
+    }
+
+    private function normalizeUpdateResult($result, $successMessage = 'Profil berhasil diperbarui.', $failedMessage = 'Gagal memperbarui profil.')
+    {
+        $isSuccess = false;
+        $message = $successMessage;
+
+        if (is_object($result)) {
+            if (property_exists($result, 'is_success')) {
+                $isSuccess = (bool) $result->is_success;
+            } elseif (property_exists($result, 'status')) {
+                $isSuccess = (bool) $result->status;
+            } else {
+                $isSuccess = true;
+            }
+
+            if (property_exists($result, 'result') && !empty($result->result)) {
+                $message = $result->result;
+            } elseif (property_exists($result, 'keterangan') && !empty($result->keterangan)) {
+                $message = $result->keterangan;
+            }
+        }
+
+        if (!$isSuccess && ($message === $successMessage || empty($message))) {
+            $message = $failedMessage;
+        }
+
+        return [
+            'success' => $isSuccess,
+            'message' => $message,
+        ];
     }
 
     public function change_password()
