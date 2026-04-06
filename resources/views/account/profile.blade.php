@@ -70,7 +70,7 @@
                                         alt="">
                                 @endif
                             </div>
-                            <h6 class="mb-1">{{ ucfirst($detail->nama ?? ($detail->nama_mahasiswa ?? '-')) }}</h6>
+                            <h6 class="mb-1 text-capitalize">{{ ucfirst($detail->nama ?? ($detail->nama_mahasiswa ?? '-')) }}</h6>
                             <small class="text-muted">
                                 {{ \Illuminate\Support\Facades\Session::get('peran')['aktif_'] ?? '' }}
                             </small>
@@ -171,32 +171,32 @@
                                             enctype="multipart/form-data">
                                             @csrf
 
-                                            <div class="form-group row mb-3">
-                                                <label class="col-sm-5 col-form-label font-weight-600">Email</label>
-                                                <div class="col-sm-7">
+                                            <div class="form-group mb-1">
+                                                <label class="col-form-label font-weight-600">Email</label>
+                                                <div class="col-sm-12">
                                                     <input type="email" class="form-control" name="email"
                                                         value="{{ old('email', $detail->email ?? '') }}"
                                                         placeholder="Masukkan email aktif">
                                                 </div>
                                             </div>
 
-                                            <div class="form-group row mb-3">
-                                                <label class="col-sm-5 col-form-label font-weight-600">No. Telepon</label>
-                                                <div class="col-sm-7">
+                                            <div class="form-group mb-1">
+                                                <label class="col-form-label font-weight-600">No. Telepon</label>
+                                                <div class="col-sm-12">
                                                     <input type="text" class="form-control" name="no_hp"
                                                         value="{{ old('no_hp', $detail->telp ?? ($detail->handphone ?? ($detail->telepon ?? '')) ) }}"
                                                         placeholder="Masukkan nomor telepon">
                                                 </div>
                                             </div>
 
-                                            <div class="form-group row mb-3">
-                                                <label class="col-sm-5 col-form-label font-weight-600">Alamat</label>
-                                                <div class="col-sm-7">
+                                            <div class="form-group mb-1">
+                                                <label class="col-form-label font-weight-600">Alamat</label>
+                                                <div class="col-sm-12">
                                                     <textarea class="form-control" name="alamat" rows="3" placeholder="Masukkan alamat lengkap">{{ old('alamat', $detail->alamat ?? '') }}</textarea>
                                                 </div>
                                             </div>
 
-                                            <div class="text-right">
+                                            <div class="text-right mt-3">
                                                 <button type="submit" class="btn btn-success">Simpan Perubahan</button>
                                             </div>
                                         </form>
@@ -205,7 +205,7 @@
                                             <div class="col-sm-5">
                                                 <h6 class="mb-0 font-weight-600">Email</h6>
                                             </div>
-                                            <div class="col-sm-7">
+                                            <div class="col-sm-12">
                                                 <p class="text-muted mb-0">
                                                     <a href="mailto:{{ $detail->email }}">{{ $detail->email ?? '-' }}</a>
                                                 </p>
