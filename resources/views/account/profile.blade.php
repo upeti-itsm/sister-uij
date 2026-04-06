@@ -27,10 +27,42 @@
                         <div class="text-center">
                             <div class="mb-3">
                                 @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
-                                    <img src="http://siakad.stie-mandala.ac.id/_report/photo_m/{{ \Illuminate\Support\Facades\Session::get('user')->nim }}.jpg"
-                                        class="img-fluid rounded-circle" style="width:120px;height:120px;object-fit:cover"
-                                        onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
-                                        alt="">
+                                    <form method="POST" action="{{ route('account.profile.update') }}"
+                                        enctype="multipart/form-data" id="form-upload-avatar-mahasiswa">
+                                        @csrf
+                                        <div class="position-relative d-inline-block" style="width:120px;height:120px;">
+                                            @php
+                                                $nimMahasiswa = \Illuminate\Support\Facades\Session::get('user')->nim;
+                                                $avatarMahasiswa = 'http://siakad.stie-mandala.ac.id/_report/photo_m/' . $nimMahasiswa . '.jpg';
+
+                                                $photoUrl = trim($detail->photo_url ?? '');
+                                                if (!empty($photoUrl) && $photoUrl !== '-') {
+                                                    if (filter_var($photoUrl, FILTER_VALIDATE_URL)) {
+                                                        $avatarMahasiswa = $photoUrl;
+                                                    } else {
+                                                        $avatarMahasiswa = asset('files/profil_mahasiswa/' . $nimMahasiswa . '/' . ltrim($photoUrl, '/'));
+                                                    }
+                                                } elseif (!empty($detail->path_photo ?? null)) {
+                                                    $avatarMahasiswa = asset('files/profil_mahasiswa/' . $nimMahasiswa . '/' . $detail->path_photo);
+                                                }
+                                            @endphp
+                                            <img src="{{ $avatarMahasiswa }}" class="img-fluid rounded-circle"
+                                                style="width:120px;height:120px;object-fit:cover"
+                                                onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
+                                                alt="Foto Profil">
+
+                                            <label for="avatar-mahasiswa-input"
+                                                class="position-absolute d-flex align-items-center justify-content-center"
+                                                style="right:0;bottom:0;width:34px;height:34px;border-radius:50%;background:#28a745;color:#fff;cursor:pointer;border:2px solid #fff;"
+                                                title="Ubah foto profil">
+                                                <i class="fas fa-camera"></i>
+                                            </label>
+                                            <input id="avatar-mahasiswa-input" type="file" name="path_photo"
+                                                accept=".jpg,.jpeg,.png,image/jpeg,image/png" class="d-none"
+                                                onchange="handleAvatarFileChange(this)">
+                                        </div>
+                                    </form>
+                                    <small class="d-block text-muted mt-2">Klik ikon kamera untuk upload foto</small>
                                 @else
                                     <img src="/files/profil_karyawan/{{ \Illuminate\Support\Facades\Session::get('user')->id_personal }}/{{ \Illuminate\Support\Facades\Session::get('karyawan')->path_photo ?? '' }}"
                                         class="img-fluid rounded-circle" style="width:120px;height:120px;object-fit:cover"
@@ -38,7 +70,7 @@
                                         alt="">
                                 @endif
                             </div>
-                            <h6 class="mb-1">{{ ucfirst($detail->nama ?? '-') }}</h6>
+                            <h6 class="mb-1">{{ ucfirst($detail->nama ?? ($detail->nama_mahasiswa ?? '-')) }}</h6>
                             <small class="text-muted">
                                 {{ \Illuminate\Support\Facades\Session::get('peran')['aktif_'] ?? '' }}
                             </small>
@@ -79,7 +111,7 @@
                                             <h6 class="mb-0 font-weight-600">Nama</h6>
                                         </div>
                                         <div class="col-sm-7">
-                                            <p class="text-muted mb-0">{{ $detail->nama ?? '-' }}</p>
+                                            <p class="text-muted mb-0">{{ $detail->nama ?? ($detail->nama_mahasiswa ?? '-') }}</p>
                                         </div>
                                     </div>
                                     <hr class="my-2">
@@ -99,7 +131,7 @@
                                             <h6 class="mb-0 font-weight-600">Jenis Kelamin</h6>
                                         </div>
                                         <div class="col-sm-7">
-                                            <p class="text-muted mb-0">{{ $detail->jenis_kelamin ?? '-' }}</p>
+                                            <p class="text-muted mb-0">{{ $detail->jenis_kelamin ?? ($detail->jenis_kelamin_label ?? '-') }}</p>
                                         </div>
                                     </div>
                                     <hr class="my-2">
@@ -109,7 +141,23 @@
                                             <h6 class="mb-0 font-weight-600">Tempat, Tanggal Lahir</h6>
                                         </div>
                                         <div class="col-sm-7">
-                                            <p class="text-muted mb-0">{{ $detail->ttl ?? '-' }}</p>
+                                            @php
+                                                $ttl = $detail->ttl ?? null;
+                                                if (empty($ttl)) {
+                                                    $ttlParts = [];
+
+                                                    if (!empty($detail->tempat_lahir ?? null)) {
+                                                        $ttlParts[] = $detail->tempat_lahir;
+                                                    }
+
+                                                    if (!empty($detail->tanggal_lahir ?? null) && strtotime($detail->tanggal_lahir)) {
+                                                        $ttlParts[] = date('d-m-Y', strtotime($detail->tanggal_lahir));
+                                                    }
+
+                                                    $ttl = !empty($ttlParts) ? implode(', ', $ttlParts) : '-';
+                                                }
+                                            @endphp
+                                            <p class="text-muted mb-0">{{ $ttl }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -118,38 +166,77 @@
                             <!-- Tab: Kontak & Alamat -->
                             <div class="tab-pane fade" id="kontak" role="tabpanel" aria-labelledby="kontak-tab">
                                 <div class="pt-3">
-                                    <div class="row mb-3">
-                                        <div class="col-sm-5">
-                                            <h6 class="mb-0 font-weight-600">Email</h6>
-                                        </div>
-                                        <div class="col-sm-7">
-                                            <p class="text-muted mb-0">
-                                                <a href="mailto:{{ $detail->email }}">{{ $detail->email ?? '-' }}</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <hr class="my-2">
+                                    @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
+                                        <form method="POST" action="{{ route('account.profile.update') }}"
+                                            enctype="multipart/form-data">
+                                            @csrf
 
-                                    <div class="row mb-3">
-                                        <div class="col-sm-5">
-                                            <h6 class="mb-0 font-weight-600">No. Telepon</h6>
-                                        </div>
-                                        <div class="col-sm-7">
-                                            <p class="text-muted mb-0">
-                                                <a href="tel:{{ $detail->telp }}">{{ $detail->telp ?? '-' }}</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <hr class="my-2">
+                                            <div class="form-group row mb-3">
+                                                <label class="col-sm-5 col-form-label font-weight-600">Email</label>
+                                                <div class="col-sm-7">
+                                                    <input type="email" class="form-control" name="email"
+                                                        value="{{ old('email', $detail->email ?? '') }}"
+                                                        placeholder="Masukkan email aktif">
+                                                </div>
+                                            </div>
 
-                                    <div class="row mb-3">
-                                        <div class="col-sm-5">
-                                            <h6 class="mb-0 font-weight-600">Alamat</h6>
+                                            <div class="form-group row mb-3">
+                                                <label class="col-sm-5 col-form-label font-weight-600">No. Telepon</label>
+                                                <div class="col-sm-7">
+                                                    <input type="text" class="form-control" name="no_hp"
+                                                        value="{{ old('no_hp', $detail->telp ?? ($detail->handphone ?? ($detail->telepon ?? '')) ) }}"
+                                                        placeholder="Masukkan nomor telepon">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mb-3">
+                                                <label class="col-sm-5 col-form-label font-weight-600">Alamat</label>
+                                                <div class="col-sm-7">
+                                                    <textarea class="form-control" name="alamat" rows="3" placeholder="Masukkan alamat lengkap">{{ old('alamat', $detail->alamat ?? '') }}</textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="text-right">
+                                                <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+                                            </div>
+                                        </form>
+                                    @else
+                                        <div class="row mb-3">
+                                            <div class="col-sm-5">
+                                                <h6 class="mb-0 font-weight-600">Email</h6>
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <p class="text-muted mb-0">
+                                                    <a href="mailto:{{ $detail->email }}">{{ $detail->email ?? '-' }}</a>
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-7">
-                                            <p class="text-muted mb-0">{{ $detail->alamat ?? '-' }}</p>
+                                        <hr class="my-2">
+
+                                        <div class="row mb-3">
+                                            <div class="col-sm-5">
+                                                <h6 class="mb-0 font-weight-600">No. Telepon</h6>
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <p class="text-muted mb-0">
+                                                    @php
+                                                        $telp = $detail->telp ?? ($detail->handphone ?? ($detail->telepon ?? null));
+                                                    @endphp
+                                                    <a href="tel:{{ $telp }}">{{ $telp ?? '-' }}</a>
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <hr class="my-2">
+
+                                        <div class="row mb-3">
+                                            <div class="col-sm-5">
+                                                <h6 class="mb-0 font-weight-600">Alamat</h6>
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <p class="text-muted mb-0">{{ $detail->alamat ?? '-' }}</p>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -183,3 +270,85 @@
         </div>
     </div>
 @endsection
+
+@section('modal')
+    <div class="modal fade" id="modal-konfirmasi-upload-avatar" tabindex="-1" role="dialog"
+        aria-labelledby="modal-konfirmasi-upload-avatar-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-konfirmasi-upload-avatar-label">Konfirmasi Upload Foto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="avatar-preview-upload" src="{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}"
+                        class="img-fluid rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover"
+                        alt="Preview Foto">
+                    <p class="mb-1">Apakah Anda yakin ingin upload foto ini?</p>
+                    <small id="avatar-upload-filename" class="text-muted"></small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-batal-upload-avatar"
+                        data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success" id="btn-konfirmasi-upload-avatar">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        function handleAvatarFileChange(input) {
+            if (!input || !input.files || !input.files.length) {
+                return;
+            }
+
+            var file = input.files[0];
+            var preview = document.getElementById('avatar-preview-upload');
+            var fileName = document.getElementById('avatar-upload-filename');
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                if (preview) {
+                    preview.src = e.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
+
+            if (fileName) {
+                fileName.textContent = file.name;
+            }
+
+            $('#modal-konfirmasi-upload-avatar').modal('show');
+        }
+
+        (function() {
+            var btnConfirm = document.getElementById('btn-konfirmasi-upload-avatar');
+            var btnCancel = document.getElementById('btn-batal-upload-avatar');
+            var fileInput = document.getElementById('avatar-mahasiswa-input');
+            var form = document.getElementById('form-upload-avatar-mahasiswa');
+
+            if (btnConfirm && form) {
+                btnConfirm.addEventListener('click', function() {
+                    $('#modal-konfirmasi-upload-avatar').modal('hide');
+                    form.submit();
+                });
+            }
+
+            if (btnCancel && fileInput) {
+                btnCancel.addEventListener('click', function() {
+                    fileInput.value = '';
+                });
+            }
+
+            $('#modal-konfirmasi-upload-avatar').on('hidden.bs.modal', function() {
+                if (fileInput && document.activeElement !== btnConfirm) {
+                    fileInput.value = '';
+                }
+            });
+        })();
+    </script>
+@endpush

@@ -1073,11 +1073,11 @@
                                     <p class="text-center">
                                         {{ \Illuminate\Support\Facades\Session::get('user')->nama_lengkap }}</p>
                                 </div><!-- user-header -->
-                                @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
+                                {{-- @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
                                     <a href="{{ route('mahasiswa.dashboard.sync_password_mahasiswa') }}"
                                        class="dropdown-item"><i class="typcn typcn-arrow-sync mr-2"></i>Sync
                                     Profil</a>
-                                @endif
+                                @endif --}}
                                 <a href="{{ route('account.profile') }}" class="dropdown-item"><i
                                     class="typcn typcn-user mr-2"></i>Profil</a>
                                 <a href="{{ route('account.password') }}" class="dropdown-item"><i class="typcn typcn-cog mr-2"></i>Ganti Password</a>

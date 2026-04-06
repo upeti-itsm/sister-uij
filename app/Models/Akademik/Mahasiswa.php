@@ -168,9 +168,25 @@ class Mahasiswa extends Model
         return $result ?  $result[0] :null;
     }
 
+    public static function update_profil_mahasiswa_by_mhs($nim, $email, $telp, $path_photo, $alamat)
+    {
+        return DB::selectOne('SELECT * FROM akademik.update_profil_mahasiswa_by_mhs(
+            :p_nim,
+            :p_email,
+            :p_telp,
+            :p_path_photo,
+            :p_alamat
+        )', [
+            'p_nim' => $nim,
+            'p_email' => $email,
+            'p_telp' => $telp,
+            'p_path_photo' => $path_photo,
+            'p_alamat' => $alamat,
+        ]);
+    }
+
     public static function update_mahasiswa(
         $nim,
-        // Data Pribadi
         $nama_mahasiswa = null,
         $nik = null,
         $nisn = null,
