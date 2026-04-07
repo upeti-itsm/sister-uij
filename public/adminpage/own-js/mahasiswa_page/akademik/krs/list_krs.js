@@ -229,9 +229,8 @@ jQuery.krs_riwayat = {
                         className : 'text-center align-middle',
                         width     : '10%',
                         render    : function (data) {
-                            if (!data || !data.id_krs) return '-';
-
-                            if (data.status_krs == 4) {
+                            // Jika id_krs tidak null DAN status_krs = 4 → tombol aktif
+                            if (data && data.id_krs !== null && data.id_krs !== undefined && data.status_krs == 4) {
                                 return '<button class="btn btn-sm btn-success btn-action btn-download-riwayat"' +
                                     ' data-id="'    + data.id_krs         + '"' +
                                     ' data-tahun="' + (data.tahun_akademik || '') + '"' +
@@ -240,6 +239,7 @@ jQuery.krs_riwayat = {
                                     '</button>';
                             }
 
+                            // Selain itu → tombol disabled
                             return '<button class="btn btn-sm btn-secondary btn-action" disabled' +
                                 ' title="Download hanya tersedia jika KRS sudah disetujui final">' +
                                 '<i class="fas fa-download mr-1"></i>Download' +

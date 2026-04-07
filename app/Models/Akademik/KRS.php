@@ -91,4 +91,9 @@ class KRS extends Model
             $nim, $tahun_akademik, $search, $offset, $limit
         ]);
     }
+
+    public static function cek_periode_krs($nim)
+    {
+        return DB::selectOne("SELECT * FROM akademik.cek_periode_krs(?)", [$nim]);
+    }
 }
