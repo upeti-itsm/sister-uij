@@ -491,13 +491,14 @@ Route::post('/dosen/akademik/daftar-matakuliah/json-kriteria-store', [\App\Http\
 Route::post('/dosen/akademik/daftar-matakuliah/json-kriteria-delete', [\App\Http\Controllers\DosenPage\Akadmik\MatakuliahController::class, 'delete_kriteria'])->name('dosen.akademik.daftar_matakuliah.delete_kriteria')->middleware('modul:Dosen - Daftar Matakuliah');
 // Nilai Matakuliah
 Route::get('/dosen/akademik/nilai-matakuliah/{id}', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'index'])->name('dosen.akademik.nilai_mahasiswa.index')->middleware('modul:Dosen - Daftar Matakuliah');
+Route::get('/dosen/akademik/nilai-matakuliah/set-status/{id}', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'set_status'])->name('dosen.akademik.nilai_mahasiswa.set_status')->middleware('modul:Dosen - Daftar Matakuliah');
 Route::post('/dosen/akademik/nilai-matakuliah/store', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'store_nilai'])->name('dosen.akademik.nilai_mahasiswa.store_nilai')->middleware('modul:Dosen - Daftar Matakuliah');
 // KRS
 // Routes untuk Dosen - Persetujuan KRS
 Route::prefix('dosen/krs')->middleware('modul:Validasi KRS DPS')->group(function () {
     Route::get('/', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'index'])->name('dosen.krs.index');
-    Route::post('/rekap-data', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController:: class, 'getRekapData'])->name('dosen.krs.rekap');
-    Route::post('/json-data', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController:: class, 'getKRSList'])->name('dosen.krs.list');
+    Route::post('/rekap-data', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'getRekapData'])->name('dosen.krs.rekap');
+    Route::post('/json-data', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'getKRSList'])->name('dosen.krs.list');
     Route::post('/detail', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'getKRSDetail'])->name('dosen.krs.detail');
     Route::post('/detail-matkul', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'getKRSMataKuliah'])->name('dosen.krs.detail. matkul');
     Route::post('/approve', [App\Http\Controllers\DosenPage\Akademik\DosenKRSController::class, 'approveKRS'])->name('dosen.krs.approve');

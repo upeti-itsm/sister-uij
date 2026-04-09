@@ -69,7 +69,6 @@ class KRSController extends Controller
             }
 
             return response()->json($data, 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'draw' => intval($request->draw ?? 1),
@@ -111,7 +110,6 @@ class KRSController extends Controller
             }
 
             return response()->json($data, 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'draw' => intval($request->draw ?? 1),
@@ -150,7 +148,7 @@ class KRSController extends Controller
             $data = [];
             foreach ($rawData as $item) {
                 $data[] = [
-                    'id_krs'              => isset($item->id_krs)              ? $item->id_krs              : null,
+                    'id_krs'              => isset($item->id_krs_mahasiswa)              ? $item->id_krs_mahasiswa              : null,
                     'tahun_akademik'      => isset($item->tahun_akademik)      ? $item->tahun_akademik      : null,
                     'nama_tahun_akademik' => isset($item->nama_tahun_akademik) ? $item->nama_tahun_akademik : '-',
                     'semester'            => isset($item->semester)            ? $item->semester            : '-',
@@ -167,7 +165,7 @@ class KRSController extends Controller
             // Hitung summary — ambil semua data tanpa limit untuk akurasi
             $allData = KRS::get_riwayat_krs_mahasiswa($nim, '', 0, 999999);
             $summary = $this->hitungSummaryRiwayat($allData);
-            dd($allData, $summary);
+            // dd($allData, $summary);
 
             return response()->json([
                 'draw'            => intval($request->draw ?? 1),
@@ -177,7 +175,6 @@ class KRSController extends Controller
                 'summary'         => $summary,
                 'error'           => null,
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'draw'            => intval($request->draw ?? 1),
@@ -319,8 +316,14 @@ class KRSController extends Controller
 
             // Mapping hari
             $hariNames = [
-                0 => '-', 1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu',
-                4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 7 => 'Minggu',
+                0 => '-',
+                1 => 'Senin',
+                2 => 'Selasa',
+                3 => 'Rabu',
+                4 => 'Kamis',
+                5 => 'Jumat',
+                6 => 'Sabtu',
+                7 => 'Minggu',
             ];
 
             // Transform daftar mata kuliah
@@ -437,7 +440,6 @@ class KRSController extends Controller
                 . '.pdf';
 
             return $pdf->download($filename);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => '0',

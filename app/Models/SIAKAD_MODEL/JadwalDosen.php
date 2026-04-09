@@ -64,7 +64,11 @@ class JadwalDosen extends Model
     public static function getMatakuliahByDosen($tahun_akademik, $id_personal, $search = '', $offset = 0, $limit = -1)
     {
         return DB::select("SELECT * FROM akademik.get_list_matakuliah_by_personal_dosen(?,?,?,?,?)", [
-            $id_personal, $tahun_akademik, $search, $offset, $limit
+            $id_personal,
+            $tahun_akademik,
+            $search,
+            $offset,
+            $limit
         ]);
     }
 
@@ -94,14 +98,20 @@ class JadwalDosen extends Model
     public static function export_presensi($id_jadwal, $search = '', $offset = -1, $limit = 0)
     {
         return DB::select("select * from absensi.rekap_presensi_mahasiswa_per_jadwal(?,?,?,?)", [
-            $id_jadwal, $search, $offset, $limit
+            $id_jadwal,
+            $search,
+            $offset,
+            $limit
         ]);
     }
 
     public static function insert_kriteria_penilaian($id_jadwal, $id_kriteria, $kriteria = NULL, $bobot = NULL)
     {
         return DB::selectOne("SELECT * FROM akademik.insert_kriteria_penilaian(?,?,?,?)", [
-            $id_jadwal, $id_kriteria, $kriteria, $bobot
+            $id_jadwal,
+            $id_kriteria,
+            $kriteria,
+            $bobot
         ]);
     }
 
@@ -165,7 +175,9 @@ class JadwalDosen extends Model
     public static function get_kriteria($search = NULL, $offset = -1, $limit = 10)
     {
         return DB::select("SELECT * FROM akademik.get_daftar_kriteria_penilaian(?,?,?)", [
-            $search, $offset, $limit
+            $search,
+            $offset,
+            $limit
         ]);
     }
 
@@ -173,6 +185,14 @@ class JadwalDosen extends Model
     {
         return DB::selectOne("SELECT * FROM akademik.delete_kriteria_penilaian_matakuliah(?)", [
             $id_kriteria_penilaian
+        ]);
+    }
+
+    public static function toggle_publish_nilai($id_jadwal_kuliah, $status)
+    {
+        return DB::selectOne("SELECT * FROM akademik.set_publish_nilai_jadwal_kuliah(?, ?)", [
+            $id_jadwal_kuliah,
+            $status
         ]);
     }
 }

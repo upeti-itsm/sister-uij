@@ -1,10 +1,10 @@
 @extends('sidebar')
 @section('head-css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/jquery-confirm/jquery-confirm.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/jquery-confirm/jquery-confirm.min.css') }}" rel="stylesheet">
     <style>
         /* Custom styles untuk input nilai */
         .mk-info-card {
@@ -138,7 +138,7 @@
         .nilai-input.has-value:hover:not(:focus) {
             background-color: #e9ecef;
             transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         /* Progress indicator untuk auto-save */
@@ -178,7 +178,7 @@
             .table-responsive {
                 font-size: 12px;
             }
-            
+
             .nilai-input.has-value {
                 font-weight: bold !important;
                 font-size: 11px !important;
@@ -269,7 +269,7 @@
 @endsection
 
 @section('body-content')
-    <input type="hidden" id="id_jadwal" value="{{$id}}">
+    <input type="hidden" id="id_jadwal" value="{{ $id }}">
     <div class="col-md-12">
         {{-- Loading Overlay --}}
         <div class="loading-overlay" id="loading-overlay">
@@ -284,7 +284,7 @@
         </div>
         <div class="row mb-3">
             {{-- Card Petunjuk Penggunaan dengan Status Online --}}
-            <div class="col-md-8 mb-3">
+            <div class="col-md-6 mb-3">
                 <div class="card border-0 shadow-sm rounded-lg">
                     <div class="card-header bg-info text-white font-weight-bold">
                         <div class="d-flex justify-content-between align-items-center">
@@ -292,9 +292,9 @@
                                 <i class="fas fa-info-circle mr-2"></i> Petunjuk Penggunaan
                             </div>
                             <div class="d-flex align-items-center">
-                    <span class="badge badge-light mr-2" id="connection-status">
-                        <i class="fas fa-wifi mr-1"></i> Online
-                    </span>
+                                <span class="badge badge-light mr-2" id="connection-status">
+                                    <i class="fas fa-wifi mr-1"></i> Online
+                                </span>
                                 <small class="text-white-50" style="display: none">
                                     <span id="last-save">Belum ada perubahan</span>
                                 </small>
@@ -314,8 +314,8 @@
             </div>
 
             {{-- Card Informasi Mata Kuliah (tanpa status online) --}}
-            <div class="col-md-4 mb-3">
-                @if(isset($mahasiswa[0]))
+            <div class="col-md-6 mb-3">
+                @if (isset($mahasiswa[0]))
                     <div class="card border-0 shadow-sm rounded-lg">
                         <div class="card-body p-3">
                             <div class="d-flex align-items-center mb-3">
@@ -327,9 +327,9 @@
                                         {{ $mahasiswa[0]->mk ?? 'Mata Kuliah' }}
                                     </h5>
                                     <div class="d-flex align-items-center">
-                            <span class="badge badge-info mr-2">
-                                {{ $mahasiswa[0]->kd_mk ?? '-' }}
-                            </span>
+                                        <span class="badge badge-info mr-2">
+                                            {{ $mahasiswa[0]->kd_mk ?? '-' }}
+                                        </span>
                                         <small class="text-muted">
                                             {{ $mahasiswa[0]->program_studi ?? 'Program Studi' }}
                                         </small>
@@ -354,6 +354,29 @@
                         </div>
                     </div>
                 @endif
+            </div>
+
+            {{-- Card Petunjuk Penggunaan dengan Status Online --}}
+            <div class="col-12 mb-3">
+                <div
+                    class="card border-0 shadow-sm rounded-lg text-white {{ isset($mahasiswa[0]) && $mahasiswa[0]->sts_publish_nilai ? 'bg-success' : 'bg-danger' }}">
+
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3" style="font-size: 30px;">
+                                <i
+                                    class="fas {{ isset($mahasiswa[0]) && $mahasiswa[0]->sts_publish_nilai ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
+                            </div>
+
+                            <div>
+                                <h6 class="mb-1">Status Penilaian</h6>
+                                <h5 class="mb-0 font-weight-bold">
+                                    {{ isset($mahasiswa[0]) && $mahasiswa[0]->sts_publish_nilai ? 'Sudah Dipublikasikan' : 'Belum Dipublikasikan' }}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         @php
@@ -389,123 +412,124 @@
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered table-hover align-middle mb-0" id="table">
                             <thead class="thead-light">
-                            <tr class="text-center">
-                                <th style="min-width:60px; background-color: #f8f9fa;">
-                                    No
-                                </th>
-                                <th style="min-width:100px; background-color: #f8f9fa;">
-                                    <i class="fas fa-id-card"></i> NIM
-                                </th>
-                                <th style="min-width:200px; background-color: #f8f9fa;" class="text-center">
-                                    <i class="fas fa-user"></i> Nama Mahasiswa
-                                </th>
-
-                                {{-- Kolom kriteria dinamis --}}
-                                @foreach($daftar_kriteria as $index => $kriteria)
-                                    <th class="text-center" style="min-width:100px; background-color: #e3f2fd;"
-                                        title="{{ trim($kriteria) }} ({{ $daftar_bobot[$index] ?? 0 }}%)">
-                                        <div class="text-truncate">
-                                            <small>{{ trim($kriteria) }}</small><br>
-                                            <span
-                                                class="badge badge-info badge-sm">{{ $daftar_bobot[$index] ?? 0 }}%</span>
-                                        </div>
+                                <tr class="text-center">
+                                    <th style="min-width:60px; background-color: #f8f9fa;">
+                                        No
                                     </th>
-                                @endforeach
+                                    <th style="min-width:100px; background-color: #f8f9fa;">
+                                        <i class="fas fa-id-card"></i> NIM
+                                    </th>
+                                    <th style="min-width:200px; background-color: #f8f9fa;" class="text-center">
+                                        <i class="fas fa-user"></i> Nama Mahasiswa
+                                    </th>
 
-                                <th class="text-center bg-success text-white" style="min-width:90px">
-                                    <i class="fas fa-calculator"></i> Nilai Akhir
-                                </th>
-                                <th class="text-center bg-success text-white" style="min-width:80px">
-                                    <i class="fas fa-medal"></i> Nilai Mutu
-                                </th>
-                                <th class="text-center bg-success text-white" style="min-width:70px">
-                                    <i class="fas fa-font"></i> Huruf
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @forelse($mahasiswa as $item)
-                                @php
-                                    $kriteria_ids = explode('#', $item->daftar_kriteria_penilaian_id);
-                                    $nilai_per_kriteria = isset($item->nilai_per_kriteria) ? explode('#', $item->nilai_per_kriteria) : [];
-                                @endphp
-                                <tr data-nim="{{ $item->nim }}" class="mahasiswa-row">
-                                    <td class="text-center" style="font-size: 12px">{{ $item->nomor }}</td>
-                                    <td class="text-center" style="font-size: 12px">{{ $item->nim }}</td>
-                                    <td class="text-left" style="font-size: 12px">{{ $item->nama_mahasiswa }}</td>
-
-                                    {{-- Input nilai per kriteria --}}
-                                    @foreach($kriteria_ids as $index => $kid)
-                                        <td class="text-center position-relative p-1">
-                                            <input type="number"
-                                                   class="form-control form-control-sm text-center nilai-input"
-                                                   name="nilai[{{ $item->nim }}][{{ $kid }}]"
-                                                   data-nim="{{ $item->nim }}"
-                                                   data-kriteria="{{ $kid }}"
-                                                   min="0" max="100" step="0.1"
-                                                   value="{{ $nilai_per_kriteria[$index] ?? '' }}"
-                                                   placeholder="0-100"
-                                                   title="Masukkan nilai untuk {{ trim($daftar_kriteria[$index] ?? '') }}"
-                                                   style="font-size:12px; padding:2px 4px;">
-                                            <div class="save-indicator"></div>
-                                        </td>
+                                    {{-- Kolom kriteria dinamis --}}
+                                    @foreach ($daftar_kriteria as $index => $kriteria)
+                                        <th class="text-center" style="min-width:100px; background-color: #e3f2fd;"
+                                            title="{{ trim($kriteria) }} ({{ $daftar_bobot[$index] ?? 0 }}%)">
+                                            <div class="text-truncate">
+                                                <small>{{ trim($kriteria) }}</small><br>
+                                                <span
+                                                    class="badge badge-info badge-sm">{{ $daftar_bobot[$index] ?? 0 }}%</span>
+                                            </div>
+                                        </th>
                                     @endforeach
 
-                                    {{-- Nilai Akhir --}}
-                                    <td class="text-center font-weight-bold bg-light nilai-akhir">
-                                        @if(isset($item->nilai_mutu) && $item->nilai_mutu < 2.0)
-                                            <span class="text-danger font-weight-bold">
-                                                <i class="fas fa-arrow-down mr-1"></i>{{ $item->nilai_akhir ?? '-' }}
-                                            </span>
-                                        @else
-                                            <span class="text-success font-weight-bold">
-                                                <i class="fas fa-arrow-up mr-1"></i>{{ $item->nilai_akhir ?? '-' }}
-                                            </span>
-                                        @endif
-                                    </td>
-
-                                    {{-- Nilai Mutu --}}
-                                    <td class="text-center bg-light nilai-mutu">
-                                        @if(isset($item->nilai_mutu) && $item->nilai_mutu < 2.0)
-                                            <span class="badge badge-danger badge-lg">
-                                                <i class="fas fa-times mr-1"></i>{{ $item->nilai_mutu }}
-                                            </span>
-                                        @else
-                                            <span class="badge badge-success badge-lg">
-                                                <i class="fas fa-check mr-1"></i>{{ $item->nilai_mutu ?? '-' }}
-                                            </span>
-                                        @endif
-                                    </td>
-
-                                    {{-- Nilai Huruf --}}
-                                    <td class="text-center bg-light nilai-huruf">
-                                        @if(isset($item->nilai_mutu) && $item->nilai_mutu < 2.0)
-                                            <span class="badge badge-danger badge-lg">
-                                                {{ $item->nilai_huruf ?? '-' }}
-                                            </span>
-                                        @else
-                                            <span class="badge badge-success badge-lg">
-                                                {{ $item->nilai_huruf ?? '-' }}
-                                            </span>
-                                        @endif
-                                    </td>
+                                    <th class="text-center bg-success text-white" style="min-width:90px">
+                                        <i class="fas fa-calculator"></i> Nilai Akhir
+                                    </th>
+                                    <th class="text-center bg-success text-white" style="min-width:80px">
+                                        <i class="fas fa-medal"></i> Nilai Mutu
+                                    </th>
+                                    <th class="text-center bg-success text-white" style="min-width:70px">
+                                        <i class="fas fa-font"></i> Huruf
+                                    </th>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="{{ count($daftar_kriteria) + 6 }}" class="text-center text-muted py-4">
-                                        <i class="fas fa-users-slash fa-3x mb-3"></i>
-                                        <h5>Tidak ada data mahasiswa</h5>
-                                        <p>Belum ada mahasiswa yang terdaftar untuk mata kuliah ini</p>
-                                    </td>
-                                </tr>
-                            @endforelse
+                            </thead>
+                            <tbody>
+                                @forelse($mahasiswa as $item)
+                                    @php
+                                        $kriteria_ids = explode('#', $item->daftar_kriteria_penilaian_id);
+                                        $nilai_per_kriteria = isset($item->nilai_per_kriteria)
+                                            ? explode('#', $item->nilai_per_kriteria)
+                                            : [];
+                                    @endphp
+                                    <tr data-nim="{{ $item->nim }}" class="mahasiswa-row">
+                                        <td class="text-center" style="font-size: 12px">{{ $item->nomor }}</td>
+                                        <td class="text-center" style="font-size: 12px">{{ $item->nim }}</td>
+                                        <td class="text-left" style="font-size: 12px">{{ $item->nama_mahasiswa }}</td>
+
+                                        {{-- Input nilai per kriteria --}}
+                                        @foreach ($kriteria_ids as $index => $kid)
+                                            <td class="text-center position-relative p-1">
+                                                <input type="number"
+                                                    class="form-control form-control-sm text-center nilai-input"
+                                                    name="nilai[{{ $item->nim }}][{{ $kid }}]"
+                                                    data-nim="{{ $item->nim }}" data-kriteria="{{ $kid }}"
+                                                    min="0" max="100" step="0.1"
+                                                    value="{{ $nilai_per_kriteria[$index] ?? '' }}" placeholder="0-100"
+                                                    title="Masukkan nilai untuk {{ trim($daftar_kriteria[$index] ?? '') }}"
+                                                    style="font-size:12px; padding:2px 4px;">
+                                                <div class="save-indicator"></div>
+                                            </td>
+                                        @endforeach
+
+                                        {{-- Nilai Akhir --}}
+                                        <td class="text-center font-weight-bold bg-light nilai-akhir">
+                                            @if (isset($item->nilai_mutu) && $item->nilai_mutu < 2.0)
+                                                <span class="text-danger font-weight-bold">
+                                                    <i class="fas fa-arrow-down mr-1"></i>{{ $item->nilai_akhir ?? '-' }}
+                                                </span>
+                                            @else
+                                                <span class="text-success font-weight-bold">
+                                                    <i class="fas fa-arrow-up mr-1"></i>{{ $item->nilai_akhir ?? '-' }}
+                                                </span>
+                                            @endif
+                                        </td>
+
+                                        {{-- Nilai Mutu --}}
+                                        <td class="text-center bg-light nilai-mutu">
+                                            @if (isset($item->nilai_mutu) && $item->nilai_mutu < 2.0)
+                                                <span class="badge badge-danger badge-lg">
+                                                    <i class="fas fa-times mr-1"></i>{{ $item->nilai_mutu }}
+                                                </span>
+                                            @else
+                                                <span class="badge badge-success badge-lg">
+                                                    <i class="fas fa-check mr-1"></i>{{ $item->nilai_mutu ?? '-' }}
+                                                </span>
+                                            @endif
+                                        </td>
+
+                                        {{-- Nilai Huruf --}}
+                                        <td class="text-center bg-light nilai-huruf">
+                                            @if (isset($item->nilai_mutu) && $item->nilai_mutu < 2.0)
+                                                <span class="badge badge-danger badge-lg">
+                                                    {{ $item->nilai_huruf ?? '-' }}
+                                                </span>
+                                            @else
+                                                <span class="badge badge-success badge-lg">
+                                                    {{ $item->nilai_huruf ?? '-' }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="{{ count($daftar_kriteria) + 6 }}"
+                                            class="text-center text-muted py-4">
+                                            <i class="fas fa-users-slash fa-3x mb-3"></i>
+                                            <h5>Tidak ada data mahasiswa</h5>
+                                            <p>Belum ada mahasiswa yang terdaftar untuk mata kuliah ini</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 {{-- Summary Footer --}}
-                @if(count($mahasiswa) > 0)
+                @if (count($mahasiswa) > 0)
                     <div class="card-footer bg-light border-top">
                         <div class="row text-center">
                             <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
@@ -523,7 +547,7 @@
                             <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
                                 <div class="border-right">
                                     <h6 class="mb-1 text-danger" id="tidak-lulus-count">-</h6>
-                                    <small class="text-muted">Tidak Lulus (<2.0)</small>
+                                    <small class="text-muted">Tidak Lulus (&lt;2.0)</small>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-6">
@@ -548,7 +572,7 @@
 @section('modal')
     {{-- Modal untuk preview export --}}
     <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
@@ -568,21 +592,21 @@
                         <label>Format File:</label>
                         <div class="custom-control custom-radio">
                             <input type="radio" id="format-excel" name="export-format" class="custom-control-input"
-                                   value="excel" checked>
+                                value="excel" checked>
                             <label class="custom-control-label" for="format-excel">
                                 <i class="fas fa-file-excel text-success mr-1"></i>Excel (.xlsx)
                             </label>
                         </div>
                         <div class="custom-control custom-radio">
                             <input type="radio" id="format-csv" name="export-format" class="custom-control-input"
-                                   value="csv">
+                                value="csv">
                             <label class="custom-control-label" for="format-csv">
                                 <i class="fas fa-file-csv text-primary mr-1"></i>CSV (.csv)
                             </label>
                         </div>
                         <div class="custom-control custom-radio">
                             <input type="radio" id="format-pdf" name="export-format" class="custom-control-input"
-                                   value="pdf">
+                                value="pdf">
                             <label class="custom-control-label" for="format-pdf">
                                 <i class="fas fa-file-pdf text-danger mr-1"></i>PDF (.pdf)
                             </label>
@@ -603,10 +627,10 @@
 @endsection
 
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/jquery-confirm/jquery-confirm.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/sheetjs.min.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/jquery-confirm/jquery-confirm.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/sheetjs.min.js') }}"></script>
 
     {{-- Custom script untuk monitoring connection --}}
     <script>
@@ -633,7 +657,7 @@
             let tidakLulusCount = 0;
             let belumNilaiCount = 0;
 
-            $('.mahasiswa-row').each(function () {
+            $('.mahasiswa-row').each(function() {
                 const nilaiMutu = $(this).find('.nilai-mutu .badge').text().trim();
 
                 // Check if student has been graded
@@ -672,12 +696,12 @@
         window.addEventListener('offline', updateConnectionStatus);
 
         // Initialize on page load
-        $(document).ready(function () {
+        $(document).ready(function() {
             updateConnectionStatus();
             updateSummaryCount();
 
             // Update summary saat ada perubahan nilai
-            $(document).on('input', '.nilai-input', function () {
+            $(document).on('input', '.nilai-input', function() {
                 setTimeout(updateSummaryCount, 100);
             });
         });
@@ -685,7 +709,12 @@
         // Expose functions globally for use in nilai_mahasiswa.js
         window.updateLastSave = updateLastSave;
         window.updateSummaryCount = updateSummaryCount;
+
+        window.nilaiConfig = {
+            hasEmptyNilai: @json($hasEmptyNilai),
+            allPublished: @json($allPublished)
+        };
     </script>
 
-    <script src="{{asset('adminpage/own-js/dosen_page/akademik/nilai_mahasiswa.js')}}"></script>
+    <script src="{{ asset('adminpage/own-js/dosen_page/akademik/nilai_mahasiswa.js') }}"></script>
 @endpush
