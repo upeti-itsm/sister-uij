@@ -14,8 +14,46 @@ class NilaiMahasiswaController extends Controller
     {
         $menu = 'Dosen - Akademik - Melihat Daftar Matakuliah';
         $mahasiswa = JadwalDosen::get_list_mahasiswa_by_jadwal($id);
-//        dd($mahasiswa);
-        return view('dosen_page.akademik.nilai_mahasiswa', compact('menu', 'mahasiswa', 'id'));
+
+        $collection = collect($mahasiswa);
+
+        // Cek apakah masih ada nilai kosong
+        $hasEmptyNilai = $collection->contains(function ($item) {
+            return $item->nilai_akhir === '-' || $item->nilai_akhir === null;
+        });
+
+        // Cek apakah semua sudah publish
+        $allPublished = $collection->every(function ($item) {
+            return $item->sts_publish_nilai == true;
+        });
+
+        return view('dosen_page.akademik.nilai_mahasiswa', compact('menu', 'mahasiswa', 'id', 'hasEmptyNilai', 'allPublished'));
+    }
+
+    public function set_status($id, Request $request)
+    {
+        try {
+            $sts = $request->query('status');
+            // dd($id, $sts);
+            $result = JadwalDosen::toggle_publish_nilai($id, $sts);
+
+            if ($result) {
+                return response()->json([
+                    'success' => $result->status == true,
+                    'message' => $result->keterangan
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada respon dari database'
+            ], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengubah status publikasi: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function store_nilai(Request $request)
@@ -28,7 +66,6 @@ class NilaiMahasiswaController extends Controller
 
             // Handle individual save (backward compatibility)
             return $this->handleIndividualSave($request);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -101,7 +138,6 @@ class NilaiMahasiswaController extends Controller
                 'success' => false,
                 'message' => 'Tidak ada respon dari database'
             ], 500);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -192,7 +228,6 @@ class NilaiMahasiswaController extends Controller
                 Carbon::now()->format('Y-m-d') . '.pdf';
             // Return PDF untuk download
             return $pdf->download($filename);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

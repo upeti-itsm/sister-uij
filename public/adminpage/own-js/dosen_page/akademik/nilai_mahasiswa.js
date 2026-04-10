@@ -54,6 +54,153 @@ jQuery.nilai_mahasiswa = {
             self.handleKeyInput(e, $(this));
         });
 
+        // KETIKA TOMBOL PUBLISH DIKLIK
+        $(document).on('click', '#btn-publish-all', function () {
+            var id_jadwal = $("#id_jadwal").val();
+
+            // Konfirmasi sebelum publish
+            $.confirm({
+                title: '<i class="fa fa-question-circle text-blue"></i> Konfirmasi Publish',
+                content: 'Apakah Anda yakin ingin mempublikasikan semua nilai mahasiswa? Pastikan semua nilai sudah benar sebelum dipublikasikan.',
+                type: 'blue',
+                theme: 'modern',
+                draggable: false,
+                backgroundDismiss: false,
+                buttons: {
+                    ya: {
+                        text: '<i class="fa fa-check"></i> Ya, Publish',
+                        btnClass: 'btn-primary',
+                        action: function () {
+                            // Langsung ke route publish tanpa perlu konfirmasi tambahan
+                            $.ajax({
+                                url: '/dosen/akademik/nilai-matakuliah/set-status/' + id_jadwal,
+                                type: 'GET',
+                                data: {
+                                    status: true
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        self.showMessage('success', response.message || 'Semua nilai berhasil dipublikasikan', true);
+                                        // Update status di UI
+                                        setTimeout(function () {
+                                            location.reload();
+                                        }, 1500);
+                                    } else {
+                                        self.showMessage('error', response.message || 'Gagal mempublikasikan nilai');
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    var message = 'Terjadi kesalahan saat mempublikasikan nilai';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        message = xhr.responseJSON.message;
+                                    }
+                                    $.alert({
+                                        title: '<i class="fa fa-times-circle text-red"></i> Gagal Publish',
+                                        content: message,
+                                        type: 'red',
+                                        theme: 'modern',
+                                        buttons: {
+                                            ok: {
+                                                text: 'OK',
+                                                btnClass: 'btn-red'
+                                            },
+                                            refresh: {
+                                                text: '<i class="fa fa-refresh"></i> Refresh',
+                                                btnClass: 'btn-light',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    batal: {
+                        text: '<i class="fa fa-times"></i> Batal',
+                        btnClass: 'btn-light',
+                        action: function () {
+                            // Tidak melakukan apa-apa, hanya menutup dialog
+                        }
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', '#btn-unpublish-all', function () {
+            var id_jadwal = $("#id_jadwal").val();
+
+            // Konfirmasi sebelum publish
+            $.confirm({
+                title: '<i class="fa fa-question-circle text-blue"></i> Konfirmasi Unpublish',
+                content: 'Apakah Anda yakin ingin membatalkan publikasi semua nilai mahasiswa?',
+                type: 'blue',
+                theme: 'modern',
+                draggable: false,
+                backgroundDismiss: false,
+                buttons: {
+                    ya: {
+                        text: '<i class="fa fa-check"></i> Ya, Unpublish',
+                        btnClass: 'btn-primary',
+                        action: function () {
+                            // Langsung ke route publish tanpa perlu konfirmasi tambahan
+                            $.ajax({
+                                url: '/dosen/akademik/nilai-matakuliah/set-status/' + id_jadwal,
+                                type: 'GET',
+                                data: {
+                                    status: false
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        self.showMessage('success', response.message || 'Semua nilai berhasil di-unpublish', true);
+                                        // Update status di UI
+                                        setTimeout(function () {
+                                            location.reload();
+                                        }, 1500);
+                                    } else {
+                                        self.showMessage('error', response.message || 'Gagal meng-unpublish nilai');
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    var message = 'Terjadi kesalahan saat meng-unpublish nilai';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        message = xhr.responseJSON.message;
+                                    }
+                                    $.alert({
+                                        title: '<i class="fa fa-times-circle text-red"></i> Gagal Unpublish',
+                                        content: message,
+                                        type: 'red',
+                                        theme: 'modern',
+                                        buttons: {
+                                            ok: {
+                                                text: 'OK',
+                                                btnClass: 'btn-red'
+                                            },
+                                            refresh: {
+                                                text: '<i class="fa fa-refresh"></i> Refresh',
+                                                btnClass: 'btn-light',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    batal: {
+                        text: '<i class="fa fa-times"></i> Batal',
+                        btnClass: 'btn-light',
+                        action: function () {
+                            // Tidak melakukan apa-apa, hanya menutup dialog
+                        }
+                    }
+                }
+            });
+        });
+
         // Event untuk paste - validasi content yang di-paste
         $(document).on('paste', 'input[name^="nilai["]', function (e) {
             var $input = $(this);
@@ -102,10 +249,10 @@ jQuery.nilai_mahasiswa = {
             }
 
             // Ctrl+R untuk reset (dengan konfirmasi)
-            if (e.ctrlKey && e.which === 82) {
-                e.preventDefault();
-                self.resetAllNilai();
-            }
+            // if (e.ctrlKey && e.which === 82) {
+            //     e.preventDefault();
+            //     self.resetAllNilai();
+            // }
         });
 
         // Warn user about unsaved changes before leaving page
@@ -214,40 +361,87 @@ jQuery.nilai_mahasiswa = {
     },
 
     addSaveButton: function () {
-        // Tambahkan tombol-tombol aksi ke container yang sudah disediakan
         const container = $('#action-buttons-container');
-        if (container.length && $('#btn-save-all').length === 0) {
-            var actionButtons = `
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="input-group input-group-sm" style="width: 250px;">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white border-right-0">
-                                <i class="fas fa-search text-muted"></i>
-                            </span>
-                        </div>
-                        <input type="text" id="custom-search" class="form-control border-left-0"
-                               placeholder="Cari mahasiswa..."
-                               style="font-size: 13px;">
-                    </div>
-                    <div class="btn-group" role="group">
-                        <button type="button" id="btn-save-all" class="btn btn-success btn-sm" title="Simpan semua nilai (Ctrl+S)">
-                            <i class="fas fa-save mr-1"></i>Simpan Semua Nilai
-                        </button>
-                        <button type="button" id="btn-reset-all" class="btn btn-warning btn-sm" title="Reset semua nilai (Ctrl+R)">
-                            <i class="fas fa-eraser mr-1"></i>Reset
-                        </button>
-                        <button type="button" id="btn-export-nilai" class="btn btn-info btn-sm" title="Export ke Excel/CSV/PDF">
-                            <i class="fas fa-download mr-1"></i>Export
-                        </button>
-                        <button type="button" id="btn-refresh" class="btn btn-secondary btn-sm" title="Refresh halaman">
-                            <i class="fas fa-sync-alt mr-1"></i>Refresh
-                        </button>
-                    </div>
-                </div>
-            `;
-            container.html(actionButtons);
 
-            // Connect custom search to DataTable
+        if (container.length && $('#btn-save-all').length === 0) {
+
+            let mainButtonsHTML = '';
+
+            if (window.nilaiConfig) {
+
+                // MASIH ADA NILAI KOSONG → hanya draft
+                if (window.nilaiConfig.hasEmptyNilai) {
+
+                    mainButtonsHTML = `
+                    <button type="button" id="btn-save-all" class="btn btn-secondary btn-sm"
+                        title="Simpan semua nilai (Ctrl+S)">
+                        <i class="fas fa-file-alt mr-1"></i>Simpan Draft
+                    </button>
+                `;
+
+                } else {
+
+                    // SEMUA SUDAH ADA NILAI
+                    if (window.nilaiConfig.allPublished) {
+
+                        // SUDAH PUBLISH → hanya unpublish
+                        mainButtonsHTML = `
+                        <button type="button" id="btn-unpublish-all" class="btn btn-danger btn-sm"
+                            title="Batalkan publikasi semua nilai">
+                            <i class="fas fa-times mr-1"></i>Unpublish
+                        </button>
+                    `;
+
+                    } else {
+
+                        // BELUM PUBLISH → 2 tombol
+                        mainButtonsHTML = `
+                        <button type="button" id="btn-save-all" class="btn btn-success btn-sm"
+                            title="Simpan sebagai draft">
+                            <i class="fas fa-save mr-1"></i>Simpan
+                        </button>
+
+                        <button type="button" id="btn-publish-all" class="btn btn-primary btn-sm"
+                            title="Publikasikan semua nilai">
+                            <i class="fas fa-check mr-1"></i>Publish
+                        </button>
+                    `;
+                    }
+                }
+            }
+
+            var actionButtons = `
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="input-group input-group-sm" style="width: 250px;">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                    </div>
+                    <input type="text" id="custom-search" class="form-control border-left-0"
+                           placeholder="Cari mahasiswa..."
+                           style="font-size: 13px;">
+                </div>
+
+                <div class="btn-group" role="group">
+                    ${mainButtonsHTML}
+
+                    <button type="button" id="btn-reset-all" class="btn btn-warning btn-sm">
+                        <i class="fas fa-eraser mr-1"></i>Reset
+                    </button>
+
+                    <button type="button" id="btn-export-nilai" class="btn btn-info btn-sm">
+                        <i class="fas fa-download mr-1"></i>Export
+                    </button>
+
+                    <button type="button" id="btn-refresh" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-sync-alt mr-1"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        `;
+
+            container.html(actionButtons);
             this.initCustomSearch();
         }
     },
@@ -303,6 +497,26 @@ jQuery.nilai_mahasiswa = {
         var hasData = false;
         var invalidInputs = [];
 
+        // DEBUG: Cek semua input
+        console.log('=== DEBUG SEMUA INPUT ===');
+        $('input[name^="nilai["]').each(function (index) {
+            var $input = $(this);
+            var name = $input.attr('name');
+            var nilai = $input.val();
+            var nim = $input.data('nim');
+            var kriteriaId = $input.data('kriteria');
+
+            console.log(`Input ${index}:`, {
+                name: name,
+                nilai: nilai,
+                'data-nim': nim,
+                'data-kriteria': kriteriaId,
+                'attr nim': $input.attr('data-nim'),
+                'attr kriteria': $input.attr('data-kriteria')
+            });
+        });
+        console.log('=== END DEBUG ===');
+
         // Kumpulkan semua nilai dan validasi
         $('input[name^="nilai["]').each(function () {
             var $input = $(this);
@@ -323,11 +537,26 @@ jQuery.nilai_mahasiswa = {
                     return;
                 }
 
-                var matches = name.match(/nilai\[(.+?)\]\[(.+?)\]/);
-                if (matches) {
-                    var nim = matches[1];
-                    var kriteriaId = matches[2];
+                // PERBAIKAN: Gunakan data attribute (lebih reliable)
+                var nim = $input.data('nim');
+                var kriteriaId = $input.data('kriteria');
 
+                console.log('Setelah validasi - NIM:', nim, 'KriteriaId:', kriteriaId, 'Nilai:', validation.value);
+
+                // Fallback ke regex jika data attribute tidak ada
+                if (!nim || !kriteriaId) {
+                    var matches = name.match(/nilai\[([^\]]+)\]\[([^\]]+)\]/);
+                    console.log('Regex match:', matches);
+                    if (matches) {
+                        nim = matches[1];
+                        kriteriaId = matches[2];
+                        console.log('Dari regex - NIM:', nim, 'KriteriaId:', kriteriaId);
+                    }
+                }
+
+                console.log('Final - NIM:', nim, 'KriteriaId:', kriteriaId, 'HasData akan true?:', (nim && kriteriaId));
+
+                if (nim && kriteriaId) {
                     if (!allData[nim]) {
                         allData[nim] = {};
                     }
@@ -336,6 +565,9 @@ jQuery.nilai_mahasiswa = {
                 }
             }
         });
+
+        console.log('hasData:', hasData);
+        console.log('allData:', allData);
 
         // Jika ada input yang tidak valid
         if (invalidInputs.length > 0) {
@@ -368,6 +600,7 @@ jQuery.nilai_mahasiswa = {
             self.showMessage('warning', 'Tidak ada nilai yang akan disimpan');
             return;
         }
+
 
         // Konfirmasi
         $.confirm({
@@ -406,6 +639,10 @@ jQuery.nilai_mahasiswa = {
             save_all: true,
             _token: $('meta[name="csrf-token"]').attr('content') || $('input[name="_token"]').val()
         };
+
+        // DEBUG: Log data yang akan dikirim
+        console.log('Data yang dikirim ke server:', JSON.stringify(data, null, 2));
+        console.log('allData structure:', allData);
 
         // Loading dialog
         var loadingDialog = $.dialog({
@@ -744,30 +981,30 @@ jQuery.nilai_mahasiswa = {
 
             // Set column widths
             ws['!cols'] = [
-                {wch: 5},   // No
-                {wch: 15},  // NIM
-                {wch: 25},  // Nama
-                ...Array(headers.length - 6).fill({wch: 10}), // Kriteria columns
-                {wch: 12},  // Nilai Akhir
-                {wch: 12},  // Nilai Mutu
-                {wch: 8}    // Huruf
+                { wch: 5 },   // No
+                { wch: 15 },  // NIM
+                { wch: 25 },  // Nama
+                ...Array(headers.length - 6).fill({ wch: 10 }), // Kriteria columns
+                { wch: 12 },  // Nilai Akhir
+                { wch: 12 },  // Nilai Mutu
+                { wch: 8 }    // Huruf
             ];
 
             // Style header row
             var range = XLSX.utils.decode_range(ws['!ref']);
             for (var C = range.s.c; C <= range.e.c; ++C) {
-                var address = XLSX.utils.encode_cell({r: 0, c: C});
+                var address = XLSX.utils.encode_cell({ r: 0, c: C });
                 if (!ws[address]) continue;
                 ws[address].s = {
-                    font: {bold: true, color: {rgb: "FFFFFF"}},
-                    fill: {fgColor: {rgb: "4472C4"}},
-                    alignment: {horizontal: "center", vertical: "center"}
+                    font: { bold: true, color: { rgb: "FFFFFF" } },
+                    fill: { fgColor: { rgb: "4472C4" } },
+                    alignment: { horizontal: "center", vertical: "center" }
                 };
             }
 
             // Format NIM column as text
             for (var R = 1; R <= range.e.r; ++R) {
-                var nimAddress = XLSX.utils.encode_cell({r: R, c: 1});
+                var nimAddress = XLSX.utils.encode_cell({ r: R, c: 1 });
                 if (ws[nimAddress]) {
                     ws[nimAddress].t = 's'; // Set as string type
                     ws[nimAddress].z = '@'; // Text format
@@ -828,7 +1065,7 @@ jQuery.nilai_mahasiswa = {
     // Enhanced validation with decimal support
     validateNilai: function (nilai, kriteriaName) {
         if (nilai === '' || nilai === null || nilai === undefined) {
-            return {valid: true, value: ''}; // Kosong diizinkan
+            return { valid: true, value: '' }; // Kosong diizinkan
         }
 
         // Trim whitespace
@@ -838,21 +1075,21 @@ jQuery.nilai_mahasiswa = {
         if (nilai.indexOf('.') !== -1) {
             var parts = nilai.split('.');
             if (parts.length > 2) {
-                return {valid: false, message: 'Format desimal tidak valid (terlalu banyak titik)'};
+                return { valid: false, message: 'Format desimal tidak valid (terlalu banyak titik)' };
             }
             if (parts[1] && parts[1].length > 2) {
-                return {valid: false, message: 'Maksimal 2 digit setelah koma'};
+                return { valid: false, message: 'Maksimal 2 digit setelah koma' };
             }
         }
 
         var numValue = parseFloat(nilai);
 
         if (isNaN(numValue)) {
-            return {valid: false, message: 'Nilai harus berupa angka (gunakan titik untuk desimal)'};
+            return { valid: false, message: 'Nilai harus berupa angka (gunakan titik untuk desimal)' };
         }
 
         if (numValue < 0) {
-            return {valid: false, message: 'Nilai tidak boleh kurang dari 0'};
+            return { valid: false, message: 'Nilai tidak boleh kurang dari 0' };
         }
 
         // Check if criteria is "Kehadiran" for different max range
@@ -874,7 +1111,7 @@ jQuery.nilai_mahasiswa = {
         // Round to 2 decimal places
         var roundedValue = Math.round(numValue * 100) / 100;
 
-        return {valid: true, value: roundedValue};
+        return { valid: true, value: roundedValue };
     },
 
     // Get criteria name from input element

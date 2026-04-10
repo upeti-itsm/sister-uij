@@ -42,8 +42,8 @@ jQuery.krs_riwayat = {
                     url: '/mhs/krs/riwayat/json',
                     type: 'POST',
                     data: function (d) {
-                        d._token              = $('meta[name="csrf-token"]').attr('content');
-                        d.tahun_akademik      = self.data.filter_tahun_akademik;
+                        d._token = $('meta[name="csrf-token"]').attr('content');
+                        d.tahun_akademik = self.data.filter_tahun_akademik;
                         return d;
                     },
                     dataSrc: function (json) {
@@ -58,9 +58,9 @@ jQuery.krs_riwayat = {
                             return Array.isArray(json) ? json : [];
                         }
 
-                        json.recordsTotal    = json.recordsTotal    || (json.data ? json.data.length : 0);
+                        json.recordsTotal = json.recordsTotal || (json.data ? json.data.length : 0);
                         json.recordsFiltered = json.recordsFiltered || json.recordsTotal;
-                        json.draw            = json.draw            || 1;
+                        json.draw = json.draw || 1;
 
                         // Update summary cards
                         if (json.summary) {
@@ -82,9 +82,9 @@ jQuery.krs_riwayat = {
                             .html('<i class="fas fa-search mr-1"></i>Cari');
 
                         $.alert({
-                            title  : 'Error',
+                            title: 'Error',
                             content: 'Gagal memuat data riwayat KRS: ' + (thrown || error),
-                            type   : 'red'
+                            type: 'red'
                         });
                     }
                 },
@@ -100,28 +100,28 @@ jQuery.krs_riwayat = {
                         self.hideEmptyState();
                     }
                 },
-                scrollY       : '450px',
+                scrollY: '450px',
                 scrollCollapse: true,
                 columns: [
                     // No
                     {
-                        data      : null,
+                        data: null,
                         searchable: false,
-                        orderable : false,
-                        className : 'text-center align-middle',
-                        width     : '4%',
-                        render    : function (data, type, row, meta) {
+                        orderable: false,
+                        className: 'text-center align-middle',
+                        width: '4%',
+                        render: function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     // Tahun Akademik
                     {
-                        data      : null,
+                        data: null,
                         searchable: false,
-                        orderable : false,
-                        className : 'align-middle',
-                        width     : '18%',
-                        render    : function (data) {
+                        orderable: false,
+                        className: 'align-middle',
+                        width: '18%',
+                        render: function (data) {
                             if (!data) return '-';
                             return '<span class="badge badge-primary badge-tahun">' +
                                 '<i class="fas fa-calendar-alt mr-1"></i>' +
@@ -133,16 +133,16 @@ jQuery.krs_riwayat = {
                     },
                     // IPS
                     {
-                        data      : 'ips',
+                        data: 'ips',
                         searchable: false,
-                        orderable : false,
-                        className : 'text-center align-middle',
-                        width     : '9%',
-                        render    : function (data) {
+                        orderable: false,
+                        className: 'text-center align-middle',
+                        width: '9%',
+                        render: function (data) {
                             if (data === null || data === undefined || data === '') {
                                 return '<span class="text-muted">-</span>';
                             }
-                            var val        = parseFloat(data);
+                            var val = parseFloat(data);
                             var colorClass = val >= 3.5 ? 'text-success'
                                 : val >= 3.0 ? 'text-primary'
                                     : val >= 2.5 ? 'text-warning'
@@ -152,16 +152,16 @@ jQuery.krs_riwayat = {
                     },
                     // IPK
                     {
-                        data      : 'ipk',
+                        data: 'ipk',
                         searchable: false,
-                        orderable : false,
-                        className : 'text-center align-middle',
-                        width     : '9%',
-                        render    : function (data) {
+                        orderable: false,
+                        className: 'text-center align-middle',
+                        width: '9%',
+                        render: function (data) {
                             if (data === null || data === undefined || data === '') {
                                 return '<span class="text-muted">-</span>';
                             }
-                            var val        = parseFloat(data);
+                            var val = parseFloat(data);
                             var colorClass = val >= 3.5 ? 'text-success'
                                 : val >= 3.0 ? 'text-primary'
                                     : val >= 2.5 ? 'text-warning'
@@ -171,27 +171,27 @@ jQuery.krs_riwayat = {
                     },
                     // SKS Maks
                     {
-                        data      : 'sks_maks',
+                        data: 'sks_maks',
                         searchable: false,
-                        orderable : false,
-                        className : 'text-center align-middle',
-                        width     : '11%',
-                        render    : function (data) {
+                        orderable: false,
+                        className: 'text-center align-middle',
+                        width: '11%',
+                        render: function (data) {
                             return '<span class="badge badge-secondary">' + (data || 0) + ' SKS</span>';
                         }
                     },
                     // SKS Ditempuh
                     {
-                        data      : null,
+                        data: null,
                         searchable: false,
-                        orderable : false,
-                        className : 'text-center align-middle',
-                        width     : '13%',
-                        render    : function (data) {
+                        orderable: false,
+                        className: 'text-center align-middle',
+                        width: '13%',
+                        render: function (data) {
                             if (!data) return '-';
-                            var sks      = data.sks_ditempuh || 0;
-                            var maks     = data.sks_maks     || 0;
-                            var ratio    = maks > 0 ? (sks / maks) * 100 : 0;
+                            var sks = data.sks_ditempuh || 0;
+                            var maks = data.sks_maks || 0;
+                            var ratio = maks > 0 ? (sks / maks) * 100 : 0;
                             var barClass = ratio >= 90 ? 'danger' : ratio >= 70 ? 'warning' : '';
                             return '<span class="badge badge-info">' + sks + ' SKS</span>' +
                                 '<div class="sks-bar-wrap mt-1">' +
@@ -201,23 +201,23 @@ jQuery.krs_riwayat = {
                     },
                     // Jumlah MK
                     {
-                        data      : 'jml_matkul',
+                        data: 'jml_matkul',
                         searchable: false,
-                        orderable : false,
-                        className : 'text-center align-middle',
-                        width     : '12%',
-                        render    : function (data) {
+                        orderable: false,
+                        className: 'text-center align-middle',
+                        width: '12%',
+                        render: function (data) {
                             return '<span class="badge badge-warning">' + (data || 0) + ' MK</span>';
                         }
                     },
                     // Status
                     {
-                        data      : 'status_krs',
+                        data: 'status_krs',
                         searchable: false,
-                        orderable : false,
-                        className : 'text-center align-middle',
-                        width     : '12%',
-                        render    : function (data) {
+                        orderable: false,
+                        className: 'text-center align-middle',
+                        width: '12%',
+                        render: function (data) {
                             return self.renderStatusBadge(data);
                         }
                     },
@@ -225,21 +225,31 @@ jQuery.krs_riwayat = {
                     {
                         data      : null,
                         searchable: false,
-                        orderable : false,
-                        className : 'text-center align-middle',
-                        width     : '10%',
-                        render    : function (data) {
-                            // Jika id_krs tidak null DAN status_krs = 4 → tombol aktif
-                            if (data && data.id_krs !== null && data.id_krs !== undefined && data.status_krs == 4) {
+                        orderable: false,
+                        className: 'text-center align-middle',
+                        width: '10%',
+                        render: function (data) {
+                            if (!data || !data.id_krs) return '-';
+
+                            if (data.status_krs == 0 || data.status_krs == 1) {
+                                return '<button class="btn btn-sm btn-warning btn-action btn-sts-draft"' +
+                                    ' title="Lihat Draft">' +
+                                    '<i class="fas fa-eye mr-1"></i>Lihat' +
+                                    '</button>';
+                            } else if (data.status_krs == 3) {
+                                return '<button class="btn btn-sm btn-danger btn-action btn-sts-draft"' +
+                                    ' title="Ajukan Ulang">' +
+                                    '<i class="fas fa-undo mr-1"></i>Ajukan Ulang' +
+                                    '</button>';
+                            } else if (data.status_krs == 4) {
                                 return '<button class="btn btn-sm btn-success btn-action btn-download-riwayat"' +
-                                    ' data-id="'    + data.id_krs         + '"' +
+                                    ' data-id="' + data.id_krs + '"' +
                                     ' data-tahun="' + (data.tahun_akademik || '') + '"' +
                                     ' title="Download KRS PDF">' +
                                     '<i class="fas fa-download mr-1"></i>Download' +
                                     '</button>';
                             }
 
-                            // Selain itu → tombol disabled
                             return '<button class="btn btn-sm btn-secondary btn-action" disabled' +
                                 ' title="Download hanya tersedia jika KRS sudah disetujui final">' +
                                 '<i class="fas fa-download mr-1"></i>Download' +
@@ -247,24 +257,24 @@ jQuery.krs_riwayat = {
                         }
                     }
                 ],
-                paging      : true,
-                processing  : true,
-                pageLength  : 10,
-                ordering    : false,
+                paging: true,
+                processing: true,
+                pageLength: 10,
+                ordering: false,
                 lengthChange: false,
-                autoWidth   : false,
-                dom         : 'ltipr',
-                language    : {
-                    "emptyTable"  : "Tidak ada riwayat KRS",
-                    "processing"  : "Sedang memuat data...",
-                    "zeroRecords" : "Tidak ditemukan data yang sesuai",
-                    "info"        : "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                    "infoEmpty"   : "Menampilkan 0 sampai 0 dari 0 data",
+                autoWidth: false,
+                dom: 'ltipr',
+                language: {
+                    "emptyTable": "Tidak ada riwayat KRS",
+                    "processing": "Sedang memuat data...",
+                    "zeroRecords": "Tidak ditemukan data yang sesuai",
+                    "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    "infoEmpty": "Menampilkan 0 sampai 0 dari 0 data",
                     "infoFiltered": "(disaring dari _MAX_ total data)",
-                    "paginate"    : {
-                        "first"   : "Pertama",
-                        "last"    : "Terakhir",
-                        "next"    : "Selanjutnya",
+                    "paginate": {
+                        "first": "Pertama",
+                        "last": "Terakhir",
+                        "next": "Selanjutnya",
                         "previous": "Sebelumnya"
                     }
                 }
@@ -275,9 +285,9 @@ jQuery.krs_riwayat = {
         } catch (e) {
             console.error('Error initializing table-riwayat-krs:', e);
             $.alert({
-                title  : 'Error',
+                title: 'Error',
                 content: 'Gagal inisialisasi tabel: ' + e.message,
-                type   : 'red'
+                type: 'red'
             });
             return;
         }
@@ -325,19 +335,23 @@ jQuery.krs_riwayat = {
 
         // Tombol Download
         $(document).off('click', '.btn-download-riwayat').on('click', '.btn-download-riwayat', function () {
-            var id    = $(this).data('id');
+            var id = $(this).data('id');
             var tahun = $(this).data('tahun');
             self.downloadRiwayat(id, tahun, $(this));
+        });
+
+        $(document).off('click', '.btn-sts-draft').on('click', '.btn-sts-draft', function () {
+            window.location.href = '/mhs/krs/';
         });
     },
 
     renderStatusBadge: function (status) {
         var statusMap = {
-            0: { label: 'Draft',           cls: 'badge-secondary' },
-            1: { label: 'Diajukan',        cls: 'badge-info'      },
-            2: { label: 'Disetujui PA',    cls: 'badge-primary'   },
-            3: { label: 'Ditolak',         cls: 'badge-danger'    },
-            4: { label: 'Disetujui Final', cls: 'badge-success'   },
+            0: { label: 'Draft', cls: 'badge-secondary' },
+            1: { label: 'Diajukan', cls: 'badge-info' },
+            2: { label: 'Disetujui PA', cls: 'badge-primary' },
+            3: { label: 'Ditolak', cls: 'badge-danger' },
+            4: { label: 'Disetujui Final', cls: 'badge-success' },
         };
         var info = statusMap[parseInt(status)];
         if (!info) {
@@ -358,20 +372,20 @@ jQuery.krs_riwayat = {
         });
 
         form.append($('<input>', {
-            type : 'hidden',
-            name : '_token',
+            type: 'hidden',
+            name: '_token',
             value: $('meta[name="csrf-token"]').attr('content')
         }));
 
         form.append($('<input>', {
-            type : 'hidden',
-            name : 'id_krs',
+            type: 'hidden',
+            name: 'id_krs',
             value: id
         }));
 
         form.append($('<input>', {
-            type : 'hidden',
-            name : 'tahun_akademik',
+            type: 'hidden',
+            name: 'tahun_akademik',
             value: tahun
         }));
 
@@ -401,7 +415,7 @@ jQuery.krs_riwayat = {
 
     showEmptyState: function () {
         if (!$('#empty-state-riwayat').length) {
-            var url  = $('#btn-tambah-krs').attr('href') || '/mhs/krs';
+            var url = $('#btn-tambah-krs').attr('href') || '/mhs/krs';
             var html = '<div id="empty-state-riwayat" class="empty-state">' +
                 '<i class="fas fa-folder-open"></i>' +
                 '<p>Belum ada riwayat KRS yang tersedia.</p>' +

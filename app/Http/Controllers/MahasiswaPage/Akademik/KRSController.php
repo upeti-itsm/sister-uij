@@ -135,11 +135,11 @@ class KRSController extends Controller
     public function json_riwayat(Request $request)
     {
         try {
-            $user = Session::get('user');
-            $nim = $user->nim;
-            $length = intval($request->length ?? 10);
-            $start = intval($request->start ?? 0);
-            $tahun_akademik = $request->tahun_akademik ?? '';
+            $user            = Session::get('user');
+            $nim             = $user->nim;
+            $length          = intval($request->length          ?? 10);
+            $start           = intval($request->start           ?? 0);
+            $tahun_akademik  = $request->tahun_akademik         ?? '';
 
             // Ambil data riwayat berdasarkan tahun_akademik yang dipilih
             $rawData = KRS::get_riwayat_krs_mahasiswa($nim, $tahun_akademik, '', $start, $length);
@@ -155,40 +155,42 @@ class KRSController extends Controller
             $data = [];
             foreach ($rawData as $item) {
                 $data[] = [
-                    'id_krs' => isset($item->id_krs) ? $item->id_krs : null,
-                    'tahun_akademik' => isset($item->tahun_akademik) ? $item->tahun_akademik : null,
+                    'id_krs'              => isset($item->id_krs_mahasiswa)              ? $item->id_krs_mahasiswa              : null,
+                    'tahun_akademik'      => isset($item->tahun_akademik)      ? $item->tahun_akademik      : null,
                     'nama_tahun_akademik' => isset($item->nama_tahun_akademik) ? $item->nama_tahun_akademik : '-',
-                    'semester' => isset($item->semester) ? $item->semester : '-',
-                    'ips' => isset($item->ips) ? $item->ips : null,
-                    'ipk' => isset($item->ipk) ? $item->ipk : null,
-                    'sks_maks' => intval(isset($item->sks_maks) ? $item->sks_maks : 0),
-                    'sks_ditempuh' => intval(isset($item->sks_ditempuh) ? $item->sks_ditempuh : 0),
-                    'jml_matkul' => intval(isset($item->jml_matkul) ? $item->jml_matkul : 0),
-                    'status_krs' => intval(isset($item->status_krs) ? $item->status_krs : 0),
-                    'tgl_pengajuan' => isset($item->tgl_pengajuan_krs) ? $item->tgl_pengajuan_krs : null,
+                    'semester'            => isset($item->semester)            ? $item->semester            : '-',
+                    'ips'                 => isset($item->ips)                 ? $item->ips                 : null,
+                    'ipk'                 => isset($item->ipk)                 ? $item->ipk                 : null,
+                    'sks_maks'            => intval(isset($item->sks_maks)     ? $item->sks_maks            : 0),
+                    'sks_ditempuh'        => intval(isset($item->sks_ditempuh) ? $item->sks_ditempuh        : 0),
+                    'jml_matkul'          => intval(isset($item->jml_matkul)   ? $item->jml_matkul          : 0),
+                    'status_krs'          => intval(isset($item->status_krs)   ? $item->status_krs          : 0),
+                    'tgl_pengajuan'       => isset($item->tgl_pengajuan_krs)   ? $item->tgl_pengajuan_krs   : null,
                 ];
             }
 
             // Hitung summary — ambil semua data tanpa limit untuk akurasi
             $allData = KRS::get_riwayat_krs_mahasiswa($nim, '', 0, 999999);
             $summary = $this->hitungSummaryRiwayat($allData);
+            // dd($allData, $summary);
+
             return response()->json([
-                'draw' => intval($request->draw ?? 1),
-                'recordsTotal' => $recordsTotal,
+                'draw'            => intval($request->draw ?? 1),
+                'recordsTotal'    => $recordsTotal,
                 'recordsFiltered' => $recordsTotal,
-                'data' => $data,
-                'summary' => $summary,
-                'error' => null,
+                'data'            => $data,
+                'summary'         => $summary,
+                'error'           => null,
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
-                'draw' => intval($request->draw ?? 1),
-                'recordsTotal' => 0,
+                'draw'            => intval($request->draw ?? 1),
+                'recordsTotal'    => 0,
                 'recordsFiltered' => 0,
-                'data' => [],
-                'summary' => null,
-                'error' => $e->getMessage(),
+                'data'            => [],
+                'summary'         => null,
+                'error'           => $e->getMessage(),
             ], 500);
         }
     }
@@ -322,8 +324,14 @@ class KRSController extends Controller
 
             // Mapping hari
             $hariNames = [
-                0 => '-', 1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu',
-                4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 7 => 'Minggu',
+                0 => '-',
+                1 => 'Senin',
+                2 => 'Selasa',
+                3 => 'Rabu',
+                4 => 'Kamis',
+                5 => 'Jumat',
+                6 => 'Sabtu',
+                7 => 'Minggu',
             ];
 
             // Transform daftar mata kuliah
