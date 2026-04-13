@@ -196,14 +196,16 @@
                     </h6>
                     <small class="text-muted">Daftar KRS yang telah diproses di setiap tahun akademik</small>
                 </div>
-                <div>
-                    <a href="{{ route('mahasiswa.akademik.krs.index') }}"
-                       class="btn btn-primary btn-sm px-4"
-                       id="btn-tambah-krs"
-                       data-url="{{ route('mahasiswa.akademik.krs.index') }}">
-                        <i class="fas fa-plus mr-2"></i>Tambah KRS Baru
-                    </a>
-                </div>
+                @if($is_krs->status)
+                    <div>
+                        <a href="{{ route('mahasiswa.akademik.krs.index') }}"
+                           class="btn btn-primary btn-sm px-4"
+                           id="btn-tambah-krs"
+                           data-url="{{ route('mahasiswa.akademik.krs.index') }}">
+                            <i class="fas fa-plus mr-2"></i>Tambah KRS Baru
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <div class="card-body">
@@ -262,13 +264,14 @@
                 </div>
 
             </div>
-
-            <div class="card-footer text-right">
-                <a href="{{ route('mahasiswa.akademik.krs.index') }}"
-                   class="btn btn-primary btn-lg px-5">
-                    <i class="fas fa-plus mr-2"></i>Tambah KRS Baru
-                </a>
-            </div>
+            @if($is_krs->status)
+                <div class="card-footer text-right" style="display: none">
+                    <a href="{{ route('mahasiswa.akademik.krs.index') }}"
+                       class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-plus mr-2"></i>Tambah KRS Baru
+                    </a>
+                </div>
+            @endif
         </div>
     </div>
 

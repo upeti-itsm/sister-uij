@@ -223,7 +223,7 @@ jQuery.krs_riwayat = {
                     },
                     // Aksi — hanya tombol download
                     {
-                        data: null,
+                        data      : null,
                         searchable: false,
                         orderable: false,
                         className: 'text-center align-middle',

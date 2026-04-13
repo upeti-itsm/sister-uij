@@ -25,7 +25,8 @@ class KRSController extends Controller
     {
         $menu = "Mengelola Kartu Rencana Studi";
         $tahun_akademik = JadwalKuliahMahasiswa::get_tahun_akademik();
-        return view('mahasiswa_page.akademik.krs.list_krs', compact('menu', 'tahun_akademik'));
+        $is_krs = KRS::cek_periode_krs(Session::get('user')->nim);
+        return view('mahasiswa_page.akademik.krs.list_krs', compact('menu', 'tahun_akademik', 'is_krs'));
     }
 
     /**
@@ -34,7 +35,11 @@ class KRSController extends Controller
     public function index()
     {
         $menu = "Mengelola Kartu Rencana Studi";
-        return view('mahasiswa_page.akademik.krs.index', compact('menu'));
+        $is_krs = KRS::cek_periode_krs(Session::get('user')->nim);
+        if ($is_krs->status)
+            return view('mahasiswa_page.akademik.krs.index', compact('menu'));
+        else
+            return redirect(route('mahasiswa.akademik.krs.riwayat'));
     }
 
     // =====================================================================
@@ -69,6 +74,7 @@ class KRSController extends Controller
             }
 
             return response()->json($data, 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'draw' => intval($request->draw ?? 1),
@@ -110,6 +116,7 @@ class KRSController extends Controller
             }
 
             return response()->json($data, 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'draw' => intval($request->draw ?? 1),
@@ -175,6 +182,7 @@ class KRSController extends Controller
                 'summary'         => $summary,
                 'error'           => null,
             ], 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'draw'            => intval($request->draw ?? 1),
@@ -440,6 +448,7 @@ class KRSController extends Controller
                 . '.pdf';
 
             return $pdf->download($filename);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => '0',
