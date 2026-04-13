@@ -74,6 +74,28 @@ class NilaiMahasiswaController extends Controller
         }
     }
 
+    public function delete_nilai(Request $request)
+    {
+        try {
+            $nim_list = '0';
+            $nilai_list = '0';
+            $kriteria_list = implode(',', $request->kriteria_list);
+            $result = JadwalDosen::insup_nilai($kriteria_list, $nim_list, $nilai_list);
+            return response()->json([
+                'success' => $result->status == 1,
+                'message' => $result->keterangan,
+                'data' => [
+                    'function_result' => $result
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     private function handleIndividualSave(Request $request)
     {
         $request->validate([

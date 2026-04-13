@@ -428,7 +428,6 @@ jQuery.nilai_mahasiswa = {
                         title="Kembali ke daftar mata kuliah">
                         <i class="fas fa-arrow-left mr-1"></i>Kembali
                     </a>
-
                     ${mainButtonsHTML}
 
                     <button type="button" id="btn-reset-all" class="btn btn-danger btn-sm">
@@ -793,26 +792,63 @@ jQuery.nilai_mahasiswa = {
             buttons: {
                 ya: {
                     text: '<i class="fa fa-eraser"></i> Ya, Reset',
-                    btnClass: 'btn-danger',
+                    btnClass: 'btn-warning',
                     action: function () {
-                        $('input[name^="nilai["]').val('').removeClass('border-success border-danger border-warning');
 
-                        // Clear error tooltips
+                        // =========================
+                        // KUMPULKAN NIM & KRITERIA
+                        // =========================
+                        let nimList = new Set();
+                        let kriteriaList = new Set();
+
                         $('input[name^="nilai["]').each(function () {
-                            self.hideInputError($(this));
+                            let nim = $(this).data('nim');
+                            let kriteria = $(this).data('kriteria');
+
+                            if (nim) nimList.add(nim);
+                            if (kriteria) kriteriaList.add(kriteria);
                         });
 
-                        // Reset tracking system
-                        self.data.unsavedChanges.clear();
-                        self.updateUnsavedCounter();
-                        self.initOriginalValues();
+                        // =========================
+                        // HIT ENDPOINT DELETE
+                        // =========================
+                        $.ajax({
+                            url: '/dosen/akademik/nilai-matakuliah/delete',
+                            type: 'POST',
+                            data: {
+                                nim_list: Array.from(nimList),
+                                kriteria_list: Array.from(kriteriaList),
+                                _token: $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function (response) {
 
-                        // Update summary
-                        if (typeof window.updateSummaryCount === 'function') {
-                            setTimeout(window.updateSummaryCount, 100);
-                        }
+                                // =========================
+                                // RESET UI
+                                // =========================
+                                $('input[name^="nilai["]')
+                                    .val('')
+                                    .removeClass('border-success border-danger border-warning');
 
-                        self.showToast('success', 'Semua nilai berhasil direset');
+                                $('input[name^="nilai["]').each(function () {
+                                    self.hideInputError($(this));
+                                });
+
+                                // reset tracking
+                                self.data.unsavedChanges.clear();
+                                self.updateUnsavedCounter();
+                                self.initOriginalValues();
+
+                                if (typeof window.updateSummaryCount === 'function') {
+                                    setTimeout(window.updateSummaryCount, 100);
+                                }
+
+                                self.showToast('success', 'Semua nilai berhasil direset');
+                            },
+                            error: function () {
+                                self.showToast('error', 'Gagal reset nilai di server');
+                            }
+                        });
+
                     }
                 },
                 batal: {
@@ -986,30 +1022,30 @@ jQuery.nilai_mahasiswa = {
 
             // Set column widths
             ws['!cols'] = [
-                { wch: 5 },   // No
-                { wch: 15 },  // NIM
-                { wch: 25 },  // Nama
-                ...Array(headers.length - 6).fill({ wch: 10 }), // Kriteria columns
-                { wch: 12 },  // Nilai Akhir
-                { wch: 12 },  // Nilai Mutu
-                { wch: 8 }    // Huruf
+                {wch: 5},   // No
+                {wch: 15},  // NIM
+                {wch: 25},  // Nama
+                ...Array(headers.length - 6).fill({wch: 10}), // Kriteria columns
+                {wch: 12},  // Nilai Akhir
+                {wch: 12},  // Nilai Mutu
+                {wch: 8}    // Huruf
             ];
 
             // Style header row
             var range = XLSX.utils.decode_range(ws['!ref']);
             for (var C = range.s.c; C <= range.e.c; ++C) {
-                var address = XLSX.utils.encode_cell({ r: 0, c: C });
+                var address = XLSX.utils.encode_cell({r: 0, c: C});
                 if (!ws[address]) continue;
                 ws[address].s = {
-                    font: { bold: true, color: { rgb: "FFFFFF" } },
-                    fill: { fgColor: { rgb: "4472C4" } },
-                    alignment: { horizontal: "center", vertical: "center" }
+                    font: {bold: true, color: {rgb: "FFFFFF"}},
+                    fill: {fgColor: {rgb: "4472C4"}},
+                    alignment: {horizontal: "center", vertical: "center"}
                 };
             }
 
             // Format NIM column as text
             for (var R = 1; R <= range.e.r; ++R) {
-                var nimAddress = XLSX.utils.encode_cell({ r: R, c: 1 });
+                var nimAddress = XLSX.utils.encode_cell({r: R, c: 1});
                 if (ws[nimAddress]) {
                     ws[nimAddress].t = 's'; // Set as string type
                     ws[nimAddress].z = '@'; // Text format
@@ -1070,7 +1106,7 @@ jQuery.nilai_mahasiswa = {
     // Enhanced validation with decimal support
     validateNilai: function (nilai, kriteriaName) {
         if (nilai === '' || nilai === null || nilai === undefined) {
-            return { valid: true, value: '' }; // Kosong diizinkan
+            return {valid: true, value: ''}; // Kosong diizinkan
         }
 
         // Trim whitespace
@@ -1080,21 +1116,21 @@ jQuery.nilai_mahasiswa = {
         if (nilai.indexOf('.') !== -1) {
             var parts = nilai.split('.');
             if (parts.length > 2) {
-                return { valid: false, message: 'Format desimal tidak valid (terlalu banyak titik)' };
+                return {valid: false, message: 'Format desimal tidak valid (terlalu banyak titik)'};
             }
             if (parts[1] && parts[1].length > 2) {
-                return { valid: false, message: 'Maksimal 2 digit setelah koma' };
+                return {valid: false, message: 'Maksimal 2 digit setelah koma'};
             }
         }
 
         var numValue = parseFloat(nilai);
 
         if (isNaN(numValue)) {
-            return { valid: false, message: 'Nilai harus berupa angka (gunakan titik untuk desimal)' };
+            return {valid: false, message: 'Nilai harus berupa angka (gunakan titik untuk desimal)'};
         }
 
         if (numValue < 0) {
-            return { valid: false, message: 'Nilai tidak boleh kurang dari 0' };
+            return {valid: false, message: 'Nilai tidak boleh kurang dari 0'};
         }
 
         // Check if criteria is "Kehadiran" for different max range
@@ -1116,7 +1152,7 @@ jQuery.nilai_mahasiswa = {
         // Round to 2 decimal places
         var roundedValue = Math.round(numValue * 100) / 100;
 
-        return { valid: true, value: roundedValue };
+        return {valid: true, value: roundedValue};
     },
 
     // Get criteria name from input element
