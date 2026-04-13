@@ -424,9 +424,14 @@ jQuery.nilai_mahasiswa = {
                 </div>
 
                 <div class="btn-group" role="group">
+                    <a href="/dosen/akademik/daftar-matakuliah" class="btn btn-warning btn-sm text-white"
+                        title="Kembali ke daftar mata kuliah">
+                        <i class="fas fa-arrow-left mr-1"></i>Kembali
+                    </a>
+
                     ${mainButtonsHTML}
 
-                    <button type="button" id="btn-reset-all" class="btn btn-warning btn-sm">
+                    <button type="button" id="btn-reset-all" class="btn btn-danger btn-sm">
                         <i class="fas fa-eraser mr-1"></i>Reset
                     </button>
 
@@ -788,7 +793,7 @@ jQuery.nilai_mahasiswa = {
             buttons: {
                 ya: {
                     text: '<i class="fa fa-eraser"></i> Ya, Reset',
-                    btnClass: 'btn-warning',
+                    btnClass: 'btn-danger',
                     action: function () {
                         $('input[name^="nilai["]').val('').removeClass('border-success border-danger border-warning');
 
