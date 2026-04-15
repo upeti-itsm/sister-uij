@@ -60,7 +60,7 @@ class DataDiriController extends Controller
             'nama' => 'required',
             'tempat_lahir' => 'required', 'tgl_lahir' => 'required',
             'no_hp' => 'required|min:10|max:13',
-            'email' => 'required|email:rfc,dns',
+            'email' => 'required|email:rfc',
             'jenis_kelamin' => 'required',
             'agama' => 'required',
             'alamat' => 'required'
