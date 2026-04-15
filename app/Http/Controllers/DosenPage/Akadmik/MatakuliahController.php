@@ -152,7 +152,7 @@ class MatakuliahController extends Controller
             $kriteria = JadwalDosen::delete_kriteria($request->id);
             return response()->json([
                 'success' => $kriteria->status == 1,
-                'message' => 'Kriteria penilaian "' . $kriteria->keterangan . '" berhasil dihapus'
+                'message' => $kriteria->keterangan
             ]);
 
         } catch (\Exception $e) {

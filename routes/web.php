@@ -493,6 +493,7 @@ Route::post('/dosen/akademik/daftar-matakuliah/json-kriteria-delete', [\App\Http
 Route::get('/dosen/akademik/nilai-matakuliah/{id}', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'index'])->name('dosen.akademik.nilai_mahasiswa.index')->middleware('modul:Dosen - Daftar Matakuliah');
 Route::get('/dosen/akademik/nilai-matakuliah/set-status/{id}', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'set_status'])->name('dosen.akademik.nilai_mahasiswa.set_status')->middleware('modul:Dosen - Daftar Matakuliah');
 Route::post('/dosen/akademik/nilai-matakuliah/store', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'store_nilai'])->name('dosen.akademik.nilai_mahasiswa.store_nilai')->middleware('modul:Dosen - Daftar Matakuliah');
+Route::post('/dosen/akademik/nilai-matakuliah/delete', [\App\Http\Controllers\DosenPage\Akadmik\NilaiMahasiswaController::class, 'delete_nilai'])->name('dosen.akademik.nilai_mahasiswa.delete_nilai')->middleware('modul:Dosen - Daftar Matakuliah');
 // KRS
 // Routes untuk Dosen - Persetujuan KRS
 Route::prefix('dosen/krs')->middleware('modul:Validasi KRS DPS')->group(function () {
