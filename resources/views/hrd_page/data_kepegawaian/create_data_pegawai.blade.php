@@ -113,8 +113,8 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label class="text-muted">Bank Penggajian<span
-                                                        class="text-danger">*</span></label>
+                                                <label class="text-muted">Bank Penggajian <span
+                                                    class="text-danger">*</span></label>
                                                 <select class="form-control select2" name="jenis_bank" required>
                                                     <option>-- Pilih Jenis Bank --</option>
                                                     <option value="1"
@@ -340,7 +340,7 @@
                         @endif
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="text-muted">Pangkat</label>
+                                <label class="text-muted">Pangkat <span class="text-danger">*</span></label>
                                 <select class="form-control select2" name="pangkat">
                                     <option value="0">-- Pilih Pangkat --</option>
                                     <option value="1" @if(old('pangkat') == 1) selected @endif>Pengatur</option>
@@ -483,7 +483,7 @@
                             <div class="form-group">
                                 <label class="text-muted">Unit Kerja <span class="text-danger">*</span></label>
                                 <select class="form-control select2" required name="unit_kerja">
-                                    <option value="0">-- Pilih Unit Kerja --</option>
+                                    <option value="" disabled selected>-- Pilih Unit Kerja --</option>
                                     @foreach($unit_kerja AS $item)
                                         <option value="{{$item->id_unit_kerja}}"
                                                 @if(old('unit_kerja') == $item->id_unit_kerja) selected @endif>{{$item->unit_kerja}}</option>

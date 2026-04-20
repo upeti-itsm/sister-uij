@@ -3,6 +3,20 @@
     <link href="{{asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.min.css')}}" rel="stylesheet">
     <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
     <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <style>
+        .form-group label .text-danger {
+            display: inline;
+            margin-left: 4px;
+            vertical-align: baseline;
+        }
+
+        .custom-file-label {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding-right: 90px;
+        }
+    </style>
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -120,8 +134,8 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label class="text-muted">Bank Penggajian<span
-                                                        class="text-danger">*</span></label>
+                                                <label class="text-muted">Bank Penggajian <span
+                                                    class="text-danger">*</span></label>
                                                 <select class="form-control select2" name="jenis_bank" required>
                                                     <option>-- Pilih Jenis Bank --</option>
                                                     <option value="1"
@@ -352,7 +366,7 @@
                         @endif
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="text-muted">Pangkat</label>
+                                <label class="text-muted">Pangkat <span class="text-danger">*</span></label>
                                 <select class="form-control select2" name="pangkat">
                                     <option value="0">-- Pilih Pangkat --</option>
                                     <option value="1" @if(old('pangkat') == 1 || $karyawan->id_pangkat == 1) selected @endif>Pengatur</option>
@@ -375,7 +389,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group" style="text-align: left">
-                                <label class="text-muted">Unggah SK Golongan</label>
+                                <label class="text-muted">Unggah SK Golongan <span class="text-danger">*</span></label>
                                 <div class="custom-file">
                                     <input type="file" accept=".pdf"
                                            class="custom-file-input"
@@ -408,7 +422,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group" style="text-align: left">
-                                <label class="text-muted">Unggah SK Jabatan Struktural</label>
+                                <label class="text-muted">Unggah SK Jabatan Struktural <span class="text-danger">*</span></label>
                                 <div class="custom-file">
                                     <input type="file" accept=".pdf"
                                            class="custom-file-input"
@@ -442,7 +456,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group" style="text-align: left">
-                                <label class="text-muted">Unggah SK Jabatan Fungsional</label>
+                                <label class="text-muted">Unggah SK Jabatan Fungsional <span class="text-danger">*</span></label>
                                 <div class="custom-file">
                                     <input type="file" accept=".pdf"
                                            class="custom-file-input"
@@ -476,7 +490,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group" style="text-align: left">
-                                <label class="text-muted">Unggah Ijazah</label>
+                                <label class="text-muted">Unggah Ijazah <span class="text-danger">*</span></label>
                                 <div class="custom-file">
                                     <input type="file" accept=".pdf"
                                            class="custom-file-input"
@@ -499,7 +513,7 @@
                             <div class="form-group">
                                 <label class="text-muted">Unit Kerja <span class="text-danger">*</span></label>
                                 <select class="form-control select2" required name="unit_kerja">
-                                    <option>-- Pilih Unit Kerja --</option>
+                                    <option value="" disabled @if(!old('unit_kerja') && is_null($karyawan->id_unit_kerja)) selected @endif>-- Pilih Unit Kerja --</option>
                                     @foreach($unit_kerja AS $item)
                                         <option value="{{$item->id_unit_kerja}}"
                                                 @if(old('unit_kerja') == $item->id_unit_kerja || $karyawan->id_unit_kerja == $item->id_unit_kerja) selected @endif>{{$item->unit_kerja}}</option>
@@ -509,7 +523,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="text-muted">Status Menikah <span class="text-danger">*</span></label>
+                                <label class="text-muted">Status Menikah</label>
                                 <select class="form-control select2" id="status_menikah" name="status_menikah" required>
                                     <option value="">-- Pilih Status Menikah --</option>
                                     <option value="1"
@@ -533,7 +547,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group" style="text-align: left">
-                                <label class="text-muted">Unggah Scan KK</label>
+                                <label class="text-muted">Unggah Scan KK <span class="text-danger">*</span></label>
                                 <div class="custom-file">
                                     <input type="file" accept=".pdf"
                                            class="custom-file-input"

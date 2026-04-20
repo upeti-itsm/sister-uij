@@ -26,7 +26,7 @@ jQuery.edit_data_pegawai = {
         });
         $(".custom-file-input").on("change", function () {
             var fileName = $(this).val().split("\\").pop();
-            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            $(this).siblings(".custom-file-label").addClass("selected").text(fileName).attr("title", fileName);
         });
         $("#photo_profile").change(function () {
             var data = new FormData();
