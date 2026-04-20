@@ -630,7 +630,7 @@
                                         </ul>
                                     </li>
                                 @endif
-                                @if (array_key_exists('Pengelolaan Jadwal Wisuda', $modul) || array_key_exists('Validasi Pendaftaran Wisuda', $modul))
+                                {{-- @if (array_key_exists('Pengelolaan Jadwal Wisuda', $modul) || array_key_exists('Validasi Pendaftaran Wisuda', $modul))
                                     <li @if ($menu == 'Pengelolaan Jadwal Wisuda' || $menu == 'Validasi Pendaftaran Wisuda') class="mm-active" @endif>
                                         <a class="has-arrow" href="#" aria-expanded="true">Wisuda</a>
                                         <ul class="nav-third-level mm-collapse" style="">
@@ -648,7 +648,7 @@
                                             @endif
                                         </ul>
                                     </li>
-                                @endif
+                                @endif --}}
                                 @if (session()->has('nilai_ta') || session()->has('krs_ta'))
                                     @if (array_key_exists('Pengajuan Tugas Akhir', $modul))
                                         <li @if ($menu == 'Pengajuan Tugas Akhir') class="mm-active" @endif>
