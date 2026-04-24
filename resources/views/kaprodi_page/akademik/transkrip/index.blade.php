@@ -431,16 +431,6 @@
                                     <td id="kpd-keperluan">-</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Bahasa</strong></td>
-                                    <td>:</td>
-                                    <td id="kpd-bahasa">-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Jumlah Lembar</strong></td>
-                                    <td>:</td>
-                                    <td id="kpd-jumlah-lembar">-</td>
-                                </tr>
-                                <tr>
                                     <td><strong>Email Tujuan</strong></td>
                                     <td>:</td>
                                     <td id="kpd-email-tujuan">-</td>

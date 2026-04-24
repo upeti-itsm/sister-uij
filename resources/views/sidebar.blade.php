@@ -68,6 +68,9 @@
             <div class="profile-text">
                 <small
                     class="m-0 text-white">{{ \Illuminate\Support\Facades\Session::get('user')->nama_lengkap }}</small><br/>
+                @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
+                    <small class="d-block text-white-50">NIM: {{ \Illuminate\Support\Facades\Session::get('user')->nim }}</small>
+                @endif
                 <span>{{ \Illuminate\Support\Facades\Session::get('peran')['aktif_'] }}</span>
             </div>
         </div><!--/.profile element-->
@@ -1070,8 +1073,12 @@
                                                 onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'">
                                         @endif
                                     </div><!-- img-user -->
-                                    <p class="text-center">
-                                        {{ \Illuminate\Support\Facades\Session::get('user')->nama_lengkap }}</p>
+                                    <p class="text-center mb-0 text-capitalize">
+                                        {{ \Illuminate\Support\Facades\Session::get('user')->nama_lengkap }}
+                                        @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
+                                            <small class="d-block text-muted">NIM: {{ \Illuminate\Support\Facades\Session::get('user')->nim }}</small>
+                                        @endif
+                                    </p>
                                 </div><!-- user-header -->
                                 {{-- @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
                                     <a href="{{ route('mahasiswa.dashboard.sync_password_mahasiswa') }}"
