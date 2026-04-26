@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\DB;
 class TTE extends Model
 {
     use HasFactory;
+
     public static function cekTTE($qr)
     {
-        return DB::selectOne('SELECT * FROM organisasi.cek_keabsasan_dokumen(?)' , [
-            base64_decode($qr)
+        $data = DB::selectOne('SELECT * FROM organisasi.cek_keabsahan_dokumen(?)', [
+            $qr
         ]);
+
+        return $data;
     }
 }

@@ -323,8 +323,9 @@
                         </h6>
                     </div>
                     <div>
-                        <button class="btn btn-sm btn-success" id="btn-download-lhs">
-                            <i class="fas fa-download mr-2"></i>Unduh LHS
+                        <button class="btn btn-sm btn-primary"
+                            onclick="window.location.href='{{ route('mahasiswa.akademik.khs.riwayat_pengajuan') }}'">
+                            <i class="fas fa-list mr-2"></i>Riwayat Pengajuan LHS
                         </button>
                     </div>
                 </div>
