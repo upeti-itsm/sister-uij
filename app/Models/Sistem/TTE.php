@@ -12,7 +12,7 @@ class TTE extends Model
 
     public static function cekTTE($qr)
     {
-        $data = DB::selectOne('SELECT * FROM organisasi.cek_keabsasan_dokumen(?)', [
+        $data = DB::selectOne('SELECT * FROM organisasi.cek_keabsahan_dokumen(?)', [
             $qr
         ]);
 
