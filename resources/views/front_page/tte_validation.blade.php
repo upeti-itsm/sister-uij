@@ -1,329 +1,368 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Dokumen Digital</title>
+    <title>Cek Dokumen Digital | UIJ</title>
     <link rel="shortcut icon" href="{{ asset('image/logo-uij.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
+        :root {
+            --bg: #f4f6f8;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --line: #e5e7eb;
+
+            --primary: #0f5c5f;
+            --primary-dark: #0b494b;
+
+            --success-bg: #eaf7f0;
+            --success-text: #166534;
+            --success-line: #bbdfc9;
+
+            --danger-bg: #fef2f2;
+            --danger-text: #b91c1c;
+            --danger-line: #fecaca;
+
+            --warning-bg: #fff7ed;
+            --warning-text: #9a3412;
+            --warning-line: #fed7aa;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-image: url('{{ asset('images/bg_login.webp') }}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", Inter, -apple-system, Roboto, sans-serif;
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            position: relative;
+            padding: 16px;
+
+            display: flex;
+            align-items: center;
+            /* vertical center */
+            justify-content: center;
+            /* horizontal center */
         }
 
-        /* Overlay hijau transparan di atas background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(17, 153, 142, 0.7) 0%, rgba(56, 239, 125, 0.7) 100%);
-            z-index: 0;
-        }
-
-        .container {
-            padding: 50px 15px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .document-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
-            max-width: 600px;
+        .page-wrap {
+            max-width: 840px;
             margin: 0 auto;
         }
 
-        .card-header-custom {
-            padding: 30px;
-            text-align: center;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-            position: relative;
+        .verify-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
         }
 
-        .logo-container {
-            margin-bottom: 20px;
+        .verify-head {
+            background: #ffffff;
+            border-bottom: 1px solid var(--line);
+            padding: 26px 24px 20px;
         }
 
-        .logo-container img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            background: white;
-            padding: 10px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-header-custom i {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-
-        .card-body-custom {
-            padding: 40px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 20px;
-            animation: fadeInScale 0.5s ease-in-out;
-        }
-
-        @keyframes fadeInScale {
-            0% {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .status-error {
-            background-color: #fee;
-            color: #c33;
-            border: 2px solid #fcc;
-        }
-
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 2px solid #c3e6cb;
-        }
-
-        .info-row {
-            display: flex;
-            padding: 15px 0;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background-color 0.3s ease;
-        }
-
-        .info-row:hover {
-            background-color: #f8f9fa;
-            padding-left: 10px;
-            padding-right: 10px;
-            border-radius: 8px;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #11998e;
-            min-width: 180px;
+        .head-top {
             display: flex;
             align-items: center;
+            gap: 14px;
+            margin-bottom: 8px;
         }
 
-        .info-label i {
-            margin-right: 10px;
-            width: 20px;
+        .logo-box {
+            width: 52px;
+            height: 52px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        .logo-box img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .head-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .head-sub {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .verify-body {
+            padding: 22px 24px 26px;
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .status-chip.success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border-color: var(--success-line);
+        }
+
+        .status-chip.error {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            border-color: var(--danger-line);
+        }
+
+        .detail-box {
+            margin-top: 18px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--line);
+            align-items: start;
+            background: #fff;
+        }
+
+        .detail-row:last-child {
+            border-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.92rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-label i {
+            width: 18px;
             text-align: center;
-            color: #38ef7d;
+            color: var(--primary);
         }
 
-        .info-value {
-            color: #555;
-            flex: 1;
+        .detail-value {
+            font-size: 0.95rem;
+            color: #111827;
+            word-break: break-word;
+            line-height: 1.5;
+            font-weight: 500;
         }
 
-        .empty-value {
-            color: #999;
-            font-style: italic;
+        .detail-value.empty {
+            color: #94a3b8;
+            font-weight: 400;
         }
 
-        .alert-custom {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
+        .notice {
+            margin-top: 16px;
+            border: 1px solid var(--warning-line);
+            background: var(--warning-bg);
+            color: var(--warning-text);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 0.88rem;
+            line-height: 1.5;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            border: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        .notice i {
+            margin-right: 6px;
         }
 
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #0d7a6f 0%, #2dd165 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.3);
+        .actions {
+            margin-top: 22px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .btn-outline-secondary {
-            border-color: #11998e;
-            color: #11998e;
-            transition: all 0.3s ease;
+        .btn-uij-primary {
+            background: var(--primary);
+            color: #fff;
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 9px 16px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            transition: 0.2s ease;
         }
 
-        .btn-outline-secondary:hover {
-            background: #11998e;
-            border-color: #11998e;
-            color: white;
-            transform: translateY(-2px);
+        .btn-uij-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: #fff;
+            transform: translateY(-1px);
         }
 
-        .document-card {
-            animation: slideUp 0.6s ease-out;
+        .btn-uij-outline {
+            background: #fff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 9px 16px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            transition: 0.2s ease;
         }
 
-        @keyframes slideUp {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .btn-uij-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
         }
 
-        /* Responsive */
+        .credits {
+            text-align: center;
+            margin-top: 14px;
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+
         @media (max-width: 768px) {
-            .info-row {
-                flex-direction: column;
+
+            .verify-head,
+            .verify-body {
+                padding-left: 16px;
+                padding-right: 16px;
             }
 
-            .info-label {
-                min-width: 100%;
-                margin-bottom: 5px;
+            .detail-row {
+                grid-template-columns: 1fr;
+                gap: 6px;
+                padding: 12px 14px;
             }
 
-            .card-body-custom {
-                padding: 25px;
+            .head-title {
+                font-size: 1.05rem;
             }
         }
     </style>
 </head>
-<body>
-<div class="container">
-    <div class="document-card">
-        <!-- Header -->
-        <div class="card-header-custom">
-            <!-- Logo -->
-            <div class="logo-container">
-                <img src="{{ asset('image/logo-uij.png') }}" alt="Logo UIJ">
-            </div>
-            <h2 class="mb-0">Verifikasi Dokumen Digital</h2>
-            <p class="mb-0 mt-2">Berdasarkan Data Dokumen Digital Milik Uinversitas Islam Jember</p>
-        </div>
 
-        <!-- Body -->
-        <div class="card-body-custom">
-            <!-- Status Badge -->
-            <div class="text-center">
-                @if($data->status == 0)
-                    <span class="status-badge status-error">
-                        <i class="fas fa-times-circle"></i> Dokumen Tidak Ditemukan
+<body>
+    <div class="page-wrap">
+        <div class="verify-card">
+            <div class="verify-head">
+                <div class="head-top">
+                    <div class="logo-box">
+                        <img src="{{ asset('image/logo-uij.png') }}" alt="Logo UIJ">
+                    </div>
+                    <div>
+                        <h1 class="head-title">Verifikasi Dokumen Digital</h1>
+                        <p class="head-sub">Arsip digital terintegrasi Universitas Islam Jember</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="verify-body">
+                @if ($data->status == 0)
+                    <span class="status-chip error">
+                        <i class="fas fa-circle-xmark"></i> Dokumen Tidak Ditemukan
                     </span>
                 @else
-                    <span class="status-badge status-success">
-                        <i class="fas fa-check-circle"></i> Dokumen Valid
+                    <span class="status-chip success">
+                        <i class="fas fa-circle-check"></i> Dokumen Tervalidasi
                     </span>
                 @endif
-            </div>
 
-            <!-- Info Details -->
-            <div class="mt-4">
-                <div class="info-row">
-                    <div class="info-label">
-                        <i class="fas fa-info-circle"></i> Status Kode
+                <div class="detail-box">
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-file-lines"></i> Nama Dokumen</div>
+                        <div
+                            class="detail-value {{ empty($data->nama_dokumen) || $data->nama_dokumen == '-' ? 'empty' : '' }}">
+                            {{ !empty($data->nama_dokumen) && $data->nama_dokumen != '-' ? $data->nama_dokumen : 'Tidak Tersedia' }}
+                        </div>
                     </div>
-                    <div class="info-value">
-                        <strong>{{ $data->status }}</strong>
+
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-user-pen"></i> Penandatangan</div>
+                        <div
+                            class="detail-value {{ empty($data->nama_penandatangan) || $data->nama_penandatangan == '-' ? 'empty' : '' }}">
+                            {{ !empty($data->nama_penandatangan) && $data->nama_penandatangan != '-' ? $data->nama_penandatangan : 'Tidak Tersedia' }}
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-calendar-check"></i> Tanggal Persetujuan</div>
+                        <div class="detail-value {{ empty($data->tgl_persetujuan) ? 'empty' : '' }}">
+                            {{ !empty($data->tgl_persetujuan) ? $data->tgl_persetujuan : 'Tidak Tersedia' }}
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-user-tag"></i> Peran / Jabatan</div>
+                        <div class="detail-value {{ empty($data->nama_peran) ? 'empty' : '' }}">
+                            {{ !empty($data->nama_peran) ? $data->nama_peran : 'Tidak Tersedia' }}
+                        </div>
                     </div>
                 </div>
 
-                <div class="info-row">
-                    <div class="info-label">
-                        <i class="fas fa-clipboard-list"></i> Keterangan
+                @if ($data->status == 0)
+                    <div class="notice">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        Dokumen tidak ditemukan di database UIJ. Pastikan kode verifikasi benar, atau hubungi bagian
+                        akademik.
                     </div>
-                    <div class="info-value">
-                        {{ $data->keterangan }}
-                    </div>
-                </div>
+                @endif
 
-                <div class="info-row">
-                    <div class="info-label">
-                        <i class="fas fa-file-alt"></i> Nama Dokumen
-                    </div>
-                    <div class="info-value {{ $data->nama_dokumen == '-' ? 'empty-value' : '' }}">
-                        {{ $data->nama_dokumen == '-' ? 'Tidak Tersedia' : $data->nama_dokumen }}
-                    </div>
+                <div class="actions">
+                    <button class="btn btn-uij-primary" onclick="window.location.reload()">
+                        <i class="fas fa-rotate-right me-1"></i> Cek Ulang
+                    </button>
+                    <a href="{{ route('frontpage.home') }}" class="btn btn-uij-outline">
+                        <i class="fas fa-house me-1"></i> Halaman Utama
+                    </a>
                 </div>
-
-                <div class="info-row">
-                    <div class="info-label">
-                        <i class="fas fa-user-edit"></i> Penandatangan
-                    </div>
-                    <div class="info-value {{ $data->nama_penandatangan == '-' ? 'empty-value' :  '' }}">
-                        {{ $data->nama_penandatangan == '-' ? 'Tidak Tersedia' : $data->nama_penandatangan }}
-                    </div>
-                </div>
-
-                <div class="info-row">
-                    <div class="info-label">
-                        <i class="fas fa-calendar-check"></i> Tanggal Persetujuan
-                    </div>
-                    <div class="info-value {{ empty($data->tgl_persetujuan) ? 'empty-value' : '' }}">
-                        {{ empty($data->tgl_persetujuan) ? 'Tidak Tersedia' :  $data->tgl_persetujuan }}
-                    </div>
-                </div>
-
-                <div class="info-row">
-                    <div class="info-label">
-                        <i class="fas fa-user-tag"></i> Peran
-                    </div>
-                    <div class="info-value {{ empty($data->nama_peran) ? 'empty-value' : '' }}">
-                        {{ empty($data->nama_peran) ? 'Tidak Tersedia' : $data->nama_peran }}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alert Message -->
-            @if($data->status == 0)
-                <div class="alert-custom">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Perhatian: </strong> Dokumen tidak ditemukan atau tidak valid di database UIJ.
-                    Silakan periksa kembali nomor dokumen atau hubungi administrator.
-                </div>
-            @endif
-
-            <!-- Action Buttons -->
-            <div class="text-center mt-4">
-                <button class="btn btn-primary" onclick="window.location.reload()">
-                    <i class="fas fa-redo"></i> Cek Ulang
-                </button>
-                <a href="{{route('frontpage.home')}}" class="btn btn-outline-secondary">
-                    <i class="fas fa-home"></i> Beranda
-                </a>
             </div>
         </div>
+
+        <div class="credits">
+            <i class="fas fa-shield-halved me-1"></i> Data bersumber dari sistem informasi terpadu SISTER UIJ
+        </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.querySelectorAll('.btn-uij-primary').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (this.getAttribute('onclick') === "window.location.reload()") {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Memuat...';
+                    setTimeout(() => window.location.reload(), 140);
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>

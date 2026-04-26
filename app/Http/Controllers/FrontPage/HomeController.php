@@ -143,7 +143,7 @@ class HomeController extends Controller
             $response = DaftarHadirWisuda::insert_tamu($barcode[0], $barcode[1], $barcode[2], $barcode[3]);
         else
             $response = DaftarHadirWisuda::insert_tamu('0', '0', $request->barcode, '0');
-//            $response = DaftarHadirWisuda::insert_tamu('-', $barcode[0], $barcode[1], $barcode[2]);
+        //            $response = DaftarHadirWisuda::insert_tamu('-', $barcode[0], $barcode[1], $barcode[2]);
         Session::flash($response->status == 1 ? "success_message" : "failed_message", $response->keterangan);
         return redirect()->back();
     }
@@ -171,6 +171,7 @@ class HomeController extends Controller
     {
         $data = TTE::cekTTE($id_qr);
         Session::flash($data->status == 1 ? 'success_message' : 'failed_message', $data->keterangan);
+
         return view('front_page.tte_validation', compact('data'));
     }
 }
