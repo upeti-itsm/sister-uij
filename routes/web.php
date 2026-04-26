@@ -362,6 +362,10 @@ Route::prefix('mhs/khs')
         Route::post('/grafik-ip', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getGrafikIP'])->name('grafik_ip');
         Route::post('/matakuliah-belum-lulus', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getMatakuliahBelumLulus'])->name('matakuliah_belum_lulus');
         Route::post('/statistik-nilai', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'getStatistikNilai'])->name('statistik_nilai');
+
+        Route::get('/riwayat-pengajuan', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'riwayatPengajuan'])->name('riwayat_pengajuan');
+        Route::post('/riwayat-pengajuan/insup', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'insupRiwayatPengajuan'])->name('riwayat_pengajuan.insup');
+        Route::post('/riwayat-pengajuan/json', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'jsonRiwayatPengajuan'])->name('riwayat_pengajuan.json');
     });
 // Pengajuan Transkrip
 Route::prefix('mhs/transkrip')

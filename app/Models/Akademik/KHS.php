@@ -46,6 +46,38 @@ class KHS extends Model
         ]);
     }
 
+    public static function get_tahun_akademik_khs($nim)
+    {
+        return DB::select('SELECT * FROM akademik.get_tahun_akademik_khs(?) ORDER BY tahun_akademik DESC', [
+            $nim
+        ]);
+    }
+
+    public static function insup_pengajuan_khs($id_riwayat_pengajuan_khs, $nim, $id_tahun_akademik, $status)
+    {
+        $data = DB::selectOne('SELECT * FROM akademik.insup_pengajuan_khs(?,?,?,?)', [
+            $id_riwayat_pengajuan_khs ?? null,
+            $nim,
+            $id_tahun_akademik,
+            $status
+        ]);
+
+        return $data;
+    }
+
+    public static function get_riwayat_pengajuan_khs($status, $id_tahun_akademik, $nim, $p_id_personal_akses, $search = '', $no_page = -1, $limit = 10)
+    {
+        return DB::select('SELECT * FROM akademik.get_list_pengajuan_khs(?,?,?,?,?,?,?)', [
+            $status,
+            $id_tahun_akademik,
+            $nim,
+            $p_id_personal_akses,
+            $search,
+            $no_page,
+            $limit
+        ]);
+    }
+
     public static function get_semester_list($nim)
     {
         return DB::select('SELECT * FROM akademik.get_semester_by_mahasiswa(?)', [

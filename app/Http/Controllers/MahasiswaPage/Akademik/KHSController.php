@@ -21,6 +21,69 @@ class KHSController extends Controller
         return view('mahasiswa_page.akademik.khs.index', compact('menu'));
     }
 
+    public function riwayatPengajuan()
+    {
+        $menu = "Hasil Studi Mahasiswa";
+        $tahunAkademik = KHS::get_tahun_akademik_khs(Session::get('user')->nim);
+
+        return view('mahasiswa_page.akademik.khs.riwayat_pengajuan', compact('menu', 'tahunAkademik'));
+    }
+
+    public function insupRiwayatPengajuan(Request $request)
+    {
+        $request->validate([
+            'tahun_akademik' => 'required',
+        ]);
+
+        $id_riwayat_pengajuan_khs = $request->input('id_riwayat_pengajuan_khs') ?? null;
+        $ta = $request->input('tahun_akademik');
+        $nim = Session::get('user')->nim;
+        $status = 1;
+
+        $data = KHS::insup_pengajuan_khs($id_riwayat_pengajuan_khs, $nim, $ta, $status);
+
+        return response()->json($data);
+    }
+
+    public function jsonRiwayatPengajuan(Request $request)
+    {
+        $status = $request->input('status') ?? null;
+        $ta = $request->input('tahun_akademik') ?? null;
+        $nim = Session::get('user')->nim ?? null;
+        $id_personal = Session::get('user')->id_personal ?? null;
+
+        $length = (int) $request->input('length', 10);
+        $startRaw = $request->input('start', null);
+        $search = trim($request->input('search.value', ''));
+
+        $noPage = (is_null($startRaw) || $startRaw === '' || (int)$startRaw === 0) ? -1 : (int)$startRaw;
+
+        $data_ = KHS::get_riwayat_pengajuan_khs(
+            $status,
+            $ta,
+            $nim,
+            $id_personal,
+            $search,
+            $noPage,
+            $length
+        );
+
+        $data = [
+            'draw' => intval($request->input('draw', 1)),
+            'recordsTotal' => 0,
+            'recordsFiltered' => 0,
+            'data' => $data_,
+            'error' => null
+        ];
+
+        if (is_array($data_) && count($data_) > 0) {
+            $data['recordsTotal'] = $data_[0]->jml_record ?? count($data_);
+            $data['recordsFiltered'] = $data['recordsTotal'];
+        }
+
+        return response()->json($data);
+    }
+
     /**
      * Get data KHS untuk DataTable (Server-side)
      */
