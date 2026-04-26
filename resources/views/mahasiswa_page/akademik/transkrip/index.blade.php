@@ -418,7 +418,7 @@
                             <th class="text-center" width="5%">No</th>
                             <th width="15%">No. Pengajuan</th>
                             <th width="20%">Keperluan</th>
-                            <th width="10%" class="text-center">Bahasa</th>
+                            <th width="20%">Nama Prodi</th>
                             <th width="12%" class="text-center">Tanggal Ajuan</th>
                             <th width="13%" class="text-center">Status</th>
                             <th width="15%" class="text-center">Progress</th>

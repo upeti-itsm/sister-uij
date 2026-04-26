@@ -78,7 +78,7 @@ jQuery.transkrip = {
                     data: function (d) {
                         d._token = $('meta[name="csrf-token"]').attr('content');
                         d.status = self.data.filter.status;
-                        d.tahun  = self.data.filter.tahun;
+                        d.tahun = self.data.filter.tahun;
                         d.search = self.data.filter.search;
                         return d;
                     },
@@ -103,9 +103,9 @@ jQuery.transkrip = {
                             }
                         }
 
-                        json.recordsTotal    = json.recordsTotal    || (json.data ? json.data.length : 0);
+                        json.recordsTotal = json.recordsTotal || (json.data ? json.data.length : 0);
                         json.recordsFiltered = json.recordsFiltered || json.recordsTotal;
-                        json.draw            = json.draw            || 1;
+                        json.draw = json.draw || 1;
 
                         return json.data || [];
                     },
@@ -198,10 +198,10 @@ jQuery.transkrip = {
                         render: function (data) {
                             if (!data) return '-';
 
-                            var id     = data.id_riwayat_pengajuan_nilai || '';
-                            var id_pengajuan_induk     = data.id_pengajuan_induk || '';
+                            var id = data.id_riwayat_pengajuan_nilai || '';
+                            var id_pengajuan_induk = data.id_pengajuan_induk || '';
                             var status = String(data.status);
-                            var noTrk  = data.nomor_pengajuan;
+                            var noTrk = data.nomor_pengajuan;
 
                             // Tombol Detail — selalu tampil
                             var btnDetail = `
@@ -266,7 +266,7 @@ jQuery.transkrip = {
                     }
                 ],
                 drawCallback: function (settings) {
-                    var api  = this.api();
+                    var api = this.api();
                     var data = api.rows().data().toArray();
 
                     if (data.length === 0) {
@@ -294,17 +294,17 @@ jQuery.transkrip = {
                 lengthMenu: [[10, 25, 50], [10, 25, 50]],
                 autoWidth: false,
                 language: {
-                    emptyTable:     "Tidak ada data pengajuan transkrip",
-                    processing:     "Sedang memuat data...",
-                    zeroRecords:    "Tidak ditemukan data yang sesuai",
-                    info:           "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                    infoEmpty:      "Menampilkan 0 sampai 0 dari 0 data",
-                    infoFiltered:   "(disaring dari _MAX_ total data)",
-                    lengthMenu:     "Tampilkan _MENU_ data",
+                    emptyTable: "Tidak ada data pengajuan transkrip",
+                    processing: "Sedang memuat data...",
+                    zeroRecords: "Tidak ditemukan data yang sesuai",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+                    infoFiltered: "(disaring dari _MAX_ total data)",
+                    lengthMenu: "Tampilkan _MENU_ data",
                     paginate: {
-                        first:    "Pertama",
-                        last:     "Terakhir",
-                        next:     "Selanjutnya",
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Selanjutnya",
                         previous: "Sebelumnya"
                     }
                 }
@@ -403,7 +403,7 @@ jQuery.transkrip = {
 
         $('#btn-ajukan-pengajuan').off('click').on('click', function () {
             if (self.data.current_detail) {
-                var d  = self.data.current_detail;
+                var d = self.data.current_detail;
                 var no = d.nomor_pengajuan;
                 $('#modal-detail-pengajuan').modal('hide');
                 self.konfirmasiAjukan(d.id_riwayat_pengajuan_nilai, no);
@@ -412,7 +412,7 @@ jQuery.transkrip = {
 
         $('#btn-hapus-draft-pengajuan').off('click').on('click', function () {
             if (self.data.current_detail) {
-                var d  = self.data.current_detail;
+                var d = self.data.current_detail;
                 var no = 'TRK-' + d.id_riwayat_pengajuan_nilai.substring(0, 8).toUpperCase();
                 $('#modal-detail-pengajuan').modal('hide');
                 self.konfirmasiHapusDraft(d.id_riwayat_pengajuan_nilai, no);
@@ -421,7 +421,7 @@ jQuery.transkrip = {
 
         $('#btn-batalkan-pengajuan').off('click').on('click', function () {
             if (self.data.current_detail) {
-                var d  = self.data.current_detail;
+                var d = self.data.current_detail;
                 var no = d.nomor_pengajuan ?? '-';
                 $('#modal-detail-pengajuan').modal('hide');
                 self.konfirmasiBatalkan(d.id_riwayat_pengajuan_nilai, no);
@@ -442,7 +442,7 @@ jQuery.transkrip = {
         var self = this;
 
         self.data.filter.status = $('#filter-status').val();
-        self.data.filter.tahun  = $('#filter-tahun').val();
+        self.data.filter.tahun = $('#filter-tahun').val();
         self.data.filter.search = $('#filter-search').val().trim();
 
         console.log('Applying filter:', self.data.filter);
@@ -459,7 +459,7 @@ jQuery.transkrip = {
         $('#filter-tahun').val('').trigger('change');
         $('#filter-search').val('');
 
-        self.data.filter = {status: '', tahun: '', search: ''};
+        self.data.filter = { status: '', tahun: '', search: '' };
 
         if (self.data.table_transkrip) {
             self.data.table_transkrip.ajax.reload();
@@ -476,14 +476,14 @@ jQuery.transkrip = {
         $.ajax({
             url: '/mhs/transkrip/statistik',
             method: 'POST',
-            data: {_token: $('meta[name="csrf-token"]').attr('content')},
+            data: { _token: $('meta[name="csrf-token"]').attr('content') },
             success: function (response) {
                 console.log('Statistik transkrip:', response);
                 if (response) {
                     $('#stat-total-pengajuan').text(response.total_pengajuan || 0);
-                    $('#stat-diproses').text(response.diproses             || 0);
-                    $('#stat-disetujui').text(response.disetujui           || 0);
-                    $('#stat-ditolak').text(response.ditolak               || 0);
+                    $('#stat-diproses').text(response.diproses || 0);
+                    $('#stat-disetujui').text(response.disetujui || 0);
+                    $('#stat-ditolak').text(response.ditolak || 0);
                 }
             },
             error: function (xhr, status, error) {
@@ -498,13 +498,13 @@ jQuery.transkrip = {
         $.ajax({
             url: '/mhs/transkrip/mahasiswa-info',
             method: 'POST',
-            data: {_token: $('meta[name="csrf-token"]').attr('content')},
+            data: { _token: $('meta[name="csrf-token"]').attr('content') },
             success: function (response) {
                 console.log('Mahasiswa info:', response);
                 if (response) {
-                    $('#form-nim').text(response.nim           || '-');
-                    $('#form-nama').text(response.nama         || '-');
-                    $('#form-prodi').text(response.nama_prodi  || '-');
+                    $('#form-nim').text(response.nim || '-');
+                    $('#form-nama').text(response.nama || '-');
+                    $('#form-prodi').text(response.nama_prodi || '-');
                     $('#form-ipk').text(parseFloat(response.ipk || 0).toFixed(2));
                 }
             },
@@ -518,7 +518,7 @@ jQuery.transkrip = {
         var self = this;
 
         if (!id) {
-            $.alert({title: 'Error', content: 'ID pengajuan tidak valid', type: 'red'});
+            $.alert({ title: 'Error', content: 'ID pengajuan tidak valid', type: 'red' });
             return;
         }
 
@@ -592,7 +592,7 @@ jQuery.transkrip = {
             url: '/mhs/transkrip/ajukan',
             method: 'POST',
             data: {
-                _token:    $('meta[name="csrf-token"]').attr('content'),
+                _token: $('meta[name="csrf-token"]').attr('content'),
                 keperluan: $('#keperluan').val()
             },
             success: function (response) {
@@ -637,7 +637,7 @@ jQuery.transkrip = {
                 try {
                     var res = JSON.parse(xhr.responseText);
                     msg = res.keterangan || res.message || error;
-                } catch (e) {}
+                } catch (e) { }
 
                 $.alert({
                     title: 'Error',
@@ -920,7 +920,7 @@ jQuery.transkrip = {
 
     downloadTranskrip: function (id) {
         if (!id) {
-            $.alert({title: 'Error', content: 'ID pengajuan tidak valid', type: 'red'});
+            $.alert({ title: 'Error', content: 'ID pengajuan tidak valid', type: 'red' });
             return;
         }
 
@@ -930,10 +930,14 @@ jQuery.transkrip = {
             target: '_blank'
         });
 
-        form.append($('<input>', {type: 'hidden', name: '_token',
-            value: $('meta[name="csrf-token"]').attr('content')}));
-        form.append($('<input>', {type: 'hidden', name: 'id_riwayat_pengajuan_nilai',
-            value: id}));
+        form.append($('<input>', {
+            type: 'hidden', name: '_token',
+            value: $('meta[name="csrf-token"]').attr('content')
+        }));
+        form.append($('<input>', {
+            type: 'hidden', name: 'id_riwayat_pengajuan_nilai',
+            value: id
+        }));
 
         $('body').append(form);
         form.submit();
@@ -961,10 +965,10 @@ jQuery.transkrip = {
         $('#detail-no-pengajuan').text(noPengajuan);
         $('#detail-status-badge').html(self.getBadgeStatus(data.status, data.keterangan_status));
 
-        $('#detail-keperluan').text(data.keperluan   || '-');
+        $('#detail-keperluan').text(data.keperluan || '-');
         $('#detail-tgl-ajuan').text(data.tgl_created || '-');
         $('#detail-tgl-kaprodi').text(data.tgl_kaprodi || '-');
-        $('#detail-tgl-dekan').text(data.tgl_dekan   || '-');
+        $('#detail-tgl-dekan').text(data.tgl_dekan || '-');
         $('#detail-tgl-selesai').text(data.tgl_updated || '-');
 
         // Alasan tolak
@@ -982,14 +986,14 @@ jQuery.transkrip = {
         var status = String(data.status);
 
         // Draft (1): tampilkan Ajukan + Hapus Draft
-        $('#btn-ajukan-pengajuan').toggleClass('d-none',      status !== '1');
+        $('#btn-ajukan-pengajuan').toggleClass('d-none', status !== '1');
         $('#btn-hapus-draft-pengajuan').toggleClass('d-none', status !== '1');
 
         // Diajukan (2): tampilkan Batalkan
-        $('#btn-batalkan-pengajuan').toggleClass('d-none',    status !== '2');
+        $('#btn-batalkan-pengajuan').toggleClass('d-none', status !== '2');
 
         // Disetujui (5): tampilkan Download
-        $('#btn-download-transkrip').toggleClass('d-none',    status !== '5');
+        $('#btn-download-transkrip').toggleClass('d-none', status !== '5');
     },
 
     // ============================================================
@@ -1009,15 +1013,15 @@ jQuery.transkrip = {
         if (!statusKode) return '<span class="badge badge-secondary">-</span>';
 
         var map = {
-            '1': {cls: 'badge-status-draft',      icon: 'fa-file-alt'},
-            '2': {cls: 'badge-status-diajukan',   icon: 'fa-paper-plane'},
-            '3': {cls: 'badge-status-kaprodi',    icon: 'fa-user-tie'},
-            '4': {cls: 'badge-status-dekan',      icon: 'fa-user-shield'},
-            '5': {cls: 'badge-status-disetujui',  icon: 'fa-check-circle'},
-            '6': {cls: 'badge-status-ditolak',    icon: 'fa-times-circle'}
+            '1': { cls: 'badge-status-draft', icon: 'fa-file-alt' },
+            '2': { cls: 'badge-status-diajukan', icon: 'fa-paper-plane' },
+            '3': { cls: 'badge-status-kaprodi', icon: 'fa-user-tie' },
+            '4': { cls: 'badge-status-dekan', icon: 'fa-user-shield' },
+            '5': { cls: 'badge-status-disetujui', icon: 'fa-check-circle' },
+            '6': { cls: 'badge-status-ditolak', icon: 'fa-times-circle' }
         };
 
-        var s     = map[String(statusKode)];
+        var s = map[String(statusKode)];
         var label = keteranganStatus || statusKode;
 
         if (!s) return `<span class="badge badge-secondary">${label}</span>`;
@@ -1028,10 +1032,10 @@ jQuery.transkrip = {
     },
 
     renderProgressMini: function (statusKode) {
-        var steps     = ['M', 'K', 'D', '✓'];
+        var steps = ['M', 'K', 'D', '✓'];
         // Draft (1) belum ada progress → index -1, Diajukan (2) → step M selesai, dst.
-        var doneUntil = {'1': -1, '2': 0, '3': 1, '4': 2, '5': 3};
-        var doneIdx   = (doneUntil[String(statusKode)] !== undefined)
+        var doneUntil = { '1': -1, '2': 0, '3': 1, '4': 2, '5': 3 };
+        var doneIdx = (doneUntil[String(statusKode)] !== undefined)
             ? doneUntil[String(statusKode)] : -1;
         var isDitolak = String(statusKode) === '6';
 
@@ -1041,16 +1045,16 @@ jQuery.transkrip = {
             var cls, color;
 
             if (isDitolak) {
-                cls   = i === 0 ? 'bg-danger' : 'bg-light border';
+                cls = i === 0 ? 'bg-danger' : 'bg-light border';
                 color = i === 0 ? 'white' : '#999';
             } else if (i <= doneIdx) {
-                cls   = 'bg-success';
+                cls = 'bg-success';
                 color = 'white';
             } else if (i === doneIdx + 1) {
-                cls   = 'bg-primary';
+                cls = 'bg-primary';
                 color = 'white';
             } else {
-                cls   = 'bg-light border';
+                cls = 'bg-light border';
                 color = '#999';
             }
 
@@ -1071,17 +1075,17 @@ jQuery.transkrip = {
 
     renderStepIndicator: function (statusKode) {
         var steps = [
-            {key: '2', label: 'Diajukan', icon: 'fa-paper-plane'},
-            {key: '3', label: 'Kaprodi',  icon: 'fa-user-tie'},
-            {key: '4', label: 'Dekan',    icon: 'fa-user-shield'},
-            {key: '5', label: 'Selesai',  icon: 'fa-check'}
+            { key: '2', label: 'Diajukan', icon: 'fa-paper-plane' },
+            { key: '3', label: 'Kaprodi', icon: 'fa-user-tie' },
+            { key: '4', label: 'Dekan', icon: 'fa-user-shield' },
+            { key: '5', label: 'Selesai', icon: 'fa-check' }
         ];
 
-        var order      = ['2', '3', '4', '5'];
-        var kode       = String(statusKode);
+        var order = ['2', '3', '4', '5'];
+        var kode = String(statusKode);
         var currentIdx = order.indexOf(kode);   // -1 jika Draft / Ditolak
-        var isDitolak  = kode === '6';
-        var isDraft    = kode === '1';
+        var isDitolak = kode === '6';
+        var isDraft = kode === '1';
 
         var html = '<div class="step-indicator" style="padding:0 12px;gap:4px;">';
 
@@ -1093,7 +1097,7 @@ jQuery.transkrip = {
                 // Semua step belum aktif
                 cls = '';
             } else if (isDitolak) {
-                cls = stepIdx < currentIdx  ? 'done'
+                cls = stepIdx < currentIdx ? 'done'
                     : stepIdx === currentIdx ? 'reject'
                         : '';
             } else if (currentIdx >= stepIdx) {
@@ -1134,7 +1138,7 @@ jQuery.transkrip = {
                 '6': 'danger'
             };
 
-            var cls     = clsMap[String(item.status)] || '';
+            var cls = clsMap[String(item.status)] || '';
             // ← gunakan tgl_created sesuai struktur DB
             var tanggal = item.tgl_created || '-';
             // ← gunakan komentar_persetujuan sebagai catatan
@@ -1147,11 +1151,11 @@ jQuery.transkrip = {
                     <small class="text-muted">${tanggal}</small>
                 </div>
                 ${item.nama_user
-                ? `<small class="text-muted">oleh: ${item.nama_user}</small>`
-                : ''}
+                    ? `<small class="text-muted">oleh: ${item.nama_user}</small>`
+                    : ''}
                 ${catatan
-                ? `<p class="mb-0 mt-1 small text-muted">${catatan}</p>`
-                : ''}
+                    ? `<p class="mb-0 mt-1 small text-muted">${catatan}</p>`
+                    : ''}
             </div>`;
         });
 

@@ -83,8 +83,8 @@ jQuery.transkripDekan = {
         var map = {
             '#stat-menunggu': menunggu,
             '#stat-disahkan': disahkan,
-            '#stat-ditolak':  ditolak,
-            '#stat-total':    total
+            '#stat-ditolak': ditolak,
+            '#stat-total': total
         };
         Object.keys(map).forEach(function (id) {
             $(id).removeClass('stat-loading').text(map[id]);
@@ -156,8 +156,8 @@ jQuery.transkripDekan = {
                     data: function (d) {
                         d._token = $('meta[name="csrf-token"]').attr('content');
                         d.status = self.data.filter.status;
-                        d.tahun  = self.data.filter.tahun;
-                        d.prodi  = self.data.filter.prodi;
+                        d.tahun = self.data.filter.tahun;
+                        d.prodi = self.data.filter.prodi;
                         d.search = self.data.filter.search;
                         return d;
                     },
@@ -182,9 +182,9 @@ jQuery.transkripDekan = {
                             }
                         }
 
-                        json.recordsTotal    = json.recordsTotal    || (json.data ? json.data.length : 0);
+                        json.recordsTotal = json.recordsTotal || (json.data ? json.data.length : 0);
                         json.recordsFiltered = json.recordsFiltered || json.recordsTotal;
-                        json.draw            = json.draw            || 1;
+                        json.draw = json.draw || 1;
 
                         return json.data || [];
                     },
@@ -213,7 +213,7 @@ jQuery.transkripDekan = {
                         className: 'text-left',
                         width: '14%',
                         render: function (data, type, row) {
-                            var no      = data || '-';
+                            var no = data || '-';
                             var idShort = row.id_riwayat_pengajuan_nilai
                                 ? row.id_riwayat_pengajuan_nilai.substring(0, 8).toUpperCase()
                                 : '-';
@@ -289,7 +289,7 @@ jQuery.transkripDekan = {
                         render: function (data) {
                             if (!data) return '-';
 
-                            var idRiwayat        = data.id_riwayat_pengajuan_nilai || '';
+                            var idRiwayat = data.id_riwayat_pengajuan_nilai || '';
                             var idPengajuanInduk = data.id_pengajuan_induk || idRiwayat;
 
                             return `
@@ -308,7 +308,7 @@ jQuery.transkripDekan = {
                     }
                 },
                 drawCallback: function (settings) {
-                    var api  = this.api();
+                    var api = this.api();
                     var rows = api.rows().data().toArray();
 
                     if (rows.length === 0) {
@@ -337,21 +337,21 @@ jQuery.transkripDekan = {
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
                 autoWidth: false,
                 language: {
-                    emptyTable:   "Tidak ada data pengajuan transkrip",
-                    processing:   `<div class="text-center py-3">
+                    emptyTable: "Tidak ada data pengajuan transkrip",
+                    processing: `<div class="text-center py-3">
                                        <i class="fas fa-spinner fa-spin mr-2"
                                           style="color:#9c27b0;"></i>
                                        Sedang memuat data...
                                    </div>`,
-                    zeroRecords:  "Tidak ditemukan data yang sesuai",
-                    info:         "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                    infoEmpty:    "Menampilkan 0 sampai 0 dari 0 data",
+                    zeroRecords: "Tidak ditemukan data yang sesuai",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
                     infoFiltered: "(disaring dari _MAX_ total data)",
-                    lengthMenu:   "Tampilkan _MENU_ data",
+                    lengthMenu: "Tampilkan _MENU_ data",
                     paginate: {
-                        first:    "Pertama",
-                        last:     "Terakhir",
-                        next:     "Selanjutnya",
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Selanjutnya",
                         previous: "Sebelumnya"
                     }
                 }
@@ -467,8 +467,8 @@ jQuery.transkripDekan = {
         var self = this;
 
         self.data.filter.status = $('#filter-status').val();
-        self.data.filter.tahun  = $('#filter-tahun').val();
-        self.data.filter.prodi  = $('#filter-prodi').val();
+        self.data.filter.tahun = $('#filter-tahun').val();
+        self.data.filter.prodi = $('#filter-prodi').val();
         self.data.filter.search = $('#filter-search').val().trim();
 
         if (self.data.table_transkrip) {
@@ -497,8 +497,8 @@ jQuery.transkripDekan = {
     },
 
     updateBadgeFilterAktif: function () {
-        var self  = this;
-        var f     = self.data.filter;
+        var self = this;
+        var f = self.data.filter;
         var aktif = f.tahun || f.prodi || f.search ||
             (f.status && f.status !== '3');
 
@@ -530,15 +530,15 @@ jQuery.transkripDekan = {
                 self.setStatValue(
                     response.menunggu || 0,
                     response.disahkan || 0,
-                    response.ditolak  || 0,
-                    response.total    || 0
+                    response.ditolak || 0,
+                    response.total || 0
                 );
 
                 self.data.statistik = {
                     menunggu: response.menunggu || 0,
                     disahkan: response.disahkan || 0,
-                    ditolak:  response.ditolak  || 0,
-                    total:    response.total    || 0
+                    ditolak: response.ditolak || 0,
+                    total: response.total || 0
                 };
             },
             error: function (xhr, status, error) {
@@ -564,7 +564,7 @@ jQuery.transkripDekan = {
             url: '/dekan/transkrip/detail',
             method: 'POST',
             data: {
-                _token:                    $('meta[name="csrf-token"]').attr('content'),
+                _token: $('meta[name="csrf-token"]').attr('content'),
                 id_riwayat_pengajuan_nilai: idRiwayat
             },
             success: function (response) {
@@ -585,9 +585,9 @@ jQuery.transkripDekan = {
                     }
 
                     self.data.current_detail = d;
-                    self.data.current_id     = d.id_riwayat_pengajuan || idRiwayat;
-                    self.data.current_no     = d.nomor_pengajuan;
-                    self.data.current_nama   = d.nama_mahasiswa;
+                    self.data.current_id = d.id_riwayat_pengajuan || idRiwayat;
+                    self.data.current_no = d.nomor_pengajuan;
+                    self.data.current_nama = d.nama_mahasiswa;
 
                     console.log('current_id set to:', self.data.current_id);
 
@@ -651,13 +651,22 @@ jQuery.transkripDekan = {
                         </tr>`);
                 }
             },
-            error: function () {
+            // BLOK ERROR YANG BENAR DITARUH DI SINI (Di dalam kurung $.ajax)
+            error: function (xhr) {
                 self.hidePreviewLoading();
+
+                // Tangkap error asli dari backend
+                var msg = 'Gagal memuat preview nilai';
+                try {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.keterangan) msg = res.keterangan;
+                } catch (e) { }
+
                 $('#dkn-preview-nilai').html(`
                     <tr>
                         <td colspan="8" class="text-center text-danger py-3">
                             <i class="fas fa-exclamation-triangle mr-2"></i>
-                            Gagal memuat preview nilai
+                            ${msg}
                         </td>
                     </tr>`);
             }
@@ -673,15 +682,15 @@ jQuery.transkripDekan = {
 
         if (!data) return;
 
-        $('#dkn-no-pengajuan').text(data.nomor_pengajuan            || '-');
-        $('#dkn-id-riwayat').text(data.id_riwayat_pengajuan_nilai   || data.id_riwayat_pengajuan || '-');
+        $('#dkn-no-pengajuan').text(data.nomor_pengajuan || '-');
+        $('#dkn-id-riwayat').text(data.id_riwayat_pengajuan_nilai || data.id_riwayat_pengajuan || '-');
         $('#dkn-status-badge').html(
             self.getBadgeStatus(data.status, data.keterangan_status)
         );
 
-        $('#dkn-nim').text(data.nim            || '-');
+        $('#dkn-nim').text(data.nim || '-');
         $('#dkn-nama').text(data.nama_mahasiswa || '-');
-        $('#dkn-prodi').text(data.nama_prodi    || '-');
+        $('#dkn-prodi').text(data.nama_prodi || '-');
         $('#dkn-angkatan').text(
             (!data.angkatan || data.angkatan === '-') ? '-' : data.angkatan
         );
@@ -698,9 +707,9 @@ jQuery.transkripDekan = {
             (!data.catatan_kaprodi || data.catatan_kaprodi === '-') ? '-' : data.catatan_kaprodi
         );
 
-        $('#dkn-keperluan').text(data.keperluan     || '-');
+        $('#dkn-keperluan').text(data.keperluan || '-');
         $('#dkn-tgl-ajuan').text(data.tgl_pengajuan || '-');
-        $('#dkn-tgl-dekan').text(data.tgl_dekan     || '-');
+        $('#dkn-tgl-dekan').text(data.tgl_dekan || '-');
         $('#dkn-tgl-selesai').text(data.tgl_selesai || '-');
 
         if (String(data.status) === '6' && data.alasan_tolak) {
@@ -739,15 +748,15 @@ jQuery.transkripDekan = {
             return;
         }
 
-        var html       = '';
-        var totalSks   = 0;
+        var html = '';
+        var totalSks = 0;
         var totalBobot = 0;
 
         data.forEach(function (mk, i) {
-            var sks   = parseInt(mk.sks   || 0);
+            var sks = parseInt(mk.sks || 0);
             var bobot = parseFloat(mk.bobot || 0);
 
-            totalSks   += sks;
+            totalSks += sks;
             totalBobot += (bobot * sks);
 
             var tahunParsed = self.parseTahunAkademik(mk.tahun_akademik);
@@ -756,20 +765,20 @@ jQuery.transkripDekan = {
                 <tr>
                     <td class="text-center">${i + 1}</td>
                     <td>${mk.kd_matakuliah || mk.kd_mata_kuliah || '-'}</td>
-                    <td>${mk.matakuliah    || mk.nama_mata_kuliah || '-'}</td>
+                    <td>${mk.matakuliah || mk.nama_matakuliah || '-'}</td>
                     <td class="text-center">${sks}</td>
                     <td class="text-center">
                         ${(!mk.nilai_angka || mk.nilai_angka === '-')
-                ? '-'
-                : parseFloat(mk.nilai_angka).toFixed(2)}
+                    ? '-'
+                    : parseFloat(mk.nilai_angka).toFixed(2)}
                     </td>
                     <td class="text-center">
                         ${self.getBadgeNilai(mk.nilai_huruf)}
                     </td>
                     <td class="text-center">
                         ${(!mk.bobot || mk.bobot === '-')
-                ? '-'
-                : parseFloat(mk.bobot).toFixed(2)}
+                    ? '-'
+                    : parseFloat(mk.bobot).toFixed(2)}
                     </td>
                     <td class="text-center">
                         ${tahunParsed.nama}<br>
@@ -824,9 +833,9 @@ jQuery.transkripDekan = {
         $('#btn-tolak-dekan').addClass('d-none');
 
         this.data.current_detail = null;
-        this.data.current_id     = null;
-        this.data.current_no     = null;
-        this.data.current_nama   = null;
+        this.data.current_id = null;
+        this.data.current_no = null;
+        this.data.current_nama = null;
     },
 
     // ============================================================
@@ -837,15 +846,15 @@ jQuery.transkripDekan = {
         var self = this;
 
         // ✅ Simpan ke _pending sebelum apapun di-hide
-        self._pendingId      = id;
-        self._pendingNo      = no;
-        self._pendingNama    = nama;
+        self._pendingId = id;
+        self._pendingNo = no;
+        self._pendingNama = nama;
         self._pendingCatatan = catatan || '';
 
         // Tandai sedang dalam proses agar hidden.bs.modal tidak reset state
         self._isProcessing = true;
 
-        $('#konfirmasi-sahkan-no').text(no    || id);
+        $('#konfirmasi-sahkan-no').text(no || id);
         $('#konfirmasi-sahkan-nama').text(nama || '-');
 
         $('#modal-konfirmasi-sahkan').modal('show');
@@ -855,10 +864,10 @@ jQuery.transkripDekan = {
         var self = this;
 
         // ✅ Ambil dari _pending — aman dari reset oleh hidden.bs.modal
-        var idToProcess   = self._pendingId;
-        var noToProcess   = self._pendingNo;
+        var idToProcess = self._pendingId;
+        var noToProcess = self._pendingNo;
         var namaToProcess = self._pendingNama;
-        var catatan       = self._pendingCatatan || '';
+        var catatan = self._pendingCatatan || '';
 
         if (!idToProcess) {
             $.alert({ title: 'Error', content: 'ID pengajuan tidak valid', type: 'red' });
@@ -876,9 +885,9 @@ jQuery.transkripDekan = {
             url: '/dekan/transkrip/sahkan',
             method: 'POST',
             data: {
-                _token:               $('meta[name="csrf-token"]').attr('content'),
+                _token: $('meta[name="csrf-token"]').attr('content'),
                 id_riwayat_pengajuan: idToProcess,
-                catatan:              catatan
+                catatan: catatan
             },
             success: function (response) {
                 self.hideOverlay();
@@ -926,7 +935,7 @@ jQuery.transkripDekan = {
                 try {
                     var res = JSON.parse(xhr.responseText);
                     msg = res.keterangan || res.message || error;
-                } catch (e) {}
+                } catch (e) { }
 
                 $.alert({
                     title: 'Error',
@@ -945,15 +954,15 @@ jQuery.transkripDekan = {
         var self = this;
 
         // ✅ Simpan ke _pending sebelum apapun di-hide
-        self._pendingId      = id;
-        self._pendingNo      = no;
-        self._pendingNama    = nama;
+        self._pendingId = id;
+        self._pendingNo = no;
+        self._pendingNama = nama;
         self._pendingCatatan = catatan || '';
 
         // Tandai sedang dalam proses agar hidden.bs.modal tidak reset state
         self._isProcessing = true;
 
-        $('#konfirmasi-tolak-dekan-no').text(no    || id);
+        $('#konfirmasi-tolak-dekan-no').text(no || id);
         $('#konfirmasi-tolak-dekan-nama').text(nama || '-');
         $('#alasan-tolak-dekan-final').val(catatan || '');
         $('#alasan-tolak-dekan-final').removeClass('is-invalid');
@@ -973,8 +982,8 @@ jQuery.transkripDekan = {
         }
 
         // ✅ Ambil dari _pending — aman dari reset oleh hidden.bs.modal
-        var idToProcess   = self._pendingId;
-        var noToProcess   = self._pendingNo;
+        var idToProcess = self._pendingId;
+        var noToProcess = self._pendingNo;
         var namaToProcess = self._pendingNama;
 
         if (!idToProcess) {
@@ -993,9 +1002,9 @@ jQuery.transkripDekan = {
             url: '/dekan/transkrip/tolak',
             method: 'POST',
             data: {
-                _token:               $('meta[name="csrf-token"]').attr('content'),
+                _token: $('meta[name="csrf-token"]').attr('content'),
                 id_riwayat_pengajuan: idToProcess,
-                alasan_tolak:         alasan
+                alasan_tolak: alasan
             },
             success: function (response) {
                 self.hideOverlay();
@@ -1040,7 +1049,7 @@ jQuery.transkripDekan = {
                 try {
                     var res = JSON.parse(xhr.responseText);
                     msg = res.keterangan || res.message || error;
-                } catch (e) {}
+                } catch (e) { }
 
                 $.alert({
                     title: 'Error',
@@ -1059,10 +1068,10 @@ jQuery.transkripDekan = {
         var self = this;
 
         // ✅ Bersihkan semua _pending state + flag processing
-        self._isProcessing   = false;
-        self._pendingId      = null;
-        self._pendingNo      = null;
-        self._pendingNama    = null;
+        self._isProcessing = false;
+        self._pendingId = null;
+        self._pendingNo = null;
+        self._pendingNama = null;
         self._pendingCatatan = '';
 
         if (self.data.table_transkrip) {
@@ -1082,14 +1091,14 @@ jQuery.transkripDekan = {
         if (!statusKode) return '<span class="badge badge-secondary">-</span>';
 
         var map = {
-            '1': { cls: 'badge-status-draft',     icon: 'fa-pencil-alt' },
-            '2': { cls: 'badge-status-diajukan',  icon: 'fa-clock' },
-            '3': { cls: 'badge-status-dekan',     icon: 'fa-user-shield' },
+            '1': { cls: 'badge-status-draft', icon: 'fa-pencil-alt' },
+            '2': { cls: 'badge-status-diajukan', icon: 'fa-clock' },
+            '3': { cls: 'badge-status-dekan', icon: 'fa-user-shield' },
             '4': { cls: 'badge-status-disetujui', icon: 'fa-stamp' },
-            '6': { cls: 'badge-status-ditolak',   icon: 'fa-times-circle' }
+            '6': { cls: 'badge-status-ditolak', icon: 'fa-times-circle' }
         };
 
-        var s     = map[String(statusKode)];
+        var s = map[String(statusKode)];
         var label = keteranganStatus || statusKode;
 
         if (!s) return `<span class="badge badge-secondary">${label}</span>`;
@@ -1103,14 +1112,14 @@ jQuery.transkripDekan = {
         if (!nilai || nilai === '-') return '-';
 
         var nilaiUpper = nilai.toUpperCase();
-        var badgeMap   = {
-            'A':  'badge-success',
+        var badgeMap = {
+            'A': 'badge-success',
             'AB': 'badge-success',
-            'B':  'badge-primary',
+            'B': 'badge-primary',
             'BC': 'badge-info',
-            'C':  'badge-warning',
-            'D':  'badge-warning',
-            'E':  'badge-danger'
+            'C': 'badge-warning',
+            'D': 'badge-warning',
+            'E': 'badge-danger'
         };
 
         var cls = badgeMap[nilaiUpper] || 'badge-secondary';
@@ -1120,14 +1129,14 @@ jQuery.transkripDekan = {
     renderStepIndicator: function (statusKode) {
         var steps = [
             { label: 'Mahasiswa', icon: 'fa-user' },
-            { label: 'Kaprodi',   icon: 'fa-user-tie' },
-            { label: 'Dekan',     icon: 'fa-user-shield' },
-            { label: 'Selesai',   icon: 'fa-check' }
+            { label: 'Kaprodi', icon: 'fa-user-tie' },
+            { label: 'Dekan', icon: 'fa-user-shield' },
+            { label: 'Selesai', icon: 'fa-check' }
         ];
 
-        var kode      = String(statusKode);
+        var kode = String(statusKode);
         var isDitolak = kode === '6';
-        var isDone    = kode === '4';
+        var isDone = kode === '4';
 
         var activeMap = { '1': 0, '2': 0, '3': 1 };
         var activeIdx = activeMap[kode] !== undefined ? activeMap[kode] : -1;
@@ -1140,7 +1149,7 @@ jQuery.transkripDekan = {
             if (isDone) {
                 cls = 'done';
             } else if (isDitolak) {
-                cls = i < 1  ? 'done'
+                cls = i < 1 ? 'done'
                     : i === 1 ? 'reject'
                         : '';
             } else if (i < activeIdx) {
@@ -1182,10 +1191,10 @@ jQuery.transkripDekan = {
                 '6': 'danger'
             };
 
-            var cls         = clsMap[String(item.status)] || '';
-            var tanggal     = item.tgl_persetujuan || item.tgl_created || '-';
+            var cls = clsMap[String(item.status)] || '';
+            var tanggal = item.tgl_persetujuan || item.tgl_created || '-';
             var noPengajuan = item.nomor_pengajuan || '';
-            var komentar    = item.komentar_persetujuan || '';
+            var komentar = item.komentar_persetujuan || '';
 
             html += `
                 <div class="timeline-item ${cls}">
@@ -1193,14 +1202,14 @@ jQuery.transkripDekan = {
                         <div>
                             <strong>${item.keterangan_status || '-'}</strong>
                             ${noPengajuan
-                ? `<br><small class="text-muted">No: ${noPengajuan}</small>`
-                : ''}
+                    ? `<br><small class="text-muted">No: ${noPengajuan}</small>`
+                    : ''}
                         </div>
                         <small class="text-muted text-right ml-2">${tanggal}</small>
                     </div>
                     ${komentar
-                ? `<p class="mb-0 mt-1 small text-muted">${komentar}</p>`
-                : ''}
+                    ? `<p class="mb-0 mt-1 small text-muted">${komentar}</p>`
+                    : ''}
                 </div>`;
         });
 
@@ -1212,14 +1221,14 @@ jQuery.transkripDekan = {
 
         if (!tahunAkademik || tahunAkademik.length < 5) return result;
 
-        var tahun        = tahunAkademik.substring(0, 4);
+        var tahun = tahunAkademik.substring(0, 4);
         var semesterCode = tahunAkademik.substring(4, 5);
-        var tahunInt     = parseInt(tahun);
+        var tahunInt = parseInt(tahun);
 
         result.nama = tahunInt + '/' + (tahunInt + 1);
 
-        var semesterMap  = { '1': 'Ganjil', '2': 'Genap', '3': 'Antara' };
-        result.semester  = semesterMap[semesterCode] || 'Ganjil';
+        var semesterMap = { '1': 'Ganjil', '2': 'Genap', '3': 'Antara' };
+        result.semester = semesterMap[semesterCode] || 'Ganjil';
 
         return result;
     }

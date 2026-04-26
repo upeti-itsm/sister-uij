@@ -85,6 +85,7 @@ class LoginController extends Controller
             foreach ($mod as $item) {
                 $modul[$item->nama_modul] = $item->kd_kewenangan;
             }
+
             Session::put('modul', $modul);
             return redirect(route('dashboard.dashboard'));
         } else {

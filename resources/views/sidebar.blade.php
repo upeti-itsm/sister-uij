@@ -67,7 +67,7 @@
             </div>
             <div class="profile-text">
                 <small
-                    class="m-0 text-white">{{ \Illuminate\Support\Facades\Session::get('user')->nama_lengkap }}</small><br/>
+                    class="m-0 text-white text-capitalize">{{ \Illuminate\Support\Facades\Session::get('user')->nama_lengkap }}</small><br/>
                 @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
                     <small class="d-block text-white-50">NIM: {{ \Illuminate\Support\Facades\Session::get('user')->nim }}</small>
                 @endif

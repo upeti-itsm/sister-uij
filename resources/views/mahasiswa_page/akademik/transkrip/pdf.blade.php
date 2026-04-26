@@ -3,728 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Transkrip Nilai - {{ $mahasiswa->nim }}</title>
+    <title>Transkrip - {{ $mahasiswa->nim }}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @page {
+            size: A4 portrait;
+            margin: 15px 25px 20px 25px;
         }
 
         body {
-            font-family: 'DejaVu Sans', sans-serif;
-            font-size: 10px;
-            color: #1a1a1a;
-            background: #fff;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 8pt;
+            color: #000;
+            margin: 0;
+            padding: 0;
         }
 
-        /* ===================== LAYOUT ===================== */
-        .page {
+        /* ===== KOP ===== */
+        .kop-table {
             width: 100%;
-            padding: 20px 30px;
+            border-collapse: collapse;
         }
-
-        /* ===================== HEADER ===================== */
-        .header-wrapper {
-            width: 100%;
-            border-bottom: 3px solid #1a237e;
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-        }
-
-        .header-table {
-            width: 100%;
-        }
-
-        .header-logo {
-            width: 70px;
-            text-align: center;
+        .kop-logo td {
             vertical-align: middle;
+            padding: 0;
         }
-
-        .header-logo img {
-            width: 60px;
-            height: auto;
-        }
-
-        .header-text {
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .header-text .universitas {
-            font-size: 13px;
+        .kop-yayasan {
+            font-size: 11pt;
             font-weight: bold;
-            color: #1a237e;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            line-height: 1.3;
         }
-
-        .header-text .fakultas {
-            font-size: 10px;
-            color: #333;
-            margin-top: 2px;
-        }
-
-        .header-text .alamat {
-            font-size: 8px;
-            color: #666;
-            margin-top: 2px;
-        }
-
-        .header-qr {
-            width: 70px;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .header-qr img {
-            width: 55px;
-            height: 55px;
-        }
-
-        .header-qr small {
-            font-size: 7px;
-            color: #666;
-            display: block;
-            margin-top: 2px;
-        }
-
-        /* ===================== JUDUL ===================== */
-        .title-wrapper {
-            text-align: center;
-            margin-bottom: 14px;
-        }
-
-        .title-wrapper .title-main {
-            font-size: 13px;
+        .kop-univ {
+            font-size: 20pt;
             font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #1a237e;
-            border: 2px solid #1a237e;
-            display: inline-block;
-            padding: 5px 20px;
-            border-radius: 4px;
+            line-height: 1.1;
+        }
+        .kop-alamat {
+            font-size: 7.5pt;
+            line-height: 1.5;
+            margin-top: 2px;
         }
 
-        .title-wrapper .title-sub {
-            font-size: 9px;
-            color: #555;
-            margin-top: 4px;
+        hr.garis-kop {
+            border: none;
+            border-top: 1.5px solid #000;
+            margin: 5px 0 5px 0;
         }
 
-        /* ===================== INFO MAHASISWA ===================== */
-        .info-wrapper {
-            width: 100%;
-            margin-bottom: 14px;
-            border: 1px solid #c5cae9;
-            border-radius: 4px;
-            padding: 10px 12px;
-            background-color: #f8f9ff;
+        /* ===== JUDUL ===== */
+        .judul {
+            text-align: center;
+            font-size: 12pt;
+            font-weight: bold;
+            text-decoration: underline;
+            letter-spacing: 3px;
+            margin: 6px 0 6px 0;
         }
 
+        /* ===== INFO MAHASISWA ===== */
         .info-table {
             width: 100%;
+            border-collapse: collapse;
         }
-
         .info-table td {
-            font-size: 9.5px;
-            padding: 2px 4px;
+            font-size: 7.5pt;
+            padding: 1px 0;
             vertical-align: top;
         }
 
-        .info-table .label {
-            width: 22%;
-            color: #555;
-            font-weight: bold;
-        }
-
-        .info-table .sep {
-            width: 2%;
-            color: #555;
-        }
-
-        .info-table .value {
-            width: 26%;
-            color: #1a1a1a;
-        }
-
-        /* ===================== TABEL NILAI ===================== */
-        .semester-title {
-            background-color: #1a237e;
-            color: white;
-            font-size: 9.5px;
-            font-weight: bold;
-            padding: 5px 10px;
-            margin-top: 10px;
-            margin-bottom: 0;
-            border-radius: 3px 3px 0 0;
-        }
-
-        .table-nilai {
+        /* ===== TABEL NILAI ===== */
+        /*
+         * Proporsi kolom dihitung dari HTML referensi (total 100%):
+         * Kolom KIRI: NO=3%, MK=30%, SKS=3%, HURUF=5%, ANGKA=4%, NxK=5% => 50%
+         * Kolom KANAN: MK=32%, SKS=5%, HURUF=5%, ANGKA=4%, NxK=4%      => 50%
+         */
+        .nilai-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 0;
-            font-size: 9px;
-        }
-
-        .table-nilai thead tr th {
-            background-color: #e8eaf6;
-            color: #1a237e;
-            font-weight: bold;
-            text-align: center;
-            padding: 5px 4px;
-            border: 1px solid #c5cae9;
-            font-size: 8.5px;
-        }
-
-        .table-nilai tbody tr td {
-            padding: 4px 5px;
-            border: 1px solid #e0e0e0;
-            vertical-align: middle;
-            color: #1a1a1a;
-        }
-
-        .table-nilai tbody tr:nth-child(even) td {
-            background-color: #f5f5ff;
-        }
-
-        .table-nilai tbody tr:nth-child(odd) td {
-            background-color: #ffffff;
-        }
-
-        .table-nilai .text-center { text-align: center; }
-        .table-nilai .text-right  { text-align: right; }
-        .table-nilai .text-left   { text-align: left; }
-
-        /* Footer baris total per semester */
-        .table-nilai tfoot tr td {
-            background-color: #e8eaf6;
-            font-weight: bold;
-            font-size: 8.5px;
-            padding: 4px 5px;
-            border: 1px solid #c5cae9;
-            color: #1a237e;
-        }
-
-        /* ===================== BADGE NILAI ===================== */
-        .badge-nilai {
-            display: inline-block;
-            padding: 1px 6px;
-            border-radius: 3px;
-            font-weight: bold;
-            font-size: 8.5px;
-            color: white;
-        }
-
-        .badge-a   { background-color: #4caf50; }
-        .badge-ab  { background-color: #66bb6a; }
-        .badge-b   { background-color: #8bc34a; color: #fff; }
-        .badge-bc  { background-color: #cddc39; color: #333; }
-        .badge-c   { background-color: #ffeb3b; color: #333; }
-        .badge-d   { background-color: #ff9800; }
-        .badge-e   { background-color: #f44336; }
-        .badge-def { background-color: #9e9e9e; }
-
-        /* ===================== REKAP IPK ===================== */
-        .rekap-wrapper {
-            margin-top: 14px;
-            width: 100%;
-        }
-
-        .rekap-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .rekap-left {
-            width: 60%;
-            vertical-align: top;
-            padding-right: 10px;
-        }
-
-        .rekap-right {
-            width: 40%;
-            vertical-align: top;
-        }
-
-        /* Tabel keterangan nilai */
-        .table-keterangan {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 8.5px;
-        }
-
-        .table-keterangan th {
-            background-color: #e8eaf6;
-            color: #1a237e;
-            font-weight: bold;
-            text-align: center;
-            padding: 4px;
-            border: 1px solid #c5cae9;
-        }
-
-        .table-keterangan td {
-            padding: 3px 5px;
-            border: 1px solid #e0e0e0;
-            text-align: center;
-        }
-
-        /* Kotak IPK */
-        .ipk-box {
-            border: 2px solid #1a237e;
-            border-radius: 6px;
-            padding: 12px;
-            text-align: center;
-            background: linear-gradient(135deg, #e8eaf6 0%, #f8f9ff 100%);
-        }
-
-        .ipk-box .ipk-label {
-            font-size: 8.5px;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: bold;
-        }
-
-        .ipk-box .ipk-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #1a237e;
-            line-height: 1.1;
-            margin: 4px 0;
-        }
-
-        .ipk-box .ipk-scale {
-            font-size: 8px;
-            color: #777;
-        }
-
-        .ipk-box .ipk-predikat {
-            font-size: 9.5px;
-            font-weight: bold;
             margin-top: 6px;
-            padding: 3px 10px;
-            border-radius: 10px;
-            display: inline-block;
+            font-size: 6.5pt;
         }
-
-        .predikat-cumlaude    { background-color: #ffd700; color: #5d4037; }
-        .predikat-sangat-baik { background-color: #4caf50; color: white; }
-        .predikat-baik        { background-color: #2196f3; color: white; }
-        .predikat-cukup       { background-color: #ff9800; color: white; }
-
-        /* Rekap SKS */
-        .table-rekap {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 9px;
-            margin-bottom: 8px;
+        .nilai-table th,
+        .nilai-table td {
+            border: 0.5px solid #000;
+            padding: 1px 2px;
+            vertical-align: middle;
         }
-
-        .table-rekap td {
-            padding: 4px 6px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .table-rekap .rekap-label {
-            width: 65%;
-            color: #555;
-            font-weight: bold;
-        }
-
-        .table-rekap .rekap-value {
-            width: 35%;
+        .nilai-table th {
             text-align: center;
             font-weight: bold;
-            color: #1a237e;
+            font-size: 6pt;
+        }
+        .tc { text-align: center; }
+        .bold { font-weight: bold; }
+
+        /* ===== REKAP ===== */
+        .rekap-wrap {
+            /* Rekap berada di bagian kanan-tengah, sesuai referensi left~25.91 dari 51em */
+            /* 25.91/51 ≈ 50.8% dari kiri */
+            padding-left: 50%;
+        }
+        .rekap-table {
+            border-collapse: collapse;
+        }
+        .rekap-table td {
+            font-size: 7.5pt;
+            padding: 1px 2px 1px 0;
+            vertical-align: top;
         }
 
-        /* ===================== TTANDA TANGAN ===================== */
-        .ttd-wrapper {
-            margin-top: 20px;
-            width: 100%;
-        }
-
+        /* ===== TTD ===== */
         .ttd-table {
             width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
         }
-
-        .ttd-col {
-            width: 33.33%;
-            text-align: center;
+        .ttd-table td {
+            font-size: 7.5pt;
             vertical-align: top;
-            padding: 0 10px;
+            width: 50%;
+            padding: 0 5px;
         }
-
-        .ttd-col .ttd-title {
-            font-size: 9px;
-            color: #555;
-            margin-bottom: 50px;
-        }
-
-        .ttd-col .ttd-name {
-            font-size: 9.5px;
-            font-weight: bold;
-            color: #1a1a1a;
-            border-top: 1px solid #333;
-            padding-top: 4px;
-        }
-
-        .ttd-col .ttd-nip {
-            font-size: 8px;
-            color: #666;
-        }
-
-        /* ===================== FOOTER ===================== */
-        .footer-wrapper {
-            margin-top: 16px;
-            border-top: 1px solid #c5cae9;
-            padding-top: 6px;
-            text-align: center;
-        }
-
-        .footer-wrapper p {
-            font-size: 7.5px;
-            color: #888;
-        }
-
-        .footer-wrapper .tanggal-cetak {
-            font-size: 8px;
-            color: #555;
-            font-style: italic;
-        }
-
-        /* ===================== PAGE BREAK ===================== */
-        .page-break {
-            page-break-after: always;
+        .ttd-spacer {
+            display: block;
+            height: 42px;
         }
     </style>
 </head>
 <body>
-<div class="page">
 
-    {{-- ==================== HEADER ==================== --}}
-    <div class="header-wrapper">
-        <table class="header-table">
+{{-- ==================== KOP ==================== --}}
+<table class="kop-table">
+    <tr>
+        <td style="width:72px; padding:0; vertical-align:middle;">
+            @if($logo)
+                <img src="data:image/png;base64,{{ $logo }}" style="width:68px; height:auto; display:block;">
+            @endif
+        </td>
+        <td style="padding:0; vertical-align:middle;">
+            <div class="kop-yayasan">YAYASAN PENDIDIKAN NAHDLATUL ULAMA JEMBER</div>
+            <div class="kop-univ">UNIVERSITAS ISLAM JEMBER</div>
+            <div class="kop-alamat">
+                Jl. Kyai Mojo 101<br>
+                Telp. (0331) 488675 Fax. (0331) 428732<br>
+                Jember (68133)
+            </div>
+        </td>
+    </tr>
+</table>
+
+<hr class="garis-kop">
+
+{{-- ==================== JUDUL ==================== --}}
+<div class="judul">TRANSKRIP</div>
+
+{{-- ==================== INFO MAHASISWA ==================== --}}
+{{--
+  Referensi layout:
+  Baris 1: FAKULTAS (L=2.08)  : xxx  |  NIM (L=31.89)         : xxx
+  Baris 2: PROGRAM STUDI       : xxx  |  TAHUN MASUK            : xxx
+  Baris 3: NAMA                : xxx  (full width)
+  Baris 4: TEMPAT, TANGGAL LAHIR : xxx (full width)
+  Proporsi: kiri ~62%, kanan ~38%
+--}}
+<table class="info-table">
+    <tr>
+        <td style="width:18%;">FAKULTAS</td>
+        <td style="width:1%;">:</td>
+        <td style="width:43%;">{{ strtoupper($mahasiswa->nama_prodi   ?? '-') }}</td>
+        <td style="width:13%;">NIM</td>
+        <td style="width:1%;">:</td>
+        <td>{{ $mahasiswa->nim }}</td>
+    </tr>
+    <tr>
+        <td>PROGRAM STUDI</td>
+        <td>:</td>
+        <td>{{ strtoupper($mahasiswa->kd_fakultas ?? '-') }}</td>
+        <td>TAHUN MASUK</td>
+        <td>:</td>
+        <td>{{ $mahasiswa->angkatan }}</td>
+    </tr>
+    <tr>
+        <td>NAMA</td>
+        <td>:</td>
+        <td colspan="4" class="text-capitalize">{{ strtoupper($mahasiswa->nama_mahasiswa) }}</td>
+    </tr>
+    <tr>
+        <td>TEMPAT, TANGGAL LAHIR</td>
+        <td>:</td>
+        <td colspan="4">{{ strtoupper($mahasiswa->ttl ?? '-') }}</td>
+    </tr>
+</table>
+
+{{-- ==================== TABEL NILAI ==================== --}}
+@php
+    // Flatten semua MK dari semua semester
+    $semuaMK = [];
+    foreach ($nilai_per_semester as $sem) {
+        foreach ($sem['mata_kuliah'] as $mk) {
+            $semuaMK[] = $mk;
+        }
+    }
+    $totalMK  = count($semuaMK);
+    // Bagi dua: kiri dan kanan
+    $setengah = (int) ceil($totalMK / 2);
+    $kiri     = array_slice($semuaMK, 0, $setengah);
+    $kanan    = array_slice($semuaMK, $setengah);
+    $maxBaris = max(count($kiri), count($kanan));
+
+    // Sub-total per sisi
+    $totalSKS_kiri  = array_sum(array_map(fn($m) => $m['sks'], $kiri));
+    $totalSKS_kanan = array_sum(array_map(fn($m) => $m['sks'], $kanan));
+    $totalNxK_kiri  = array_sum(array_map(fn($m) => $m['sks'] * $m['bobot'], $kiri));
+    $totalNxK_kanan = array_sum(array_map(fn($m) => $m['sks'] * $m['bobot'], $kanan));
+@endphp
+
+<table class="nilai-table">
+    <thead>
+        <tr>
+            {{-- ===== Header kiri ===== --}}
+            <th rowspan="2" style="width:3%;">NO</th>
+            <th rowspan="2" style="width:30%;">MATAKULIAH</th>
+            <th rowspan="2" style="width:3%;">SKS</th>
+            <th colspan="2" style="width:9%;">NILAI</th>
+            <th rowspan="2" style="width:5%;">N x K</th>
+            {{-- ===== Header kanan ===== --}}
+            <th rowspan="2" style="width:32%;">MATAKULIAH</th>
+            <th rowspan="2" style="width:5%;">SKS</th>
+            <th colspan="2" style="width:9%;">NILAI</th>
+            <th rowspan="2" style="width:4%;">N x K</th>
+        </tr>
+        <tr>
+            <th style="width:4.5%;">HURUF</th>
+            <th style="width:4.5%;">ANGKA</th>
+            <th style="width:4.5%;">HURUF</th>
+            <th style="width:4.5%;">ANGKA</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for ($i = 0; $i < $maxBaris; $i++)
+            @php
+                $mkK = $kiri[$i]  ?? null;
+                $mkR = $kanan[$i] ?? null;
+                $noK = $i + 1;
+                $noR = $setengah + $i + 1;
+            @endphp
             <tr>
-                {{-- Logo --}}
-                <td class="header-logo">
-                    @if($logo)
-                        <img src="data:image/png;base64,{{ $logo }}" alt="Logo">
-                    @endif
-                </td>
-
-                {{-- Teks Institusi --}}
-                <td class="header-text">
-                    <div class="universitas">Universitas Islam Jakarta</div>
-                    <div class="fakultas">{{ $mahasiswa->nama_prodi ?? 'Program Studi' }}</div>
-                    <div class="alamat">
-                        Jl. Balai Rakyat No.9, Utan Kayu Utara, Matraman, Jakarta Timur 13120
-                    </div>
-                    <div class="alamat">Telp. (021) 8191059 &nbsp;|&nbsp; www.uij.ac.id</div>
-                </td>
-
-                {{-- QR Code --}}
-                <td class="header-qr">
-                    @if($qr_code)
-                        <img src="data:image/svg+xml;base64,{{ $qr_code }}" alt="QR Code">
-                        <small>Scan untuk verifikasi</small>
-                    @endif
-                </td>
+                {{-- Baris kiri --}}
+                @if ($mkK)
+                    <td class="tc">{{ $noK }}</td>
+                    <td>{{ $mkK['nama_matakuliah'] }}</td>
+                    <td class="tc">{{ $mkK['sks'] }}</td>
+                    <td class="tc">{{ $mkK['nilai_huruf'] }}</td>
+                    <td class="tc">{{ number_format($mkK['bobot'], 2) }}</td>
+                    <td class="tc">{{ number_format($mkK['sks'] * $mkK['bobot'], 2) }}</td>
+                @else
+                    <td></td><td></td><td></td><td></td><td></td><td></td>
+                @endif
+                {{-- Baris kanan --}}
+                @if ($mkR)
+                    <td>{{ $noR }} {{ $mkR['nama_mata_kuliah'] }}</td>
+                    <td class="tc">{{ $mkR['sks'] }}</td>
+                    <td class="tc">{{ $mkR['nilai_huruf'] }}</td>
+                    <td class="tc">{{ number_format($mkR['bobot'], 2) }}</td>
+                    <td class="tc">{{ number_format($mkR['sks'] * $mkR['bobot'], 2) }}</td>
+                @else
+                    <td></td><td></td><td></td><td></td><td></td>
+                @endif
             </tr>
-        </table>
-    </div>
+        @endfor
 
-    {{-- ==================== JUDUL ==================== --}}
-    <div class="title-wrapper">
-        <div class="title-main">Transkrip Nilai</div>
-        <div class="title-sub">
-            {{ $pengajuan->bahasa === 'Inggris' ? 'Academic Transcript' : 'Dokumen Resmi Akademik' }}
-            &nbsp;&bull;&nbsp; No. {{ $pengajuan->no_pengajuan ?? '-' }}
-        </div>
-    </div>
+        {{-- Baris JUMLAH --}}
+        <tr>
+            <td colspan="2" class="tc bold">JUMLAH</td>
+            <td class="tc bold">{{ $totalSKS_kiri }}</td>
+            <td></td>
+            <td></td>
+            <td class="tc bold">{{ number_format($totalNxK_kiri, 1) }}</td>
 
-    {{-- ==================== INFO MAHASISWA ==================== --}}
-    <div class="info-wrapper">
-        <table class="info-table">
-            <tr>
-                <td class="label">Nama Mahasiswa</td>
-                <td class="sep">:</td>
-                <td class="value"><strong>{{ $mahasiswa->nama_mahasiswa ?? '-' }}</strong></td>
-                <td class="label">Program Studi</td>
-                <td class="sep">:</td>
-                <td class="value">{{ $mahasiswa->nama_prodi ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="label">NIM</td>
-                <td class="sep">:</td>
-                <td class="value">{{ $mahasiswa->nim ?? '-' }}</td>
-                <td class="label">Jenjang</td>
-                <td class="sep">:</td>
-                <td class="value">{{ $mahasiswa->jenjang ?? 'S1' }}</td>
-            </tr>
-            <tr>
-                <td class="label">Angkatan</td>
-                <td class="sep">:</td>
-                <td class="value">{{ $mahasiswa->angkatan ?? '-' }}</td>
-                <td class="label">Keperluan</td>
-                <td class="sep">:</td>
-                <td class="value">{{ $pengajuan->keperluan ?? '-' }}</td>
-            </tr>
-        </table>
-    </div>
+            <td class="tc bold">JUMLAH</td>
+            <td class="tc bold">{{ $totalSKS_kanan }}</td>
+            <td></td>
+            <td></td>
+            <td class="tc bold">{{ number_format($totalNxK_kanan, 1) }}</td>
+        </tr>
+    </tbody>
+</table>
 
-    {{-- ==================== TABEL NILAI PER SEMESTER ==================== --}}
-    @foreach($nilai_per_semester as $semester)
-        <div class="semester-title">
-            Semester {{ $semester['semester'] }}
-            &nbsp;&bull;&nbsp;
-            Tahun Akademik {{ $semester['nama'] }}
-        </div>
-
-        <table class="table-nilai">
-            <thead>
-            <tr>
-                <th class="text-center" width="4%">No</th>
-                <th class="text-left"   width="13%">Kode MK</th>
-                <th class="text-left"   width="38%">Nama Mata Kuliah</th>
-                <th class="text-center" width="8%">SKS</th>
-                <th class="text-center" width="11%">Nilai Angka</th>
-                <th class="text-center" width="10%">Nilai Huruf</th>
-                <th class="text-center" width="10%">Bobot</th>
-                <th class="text-center" width="6%">Ket.</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($semester['mata_kuliah'] as $no => $mk)
-                <tr>
-                    <td class="text-center">{{ $no + 1 }}</td>
-                    <td class="text-left">{{ $mk['kd_mata_kuliah'] ?? '-' }}</td>
-                    <td class="text-left">{{ $mk['nama_mata_kuliah'] ?? '-' }}</td>
-                    <td class="text-center">{{ $mk['sks'] ?? 0 }}</td>
-                    <td class="text-center">{{ $mk['nilai_angka'] ?? '-' }}</td>
-                    <td class="text-center">
-                        @php
-                            $nh = strtoupper($mk['nilai_huruf'] ?? '');
-                            $badgeMap = [
-                                'A'  => 'badge-a',
-                                'AB' => 'badge-ab',
-                                'B'  => 'badge-b',
-                                'BC' => 'badge-bc',
-                                'C'  => 'badge-c',
-                                'D'  => 'badge-d',
-                                'E'  => 'badge-e',
-                            ];
-                            $badgeClass = $badgeMap[$nh] ?? 'badge-def';
-                        @endphp
-                        @if($nh && $nh !== '-')
-                            <span class="badge-nilai {{ $badgeClass }}">{{ $nh }}</span>
-                        @else
-                            -
-                        @endif
-                    </td>
-                    <td class="text-center">{{ $mk['bobot'] ?? '-' }}</td>
-                    <td class="text-center">
-                        @php $sts = strtoupper($mk['sts_nilai'] ?? ''); @endphp
-                        @if($sts === 'LULUS')
-                            <span style="color:#4caf50;font-weight:bold;">L</span>
-                        @elseif($sts === 'TIDAK LULUS')
-                            <span style="color:#f44336;font-weight:bold;">TL</span>
-                        @else
-                            -
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="3" class="text-right">Total Semester</td>
-                <td class="text-center">{{ $semester['total_sks'] }}</td>
-                <td colspan="2" class="text-center">IP Semester</td>
-                <td class="text-center">{{ $semester['ips'] }}</td>
-                <td></td>
-            </tr>
-            </tfoot>
-        </table>
-    @endforeach
-
-    {{-- ==================== REKAP & IPK ==================== --}}
-    <div class="rekap-wrapper">
-        <table class="rekap-table">
-            <tr>
-                {{-- Kiri: rekap SKS + keterangan nilai --}}
-                <td class="rekap-left">
-
-                    {{-- Rekap SKS --}}
-                    <table class="table-rekap">
-                        <tr>
-                            <td class="rekap-label">Total SKS Ditempuh</td>
-                            <td class="rekap-value">{{ $total_sks }} SKS</td>
-                        </tr>
-                        <tr>
-                            <td class="rekap-label">Total SKS Lulus</td>
-                            <td class="rekap-value">{{ $sks_lulus }} SKS</td>
-                        </tr>
-                        <tr>
-                            <td class="rekap-label">Jumlah Mata Kuliah</td>
-                            <td class="rekap-value">{{ $total_mk }} MK</td>
-                        </tr>
-                    </table>
-
-                    {{-- Keterangan Nilai --}}
-                    <table class="table-keterangan">
-                        <thead>
-                        <tr>
-                            <th>Nilai Huruf</th>
-                            <th>Bobot</th>
-                            <th>Rentang</th>
-                            <th>Keterangan</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>A</td>
-                            <td>4.00</td>
-                            <td>85 – 100</td>
-                            <td>Istimewa</td>
-                        </tr>
-                        <tr>
-                            <td>AB</td>
-                            <td>3.50</td>
-                            <td>80 – 84</td>
-                            <td>Sangat Baik</td>
-                        </tr>
-                        <tr>
-                            <td>B</td>
-                            <td>3.00</td>
-                            <td>70 – 79</td>
-                            <td>Baik</td>
-                        </tr>
-                        <tr>
-                            <td>BC</td>
-                            <td>2.50</td>
-                            <td>65 – 69</td>
-                            <td>Cukup Baik</td>
-                        </tr>
-                        <tr>
-                            <td>C</td>
-                            <td>2.00</td>
-                            <td>56 – 64</td>
-                            <td>Cukup</td>
-                        </tr>
-                        <tr>
-                            <td>D</td>
-                            <td>1.00</td>
-                            <td>45 – 55</td>
-                            <td>Kurang</td>
-                        </tr>
-                        <tr>
-                            <td>E</td>
-                            <td>0.00</td>
-                            <td>0 – 44</td>
-                            <td>Tidak Lulus</td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                </td>
-
-                {{-- Kanan: Kotak IPK --}}
-                <td class="rekap-right">
-                    <div class="ipk-box">
-                        <div class="ipk-label">Indeks Prestasi Kumulatif</div>
-                        <div class="ipk-value">{{ $ipk }}</div>
-                        <div class="ipk-scale">dari skala 4.00</div>
-
-                        @php
-                            $ipkFloat = floatval($ipk);
-                            if ($ipkFloat >= 3.51) {
-                                $predikat     = 'Cum Laude';
-                                $predikatClass = 'predikat-cumlaude';
-                            } elseif ($ipkFloat >= 3.01) {
-                                $predikat      = 'Sangat Memuaskan';
-                                $predikatClass = 'predikat-sangat-baik';
-                            } elseif ($ipkFloat >= 2.76) {
-                                $predikat      = 'Memuaskan';
-                                $predikatClass = 'predikat-baik';
-                            } else {
-                                $predikat      = 'Cukup';
-                                $predikatClass = 'predikat-cukup';
-                            }
-                        @endphp
-
-                        <div class="ipk-predikat {{ $predikatClass }}">
-                            {{ $predikat }}
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    {{-- ==================== TANDA TANGAN ==================== --}}
-    <div class="ttd-wrapper">
-        <table class="ttd-table">
-            <tr>
-                {{-- Kaprodi --}}
-                <td class="ttd-col">
-                    <div class="ttd-title">
-                        Mengetahui,<br>Ketua Program Studi
-                    </div>
-                    <div class="ttd-name">
-                        {{ $pengajuan->nama_kaprodi ?? '( _________________ )' }}
-                    </div>
-                    <div class="ttd-nip">
-                        NIDN. {{ $pengajuan->nidn_kaprodi ?? '-' }}
-                    </div>
-                </td>
-
-                {{-- Dekan --}}
-                <td class="ttd-col">
-                    <div class="ttd-title">
-                        Menyetujui,<br>Dekan Fakultas
-                    </div>
-                    <div class="ttd-name">
-                        {{ $pengajuan->nama_dekan ?? '( _________________ )' }}
-                    </div>
-                    <div class="ttd-nip">
-                        NIDN. {{ $pengajuan->nidn_dekan ?? '-' }}
-                    </div>
-                </td>
-
-                {{-- Mahasiswa --}}
-                <td class="ttd-col">
-                    <div class="ttd-title">
-                        Jakarta, {{ $tanggal_cetak }}<br>Mahasiswa
-                    </div>
-                    <div class="ttd-name">
-                        {{ $mahasiswa->nama_mahasiswa ?? '-' }}
-                    </div>
-                    <div class="ttd-nip">
-                        NIM. {{ $mahasiswa->nim ?? '-' }}
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    {{-- ==================== FOOTER ==================== --}}
-    <div class="footer-wrapper">
-        <p class="tanggal-cetak">
-            Dicetak pada: {{ $tanggal_cetak }}
-            &nbsp;&bull;&nbsp;
-            Keperluan: {{ $pengajuan->keperluan ?? '-' }}
-            &nbsp;&bull;&nbsp;
-            Dokumen ini sah tanpa tanda tangan basah apabila QR Code valid
-        </p>
-        <p>
-            &copy; {{ date('Y') }} Universitas Islam Jakarta &mdash; Sistem Informasi Akademik
-        </p>
-    </div>
-
+{{-- ==================== REKAP ==================== --}}
+{{-- Posisi rekap di referensi: left=25.91 dari 51em total = ~50.8% dari kiri --}}
+<div class="rekap-wrap">
+    <table class="rekap-table">
+        <tr>
+            <td style="width:90px;">Jumlah SKS</td>
+            <td style="width:8px;">:</td>
+            <td>{{ $total_sks }}</td>
+        </tr>
+        <tr>
+            <td>Jumlah N x K</td>
+            <td>:</td>
+            <td>{{ number_format($total_sks * $ipk, 1) }}</td>
+        </tr>
+        <tr>
+            <td>IP Kumulatif</td>
+            <td>:</td>
+            <td>{{ $ipk }}</td>
+        </tr>
+    </table>
 </div>
+
+{{-- ==================== TTD ==================== --}}
+{{--
+  Referensi:
+  - Dekan kiri  : top=52.65 (teks "Dekan,"), nama top=57.15, NIDN top=58.05
+  - Kaprodi kanan: top=51.75 (tanggal), top=52.65 ("Ketua Program Studi,"),
+                   nama top=57.15, NIDN top=58.05
+  Jarak tanda tangan = 57.15 - 52.65 = 4.5em ≈ 4-5 baris ≈ spasi tanda tangan
+--}}
+<table class="ttd-table">
+    <tr>
+        <td style="text-align:left; padding-left:10px;">
+            Dekan,<br>
+            <span class="ttd-spacer"></span>
+            <strong><u>{{ strtoupper($pengajuan->nama_dekan ?? '-') }}</u></strong><br>
+            NIDN. {{ $pengajuan->nidn_dekan ?? '-' }}
+        </td>
+        <td style="text-align:left; padding-left:10px;">
+            Jember, {{ $tanggal_cetak }}<br>
+            Ketua Program Studi,<br>
+            <span class="ttd-spacer"></span>
+            <strong><u>{{ strtoupper($pengajuan->nama_kaprodi ?? '-') }}</u></strong><br>
+            NIDN. {{ $pengajuan->nidn_kaprodi ?? '-' }}
+        </td>
+    </tr>
+</table>
+
 </body>
 </html>

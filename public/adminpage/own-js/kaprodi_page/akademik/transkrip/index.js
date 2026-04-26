@@ -537,7 +537,6 @@ jQuery.transkripKaprodi = {
             return;
         }
 
-        // Tampilkan spinner di tabel nilai (tidak pakai overlay global agar modal tetap terlihat)
         $('#kpd-preview-nilai').html(`
             <tr>
                 <td colspan="8" class="text-center text-muted py-3">
@@ -561,12 +560,18 @@ jQuery.transkripKaprodi = {
                     );
                 }
             },
-            error: function () {
+            error: function (xhr) {
+                var msg = 'Gagal memuat preview nilai';
+                try {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.keterangan) msg = res.keterangan;
+                } catch (e) { }
+
                 $('#kpd-preview-nilai').html(`
                     <tr>
                         <td colspan="8" class="text-center text-danger py-3">
                             <i class="fas fa-exclamation-triangle mr-2"></i>
-                            Gagal memuat preview nilai
+                            ${msg}
                         </td>
                     </tr>`);
             }
@@ -653,7 +658,7 @@ jQuery.transkripKaprodi = {
                 <tr>
                     <td class="text-center">${i + 1}</td>
                     <td>${mk.kd_matakuliah || mk.kd_mata_kuliah || '-'}</td>
-                    <td>${mk.matakuliah || mk.nama_mata_kuliah || '-'}</td>
+                    <td>${mk.matakuliah || mk.nama_matakuliah || '-'}</td>
                     <td class="text-center">${sks}</td>
                     <td class="text-center">
                         ${(!mk.nilai_angka || mk.nilai_angka === '-')

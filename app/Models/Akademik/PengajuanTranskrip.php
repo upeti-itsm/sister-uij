@@ -207,7 +207,7 @@ class PengajuanTranskrip extends Model
     {
         return DB::select(
             "SELECT * FROM akademik.get_nilai_transkrip_mahasiswa(?)",
-            [(string) $nim]
+            [$nim]
         );
     }
 
@@ -328,13 +328,14 @@ class PengajuanTranskrip extends Model
      * @param string|int $idProdi ID prodi kaprodi
      * @return object|null
      */
-    public static function cek_mahasiswa_prodi($nim, $idProdi)
+    public static function cek_mahasiswa_prodi($nim, $kdProdi)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.cek_mahasiswa_prodi(?,?)",
+            // UBAH BARIS INI (tambahkan type casting)
+            "SELECT * FROM akademik.cek_mahasiswa_prodi(?, ?)",
             [
-                (string) $nim,
-                $idProdi
+             (string)$nim,
+             (string)$kdProdi
             ]
         );
     }
@@ -483,13 +484,13 @@ class PengajuanTranskrip extends Model
      * @param string|int $idFakultas ID fakultas dekan
      * @return object|null
      */
-    public static function cek_mahasiswa_fakultas($nim, $idFakultas)
+    public static function cek_mahasiswa_fakultas($nim, $kdFakultas)
     {
         return DB::selectOne(
             "SELECT * FROM akademik.cek_mahasiswa_fakultas(?,?)",
             [
                 (string) $nim,
-                $idFakultas
+                $kdFakultas
             ]
         );
     }

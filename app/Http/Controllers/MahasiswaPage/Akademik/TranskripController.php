@@ -42,13 +42,13 @@ class TranskripController extends Controller
                 ], 401);
             }
 
-            $nim    = $user->nim;
-            $kd_prodi    = $user->id_personal;
-            $status = $request->status ?? null;
-            $tahun  = $request->tahun  ?? null;
-            $search = $request->search['value'] ?? $request->search ?? '';
-            $start  = $request->start  ?? 0;
-            $length = $request->length ?? 10;
+            $nim      = $user->nim;
+            $kd_prodi = $user->id_personal;
+            $status   = $request->status ?? null;
+            $tahun    = $request->tahun  ?? null;
+            $search   = $request->search['value'] ?? $request->search ?? '';
+            $start    = $request->start  ?? 0;
+            $length   = $request->length ?? 10;
 
             $data_ = PengajuanTranskrip::get_daftar_pengajuan(
                 $status, $tahun, $nim, $kd_prodi, $search, $start, $length
@@ -140,14 +140,18 @@ class TranskripController extends Controller
                 ], 401);
             }
 
-            $nim  = $user->nim;
-            $info = PengajuanTranskrip::get_info_mahasiswa($nim);
+            $nim  = $user->nim ?? '';
+            $info = null;
+
+            if ($nim !== '') {
+                $info = PengajuanTranskrip::get_info_mahasiswa($nim);
+            }
 
             return response()->json([
-                'nim'        => $nim,
+                'nim'        => $nim !== '' ? $nim : '-',
                 'nama'       => $user->nama_lengkap ?? '-',
                 'nama_prodi' => $user->nama_prodi   ?? '-',
-                'ipk'        => $info->ipk          ?? 0.00
+                'ipk'        => $info ? ($info->ipk ?? 0.00) : 0.00
             ], 200);
 
         } catch (\Exception $e) {
@@ -201,6 +205,7 @@ class TranskripController extends Controller
                     'no_pengajuan' => $result->no_pengajuan ?? '-'
                 ], 200);
             }
+
 
             return response()->json([
                 'status'     => '0',
@@ -410,7 +415,7 @@ class TranskripController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_pengajuan;
+            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
             if (!$idPengajuan) {
                 return response()->json([
                     'status'     => '0',
@@ -428,7 +433,8 @@ class TranskripController extends Controller
                 ], 404);
             }
 
-            if ($detail->status !== 'disetujui') {
+            // Validasi jika status belum disetujui
+            if ($detail->keterangan_status !== 'Disetujui' && $detail->status !== '5') {
                 return response()->json([
                     'status'     => '0',
                     'keterangan' => 'Transkrip hanya dapat diunduh jika pengajuan sudah disetujui'
@@ -452,9 +458,12 @@ class TranskripController extends Controller
                 'nim'             => $nim,
                 'nama_mahasiswa'  => $user->nama_lengkap ?? 'Nama Mahasiswa',
                 'angkatan'        => $this->getAngkatanFromNIM($nim) ?? '-',
-                'nama_prodi'      => $user->nama_prodi   ?? '-',
+                'nama_prodi' => $user->nama_prodi ?? '-',
+                'kd_fakultas' => $user->kd_fakultas ?? '-',
+                'ttl'    => $user->ttl  ?? '-',
                 'jenjang'         => $user->jenjang      ?? 'S1',
             ];
+
 
             // --- Transform data nilai per semester ---
             $nilaiPerSemester = $this->groupNilaiPerSemester($nilaiList);
@@ -462,17 +471,33 @@ class TranskripController extends Controller
             // --- Hitung rekap ---
             $rekap = $this->hitungRekapTranskrip($nilaiList);
 
-            // --- QR Code ---
+            // --- QR Code Section ---
+
+            // 1. QR Code Prodi
+            $qrIdProdi = $detail->id_tandatangan_dokumen_kaprodi ?? $idPengajuan;
+            $qrCodeProdi = base64_encode(
+                QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdProdi)]))
+            );
+
+            // 2. QR Code Dekan
+            $qrIdDekan = $detail->id_tandatangan_dokumen_dekan ?? $idPengajuan;
+            $qrCodeDekan = base64_encode(
+                QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDekan)]))
+            );
+
+            // 3. QR Code Dokumen
+            $qrIdDoc = $detail->nomor_dokumen ?? $idPengajuan;
+            $qrCodeDoc = base64_encode(
+                QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDoc)]))
+            );
+
+            // 4. QR Default (Sesuai dengan pdf.blade.php UIJ yang sekarang)
             $qrCode = base64_encode(
-                QrCode::format('svg')
-                    ->size(200)
-                    ->margin(1)
-                    ->errorCorrection('H')
-                    ->generate(
-                        route('frontpage.verifikasi_transkrip', [
-                            'id' => base64_encode($idPengajuan)
-                        ])
-                    )
+                QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($idPengajuan)]))
             );
 
             // --- Logo ---
@@ -498,7 +523,13 @@ class TranskripController extends Controller
                 'total_mk'          => $rekap['total_mk'],
                 'ipk'               => number_format($rekap['ipk'], 2),
                 'tanggal_cetak'     => $tanggalCetak,
+
+                // Variabel QR Code dikirim semua agar aman & fleksibel
                 'qr_code'           => $qrCode,
+                'qr_code_prodi'     => $qrCodeProdi,
+                'qr_code_dekan'     => $qrCodeDekan,
+                'qr_code_doc'       => $qrCodeDoc,
+
                 'logo'              => $logoBase64
             ];
 
@@ -536,8 +567,6 @@ class TranskripController extends Controller
     private function validatePengajuan(Request $request)
     {
         $keperluan    = $request->keperluan;
-        $bahasa       = $request->bahasa;
-        $jumlahLembar = intval($request->jumlah_lembar ?? 0);
 
         $keperluanValid = [
             'Melamar Pekerjaan',
@@ -547,8 +576,6 @@ class TranskripController extends Controller
             'Keperluan Institusi',
             'Lainnya'
         ];
-
-        $bahasaValid = ['Indonesia', 'Inggris'];
 
         if (empty($keperluan) || !in_array($keperluan, $keperluanValid)) {
             return 'Keperluan tidak valid';
@@ -584,7 +611,7 @@ class TranskripController extends Controller
 
             $grouped[$key]['mata_kuliah'][] = [
                 'kd_mata_kuliah'   => $item->kd_mata_kuliah  ?? '-',
-                'nama_mata_kuliah' => $item->nama_mata_kuliah ?? '-',
+                'nama_matakuliah' => $item->nama_matakuliah ?? '-',
                 'sks'              => $sks,
                 'nilai_angka'      => $item->nilai_angka
                     ? number_format($item->nilai_angka, 2)

@@ -23,7 +23,7 @@
         .badge-status-draft      { background-color: #9e9e9e; color: white; }
         .badge-status-diajukan   { background-color: #2196f3; color: white; }
         .badge-status-kaprodi    { background-color: #ff9800; color: white; }
-        .badge-status-dekan      { background-color: #9c27b0; color: white; }
+        .badge-status-dekan      { background-color: #4CAF50; color: white; } /* Diubah ke tema hijau */
         .badge-status-disetujui  { background-color: #4caf50; color: white; }
         .badge-status-ditolak    { background-color: #f44336; color: white; }
 
@@ -53,14 +53,14 @@
         .loading-spinner-box .spinner-border {
             width: 3rem;
             height: 3rem;
-            color: #9c27b0;
+            color: #4CAF50; /* Tema Hijau */
         }
 
         .loading-spinner-box p {
             margin-top: 14px;
             margin-bottom: 0;
             font-weight: 600;
-            color: #4a148c;
+            color: #1b5e20; /* Tema Hijau Gelap */
             font-size: 0.95rem;
         }
 
@@ -69,7 +69,7 @@
             display: none;
             text-align: center;
             padding: 20px;
-            color: #9c27b0;
+            color: #4CAF50; /* Tema Hijau */
         }
 
         .inline-loading.show { display: block; }
@@ -92,7 +92,7 @@
         .modal-header {
             border-bottom: none;
             padding: 1.5rem;
-            background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); /* Gradien Tema Hijau */
             color: white;
             border-radius: 12px 12px 0 0;
         }
@@ -144,12 +144,12 @@
         }
 
         .step-item.done   .step-circle { background: #4caf50; color: white; border-color: #4caf50; }
-        .step-item.active .step-circle { background: #9c27b0; color: white; border-color: #9c27b0; }
+        .step-item.active .step-circle { background: #4CAF50; color: white; border-color: #4CAF50; } /* Tema Hijau */
         .step-item.reject .step-circle { background: #f44336; color: white; border-color: #f44336; }
 
         .step-label { font-size: 0.75rem; margin-top: 6px; color: #999; text-align: center; }
         .step-item.done   .step-label { color: #4caf50; font-weight: 600; }
-        .step-item.active .step-label { color: #9c27b0; font-weight: 600; }
+        .step-item.active .step-label { color: #4CAF50; font-weight: 600; } /* Tema Hijau */
         .step-item.reject .step-label { color: #f44336; font-weight: 600; }
 
         /* ===================== TIMELINE ===================== */
@@ -180,7 +180,7 @@
         .timeline-item.success::before { background: #4caf50; box-shadow: 0 0 0 2px #4caf50; }
         .timeline-item.danger::before  { background: #f44336; box-shadow: 0 0 0 2px #f44336; }
         .timeline-item.warning::before { background: #ff9800; box-shadow: 0 0 0 2px #ff9800; }
-        .timeline-item.purple::before  { background: #9c27b0; box-shadow: 0 0 0 2px #9c27b0; }
+        .timeline-item.purple::before  { background: #4CAF50; box-shadow: 0 0 0 2px #4CAF50; } /* Override nama class purple di JS ke warna hijau */
 
         /* ===================== EMPTY STATE ===================== */
         .empty-state { text-align: center; padding: 40px; color: #999; }
@@ -210,7 +210,7 @@
         /* ===================== INFO CARDS ===================== */
         .info-mahasiswa-card {
             background: #f8f9fa;
-            border-left: 4px solid #9c27b0;
+            border-left: 4px solid #4CAF50; /* Tema Hijau */
             border-radius: 6px;
             padding: 12px 16px;
             margin-bottom: 16px;
@@ -229,13 +229,13 @@
             font-size: 0.7rem;
             padding: 2px 8px;
             border-radius: 10px;
-            background: #9c27b0;
+            background: #4CAF50; /* Tema Hijau */
             color: white;
             margin-left: 6px;
             vertical-align: middle;
         }
 
-        .row-menunggu-dekan td { background-color: #f3e5f5 !important; }
+        .row-menunggu-dekan td { background-color: #e8f5e9 !important; } /* Hijau Sangat Muda */
 
         .preview-nilai-wrapper {
             max-height: 250px;
@@ -247,15 +247,15 @@
         .table-preview-nilai { font-size: 0.8rem; margin-bottom: 0; }
 
         .table-preview-nilai thead th {
-            background: #f3e5f5;
-            color: #4a148c;
+            background: #e8f5e9; /* Hijau Sangat Muda */
+            color: #1b5e20; /* Hijau Gelap */
             font-size: 0.75rem;
             position: sticky;
             top: 0;
         }
 
         .ipk-mini-card {
-            background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); /* Gradien Tema Hijau */
             color: white;
             border-radius: 10px;
             padding: 16px;
@@ -316,8 +316,7 @@
     {{-- ==================== STATISTIK CARDS ==================== --}}
     <div class="col-md-3">
         <div class="card card-stats statistic-box mb-4">
-            <div class="card-header card-header-icon position-relative border-0 text-right px-3 py-0"
-                 style="background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);">
+            <div class="card-header card-header-icon position-relative border-0 text-right px-3 py-0">
                 <div class="card-icon d-flex align-items-center justify-content-center">
                     <i class="fas fa-hourglass-half"></i>
                 </div>
@@ -508,7 +507,7 @@
                         <tr>
                             <td colspan="10" class="text-center">
                                 <div class="inline-loading show">
-                                    <i class="fas fa-spinner fa-spin text-purple"></i>
+                                    <i class="fas fa-spinner fa-spin" style="color: #4CAF50;"></i>
                                     <p>Memuat data...</p>
                                 </div>
                             </td>
@@ -540,7 +539,7 @@
 
                     {{-- Loading inline modal --}}
                     <div class="inline-loading" id="modal-detail-loading">
-                        <i class="fas fa-spinner fa-spin" style="font-size:2.5rem;color:#9c27b0;"></i>
+                        <i class="fas fa-spinner fa-spin" style="font-size:2.5rem;color:#4CAF50;"></i>
                         <p>Memuat detail pengajuan...</p>
                     </div>
 
@@ -551,7 +550,7 @@
                         <div class="row mb-3">
                             <div class="col-md-7">
                                 <small class="text-muted">Nomor Pengajuan</small>
-                                <h5 class="font-weight-bold mb-0" style="color:#4a148c;"
+                                <h5 class="font-weight-bold mb-0" style="color:#1b5e20;"
                                     id="dkn-no-pengajuan">-</h5>
                                 <small class="text-muted" id="dkn-id-riwayat">-</small>
                             </div>
@@ -617,7 +616,7 @@
                             <div class="col-md-5">
                                 <h6 class="font-weight-bold mb-2">
                                     <i class="fas fa-info-circle mr-2"
-                                       style="color:#9c27b0;"></i>Detail Pengajuan
+                                       style="color:#4CAF50;"></i>Detail Pengajuan
                                 </h6>
                                 <table class="table table-borderless table-sm">
                                     <tr>
@@ -642,13 +641,13 @@
                             <div class="col-md-7">
                                 <h6 class="font-weight-bold mb-2">
                                     <i class="fas fa-stream mr-2"
-                                       style="color:#9c27b0;"></i>Progress Persetujuan
+                                       style="color:#4CAF50;"></i>Progress Persetujuan
                                 </h6>
                                 <div id="dkn-step-indicator"></div>
 
                                 <h6 class="font-weight-bold mb-2 mt-3">
                                     <i class="fas fa-history mr-2"
-                                       style="color:#9c27b0;"></i>Riwayat Aktivitas
+                                       style="color:#4CAF50;"></i>Riwayat Aktivitas
                                 </h6>
                                 <div class="timeline-wrapper" id="dkn-timeline">
                                     <div class="text-muted text-center py-3">
@@ -663,7 +662,7 @@
                             <div class="col-md-12">
                                 <h6 class="font-weight-bold mb-2">
                                     <i class="fas fa-list-alt mr-2"
-                                       style="color:#9c27b0;"></i>Preview Nilai Mahasiswa
+                                       style="color:#4CAF50;"></i>Preview Nilai Mahasiswa
                                     <small class="text-muted font-weight-normal ml-2">
                                         (ringkasan transkrip yang akan disahkan)
                                     </small>
@@ -672,7 +671,7 @@
                                 {{-- Loading preview nilai --}}
                                 <div class="inline-loading" id="preview-nilai-loading">
                                     <i class="fas fa-spinner fa-spin"
-                                       style="font-size:1.5rem;color:#9c27b0;"></i>
+                                       style="font-size:1.5rem;color:#4CAF50;"></i>
                                     <p>Memuat data nilai...</p>
                                 </div>
 
@@ -716,7 +715,7 @@
                             <hr>
                             <h6 class="font-weight-bold mb-3">
                                 <i class="fas fa-gavel mr-2"
-                                   style="color:#9c27b0;"></i>Tindakan Dekan
+                                   style="color:#4CAF50;"></i>Tindakan Dekan
                             </h6>
                             <div class="row">
                                 <div class="col-md-12">

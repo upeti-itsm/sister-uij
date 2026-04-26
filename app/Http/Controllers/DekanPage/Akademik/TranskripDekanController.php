@@ -252,8 +252,8 @@ class TranskripDekanController extends Controller
             }
 
             // Validasi: mahasiswa harus dari fakultas yang dipimpin dekan ini
-            $idFakultas   = $user->id_fakultas ?? null;
-            $isMahasiswa  = PengajuanTranskrip::cek_mahasiswa_fakultas($nim, $idFakultas);
+            $kdFakultas   = $user->kd_fakultas ?? null;
+            $isMahasiswa  = PengajuanTranskrip::cek_mahasiswa_fakultas($nim, $kdFakultas);
 
             if (!$isMahasiswa) {
                 return response()->json([

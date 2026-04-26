@@ -233,6 +233,7 @@ class TranskripKaprodiController extends Controller
     {
         try {
             $user = Session::get('user');
+
             if (!$user) {
                 return response()->json([
                     'status'     => '0',
@@ -249,15 +250,16 @@ class TranskripKaprodiController extends Controller
             }
 
             // Validasi: mahasiswa harus dari prodi yang diampu kaprodi ini
-            $idProdi    = $user->id_prodi ?? null;
-            $isMahasiswa = PengajuanTranskrip::cek_mahasiswa_prodi($nim, $idProdi);
+            // $kdProdi = $user->kd_prodi ?? null;
 
-            if (!$isMahasiswa) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Mahasiswa tidak terdaftar di prodi Anda'
-                ], 403);
-            }
+            // $isMahasiswa = PengajuanTranskrip::cek_mahasiswa_prodi($nim, $kdProdi);
+
+            // if (!$isMahasiswa) {
+            //     return response()->json([
+            //         'status'     => '0',
+            //         'keterangan' => 'Mahasiswa tidak terdaftar di prodi Anda'
+            //     ], 403);
+            // }
 
             $data = PengajuanTranskrip::get_nilai_transkrip($nim);
 
