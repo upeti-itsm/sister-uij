@@ -47,6 +47,32 @@ class KHSController extends Controller
 
     public function jsonRiwayatPengajuan(Request $request)
     {
+        $id = $request->input('id_riwayat_pengajuan_khs');
+
+        // MODE DETAIL
+        if ($request->input('action') === 'detail' && $id) {
+            $status = null;
+            $ta = null;
+            $nim = Session::get('user')->nim ?? null;
+            $id_personal = Session::get('user')->id_personal ?? null;
+
+            $rows = KHS::get_riwayat_pengajuan_khs($status, $ta, $nim, $id_personal, '', -1, 100);
+            $detail = collect($rows)->firstWhere('id_riwayat_pengajuan_khs', $id);
+
+            if ($detail) {
+                return response()->json([
+                    'status' => 1,
+                    'data' => $detail
+                ]);
+            }
+
+            return response()->json([
+                'status' => 0,
+                'keterangan' => 'Data detail tidak ditemukan'
+            ]);
+        }
+
+        // MODE DATATABLE (punya kamu sekarang)
         $status = $request->input('status') ?? null;
         $ta = $request->input('tahun_akademik') ?? null;
         $nim = Session::get('user')->nim ?? null;
@@ -58,15 +84,7 @@ class KHSController extends Controller
 
         $noPage = (is_null($startRaw) || $startRaw === '' || (int)$startRaw === 0) ? -1 : (int)$startRaw;
 
-        $data_ = KHS::get_riwayat_pengajuan_khs(
-            $status,
-            $ta,
-            $nim,
-            $id_personal,
-            $search,
-            $noPage,
-            $length
-        );
+        $data_ = KHS::get_riwayat_pengajuan_khs($status, $ta, $nim, $id_personal, $search, $noPage, $length);
 
         $data = [
             'draw' => intval($request->input('draw', 1)),

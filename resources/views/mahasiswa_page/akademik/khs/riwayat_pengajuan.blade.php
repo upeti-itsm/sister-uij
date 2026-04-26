@@ -111,8 +111,7 @@
                                         <th class="text-left fw-bold text-uppercase">No. Pengajuan</th>
                                         <th class="text-left fw-bold text-uppercase">Tanggal Pengajuan</th>
                                         <th class="text-left fw-bold text-uppercase">Tahun Akademik</th>
-                                        <th class="text-left fw-bold text-uppercase">Status Pengajuan</th>
-                                        <th class="text-center fw-bold text-uppercase">Progress</th>
+                                        <th class="text-left fw-bold text-uppercase">Status</th>
                                         <th class="text-center fw-bold text-uppercase">
                                             <i class="fas fa-cogs"></i>
                                         </th>
@@ -164,6 +163,66 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Pengajuan -->
+    <div class="modal fade" id="modal-detail-pengajuan" tabindex="-1" role="dialog"
+        aria-labelledby="modalDetailPengajuanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-uppercase" id="modalDetailPengajuanLabel">
+                        Detail Pengajuan LHS
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="detail-pengajuan-content">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>No. Pengajuan</th>
+                                <td id="detail-nomor-pengajuan">-</td>
+                            </tr>
+                            <tr>
+                                <th>NIM</th>
+                                <td id="detail-nim">-</td>
+                            </tr>
+                            <tr>
+                                <th>Nama Mahasiswa</th>
+                                <td id="detail-nama-mahasiswa">-</td>
+                            </tr>
+                            <tr>
+                                <th>Program Studi</th>
+                                <td id="detail-nama-prodi">-</td>
+                            </tr>
+                            <tr>
+                                <th>Tanggal Pengajuan</th>
+                                <td id="detail-tanggal-pengajuan">-</td>
+                            </tr>
+                            <tr>
+                                <th>Tahun Akademik</th>
+                                <td id="detail-tahun-akademik">-</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td id="detail-status">-</td>
+                            </tr>
+                            <tr>
+                                <th>Keterangan</th>
+                                <td id="detail-keterangan">-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i>Tutup
+                    </button>
+                </div>
             </div>
         </div>
     </div>
