@@ -167,6 +167,11 @@ class HomeController extends Controller
         return redirect()->back()->with(['response' => $response]);
     }
 
+    public function validasi_dokumen()
+    {
+        return view('front_page.validasi_dokumen');
+    }
+
     public function detail_qr($id_qr)
     {
         $data = TTE::cekTTE($id_qr);

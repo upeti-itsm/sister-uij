@@ -65,6 +65,7 @@ Route::post('/auth', [\App\Http\Controllers\FrontPage\LoginController::class, 'a
 Route::post('/forget-password', [\App\Http\Controllers\FrontPage\LoginController::class, 'forget_password'])->name('login.forget_password');
 Route::post('/sign-out', [\App\Http\Controllers\FrontPage\LoginController::class, 'logout'])->name('login.logout');
 Route::get('/change-role/{id}', [\App\Http\Controllers\FrontPage\LoginController::class, 'gantiPeran'])->name('login.ganti_peran');
+Route::get('/validasi-dokumen', [\App\Http\Controllers\FrontPage\HomeController::class, 'validasi_dokumen'])->name('frontpage.validasi_dokumen');
 Route::get('/tte-validation/{id}', [\App\Http\Controllers\FrontPage\HomeController::class, 'detail_qr'])->name('frontpage.detail_qr');
 /*
  * ------------------------------------------------------------------------
