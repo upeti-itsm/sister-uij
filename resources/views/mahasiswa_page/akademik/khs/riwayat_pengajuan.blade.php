@@ -41,9 +41,11 @@
                         </h6>
                     </div>
                     <div>
-                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-tambah-pengajuan">
-                            <i class="fas fa-plus mr-2"></i>Pengajuan
-                        </button>
+                        @if (empty($user->id_personal))
+                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-tambah-pengajuan">
+                                <i class="fas fa-plus mr-2"></i>Pengajuan
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -25,8 +25,9 @@ class KHSController extends Controller
     {
         $menu = "Hasil Studi Mahasiswa";
         $tahunAkademik = KHS::get_tahun_akademik_khs(Session::get('user')->nim);
+        $user = session()->get('user');
 
-        return view('mahasiswa_page.akademik.khs.riwayat_pengajuan', compact('menu', 'tahunAkademik'));
+        return view('mahasiswa_page.akademik.khs.riwayat_pengajuan', compact('menu', 'tahunAkademik', 'user'));
     }
 
     public function insupRiwayatPengajuan(Request $request)
@@ -356,6 +357,8 @@ class KHSController extends Controller
             if (!$user) {
                 return response()->json(['status' => '0', 'keterangan' => 'Session user tidak ditemukan'], 401);
             }
+
+            dd($request->all());
 
             $nim = $user->nim;
             $tahun_akademik = $request->tahun_akademik . $request->semester ?? null;
