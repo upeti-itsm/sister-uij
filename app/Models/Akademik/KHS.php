@@ -78,6 +78,16 @@ class KHS extends Model
         ]);
     }
 
+    public static function update_status_pengajuan_khs($id_riwayat_pengajuan_khs, $id_personal, $status, $catatan = null)
+    {
+        return DB::selectOne('SELECT * FROM akademik.set_status_pengajuan_khs(?,?,?,?)', [
+            $id_riwayat_pengajuan_khs,
+            $id_personal,
+            $status,
+            $catatan
+        ]);
+    }
+
     public static function get_semester_list($nim)
     {
         return DB::select('SELECT * FROM akademik.get_semester_by_mahasiswa(?)', [

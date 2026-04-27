@@ -366,6 +366,7 @@ Route::prefix('mhs/khs')
         Route::get('/riwayat-pengajuan', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'riwayatPengajuan'])->name('riwayat_pengajuan');
         Route::post('/riwayat-pengajuan/insup', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'insupRiwayatPengajuan'])->name('riwayat_pengajuan.insup');
         Route::post('/riwayat-pengajuan/json', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'jsonRiwayatPengajuan'])->name('riwayat_pengajuan.json');
+        Route::post('/riwayat-pengajuan/set/{action}', [\App\Http\Controllers\MahasiswaPage\Akademik\KHSController::class, 'setStatusRiwayatPengajuan'])->name('riwayat_pengajuan.set_status');
     });
 // Pengajuan Transkrip
 Route::prefix('mhs/transkrip')

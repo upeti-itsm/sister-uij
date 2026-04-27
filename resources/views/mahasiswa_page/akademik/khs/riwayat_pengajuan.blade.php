@@ -51,7 +51,7 @@
                 <div class="row">
                     <div class="col-12 mb-3">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <div class="form-group">
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="row">
@@ -67,35 +67,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="font-weight-bold">Status Pengajuan</label>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <select class="select2 form-control" id="filter-pengajuan">
-                                                <option></option>
-                                                <option value="c89f80f6-305b-4e89-b004-49c7180c7bfe">Sistem Informasi Tugas
-                                                    Akhir Mahasiswa</option>
-                                                <option value="7d7c0b9a-6c3b-4b75-ab50-9b74877b860a">Sistem Informasi
-                                                    Terpadu Mandala</option>
-                                                <option value="3c2279f3-ef87-4b6c-9a0f-c5b757cd913c">Sistem informasi
-                                                    keuangan internal mandala</option>
-                                                <option value="0c6ea48a-df4d-460d-9b50-55da7ac69544">Sistem Pengelolaan
-                                                    Absensi Karyawan</option>
-                                                <option value="519d6fa1-27e5-4ee8-b684-9ed005bbbd21">Sistem Penerimaan
-                                                    Mahasiswa Baru</option>
-                                                <option value="7a083612-9dbf-4e65-9ac2-9906c769841a">Sistem Pengelolaan
-                                                    Sertifikat Lab Kom</option>
-                                                <option value="45c36e77-7f4c-45ff-8169-e4fb606c2a65">Sistem Penganggaran
-                                                    Dana</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button class="btn btn-block btn-primary" id="btn-filter"><i
-                                                    class="fas fa-filter mr-2"></i>Filter
-                                            </button>
-                                        </div>
-                                    </div>
+                                    <select class="select2 form-control" id="filter-pengajuan">
+                                        <option></option>
+                                        <option value="0">Draft</option>
+                                        <option value="1">Diajukan</option>
+                                        <option value="2">Disetujui</option>
+                                        <option value="3">Ditolak</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -112,6 +93,7 @@
                                         <th class="text-left fw-bold text-uppercase">Tanggal Pengajuan</th>
                                         <th class="text-left fw-bold text-uppercase">Tahun Akademik</th>
                                         <th class="text-left fw-bold text-uppercase">Status</th>
+                                        <th class="text-left fw-bold text-uppercase">Catatan</th>
                                         <th class="text-center fw-bold text-uppercase">
                                             <i class="fas fa-cogs"></i>
                                         </th>
@@ -229,6 +211,10 @@
 @endsection
 
 @push('scripts')
+    <script>
+        var user = @json(session()->get('user'));
+    </script>
+
     <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/moment/moment.min.js') }}"></script>

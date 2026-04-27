@@ -101,6 +101,26 @@ class KHSController extends Controller
         return response()->json($data);
     }
 
+    public function setStatusRiwayatPengajuan(Request $request, $action)
+    {
+        $request->validate([
+            'id_riwayat_pengajuan_khs' => 'required',
+            'id_personal' => 'required'
+        ]);
+
+        $id = $request->input('id_riwayat_pengajuan_khs');
+        $id_personal = $request->input('id_personal');
+        $catatan = $request->input('catatan', '') ?? null;
+
+        if ($action === 'approve') {
+            $data = KHS::update_status_pengajuan_khs($id, 2, $id_personal, $catatan);
+        } else {
+            $data = KHS::update_status_pengajuan_khs($id, 3, $id_personal, $catatan);
+        }
+
+        return response()->json($data);
+    }
+
     /**
      * Get data KHS untuk DataTable (Server-side)
      */
