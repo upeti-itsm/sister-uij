@@ -169,7 +169,7 @@
     <tr>
         <td style="width:18%;">FAKULTAS</td>
         <td style="width:1%;">:</td>
-        <td style="width:43%;">{{ strtoupper($mahasiswa->nama_prodi   ?? '-') }}</td>
+        <td style="width:43%;">{{ strtoupper($mahasiswa->kd_fakultas   ?? '-') }}</td>
         <td style="width:13%;">NIM</td>
         <td style="width:1%;">:</td>
         <td>{{ $mahasiswa->nim }}</td>
@@ -177,7 +177,7 @@
     <tr>
         <td>PROGRAM STUDI</td>
         <td>:</td>
-        <td>{{ strtoupper($mahasiswa->kd_fakultas ?? '-') }}</td>
+        <td>{{ strtoupper($mahasiswa->nama_prodi ?? '-') }}</td>
         <td>TAHUN MASUK</td>
         <td>:</td>
         <td>{{ $mahasiswa->angkatan }}</td>
@@ -185,7 +185,7 @@
     <tr>
         <td>NAMA</td>
         <td>:</td>
-        <td colspan="4" class="text-capitalize">{{ strtoupper($mahasiswa->nama_mahasiswa) }}</td>
+        <td colspan="4" class="text-capitalize">{{ strtoupper($mahasiswa->nama_mahasiswa ?? '-') }}</td>
     </tr>
     <tr>
         <td>TEMPAT, TANGGAL LAHIR</td>
