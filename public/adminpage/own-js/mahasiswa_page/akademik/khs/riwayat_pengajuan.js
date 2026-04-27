@@ -110,6 +110,7 @@ jQuery.modul = {
                     render: function (data) {
                         var id = data.id_riwayat_pengajuan_khs;
                         var status = data.status;
+                        var tahun = data.tahun_akademik;
 
                         var buttons = "<div class='d-flex flex-column'>";
 
@@ -125,7 +126,7 @@ jQuery.modul = {
                         }
 
                         if (status === "2") {
-                            buttons += "<button class='btn btn-success btn-sm mt-1 btn-download-lhs' data-id='" + id + "'>" +
+                            buttons += "<button class='btn btn-success btn-sm mt-1 btn-download-lhs' data-tahun='" + tahun + "' data-id='" + id + "'>" +
                                 "<i class='fa fa-download mr-2'></i> Download</button>";
                         }
 
@@ -191,7 +192,7 @@ jQuery.modul = {
                                 method: 'POST',
                                 data: { id_riwayat_pengajuan_khs: id, id_personal: id_personal },
                                 success: function (response) {
-                                    if (response.status === true) {
+                                    if (response.status === 1) {
                                         $.alert({ title: 'Informasi', type: 'green', content: response.keterangan });
                                         table.ajax.reload();
                                     } else {
@@ -243,7 +244,7 @@ jQuery.modul = {
                                     catatan: catatan
                                 },
                                 success: function (response) {
-                                    if (response.status === true) {
+                                    if (response.status === 1) {
                                         $.alert({ title: 'Informasi', type: 'green', content: response.keterangan });
                                         table.ajax.reload();
                                     } else {
@@ -281,6 +282,51 @@ jQuery.modul = {
                     }
                 }
             });
+        });
+
+        $('#table-riwayat-pengajuan').on('click', 'button.btn-download-lhs', function () {
+            var id = $(this).data("id");
+            var tahun = $(this).data("tahun");
+
+            var $button = $('#btn-download-lhs');
+            $button.prop('disabled', true).html('<i class="fa fa-spinner fa-spin mr-2"></i> Mengunduh...');
+
+            var form = $('<form>', {
+                'method': 'POST',
+                'action': '/mhs/khs/download'
+            });
+
+            form.append($('<input>', {
+                'type': 'hidden',
+                'name': '_token',
+                'value': $('meta[name="csrf-token"]').attr('content')
+            }));
+
+            form.append($('<input>', {
+                'type': 'hidden',
+                'name': 'id_riwayat_pengajuan_khs',
+                'value': id
+            }));
+
+            form.append($('<input>', {
+                'type': 'hidden',
+                'name': 'tahun_akademik',
+                'value': tahun
+            }));
+
+            $('body').append(form);
+            form.submit();
+            form.remove();
+
+            setTimeout(function () {
+                $btn.prop('disabled', false).html('<i class="fas fa-download mr-2"></i>Download KHS');
+
+                $.alert({
+                    title: 'Download Dimulai',
+                    content: 'File KHS sedang dipersiapkan. Jika download tidak dimulai, silakan klik tombol download lagi.',
+                    type: 'green'
+                });
+            }, 2000);
         });
 
         $('form#form-tambah-pengajuan').submit(function (e) {
