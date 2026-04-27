@@ -10,6 +10,7 @@ use App\Models\MOODLE_MODEL\Dosen;
 use App\Models\Sistem\TTE;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\Input;
 
 class HomeController extends Controller
@@ -174,9 +175,19 @@ class HomeController extends Controller
 
     public function detail_qr($id_qr)
     {
+        if (!Str::isUuid($id_qr)) {
+            $decoded = base64_decode($id_qr, true);
+            if ($decoded === false || !Str::isUuid($decoded)) {
+                abort(400, 'ID QR tidak valid');
+            }
+            $id_qr = $decoded;
+        }
         $data = TTE::cekTTE($id_qr);
-        Session::flash($data->status == 1 ? 'success_message' : 'failed_message', $data->keterangan);
-
+        if (!is_null($data)) {
+            Session::flash($data->status == 1 ? 'success_message' : 'failed_message', $data->keterangan);
+        } else {
+            Session::flash('failed_message', "ID QR Tidak ditemukan");
+        }
         return view('front_page.tte_validation', compact('data'));
     }
 }

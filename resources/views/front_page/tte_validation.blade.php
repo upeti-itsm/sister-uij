@@ -286,7 +286,7 @@
             </div>
 
             <div class="verify-body">
-                @if ($data->status == 0)
+                @if (!isset($data->status) || $data->status == 0)
                     <span class="status-chip error">
                         <i class="fas fa-circle-xmark"></i> Dokumen Tidak Ditemukan
                     </span>
@@ -328,7 +328,7 @@
                     </div>
                 </div>
 
-                @if ($data->status == 0)
+                @if (!isset($data->status) || $data->status == 0)
                     <div class="notice">
                         <i class="fas fa-triangle-exclamation"></i>
                         Dokumen tidak ditemukan di database UIJ. Pastikan kode verifikasi benar, atau hubungi bagian
