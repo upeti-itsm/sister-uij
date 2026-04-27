@@ -346,6 +346,7 @@ jQuery.transkrip = {
         // --- Buka Modal Buat Draft ---
         $('#btn-ajukan-transkrip').off('click').on('click', function () {
             self.openModalAjukan();
+            self.loadMahasiswaInfo();
         });
 
         // --- Simpan sebagai Draft ---
@@ -966,10 +967,10 @@ jQuery.transkrip = {
         $('#detail-status-badge').html(self.getBadgeStatus(data.status, data.keterangan_status));
 
         $('#detail-keperluan').text(data.keperluan || '-');
-        $('#detail-tgl-ajuan').text(data.tgl_created || '-');
+        $('#detail-tgl-ajuan').text(data.tgl_pengajuan || '-');
         $('#detail-tgl-kaprodi').text(data.tgl_kaprodi || '-');
         $('#detail-tgl-dekan').text(data.tgl_dekan || '-');
-        $('#detail-tgl-selesai').text(data.tgl_updated || '-');
+        $('#detail-tgl-selesai').text(data.tgl_selesai || '-');
 
         // Alasan tolak
         if (data.status === '6' && data.alasan_tolak) {

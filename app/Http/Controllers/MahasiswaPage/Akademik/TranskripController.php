@@ -130,37 +130,42 @@ class TranskripController extends Controller
      * (NIM, nama, prodi, IPK)
      */
     public function getMahasiswaInfo(Request $request)
-    {
-        try {
-            $user = Session::get('user');
-            if (!$user) {
-                return response()->json([
-                    'status'     => '0',
-                    'keterangan' => 'Session user tidak ditemukan'
-                ], 401);
-            }
-
-            $nim  = $user->nim ?? '';
-            $info = null;
-
-            if ($nim !== '') {
-                $info = PengajuanTranskrip::get_info_mahasiswa($nim);
-            }
-
-            return response()->json([
-                'nim'        => $nim !== '' ? $nim : '-',
-                'nama'       => $user->nama_lengkap ?? '-',
-                'nama_prodi' => $user->nama_prodi   ?? '-',
-                'ipk'        => $info ? ($info->ipk ?? 0.00) : 0.00
-            ], 200);
-
-        } catch (\Exception $e) {
+{
+    try {
+        $user = Session::get('user');
+        if (!$user) {
             return response()->json([
                 'status'     => '0',
-                'keterangan' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
+                'keterangan' => 'Session user tidak ditemukan'
+            ], 401);
         }
+
+        $nim = $user->nim ?? '';
+        $ipk = 0.00;
+
+        if ($nim !== '') {
+            try {
+                $info = PengajuanTranskrip::get_info_mahasiswa($nim);
+                $ipk  = $info ? ($info->ipk ?? 0.00) : 0.00;
+            } catch (\Exception $e) {
+                $ipk = 0.00;
+            }
+        }
+
+        return response()->json([
+            'nim'        => $nim !== '' ? $nim : '-',
+            'nama'       => $user->nama_lengkap ?? '-',
+            'nama_prodi' => $user->nama_prodi   ?? '-',
+            'ipk'        => $ipk
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'     => '0',
+            'keterangan' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     // ============================================================
     // CRUD PENGAJUAN
@@ -432,7 +437,7 @@ class TranskripController extends Controller
                     'keterangan' => 'Pengajuan tidak ditemukan'
                 ], 404);
             }
-
+// dd($detail);
             // Validasi jika status belum disetujui
             if ($detail->keterangan_status !== 'Disetujui' && $detail->status !== '5') {
                 return response()->json([
@@ -458,13 +463,13 @@ class TranskripController extends Controller
                 'nim'             => $nim,
                 'nama_mahasiswa'  => $user->nama_lengkap ?? 'Nama Mahasiswa',
                 'angkatan'        => $this->getAngkatanFromNIM($nim) ?? '-',
-                'nama_prodi' => $user->nama_prodi ?? '-',
-                'kd_fakultas' => $user->kd_fakultas ?? '-',
+                'nama_prodi' => $user->kd_fakultas?? '-',
+                'kd_fakultas' => $user->nama_prodi ?? '-',
                 'ttl'    => $user->ttl  ?? '-',
                 'jenjang'         => $user->jenjang      ?? 'S1',
             ];
 
-
+            // dd($mahasiswaData);
             // --- Transform data nilai per semester ---
             $nilaiPerSemester = $this->groupNilaiPerSemester($nilaiList);
 
