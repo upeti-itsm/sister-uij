@@ -453,7 +453,8 @@
                                 array_key_exists('Persetujuan Transkrip Nilai', $modul) ||
                                 array_key_exists('Pengajuan Transkrip Nilai', $modul) ||
                                 array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
-                                array_key_exists('Student Body', $modul))
+                                array_key_exists('Student Body', $modul) ||
+                                array_key_exists('Hasil Studi Mahasiswa', $modul))
                             <li class="nav-label">Akademik</li>
                             <li @if (
                                 $menu == 'Validasi Pengajuan Sertifikat Laboratorium Komputer' ||
@@ -470,7 +471,8 @@
                                     $menu == 'Validasi KRS Kaprodi' ||
                                     $menu == 'Sinkronisasi Tahun Akademik dengan Siakad' ||
                                     $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
-                                    $menu == 'Student Body') class="mm-active" @endif>
+                                    $menu == 'Student Body' ||
+                                    $menu == 'Hasil Studi Mahasiswa') class="mm-active" @endif>
                                 <a class="has-arrow material-ripple" href="#">
                                     <i class="fas fa-graduation-cap mr-2"></i>
                                     @if (\Illuminate\Support\Facades\Session::get('peran')['aktif_'] === 'Dosen')
@@ -687,6 +689,15 @@
                                             @elseif(\Illuminate\Support\Facades\Session::get('peran')['aktif'] == 70)
                                                 <a href="{{ route('dekan.akademik.transkrip.index') }}">Pengajuan
                                                     Transkrip</a>
+                                            @endif
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Hasil Studi Mahasiswa', $modul))
+                                        <li @if ($menu == 'Hasil Studi Mahasiswa') class="mm-active" @endif>
+                                            @if (\Illuminate\Support\Facades\Session::get('peran')['aktif'] == 71)
+                                                <a href="{{ route('mahasiswa.akademik.khs.riwayat_pengajuan') }}">
+                                                    Pengajuan Hasil Studi
+                                                </a>
                                             @endif
                                         </li>
                                     @endif

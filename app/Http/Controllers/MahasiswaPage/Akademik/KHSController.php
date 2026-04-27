@@ -49,7 +49,6 @@ class KHSController extends Controller
     {
         $id = $request->input('id_riwayat_pengajuan_khs');
 
-        // MODE DETAIL
         if ($request->input('action') === 'detail' && $id) {
             $status = null;
             $ta = null;
@@ -72,7 +71,6 @@ class KHSController extends Controller
             ]);
         }
 
-        // MODE DATATABLE (punya kamu sekarang)
         $status = $request->input('status') ?? null;
         $ta = $request->input('tahun_akademik') ?? null;
         $nim = Session::get('user')->nim ?? null;
@@ -84,6 +82,7 @@ class KHSController extends Controller
 
         $noPage = (is_null($startRaw) || $startRaw === '' || (int)$startRaw === 0) ? -1 : (int)$startRaw;
 
+        // dd($status, $ta, $nim, $id_personal, $search, $noPage, $length);
         $data_ = KHS::get_riwayat_pengajuan_khs($status, $ta, $nim, $id_personal, $search, $noPage, $length);
 
         $data = [
