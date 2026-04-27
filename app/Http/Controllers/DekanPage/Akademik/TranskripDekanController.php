@@ -195,6 +195,17 @@ class TranskripDekanController extends Controller
                     'keterangan' => 'Data pengajuan tidak ditemukan atau bukan wewenang Anda'
                 ], 404);
             }
+
+            $ipk = floatval($detail->ipk ?? 0);
+            if ($ipk <= 0 && !empty($detail->nim)) {
+                try {
+                    $infoMhs = PengajuanTranskrip::get_info_mahasiswa($detail->nim);
+                    $ipk = floatval($infoMhs->ipk ?? 0);
+                } catch (\Exception $e) {
+                    $ipk = 0;
+                }
+            }
+
             return response()->json([
                 'status' => '1',
                 'data'   => [
@@ -204,7 +215,7 @@ class TranskripDekanController extends Controller
                     'nama_mahasiswa'   => $detail->nama_mahasiswa   ?? '-',
                     'nama_prodi'       => $detail->nama_prodi       ?? '-',
                     'angkatan'         => $detail->angkatan         ?? '-',
-                    'ipk'              => $detail->ipk              ?? 0.00,
+                    'ipk'              => $ipk,
                     // Info persetujuan kaprodi
                     'nama_kaprodi'     => $detail->nama_kaprodi     ?? '-',
                     'tgl_kaprodi'      => $detail->tgl_kaprodi      ?? null,

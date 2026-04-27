@@ -117,17 +117,17 @@ class PengajuanTranskrip extends Model
 
     /**
      * Get detail satu pengajuan transkrip
-     * Ownership check dilakukan di level DB function (nim harus cocok)
+     * Parameter yang digunakan adalah id_pengajuan_induk
      *
-     * @param string|int $idPengajuan
+     * @param string|int $idPengajuanInduk
      * @return object|null
      */
-    public static function get_detail($idPengajuan)
+    public static function get_detail($idPengajuanInduk)
     {
         return DB::selectOne(
-            "SELECT * FROM akademik.get_detail_riwayat_transkrip_nilai(?)",
+            "SELECT * FROM akademik.get_detail_riwayat_transkrip_nilai(?::uuid)",
             [
-                $idPengajuan
+                $idPengajuanInduk
             ]
         );
     }

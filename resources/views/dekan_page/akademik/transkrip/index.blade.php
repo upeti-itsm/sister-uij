@@ -6,10 +6,13 @@
 
     <style>
         /* ===================== CARD STATS ===================== */
-        .card-stats { transition: transform 0.2s; }
+        .card-stats {
+            transition: transform 0.2s;
+        }
+
         .card-stats:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         /* ===================== BADGE STATUS ===================== */
@@ -20,47 +23,77 @@
             border-radius: 6px;
         }
 
-        .badge-status-draft      { background-color: #9e9e9e; color: white; }
-        .badge-status-diajukan   { background-color: #2196f3; color: white; }
-        .badge-status-kaprodi    { background-color: #ff9800; color: white; }
-        .badge-status-dekan      { background-color: #4CAF50; color: white; } /* Diubah ke tema hijau */
-        .badge-status-disetujui  { background-color: #4caf50; color: white; }
-        .badge-status-ditolak    { background-color: #f44336; color: white; }
+        .badge-status-draft {
+            background-color: #9e9e9e;
+            color: white;
+        }
+
+        .badge-status-diajukan {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        .badge-status-kaprodi {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .badge-status-dekan {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Diubah ke tema hijau */
+        .badge-status-disetujui {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .badge-status-ditolak {
+            background-color: #f44336;
+            color: white;
+        }
 
         /* ===================== LOADING OVERLAY ===================== */
         .loading-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.45);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
             z-index: 9999;
             align-items: center;
             justify-content: center;
             flex-direction: column;
         }
 
-        .loading-overlay.show { display: flex; }
+        .loading-overlay.show {
+            display: flex;
+        }
 
         .loading-spinner-box {
             background: white;
             border-radius: 12px;
             padding: 30px 40px;
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .loading-spinner-box .spinner-border {
             width: 3rem;
             height: 3rem;
-            color: #4CAF50; /* Tema Hijau */
+            color: #4CAF50;
+            /* Tema Hijau */
         }
 
         .loading-spinner-box p {
             margin-top: 14px;
             margin-bottom: 0;
             font-weight: 600;
-            color: #1b5e20; /* Tema Hijau Gelap */
+            color: #1b5e20;
+            /* Tema Hijau Gelap */
             font-size: 0.95rem;
         }
 
@@ -69,12 +102,18 @@
             display: none;
             text-align: center;
             padding: 20px;
-            color: #4CAF50; /* Tema Hijau */
+            color: #4CAF50;
+            /* Tema Hijau */
         }
 
-        .inline-loading.show { display: block; }
+        .inline-loading.show {
+            display: block;
+        }
 
-        .inline-loading i { font-size: 1.8rem; }
+        .inline-loading i {
+            font-size: 1.8rem;
+        }
+
         .inline-loading p {
             margin-top: 8px;
             margin-bottom: 0;
@@ -86,19 +125,25 @@
         .modal-content {
             border-radius: 12px;
             border: none;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
         }
 
         .modal-header {
             border-bottom: none;
             padding: 1.5rem;
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); /* Gradien Tema Hijau */
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            /* Gradien Tema Hijau */
             color: white;
             border-radius: 12px 12px 0 0;
         }
 
-        .modal-title { font-weight: 700; }
-        .modal-body  { padding: 1.5rem; }
+        .modal-title {
+            font-weight: 700;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
 
         /* ===================== STEP INDICATOR ===================== */
         .step-indicator {
@@ -120,17 +165,25 @@
         .step-item:not(:last-child)::after {
             content: '';
             position: absolute;
-            top: 18px; left: 50%;
-            width: 100%; height: 2px;
+            top: 18px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
             background: #e0e0e0;
             z-index: 0;
         }
 
-        .step-item.done:not(:last-child)::after   { background: #4caf50; }
-        .step-item.active:not(:last-child)::after { background: #e0e0e0; }
+        .step-item.done:not(:last-child)::after {
+            background: #4caf50;
+        }
+
+        .step-item.active:not(:last-child)::after {
+            background: #e0e0e0;
+        }
 
         .step-circle {
-            width: 36px; height: 36px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #e0e0e0;
             color: #999;
@@ -143,74 +196,154 @@
             border: 3px solid #e0e0e0;
         }
 
-        .step-item.done   .step-circle { background: #4caf50; color: white; border-color: #4caf50; }
-        .step-item.active .step-circle { background: #4CAF50; color: white; border-color: #4CAF50; } /* Tema Hijau */
-        .step-item.reject .step-circle { background: #f44336; color: white; border-color: #f44336; }
+        .step-item.done .step-circle {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
 
-        .step-label { font-size: 0.75rem; margin-top: 6px; color: #999; text-align: center; }
-        .step-item.done   .step-label { color: #4caf50; font-weight: 600; }
-        .step-item.active .step-label { color: #4CAF50; font-weight: 600; } /* Tema Hijau */
-        .step-item.reject .step-label { color: #f44336; font-weight: 600; }
+        .step-item.active .step-circle {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        /* Tema Hijau */
+        .step-item.reject .step-circle {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            margin-top: 6px;
+            color: #999;
+            text-align: center;
+        }
+
+        .step-item.done .step-label {
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        .step-item.active .step-label {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        /* Tema Hijau */
+        .step-item.reject .step-label {
+            color: #f44336;
+            font-weight: 600;
+        }
 
         /* ===================== TIMELINE ===================== */
-        .timeline-wrapper { position: relative; padding-left: 30px; }
+        .timeline-wrapper {
+            position: relative;
+            padding-left: 30px;
+        }
 
         .timeline-wrapper::before {
             content: '';
             position: absolute;
-            left: 12px; top: 0; bottom: 0;
+            left: 12px;
+            top: 0;
+            bottom: 0;
             width: 2px;
             background: #e0e0e0;
         }
 
-        .timeline-item { position: relative; margin-bottom: 20px; }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
 
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: -24px; top: 6px;
-            width: 14px; height: 14px;
+            left: -24px;
+            top: 6px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: #ccc;
             border: 2px solid white;
             box-shadow: 0 0 0 2px #ccc;
         }
 
-        .timeline-item.active::before  { background: #2196f3; box-shadow: 0 0 0 2px #2196f3; }
-        .timeline-item.success::before { background: #4caf50; box-shadow: 0 0 0 2px #4caf50; }
-        .timeline-item.danger::before  { background: #f44336; box-shadow: 0 0 0 2px #f44336; }
-        .timeline-item.warning::before { background: #ff9800; box-shadow: 0 0 0 2px #ff9800; }
-        .timeline-item.purple::before  { background: #4CAF50; box-shadow: 0 0 0 2px #4CAF50; } /* Override nama class purple di JS ke warna hijau */
+        .timeline-item.active::before {
+            background: #2196f3;
+            box-shadow: 0 0 0 2px #2196f3;
+        }
+
+        .timeline-item.success::before {
+            background: #4caf50;
+            box-shadow: 0 0 0 2px #4caf50;
+        }
+
+        .timeline-item.danger::before {
+            background: #f44336;
+            box-shadow: 0 0 0 2px #f44336;
+        }
+
+        .timeline-item.warning::before {
+            background: #ff9800;
+            box-shadow: 0 0 0 2px #ff9800;
+        }
+
+        .timeline-item.purple::before {
+            background: #4CAF50;
+            box-shadow: 0 0 0 2px #4CAF50;
+        }
+
+        /* Override nama class purple di JS ke warna hijau */
 
         /* ===================== EMPTY STATE ===================== */
-        .empty-state { text-align: center; padding: 40px; color: #999; }
-        .empty-state i { font-size: 4rem; margin-bottom: 20px; opacity: 0.3; }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
 
         /* ===================== ACTION BUTTONS ===================== */
         .btn-sahkan {
             background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
-            border: none; color: white; transition: all 0.3s;
+            border: none;
+            color: white;
+            transition: all 0.3s;
         }
+
         .btn-sahkan:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(46,125,50,0.4);
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
             color: white;
         }
 
         .btn-tolak {
             background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
-            border: none; color: white; transition: all 0.3s;
+            border: none;
+            color: white;
+            transition: all 0.3s;
         }
+
         .btn-tolak:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(183,28,28,0.4);
+            box-shadow: 0 4px 15px rgba(183, 28, 28, 0.4);
             color: white;
         }
 
         /* ===================== INFO CARDS ===================== */
         .info-mahasiswa-card {
             background: #f8f9fa;
-            border-left: 4px solid #4CAF50; /* Tema Hijau */
+            border-left: 4px solid #4CAF50;
+            /* Tema Hijau */
             border-radius: 6px;
             padding: 12px 16px;
             margin-bottom: 16px;
@@ -229,13 +362,18 @@
             font-size: 0.7rem;
             padding: 2px 8px;
             border-radius: 10px;
-            background: #4CAF50; /* Tema Hijau */
+            background: #4CAF50;
+            /* Tema Hijau */
             color: white;
             margin-left: 6px;
             vertical-align: middle;
         }
 
-        .row-menunggu-dekan td { background-color: #e8f5e9 !important; } /* Hijau Sangat Muda */
+        .row-menunggu-dekan td {
+            background-color: #e8f5e9 !important;
+        }
+
+        /* Hijau Sangat Muda */
 
         .preview-nilai-wrapper {
             max-height: 250px;
@@ -244,31 +382,47 @@
             border-radius: 6px;
         }
 
-        .table-preview-nilai { font-size: 0.8rem; margin-bottom: 0; }
+        .table-preview-nilai {
+            font-size: 0.8rem;
+            margin-bottom: 0;
+        }
 
         .table-preview-nilai thead th {
-            background: #e8f5e9; /* Hijau Sangat Muda */
-            color: #1b5e20; /* Hijau Gelap */
+            background: #e8f5e9;
+            /* Hijau Sangat Muda */
+            color: #1b5e20;
+            /* Hijau Gelap */
             font-size: 0.75rem;
             position: sticky;
             top: 0;
         }
 
         .ipk-mini-card {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); /* Gradien Tema Hijau */
-            color: white;
+            /* Gradien Tema Hijau */
             border-radius: 10px;
             padding: 16px;
             text-align: center;
         }
 
-        .ipk-mini-card .ipk-value   { font-size: 2rem; font-weight: 700; line-height: 1.1; }
-        .ipk-mini-card .ipk-label   { font-size: 0.75rem; opacity: 0.85; }
+        .ipk-mini-card .ipk-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .ipk-mini-card .ipk-label {
+            font-size: 0.75rem;
+            opacity: 0.85;
+        }
+
         .ipk-mini-card .ipk-predikat {
-            font-size: 0.8rem; font-weight: 600;
-            margin-top: 6px; padding: 2px 10px;
-            border-radius: 10px; display: inline-block;
-            background: rgba(255,255,255,0.2);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 6px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Stat card loading pulse */
@@ -277,8 +431,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.4; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
         }
     </style>
 @endsection
@@ -295,14 +456,14 @@
             <div class="header-icon text-success mr-3"><i class="fas fa-stamp"></i></div>
             <div class="media-body">
                 <h1 class="font-weight-bold">Pengesahan Transkrip Nilai</h1>
-                <small>Halaman ini digunakan untuk mengesahkan atau menolak pengajuan transkrip nilai yang telah disetujui Kaprodi</small>
+                <small>Halaman ini digunakan untuk mengesahkan atau menolak pengajuan transkrip nilai yang telah disetujui
+                    Kaprodi</small>
             </div>
         </div>
     </div>
 @endsection
 
 @section('body-content')
-
     {{-- ==================== LOADING OVERLAY ==================== --}}
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner-box">
@@ -446,7 +607,7 @@
                                 <i class="fas fa-search mr-2"></i>Cari
                             </label>
                             <input type="text" class="form-control" id="filter-search"
-                                   placeholder="Cari NIM / nama / no. pengajuan...">
+                                placeholder="Cari NIM / nama / no. pengajuan...">
                         </div>
                     </div>
                 </div>
@@ -487,42 +648,39 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover"
-                           id="table-transkrip-dekan">
+                    <table class="table table-striped table-bordered table-hover" id="table-transkrip-dekan">
                         <thead class="thead-light">
-                        <tr>
-                            <th class="text-center" width="4%">No</th>
-                            <th width="14%">No. Pengajuan</th>
-                            <th width="10%">NIM</th>
-                            <th width="17%">Nama Mahasiswa</th>
-                            <th width="13%">Program Studi</th>
-                            <th width="12%">Keperluan</th>
-                            <th width="10%" class="text-center">Tgl. Ajuan</th>
-                            <th width="10%" class="text-center">Tgl. Diperbarui</th>
-                            <th width="10%" class="text-center">Status</th>
-                            <th width="6%" class="text-center">Aksi</th>
-                        </tr>
+                            <tr>
+                                <th class="text-center" width="4%">No</th>
+                                <th width="14%">No. Pengajuan</th>
+                                <th width="10%">NIM</th>
+                                <th width="17%">Nama Mahasiswa</th>
+                                <th width="13%">Program Studi</th>
+                                <th width="12%">Keperluan</th>
+                                <th width="10%" class="text-center">Tgl. Ajuan</th>
+                                <th width="10%" class="text-center">Tgl. Diperbarui</th>
+                                <th width="10%" class="text-center">Status</th>
+                                <th width="6%" class="text-center">Aksi</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td colspan="10" class="text-center">
-                                <div class="inline-loading show">
-                                    <i class="fas fa-spinner fa-spin" style="color: #4CAF50;"></i>
-                                    <p>Memuat data...</p>
-                                </div>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="10" class="text-center">
+                                    <div class="inline-loading show">
+                                        <i class="fas fa-spinner fa-spin" style="color: #4CAF50;"></i>
+                                        <p>Memuat data...</p>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('modal')
-
     {{-- ==================== MODAL DETAIL & TINDAKAN DEKAN ==================== --}}
     <div class="modal fade" id="modal-detail-dekan" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl" role="document">
@@ -550,8 +708,7 @@
                         <div class="row mb-3">
                             <div class="col-md-7">
                                 <small class="text-muted">Nomor Pengajuan</small>
-                                <h5 class="font-weight-bold mb-0" style="color:#1b5e20;"
-                                    id="dkn-no-pengajuan">-</h5>
+                                <h5 class="font-weight-bold mb-0" style="color:#1b5e20;" id="dkn-no-pengajuan">-</h5>
                                 <small class="text-muted" id="dkn-id-riwayat">-</small>
                             </div>
                             <div class="col-md-5 text-right">
@@ -562,7 +719,7 @@
                         {{-- Info Mahasiswa --}}
                         <div class="info-mahasiswa-card">
                             <div class="row align-items-center">
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <small class="text-muted d-block">NIM</small>
                                     <strong id="dkn-nim">-</strong>
                                 </div>
@@ -574,22 +731,19 @@
                                     <small class="text-muted d-block">Program Studi</small>
                                     <strong id="dkn-prodi">-</strong>
                                 </div>
-                                <div class="col-md-2">
+                                {{-- <div class="col-md-2">
                                     <small class="text-muted d-block">Angkatan</small>
                                     <strong id="dkn-angkatan">-</strong>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-2">
-                                    <div class="ipk-mini-card">
-                                        <div class="ipk-label">IPK</div>
-                                        <div class="ipk-value" id="dkn-ipk">0.00</div>
-                                        <div class="ipk-predikat" id="dkn-predikat">-</div>
-                                    </div>
+                                    <small class="text-muted d-block">IPK</small>
+                                    <strong id="dkn-ipk" class="text-primary">-</strong>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Info Persetujuan Kaprodi --}}
-                        <div class="info-kaprodi-card">
+                        {{-- <div class="info-kaprodi-card">
                             <div class="row">
                                 <div class="col-md-4">
                                     <small class="text-muted d-block">
@@ -609,14 +763,13 @@
                                           class="text-muted fst-italic">-</span>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="row">
                             {{-- Detail Pengajuan --}}
                             <div class="col-md-5">
                                 <h6 class="font-weight-bold mb-2">
-                                    <i class="fas fa-info-circle mr-2"
-                                       style="color:#4CAF50;"></i>Detail Pengajuan
+                                    <i class="fas fa-info-circle mr-2" style="color:#4CAF50;"></i>Detail Pengajuan
                                 </h6>
                                 <table class="table table-borderless table-sm">
                                     <tr>
@@ -629,25 +782,18 @@
                                         <td>:</td>
                                         <td id="dkn-tgl-ajuan">-</td>
                                     </tr>
-                                    <tr>
-                                        <td><strong>Terakhir Diperbarui</strong></td>
-                                        <td>:</td>
-                                        <td id="dkn-tgl-updated">-</td>
-                                    </tr>
                                 </table>
                             </div>
 
                             {{-- Progress & Timeline --}}
                             <div class="col-md-7">
                                 <h6 class="font-weight-bold mb-2">
-                                    <i class="fas fa-stream mr-2"
-                                       style="color:#4CAF50;"></i>Progress Persetujuan
+                                    <i class="fas fa-stream mr-2" style="color:#4CAF50;"></i>Progress Persetujuan
                                 </h6>
                                 <div id="dkn-step-indicator"></div>
 
                                 <h6 class="font-weight-bold mb-2 mt-3">
-                                    <i class="fas fa-history mr-2"
-                                       style="color:#4CAF50;"></i>Riwayat Aktivitas
+                                    <i class="fas fa-history mr-2" style="color:#4CAF50;"></i>Riwayat Aktivitas
                                 </h6>
                                 <div class="timeline-wrapper" id="dkn-timeline">
                                     <div class="text-muted text-center py-3">
@@ -661,8 +807,7 @@
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <h6 class="font-weight-bold mb-2">
-                                    <i class="fas fa-list-alt mr-2"
-                                       style="color:#4CAF50;"></i>Preview Nilai Mahasiswa
+                                    <i class="fas fa-list-alt mr-2" style="color:#4CAF50;"></i>Preview Nilai Mahasiswa
                                     <small class="text-muted font-weight-normal ml-2">
                                         (ringkasan transkrip yang akan disahkan)
                                     </small>
@@ -670,8 +815,7 @@
 
                                 {{-- Loading preview nilai --}}
                                 <div class="inline-loading" id="preview-nilai-loading">
-                                    <i class="fas fa-spinner fa-spin"
-                                       style="font-size:1.5rem;color:#4CAF50;"></i>
+                                    <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;color:#4CAF50;"></i>
                                     <p>Memuat data nilai...</p>
                                 </div>
 
@@ -679,30 +823,28 @@
                                     <div class="preview-nilai-wrapper">
                                         <table class="table table-striped table-bordered table-preview-nilai mb-0">
                                             <thead>
-                                            <tr>
-                                                <th class="text-center" width="5%">No</th>
-                                                <th width="12%">Kode MK</th>
-                                                <th width="35%">Nama Mata Kuliah</th>
-                                                <th class="text-center" width="8%">SKS</th>
-                                                <th class="text-center" width="10%">Nilai Angka</th>
-                                                <th class="text-center" width="10%">Nilai Huruf</th>
-                                                <th class="text-center" width="10%">Bobot</th>
-                                                <th class="text-center" width="10%">Tahun Akademik</th>
-                                            </tr>
+                                                <tr>
+                                                    <th class="text-center" width="5%">No</th>
+                                                    <th width="12%">Kode MK</th>
+                                                    <th width="35%">Nama Mata Kuliah</th>
+                                                    <th class="text-center" width="8%">SKS</th>
+                                                    <th class="text-center" width="10%">Nilai Angka</th>
+                                                    <th class="text-center" width="10%">Nilai Huruf</th>
+                                                    <th class="text-center" width="10%">Bobot</th>
+                                                    <th class="text-center" width="10%">Tahun Akademik</th>
+                                                </tr>
                                             </thead>
                                             <tbody id="dkn-preview-nilai"></tbody>
                                             <tfoot class="thead-light">
-                                            <tr>
-                                                <td colspan="3"
-                                                    class="text-right font-weight-bold">Total</td>
-                                                <td class="text-center font-weight-bold"
-                                                    id="dkn-preview-total-sks">0</td>
-                                                <td colspan="2"
-                                                    class="text-center font-weight-bold">IPK</td>
-                                                <td class="text-center font-weight-bold"
-                                                    id="dkn-preview-ipk">0.00</td>
-                                                <td></td>
-                                            </tr>
+                                                <tr>
+                                                    <td colspan="3" class="text-right font-weight-bold">Total</td>
+                                                    <td class="text-center font-weight-bold" id="dkn-preview-total-sks">0
+                                                    </td>
+                                                    <td colspan="2" class="text-center font-weight-bold">IPK</td>
+                                                    <td class="text-center font-weight-bold" id="dkn-preview-ipk">0.00
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
                                             </tfoot>
                                         </table>
                                     </div>
@@ -714,8 +856,7 @@
                         <div id="section-tindakan-dekan" class="mt-4" style="display:none;">
                             <hr>
                             <h6 class="font-weight-bold mb-3">
-                                <i class="fas fa-gavel mr-2"
-                                   style="color:#4CAF50;"></i>Tindakan Dekan
+                                <i class="fas fa-gavel mr-2" style="color:#4CAF50;"></i>Tindakan Dekan
                             </h6>
                             <div class="row">
                                 <div class="col-md-12">
@@ -726,9 +867,8 @@
                                                 (Opsional untuk pengesahan, wajib untuk penolakan)
                                             </span>
                                         </label>
-                                        <textarea class="form-control" id="dekan-catatan"
-                                                  rows="3"
-                                                  placeholder="Tuliskan catatan atau alasan penolakan jika diperlukan..."></textarea>
+                                        <textarea class="form-control" id="dekan-catatan" rows="3"
+                                            placeholder="Tuliskan catatan atau alasan penolakan jika diperlukan..."></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -737,12 +877,10 @@
                     </div>{{-- end modal-detail-content --}}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sahkan d-none"
-                            id="btn-sahkan-dekan">
+                    <button type="button" class="btn btn-sahkan d-none" id="btn-sahkan-dekan">
                         <i class="fas fa-stamp mr-1"></i>Sahkan Transkrip
                     </button>
-                    <button type="button" class="btn btn-tolak d-none"
-                            id="btn-tolak-dekan">
+                    <button type="button" class="btn btn-tolak d-none" id="btn-tolak-dekan">
                         <i class="fas fa-times mr-1"></i>Tolak Pengajuan
                     </button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -757,8 +895,7 @@
     <div class="modal fade" id="modal-konfirmasi-sahkan" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
-                <div class="modal-header"
-                     style="background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);">
                     <h5 class="modal-title text-white">
                         <i class="fas fa-stamp mr-2"></i>Konfirmasi Pengesahan
                     </h5>
@@ -781,12 +918,10 @@
                     </p>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary btn-sm"
-                            data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
                         <i class="fas fa-times mr-1"></i>Batal
                     </button>
-                    <button type="button" class="btn btn-success btn-sm"
-                            id="btn-konfirmasi-sahkan">
+                    <button type="button" class="btn btn-success btn-sm" id="btn-konfirmasi-sahkan">
                         <i class="fas fa-stamp mr-1"></i>Ya, Sahkan
                     </button>
                 </div>
@@ -798,8 +933,7 @@
     <div class="modal fade" id="modal-konfirmasi-tolak-dekan" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
-                <div class="modal-header"
-                     style="background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);">
                     <h5 class="modal-title text-white">
                         <i class="fas fa-times-circle mr-2"></i>Konfirmasi Penolakan
                     </h5>
@@ -820,28 +954,24 @@
                         <label class="font-weight-bold text-danger small">
                             Alasan Penolakan <span class="text-danger">*</span>
                         </label>
-                        <textarea class="form-control form-control-sm"
-                                  id="alasan-tolak-dekan-final" rows="3"
-                                  placeholder="Tuliskan alasan penolakan..."></textarea>
+                        <textarea class="form-control form-control-sm" id="alasan-tolak-dekan-final" rows="3"
+                            placeholder="Tuliskan alasan penolakan..."></textarea>
                         <div class="invalid-feedback" id="alasan-tolak-dekan-error">
                             Alasan penolakan wajib diisi
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary btn-sm"
-                            data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
                         <i class="fas fa-times mr-1"></i>Batal
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm"
-                            id="btn-konfirmasi-tolak-dekan">
+                    <button type="button" class="btn btn-danger btn-sm" id="btn-konfirmasi-tolak-dekan">
                         <i class="fas fa-ban mr-1"></i>Ya, Tolak
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')

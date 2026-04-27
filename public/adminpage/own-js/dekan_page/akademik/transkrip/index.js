@@ -642,6 +642,26 @@ jQuery.transkripDekan = {
 
                 if (response && response.status === '1' && Array.isArray(response.data)) {
                     self.renderPreviewNilai(response.data);
+
+                    // Fallback IPK: gunakan hitungan preview jika detail belum mengandung IPK valid.
+                    var detailIpk = parseFloat(self.data.current_detail && self.data.current_detail.ipk);
+                    if (!isFinite(detailIpk) || detailIpk <= 0) {
+                        var totalSksPreview = 0;
+                        var totalBobotPreview = 0;
+
+                        response.data.forEach(function (mk) {
+                            var sks = parseInt(mk.sks || 0, 10);
+                            var bobot = parseFloat(mk.bobot || 0);
+                            if (isFinite(sks) && isFinite(bobot)) {
+                                totalSksPreview += sks;
+                                totalBobotPreview += (bobot * sks);
+                            }
+                        });
+
+                        var ipkPreview = totalSksPreview > 0 ? (totalBobotPreview / totalSksPreview) : 0;
+                        $('#dkn-ipk').text(ipkPreview.toFixed(2));
+                        // $('#dkn-predikat').text(ipkPreview > 0 ? self.getPredikat(ipkPreview) : '-');
+                    }
                 } else {
                     $('#dkn-preview-nilai').html(`
                         <tr>
@@ -696,8 +716,8 @@ jQuery.transkripDekan = {
         );
 
         var ipk = parseFloat(data.ipk || 0);
-        $('#dkn-ipk').text(ipk > 0 ? ipk.toFixed(2) : '0.00');
-        $('#dkn-predikat').text(ipk > 0 ? self.getPredikat(ipk) : '-');
+        $('#dkn-ipk').text(isFinite(ipk) && ipk > 0 ? ipk.toFixed(2) : '0.00');
+        // $('#dkn-predikat').text(ipk > 0 ? self.getPredikat(ipk) : '-');
 
         $('#dkn-nama-kaprodi').text(
             (!data.nama_kaprodi || data.nama_kaprodi === '-') ? '-' : data.nama_kaprodi
@@ -708,9 +728,8 @@ jQuery.transkripDekan = {
         );
 
         $('#dkn-keperluan').text(data.keperluan || '-');
-        $('#dkn-tgl-ajuan').text(data.tgl_pengajuan || '-');
-        $('#dkn-tgl-dekan').text(data.tgl_dekan || '-');
-        $('#dkn-tgl-selesai').text(data.tgl_selesai || '-');
+        var tglAjuan = data.tgl_pengajuan || data.tgl_created || self.getTanggalAjuanDariRiwayat(data.riwayat);
+        $('#dkn-tgl-ajuan').text(tglAjuan || '-');
 
         if (String(data.status) === '6' && data.alasan_tolak) {
             $('#dkn-alasan-tolak').text(data.alasan_tolak);
@@ -804,7 +823,7 @@ jQuery.transkripDekan = {
         $('#dkn-prodi').text('-');
         $('#dkn-angkatan').text('-');
         $('#dkn-ipk').text('0.00');
-        $('#dkn-predikat').text('-');
+        // $('#dkn-predikat').text('-');
 
         $('#dkn-nama-kaprodi').text('-');
         $('#dkn-tgl-kaprodi').text('-');
@@ -812,8 +831,6 @@ jQuery.transkripDekan = {
 
         $('#dkn-keperluan').text('-');
         $('#dkn-tgl-ajuan').text('-');
-        $('#dkn-tgl-dekan').text('-');
-        $('#dkn-tgl-selesai').text('-');
 
         $('#section-alasan-tolak').hide();
         $('#dkn-alasan-tolak').text('-');
@@ -1231,6 +1248,31 @@ jQuery.transkripDekan = {
         result.semester = semesterMap[semesterCode] || 'Ganjil';
 
         return result;
+    },
+
+    getTanggalAjuanDariRiwayat: function (riwayat) {
+        if (!Array.isArray(riwayat) || riwayat.length === 0) {
+            return '-';
+        }
+
+        var fallback = '-';
+
+        for (var i = 0; i < riwayat.length; i++) {
+            var item = riwayat[i] || {};
+            var tanggal = item.tgl_created || '-';
+            var status = String(item.status || '');
+            var keterangan = String(item.keterangan_status || '').toLowerCase();
+
+            if (fallback === '-' && tanggal !== '-') {
+                fallback = tanggal;
+            }
+
+            if (status === '2' || keterangan.indexOf('diajukan') !== -1) {
+                return tanggal;
+            }
+        }
+
+        return fallback;
     }
 };
 

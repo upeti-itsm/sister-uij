@@ -239,7 +239,7 @@ class TranskripController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
+            $idPengajuan = $request->id_pengajuan_induk ?? $request->id_riwayat_pengajuan_nilai;
             if (!$idPengajuan) {
                 return response()->json([
                     'status'     => '0',
@@ -261,6 +261,7 @@ class TranskripController extends Controller
             return response()->json([
                 'status' => '1',
                 'data'   => [
+                    'id_pengajuan_induk' => $detail->id_pengajuan_induk ?? $idPengajuan,
                     'id_riwayat_pengajuan_nilai'   => $detail->id_riwayat_pengajuan_nilai,
                     'nomor_pengajuan'   => $detail->nomor_pengajuan ?? '-',
                     'keperluan'      => $detail->keperluan,
@@ -420,8 +421,8 @@ class TranskripController extends Controller
                 ], 401);
             }
 
-            $idPengajuan = $request->id_riwayat_pengajuan_nilai;
-            if (!$idPengajuan) {
+            $idPengajuanInduk = $request->id_pengajuan_induk ?? $request->id_riwayat_pengajuan_nilai;
+            if (!$idPengajuanInduk) {
                 return response()->json([
                     'status'     => '0',
                     'keterangan' => 'ID pengajuan tidak valid'
@@ -429,7 +430,17 @@ class TranskripController extends Controller
             }
 
             // --- Validasi pengajuan milik mahasiswa ini & sudah disetujui ---
-            $detail = PengajuanTranskrip::get_detail($idPengajuan, $user->nim);
+            $detail = PengajuanTranskrip::get_detail($idPengajuanInduk);
+
+            // Jika request awal masih id_riwayat, ambil ulang memakai id_pengajuan_induk.
+            if ($detail && !empty($detail->id_pengajuan_induk ?? null)
+                && (string) $detail->id_pengajuan_induk !== (string) $idPengajuanInduk) {
+                $idPengajuanInduk = $detail->id_pengajuan_induk;
+                $detailByInduk = PengajuanTranskrip::get_detail($idPengajuanInduk);
+                if ($detailByInduk) {
+                    $detail = $detailByInduk;
+                }
+            }
 
             if (!$detail) {
                 return response()->json([
@@ -437,7 +448,14 @@ class TranskripController extends Controller
                     'keterangan' => 'Pengajuan tidak ditemukan'
                 ], 404);
             }
-// dd($detail);
+
+            if (isset($detail->nim) && (string) $detail->nim !== (string) $user->nim) {
+                return response()->json([
+                    'status'     => '0',
+                    'keterangan' => 'Pengajuan tidak ditemukan'
+                ], 404);
+            }
+
             // Validasi jika status belum disetujui
             if ($detail->keterangan_status !== 'Disetujui' && $detail->status !== '5') {
                 return response()->json([
@@ -479,21 +497,21 @@ class TranskripController extends Controller
             // --- QR Code Section ---
 
             // 1. QR Code Prodi
-            $qrIdProdi = $detail->id_tandatangan_dokumen_kaprodi ?? $idPengajuan;
+            $qrIdProdi = $detail->id_tandatangan_dokumen_kaprodi ?? $idPengajuanInduk;
             $qrCodeProdi = base64_encode(
                 QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
                     ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdProdi)]))
             );
 
             // 2. QR Code Dekan
-            $qrIdDekan = $detail->id_tandatangan_dokumen_dekan ?? $idPengajuan;
+            $qrIdDekan = $detail->id_tandatangan_dokumen_dekan ?? $idPengajuanInduk;
             $qrCodeDekan = base64_encode(
                 QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
                     ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDekan)]))
             );
 
             // 3. QR Code Dokumen
-            $qrIdDoc = $detail->nomor_dokumen ?? $idPengajuan;
+            $qrIdDoc = $detail->nomor_dokumen ?? $idPengajuanInduk;
             $qrCodeDoc = base64_encode(
                 QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
                     ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDoc)]))
@@ -502,7 +520,7 @@ class TranskripController extends Controller
             // 4. QR Default (Sesuai dengan pdf.blade.php UIJ yang sekarang)
             $qrCode = base64_encode(
                 QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
-                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($idPengajuan)]))
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($idPengajuanInduk)]))
             );
 
             // --- Logo ---

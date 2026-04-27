@@ -589,15 +589,6 @@
                                     <td width="28%" id="detail-tgl-ajuan">-</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Tgl. Kaprodi</strong></td>
-                                    <td>:</td>
-                                    <td id="detail-tgl-kaprodi">-</td>
-
-                                    <td><strong>Tgl. Dekan</strong></td>
-                                    <td>:</td>
-                                    <td id="detail-tgl-dekan">-</td>
-                                </tr>
-                                <tr>
                                     <td><strong>Tgl. Selesai</strong></td>
                                     <td>:</td>
                                     <td id="detail-tgl-selesai">-</td>
