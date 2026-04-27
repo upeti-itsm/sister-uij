@@ -359,6 +359,9 @@ class KHSController extends Controller
 
             $nim = $user->nim;
             $tahun_akademik = $request->tahun_akademik . $request->semester ?? null;
+            $id_tandatangan = $request->id_tandatangan ?? null;
+            $nama_wadek = $request->nama_wadek ?? null;
+            $nidn_wadek = $request->nidn_wadek ?? null;
 
             $khsData = KHS::get_daftar_nilai($nim, $tahun_akademik);
 
@@ -381,8 +384,8 @@ class KHSController extends Controller
                 'sks_semester'    => $first->sks_semester ?? 0,
                 'sks_total'       => $first->sks_total ?? 0,
                 'beban_maks_sks'  => $first->beban_maks_sks ?? 0,
-                'nama_wakil_dekan' => $first->nama_wakil_dekan ?? '-',
-                'nidn_wakil_dekan' => $first->nidn_wakil_dekan ?? '-',
+                'nama_wakil_dekan' => $nama_wadek ?? $first->nama_wakil_dekan ?? '-',
+                'nidn_wakil_dekan' => $nidn_wadek ?? $first->nidn_wakil_dekan ?? '-',
                 'jumlah_matakuliah' => $first->jumlah_matakuliah ?? 0,
             ];
 
@@ -406,7 +409,7 @@ class KHSController extends Controller
                     ->size(150)
                     ->margin(1)
                     ->errorCorrection('H')
-                    ->generate('Halo')
+                   ->generate(route('frontpage.detail_qr', ['id' => base64_encode($id_tandatangan) ]))
             );
 
             $logoPath = public_path('image/uij.png');

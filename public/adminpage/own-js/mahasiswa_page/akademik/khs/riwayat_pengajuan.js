@@ -126,7 +126,7 @@ jQuery.modul = {
                         }
 
                         if (status === "2") {
-                            buttons += "<button class='btn btn-success btn-sm mt-1 btn-download-lhs' data-tahun='" + tahun + "' data-id='" + id + "'>" +
+                            buttons += "<button class='btn btn-success btn-sm mt-1 btn-download-lhs' data-id_tandatangan='" + data.id_tandatangan_dokumen_wakil_dekan + "' data-nama_wadek='" + data.nama_wakil_dekan + "' data-nidn_wadek='" + data.nidn_wakil_dekan + "' data-tahun='" + tahun + "' data-id='" + id + "'>" +
                                 "<i class='fa fa-download mr-2'></i> Download</button>";
                         }
 
@@ -287,45 +287,62 @@ jQuery.modul = {
         $('#table-riwayat-pengajuan').on('click', 'button.btn-download-lhs', function () {
             var id = $(this).data("id");
             var tahun = $(this).data("tahun");
+            var id_tandatangan = $(this).data("id_tandatangan");
+            var nama_wadek = $(this).data("nama_wadek");
+            var nidn_wadek = $(this).data("nidn_wadek");
+            var $button = $(this);
+            var originalHtml = $button.html();
 
-            var $button = $('#btn-download-lhs');
-            $button.prop('disabled', true).html('<i class="fa fa-spinner fa-spin mr-2"></i> Mengunduh...');
+            $button.prop('disabled', true)
+                .html('<i class="fa fa-spinner fa-spin mr-2"></i> Mengunduh...');
 
             var form = $('<form>', {
-                'method': 'POST',
-                'action': '/mhs/khs/download'
+                method: 'POST',
+                action: '/mhs/khs/download'
             });
 
             form.append($('<input>', {
-                'type': 'hidden',
-                'name': '_token',
-                'value': $('meta[name="csrf-token"]').attr('content')
+                type: 'hidden',
+                name: '_token',
+                value: $('meta[name="csrf-token"]').attr('content')
             }));
 
             form.append($('<input>', {
-                'type': 'hidden',
-                'name': 'id_riwayat_pengajuan_khs',
-                'value': id
+                type: 'hidden',
+                name: 'id_riwayat_pengajuan_khs',
+                value: id
             }));
 
             form.append($('<input>', {
-                'type': 'hidden',
-                'name': 'tahun_akademik',
-                'value': tahun
+                type: 'hidden',
+                name: 'tahun_akademik',
+                value: tahun
+            }));
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'id_tandatangan',
+                value: id_tandatangan
+            }));
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'nama_wakil_dekan',
+                value: nama_wadek
+            }));
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'nidn_wakil_dekan',
+                value: nidn_wadek
             }));
 
             $('body').append(form);
-            form.submit();
+            form.trigger('submit');
             form.remove();
 
             setTimeout(function () {
-                $btn.prop('disabled', false).html('<i class="fas fa-download mr-2"></i>Download KHS');
-
-                $.alert({
-                    title: 'Download Dimulai',
-                    content: 'File KHS sedang dipersiapkan. Jika download tidak dimulai, silakan klik tombol download lagi.',
-                    type: 'green'
-                });
+                $button.prop('disabled', false).html(originalHtml);
             }, 2000);
         });
 
