@@ -546,12 +546,17 @@
                                                 Absensi Mengajar</a>
                                         </li>
                                     @endif
-                                    @if (array_key_exists('Sinkronisasi Jadwal Kuliah dengan Siakad', $modul) ||
-                                            array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul) ||
-                                            array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
-                                            array_key_exists('Mengelola Kartu Rencana Studi', $modul) ||
-                                            array_key_exists('Hasil Studi Mahasiswa', $modul) ||
-                                            array_key_exists('Pengajuan Transkrip Nilai', $modul))
+                                    @if (
+                                                \Illuminate\Support\Facades\Session::get('peran')['aktif'] != 71 &&
+                                                (
+                                                    array_key_exists('Sinkronisasi Jadwal Kuliah dengan Siakad', $modul) ||
+                                                    array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul) ||
+                                                    array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
+                                                    array_key_exists('Mengelola Kartu Rencana Studi', $modul) ||
+                                                    array_key_exists('Hasil Studi Mahasiswa', $modul) ||
+                                                    array_key_exists('Pengajuan Transkrip Nilai', $modul)
+                                                )
+                                            )
                                         <li @if (
                                             $menu == 'Sinkronisasi Jadwal Kuliah dengan Siakad' ||
                                                 $menu == 'Sinkronisasi Tahun Akademik dengan Siakad' ||
