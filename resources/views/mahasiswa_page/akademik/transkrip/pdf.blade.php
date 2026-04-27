@@ -23,9 +23,18 @@
             width: 100%;
             border-collapse: collapse;
         }
-        .kop-logo td {
+        .kop-table td {
             vertical-align: middle;
             padding: 0;
+        }
+        .kop-logo-col {
+            width: 84px;
+        }
+        .kop-spacer-col {
+            width: 84px;
+        }
+        .kop-center {
+            text-align: center;
         }
         .kop-yayasan {
             font-size: 11pt;
@@ -101,6 +110,8 @@
             /* Rekap berada di bagian kanan-tengah, sesuai referensi left~25.91 dari 51em */
             /* 25.91/51 ≈ 50.8% dari kiri */
             padding-left: 50%;
+            margin-top: 4px;
+            margin-bottom: 14px;
         }
         .rekap-table {
             border-collapse: collapse;
@@ -115,17 +126,63 @@
         .ttd-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 8px;
+            margin-top: 0;
+            table-layout: fixed;
         }
         .ttd-table td {
             font-size: 7.5pt;
             vertical-align: top;
             width: 50%;
-            padding: 0 5px;
+            padding: 0 12px;
         }
-        .ttd-spacer {
+        .ttd-head {
             display: block;
-            height: 42px;
+            min-height: 32px;
+        }
+        .ttd-head .ttd-line {
+            margin-bottom: 1px;
+        }
+        .ttd-line {
+            display: block;
+            line-height: 1.25;
+        }
+        .ttd-qr-wrap {
+            display: block;
+            height: 68px;
+            margin: 2px 0 5px 0;
+            overflow: hidden;
+        }
+        .qr-sign {
+            width: 66px;
+            height: 66px;
+            display: block;
+            margin: 0;
+        }
+        .ttd-empty {
+            display: block;
+            height: 66px;
+        }
+        .ttd-name {
+            display: block;
+            font-size: 8.5pt;
+            font-weight: bold;
+            text-decoration: underline;
+            line-height: 1.2;
+            margin-top: 1px;
+        }
+        .ttd-nidn {
+            display: block;
+            margin-top: 2px;
+        }
+        .ttd-date-wrap {
+            width: 50%;
+            margin-left: 50%;
+            text-align: left;
+            font-size: 7.5pt;
+            line-height: 1.2;
+            padding-left: 12px;
+            margin-top: 2px;
+            margin-bottom: 2px;
         }
     </style>
 </head>
@@ -134,12 +191,12 @@
 {{-- ==================== KOP ==================== --}}
 <table class="kop-table">
     <tr>
-        <td style="width:72px; padding:0; vertical-align:middle;">
+        <td class="kop-logo-col">
             @if($logo)
                 <img src="data:image/png;base64,{{ $logo }}" style="width:68px; height:auto; display:block;">
             @endif
         </td>
-        <td style="padding:0; vertical-align:middle;">
+        <td class="kop-center">
             <div class="kop-yayasan">YAYASAN PENDIDIKAN NAHDLATUL ULAMA JEMBER</div>
             <div class="kop-univ">UNIVERSITAS ISLAM JEMBER</div>
             <div class="kop-alamat">
@@ -148,6 +205,7 @@
                 Jember (68133)
             </div>
         </td>
+        <td class="kop-spacer-col"></td>
     </tr>
 </table>
 
@@ -157,14 +215,6 @@
 <div class="judul">TRANSKRIP</div>
 
 {{-- ==================== INFO MAHASISWA ==================== --}}
-{{--
-  Referensi layout:
-  Baris 1: FAKULTAS (L=2.08)  : xxx  |  NIM (L=31.89)         : xxx
-  Baris 2: PROGRAM STUDI       : xxx  |  TAHUN MASUK            : xxx
-  Baris 3: NAMA                : xxx  (full width)
-  Baris 4: TEMPAT, TANGGAL LAHIR : xxx (full width)
-  Proporsi: kiri ~62%, kanan ~38%
---}}
 <table class="info-table">
     <tr>
         <td style="width:18%;">FAKULTAS</td>
@@ -319,20 +369,42 @@
                    nama top=57.15, NIDN top=58.05
   Jarak tanda tangan = 57.15 - 52.65 = 4.5em ≈ 4-5 baris ≈ spasi tanda tangan
 --}}
+@php
+    $qrTtdDekan = $qr_code_dekan ?? ($qr_code ?? null);
+    $qrTtdKaprodi = $qr_code_prodi ?? ($qr_code ?? null);
+@endphp
+<div class="ttd-date-wrap">Jember, {{ $tanggal_cetak }}</div>
 <table class="ttd-table">
     <tr>
-        <td style="text-align:left; padding-left:10px;">
-            Dekan,<br>
-            <span class="ttd-spacer"></span>
-            <strong><u>{{ strtoupper($pengajuan->nama_dekan ?? '-') }}</u></strong><br>
-            NIDN. {{ $pengajuan->nidn_dekan ?? '-' }}
+        <td style="text-align:left;">
+            <span class="ttd-head">
+                <span class="ttd-line">Dekan,</span>
+                <span class="ttd-line">&nbsp;</span>
+            </span>
+            <div class="ttd-qr-wrap">
+                @if(!empty($qrTtdDekan))
+                    <img class="qr-sign" src="data:image/svg+xml;base64,{{ $qrTtdDekan }}" alt="QR TTD Dekan">
+                @else
+                    <span class="ttd-empty"></span>
+                @endif
+            </div>
+            <span class="ttd-name">{{ strtoupper($pengajuan->nama_dekan ?? '-') }}</span>
+            <span class="ttd-nidn">NIDN. {{ $pengajuan->nidn_dekan ?? '-' }}</span>
         </td>
-        <td style="text-align:left; padding-left:10px;">
-            Jember, {{ $tanggal_cetak }}<br>
-            Ketua Program Studi,<br>
-            <span class="ttd-spacer"></span>
-            <strong><u>{{ strtoupper($pengajuan->nama_kaprodi ?? '-') }}</u></strong><br>
-            NIDN. {{ $pengajuan->nidn_kaprodi ?? '-' }}
+        <td style="text-align:left;">
+            <span class="ttd-head">
+                <span class="ttd-line">Ketua Program Studi,</span>
+                <span class="ttd-line">&nbsp;</span>
+            </span>
+            <div class="ttd-qr-wrap">
+                @if(!empty($qrTtdKaprodi))
+                    <img class="qr-sign" src="data:image/svg+xml;base64,{{ $qrTtdKaprodi }}" alt="QR TTD Kaprodi">
+                @else
+                    <span class="ttd-empty"></span>
+                @endif
+            </div>
+            <span class="ttd-name">{{ strtoupper($pengajuan->nama_kaprodi ?? '-') }}</span>
+            <span class="ttd-nidn">NIDN. {{ $pengajuan->nidn_kaprodi ?? '-' }}</span>
         </td>
     </tr>
 </table>

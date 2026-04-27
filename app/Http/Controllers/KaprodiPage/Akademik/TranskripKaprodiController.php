@@ -197,6 +197,16 @@ class TranskripKaprodiController extends Controller
                 ], 404);
             }
 
+            $ipk = floatval($detail->ipk ?? 0);
+            if ($ipk <= 0 && !empty($detail->nim)) {
+                try {
+                    $infoMhs = PengajuanTranskrip::get_info_mahasiswa($detail->nim);
+                    $ipk = floatval($infoMhs->ipk ?? 0);
+                } catch (\Exception $e) {
+                    $ipk = 0;
+                }
+            }
+
             return response()->json([
                 'status' => '1',
                 'data'   => [
@@ -205,7 +215,7 @@ class TranskripKaprodiController extends Controller
                     'nim'            => $detail->nim,
                     'nama_mahasiswa' => $detail->nama_mahasiswa  ?? '-',
                     'nama_prodi'     => $detail->nama_prodi      ?? '-',
-                    'ipk'            => $detail->ipk             ?? 0.00,
+                    'ipk'            => $ipk,
                     'keperluan'      => $detail->keperluan,
                     'status'         => $detail->status,
                     'alasan_tolak'   => $detail->alasan_tolak    ?? null,

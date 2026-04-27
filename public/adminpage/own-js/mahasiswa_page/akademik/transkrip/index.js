@@ -253,7 +253,7 @@ jQuery.transkrip = {
                             if (status === '5') {
                                 btnDownload = `
                                     <button class="btn btn-success btn-sm btn-download-row ml-1"
-                                            data-id="${id}"
+                                            data-id="${id_pengajuan_induk || id}"
                                             title="Download Transkrip">
                                         <i class="fas fa-download"></i>
                                     </button>`;
@@ -398,7 +398,7 @@ jQuery.transkrip = {
         // --- Tombol aksi di footer modal detail ---
         $('#btn-download-transkrip').off('click').on('click', function () {
             if (self.data.current_detail) {
-                self.downloadTranskrip(self.data.current_detail.id_riwayat_pengajuan_nilai);
+                self.downloadTranskrip(self.data.current_detail.id_pengajuan_induk || self.data.current_detail.id_riwayat_pengajuan_nilai);
             }
         });
 
@@ -528,7 +528,7 @@ jQuery.transkrip = {
             method: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
-                id_riwayat_pengajuan_nilai: id
+                id_pengajuan_induk: id
             },
             success: function (response) {
                 if (response && response.status === '1') {
@@ -540,8 +540,9 @@ jQuery.transkrip = {
                             detail.riwayat = [];
                         }
                     }
-                    self.data.current_detail = response.data;
-                    self.renderModalDetail(response.data);
+                    detail.tgl_selesai = self.getTanggalSelesaiDariRiwayat(detail.riwayat || []);
+                    self.data.current_detail = detail;
+                    self.renderModalDetail(detail);
                     $('#modal-detail-pengajuan').modal('show');
                 } else {
                     $.alert({
@@ -936,7 +937,7 @@ jQuery.transkrip = {
             value: $('meta[name="csrf-token"]').attr('content')
         }));
         form.append($('<input>', {
-            type: 'hidden', name: 'id_riwayat_pengajuan_nilai',
+            type: 'hidden', name: 'id_pengajuan_induk',
             value: id
         }));
 
@@ -968,9 +969,9 @@ jQuery.transkrip = {
 
         $('#detail-keperluan').text(data.keperluan || '-');
         $('#detail-tgl-ajuan').text(data.tgl_pengajuan || '-');
-        $('#detail-tgl-kaprodi').text(data.tgl_kaprodi || '-');
-        $('#detail-tgl-dekan').text(data.tgl_dekan || '-');
-        $('#detail-tgl-selesai').text(data.tgl_selesai || '-');
+
+        var tglSelesaiRiwayat = self.getTanggalSelesaiDariRiwayat(data.riwayat || []);
+        $('#detail-tgl-selesai').text(tglSelesaiRiwayat !== '-' ? tglSelesaiRiwayat : (data.tgl_selesai || '-'));
 
         // Alasan tolak
         if (data.status === '6' && data.alasan_tolak) {
@@ -995,6 +996,31 @@ jQuery.transkrip = {
 
         // Disetujui (5): tampilkan Download
         $('#btn-download-transkrip').toggleClass('d-none', status !== '5');
+    },
+
+    getTanggalSelesaiDariRiwayat: function (riwayat) {
+        if (!Array.isArray(riwayat) || riwayat.length === 0) {
+            return '-';
+        }
+
+        var fallback = '-';
+
+        for (var i = riwayat.length - 1; i >= 0; i--) {
+            var item = riwayat[i] || {};
+            var tanggal = item.tgl_created || '-';
+            var status = String(item.status || '');
+            var keterangan = String(item.keterangan_status || '').toLowerCase();
+
+            if (fallback === '-' && tanggal !== '-') {
+                fallback = tanggal;
+            }
+
+            if (status === '5' || keterangan.indexOf('disetujui') !== -1 || keterangan.indexOf('selesai') !== -1) {
+                return tanggal;
+            }
+        }
+
+        return fallback;
     },
 
     // ============================================================

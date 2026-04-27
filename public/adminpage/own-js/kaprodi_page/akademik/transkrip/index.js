@@ -503,11 +503,9 @@ jQuery.transkripKaprodi = {
         $('#kpd-nim').text('-');
         $('#kpd-nama').text('-');
         $('#kpd-prodi').text('-');
-        $('#kpd-ipk').text('-');
+        $('#kpd-ipk').text('0.00');
         $('#kpd-keperluan').text('-');
-        $('#kpd-email-tujuan').text('-');
         $('#kpd-tgl-ajuan').text('-');
-        $('#kpd-tgl-updated').text('-');
         $('#kpd-catatan-mhs').text('-');
         $('#kpd-step-indicator').html('');
         $('#kpd-timeline').html(
@@ -554,6 +552,25 @@ jQuery.transkripKaprodi = {
             success: function (response) {
                 if (response && response.status === '1' && Array.isArray(response.data)) {
                     self.renderPreviewNilai(response.data);
+
+                    // Fallback IPK: gunakan hitungan preview jika detail belum mengandung IPK valid.
+                    var detailIpk = parseFloat(self.data.current_detail && self.data.current_detail.ipk);
+                    if (!isFinite(detailIpk) || detailIpk <= 0) {
+                        var totalSksPreview = 0;
+                        var totalBobotPreview = 0;
+
+                        response.data.forEach(function (mk) {
+                            var sks = parseInt(mk.sks || 0, 10);
+                            var bobot = parseFloat(mk.bobot || 0);
+                            if (isFinite(sks) && isFinite(bobot)) {
+                                totalSksPreview += sks;
+                                totalBobotPreview += (bobot * sks);
+                            }
+                        });
+
+                        var ipkPreview = totalSksPreview > 0 ? (totalBobotPreview / totalSksPreview) : 0;
+                        $('#kpd-ipk').text(ipkPreview.toFixed(2));
+                    }
                 } else {
                     $('#kpd-preview-nilai').html(
                         '<tr><td colspan="8" class="text-center text-muted py-3">Tidak ada data nilai</td></tr>'
@@ -595,13 +612,11 @@ jQuery.transkripKaprodi = {
         $('#kpd-nim').text(data.nim || '-');
         $('#kpd-nama').text(data.nama_mahasiswa || '-');
         $('#kpd-prodi').text(data.nama_prodi || '-');
-        $('#kpd-ipk').text(data.ipk ? parseFloat(data.ipk).toFixed(2) : '-');
+        var ipk = parseFloat(data.ipk || 0);
+        $('#kpd-ipk').text(isFinite(ipk) && ipk > 0 ? ipk.toFixed(2) : '0.00');
 
         // Detail pengajuan
         $('#kpd-keperluan').text(data.keperluan || '-');
-        $('#kpd-email-tujuan').text(data.email_tujuan || '-');
-        $('#kpd-tgl-ajuan').text(data.tgl_created || '-');
-        $('#kpd-tgl-updated').text(data.tgl_updated || '-');
         $('#kpd-catatan-mhs').text(data.catatan || '-');
 
         // Parse riwayat — bisa string JSON atau array
@@ -613,6 +628,9 @@ jQuery.transkripKaprodi = {
                 riwayat = data.riwayat;
             }
         }
+
+        var tglAjuan = data.tgl_pengajuan || data.tgl_created || self.getTanggalAjuanDariRiwayat(riwayat);
+        $('#kpd-tgl-ajuan').text(tglAjuan || '-');
 
         // Step indicator & timeline
         $('#kpd-step-indicator').html(self.renderStepIndicator(data.status));
@@ -983,7 +1001,7 @@ jQuery.transkripKaprodi = {
         riwayat.forEach(function (item) {
             var clsMap = {
                 '1': 'active',
-                '2': 'active',
+                '2': 'success',
                 '3': 'warning',
                 '4': 'warning',
                 '5': 'success',
@@ -1031,6 +1049,31 @@ jQuery.transkripKaprodi = {
         result.semester = semesterMap[semesterCode] || 'Ganjil';
 
         return result;
+    },
+
+    getTanggalAjuanDariRiwayat: function (riwayat) {
+        if (!Array.isArray(riwayat) || riwayat.length === 0) {
+            return '-';
+        }
+
+        var fallback = '-';
+
+        for (var i = 0; i < riwayat.length; i++) {
+            var item = riwayat[i] || {};
+            var tanggal = item.tgl_created || '-';
+            var status = String(item.status || '');
+            var keterangan = String(item.keterangan_status || '').toLowerCase();
+
+            if (fallback === '-' && tanggal !== '-') {
+                fallback = tanggal;
+            }
+
+            if (status === '2' || keterangan.indexOf('diajukan') !== -1) {
+                return tanggal;
+            }
+        }
+
+        return fallback;
     }
 };
 
