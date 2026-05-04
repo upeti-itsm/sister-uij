@@ -84,8 +84,12 @@ class HomeController extends Controller
             $rekap = RekapitulasiAbsensiMengajarDosen::addAbsensi($request->username, $request->id_matakuliah, $request->nama_mata_kuliah, $request->keterangan, $request->pertemuan_ke, $request->tgl_pelaksanaan, $request->jam_ke, $request->jml_mahasiswa_hadir, $request->jml_mahasiswa_alpha, $file_name_bukti_ajar, $file_name_bukti_absensi, $request->materi_pembelajaran);
             if ($rekap->status == 1) {
                 $destinationPath = 'files/absensi_mengajar_dosen/';
-                $bukti_ajar->move($destinationPath, $file_name_bukti_ajar);
-                $bukti_absensi->move($destinationPath, $file_name_bukti_absensi);
+
+                // $bukti_ajar->move($destinationPath, $file_name_bukti_ajar);
+                // $bukti_absensi->move($destinationPath, $file_name_bukti_absensi);
+
+                $bukti_ajar->storeAs($destinationPath, $file_name_bukti_ajar, 'public');
+                $bukti_absensi->storeAs($destinationPath, $file_name_bukti_absensi, 'public');
 
                 $dosen = Dosen::get_daftar_dosen($request->username)[0];
                 $rekap = RekapitulasiAbsensiMengajarDosen::getRekapitulasiByUsername($request->username, $request->id_matakuliah);

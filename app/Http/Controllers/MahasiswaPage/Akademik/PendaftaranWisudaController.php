@@ -26,7 +26,7 @@ class PendaftaranWisudaController extends Controller
             $jadwal_wisuda = JadwalWisuda::get_daftar_jadwal_wisuda("all", 0, 1)[0];
             $cek = JadwalWisuda::check_mahasiswa(Session::get('user')->id_mhs);
             if ($jadwal_wisuda->kuota <= $jadwal_wisuda->peserta && $cek->status != 1) {
-                Session::flash('failed_message', "Mohon Maaf, Kuota Wisuda ".$jadwal_wisuda->tgl_pelaksanaan_." Sudah Penuh - Ticket Sold Out and Have a Nice Day :)");
+                Session::flash('failed_message', "Mohon Maaf, Kuota Wisuda " . $jadwal_wisuda->tgl_pelaksanaan_ . " Sudah Penuh - Ticket Sold Out and Have a Nice Day :)");
                 return redirect()->back();
             }
             $dosen = Dosen::get_dosen();
@@ -73,7 +73,9 @@ class PendaftaranWisudaController extends Controller
         $pendaftar = PendaftarWisuda::add_pengajuan(Session::get('user')->id_mhs, $file_name, $request->dpu, $request->dpa, $request->kesan_pesan);
         if ($pendaftar->status == 1) {
             $destinationPath = 'files/dokumen_pendukung_wisuda/' . Session::get('user')->nim . '/';
-            $dok->move($destinationPath, $file_name);
+            // $dok->move($destinationPath, $file_name);
+            $dok->storeAs($destinationPath, $file_name, 'public');
+
             Session::flash('success_message', "Berhasil Melakukan Pendaftaran Wisuda");
             return redirect('/mhs/pendaftaran-wisuda');
         } else {

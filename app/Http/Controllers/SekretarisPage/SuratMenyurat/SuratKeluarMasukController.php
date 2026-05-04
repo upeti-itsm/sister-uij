@@ -8,6 +8,7 @@ use App\Models\Organisasi\SuratKeluarMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 
 class SuratKeluarMasukController extends Controller
@@ -56,9 +57,12 @@ class SuratKeluarMasukController extends Controller
     public function insert_surat_keluar(Request $request)
     {
         $request->validate([
-            'nomor' => 'required', 'tgl' => 'required',
-            'perihal' => 'required', 'kode' => 'required',
-            'path' => 'required|max:5000', 'penerima' => 'required',
+            'nomor' => 'required',
+            'tgl' => 'required',
+            'perihal' => 'required',
+            'kode' => 'required',
+            'path' => 'required|max:5000',
+            'penerima' => 'required',
         ], [
             'nomor.required' => 'Pastikan Nomor Surat Terisi',
             'tgl.required' => 'Pastikan Tanggal Surat Terisi',
@@ -77,7 +81,8 @@ class SuratKeluarMasukController extends Controller
             $surat_keluar = SuratKeluarMasuk::insert_surat_keluar($request->nomor, $request->tgl, $request->perihal, $request->kode, 'files/arsip_surat_menyurat/surat_keluar_masuk/surat_keluar/' . $file_name, $request->penerima, '00000000-0000-0000-0000-000000000000', $request->pilihan_akses);
         if ($surat_keluar->status == 1) {
             $destinationPath = 'files/arsip_surat_menyurat/surat_keluar_masuk/surat_keluar/';
-            $dok->move($destinationPath, $file_name);
+            // $dok->move($destinationPath, $file_name);
+            $dok->storeAs($destinationPath, $file_name, 'public');
             Session::flash('success_message', $surat_keluar->keterangan);
             return redirect()->back();
         } else {
@@ -89,9 +94,14 @@ class SuratKeluarMasukController extends Controller
     public function insert_surat_masuk(Request $request)
     {
         $request->validate([
-            'nomor' => 'required', 'tgl_surat' => 'required', 'nomor_berkas' => 'required',
-            'tgl_diterima' => 'required', 'perihal' => 'required', 'kode' => 'required',
-            'path' => 'required|max:5000', 'pengirim' => 'required',
+            'nomor' => 'required',
+            'tgl_surat' => 'required',
+            'nomor_berkas' => 'required',
+            'tgl_diterima' => 'required',
+            'perihal' => 'required',
+            'kode' => 'required',
+            'path' => 'required|max:5000',
+            'pengirim' => 'required',
         ], [
             'nomor.required' => 'Pastikan Nomor Surat Terisi',
             'nomor_berkas.required' => 'Pastikan Nomor Berkas Terisi',
@@ -111,7 +121,8 @@ class SuratKeluarMasukController extends Controller
             $surat_masuk = SuratKeluarMasuk::insert_surat_masuk($request->nomor, $request->tgl_surat, $request->tgl_diterima, $request->perihal, $request->kode, 'files/arsip_surat_menyurat/surat_keluar_masuk/surat_masuk/' . $file_name, $request->pengirim, $request->nomor_berkas, '00000000-0000-0000-0000-000000000000', $request->pilihan_akses);
         if ($surat_masuk->status == 1) {
             $destinationPath = 'files/arsip_surat_menyurat/surat_keluar_masuk/surat_masuk/';
-            $dok->move($destinationPath, $file_name);
+            // $dok->move($destinationPath, $file_name);
+            $dok->storeAs($destinationPath, $file_name, 'public');
             Session::flash('success_message', $surat_masuk->keterangan);
             return redirect(route('sekretaris.surat_menyurat.surat_keluar_masuk.index', ['jenis_surat' => 'SM']));
         } else {
@@ -127,8 +138,11 @@ class SuratKeluarMasukController extends Controller
         ]);
         $data = SuratKeluarMasuk::delete_surat_keluar($request->id_surat);
         if ($data->status == 1)
-            if (File::exists(public_path($data->path_surat_keluar))) {
-                File::delete(public_path($data->path_surat_keluar));
+            // if (File::exists(public_path($data->path_surat_keluar))) {
+            //     File::delete(public_path($data->path_surat_keluar));
+            // }
+            if (Storage::disk('public')->exists($data->path_surat_keluar)) {
+                Storage::disk('public')->delete($data->path_surat_keluar);
             }
         return response()->json($data, 200);
     }
@@ -140,8 +154,11 @@ class SuratKeluarMasukController extends Controller
         ]);
         $data = SuratKeluarMasuk::delete_surat_masuk($request->id_surat);
         if ($data->status == 1)
-            if (File::exists(public_path($data->path_surat_masuk))) {
-                File::delete(public_path($data->path_surat_masuk));
+            // if (File::exists(public_path($data->path_surat_masuk))) {
+            //     File::delete(public_path($data->path_surat_masuk));
+            // }
+            if (Storage::disk('public')->exists($data->path_surat_masuk)) {
+                Storage::disk('public')->delete($data->path_surat_masuk);
             }
         return response()->json($data, 200);
     }

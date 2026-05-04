@@ -8,6 +8,7 @@ use App\Models\Kuesioner\RekapitulasiKepuasanMahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class SKPIController extends Controller
 {
@@ -63,16 +64,27 @@ class SKPIController extends Controller
         if (isset($request->dok_pendukung)) {
             $file_name_pend = date("d-m-Y_h-m-s", $t) . '_dok_pendukung.' . $dok_pend->getClientOriginalExtension();
         }
+
+        // if (sizeof($old_kp) > 0) {
+        //     File::delete('files/dokumen_skpi/' . Session::get('user')->nim . '/' . $old_kp[0]->path_dokumen_kartu_prestasi);
+        //     File::delete('files/dokumen_skpi/' . Session::get('user')->nim . '/' . $old_kp[0]->path_dokumen_pendukung_skpi);
+        // }
+
         if (sizeof($old_kp) > 0) {
-            File::delete('files/dokumen_skpi/' . Session::get('user')->nim . '/' . $old_kp[0]->path_dokumen_kartu_prestasi);
-            File::delete('files/dokumen_skpi/' . Session::get('user')->nim . '/' . $old_kp[0]->path_dokumen_pendukung_skpi);
+            Storage::disk('public')->delete('files/dokumen_skpi/' . Session::get('user')->nim . '/' . $old_kp[0]->path_dokumen_kartu_prestasi);
+            Storage::disk('public')->delete('files/dokumen_skpi/' . Session::get('user')->nim . '/' . $old_kp[0]->path_dokumen_pendukung_skpi);
         }
+
         $data = DokumenSKPI::insup_dokumen_skpi(Session::get('user')->id_mhs, $file_name_kp, $file_name_pend);
         if ($data->status == 1) {
             $destinationPath = 'files/dokumen_skpi/' . Session::get('user')->nim . '/';
-            $dok_kp->move($destinationPath, $file_name_kp);
+            // $dok_kp->move($destinationPath, $file_name_kp);
+            $dok_kp->storeAs($destinationPath, $file_name_kp, 'public');
+
             if (isset($request->dok_pendukung))
-                $dok_pend->move($destinationPath, $file_name_pend);
+                // $dok_pend->move($destinationPath, $file_name_pend);
+                $dok_pend->storeAs($destinationPath, $file_name_pend, 'public');
+
             Session::flash('success_message', "Berhasil Upload SKPI");
             return redirect(route('mahasiswa.akademik.skpi.index'));
         } else {

@@ -9,16 +9,19 @@ use App\Models\Referensi\Agama;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class DataDiriController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $menu = "Melihat Data Diri";
         $karyawan = Karyawan::get_detail_karyawan_by_id_personal(Session::get('user')->id_personal);
         return view('karyawan_page.data_kepegawaian.data_diri', compact('menu', 'karyawan'));
     }
 
-    public function ubah_data_diri(){
+    public function ubah_data_diri()
+    {
         $menu = "Mengubah Data Diri";
         $karyawan = Karyawan::get_detail_karyawan_by_id_personal(Session::get('user')->id_personal);
         $agama = Agama::list_agama();
@@ -38,9 +41,14 @@ class DataDiriController extends Controller
         $file = $request->file('file');
         $file_name = 'photo_profile_' . date("Y_m_d_h_m_s", $t) . '.' . $file->getClientOriginalExtension();
         $dokumen = Session::get('karyawan');
-        if (!empty($dokumen)) {
-            File::delete('files/profil_karyawan/' . Session::get('user')->id_personal . '/' . $dokumen->path_photo);
+        // if (!empty($dokumen)) {
+        //     File::delete('files/profil_karyawan/' . Session::get('user')->id_personal . '/' . $dokumen->path_photo);
+        // }
+
+        if (!empty($dokumen->path_photo)) {
+            Storage::disk('public')->delete('files/profil_karyawan/' . Session::get('user')->id_personal . '/' . $dokumen->path_photo);
         }
+
         $photo_profile = Karyawan::update_path_photo(Session::get('user')->id_personal, $file_name);
         if ($photo_profile->status == 1) {
             $karyawan = Karyawan::get_detail_karyawan_by_id_personal(Session::get('user')->id_personal);
@@ -48,17 +56,22 @@ class DataDiriController extends Controller
             Session::put('karyawan', $karyawan);
             // Proses Upload File
             $destinationPath = 'files/profil_karyawan/' . Session::get('user')->id_personal;
-            File::makeDirectory($destinationPath, $mode = 0777, true, true);
-            $file->move($destinationPath, $file_name);
+
+            // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+            // $file->move($destinationPath, $file_name);
+
+            $file->storeAs($destinationPath, $file_name, 'public');
         }
         return response()->json($photo_profile, 200);
     }
 
-    public function update_data_personal(Request $request){
+    public function update_data_personal(Request $request)
+    {
         $request->validate([
             'no_ktp' => 'required|max:16|min:16',
             'nama' => 'required',
-            'tempat_lahir' => 'required', 'tgl_lahir' => 'required',
+            'tempat_lahir' => 'required',
+            'tgl_lahir' => 'required',
             'no_hp' => 'required|min:10|max:13',
             'email' => 'required|email:rfc',
             'jenis_kelamin' => 'required',

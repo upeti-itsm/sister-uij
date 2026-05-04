@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Exception;
 use function PHPUnit\Framework\isNull;
 
@@ -165,40 +166,33 @@ class DataPegawaiController extends Controller
             // Jika sukses maka upload file
             // Photo Profile
             $destinationPath = 'files/profil_karyawan/' . $karyawan->id_personal;
-            File::makeDirectory($destinationPath, $mode = 0777, true, true);
-            $file_photo->move($destinationPath, $file_name_photo);
+            $file_photo->storeAs($destinationPath, $file_name_photo, 'public');
 
             // File KK
             $destinationPath = 'files/berkas_kepegawaian/' . $karyawan->id_personal;
-            File::makeDirectory($destinationPath, $mode = 0777, true, true);
-            $file_kk->move($destinationPath, $file_name_kk);
+            $file_kk->storeAs($destinationPath, $file_name_kk, 'public');
 
             // File Ijazah
-            File::makeDirectory($destinationPath, $mode = 0777, true, true);
-            $file_ijazah->move($destinationPath, $file_name_ijazah);
+            $file_ijazah->storeAs($destinationPath, $file_name_ijazah, 'public');
 
             // File Golongan
             if (!is_null($file_golongan)) {
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_golongan->move($destinationPath, $file_name_golongan);
+                $file_golongan->storeAs($destinationPath, $file_name_golongan, 'public');
             }
 
             // File Struktural
             if (!is_null($file_struktural)) {
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_struktural->move($destinationPath, $file_name_struktural);
+                $file_struktural->storeAs($destinationPath, $file_name_struktural, 'public');
             }
 
             // File Fungsional
             if (!is_null($file_fungsional)) {
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_fungsional->move($destinationPath, $file_name_fungsional);
+                $file_fungsional->storeAs($destinationPath, $file_name_fungsional, 'public');
             }
 
             // File Sertifikasi
             if (!is_null($file_sertifikat)) {
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_sertifikat->move($destinationPath, $file_name_sertifikat);
+                $file_sertifikat->storeAs($destinationPath, $file_name_sertifikat, 'public');
             }
 
             $message = "";
@@ -283,7 +277,7 @@ class DataPegawaiController extends Controller
             'no_ktp.min' => 'Pastikan Nomor KTP tidak kurang dari 16 karakter',
             'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
             'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
-        'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
+            'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
             'nama.required' => 'Pastikan nama anda sudah terisi',
             'tempat_lahir.required' => 'Pastikan tempat lahir sudah terisi',
             'tgl_lahir.required' => 'Pastikan tanggal lahir sudah terisi',
@@ -395,66 +389,127 @@ class DataPegawaiController extends Controller
             if (!is_null($request->file_kk)) {
                 // File KK
                 $destinationPath = 'files/berkas_kepegawaian/' . $request->id;
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_kk->move($destinationPath, $file_name_kk);
 
-                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_kartu_keluarga))) {
-                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_kartu_keluarga));
+                // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                // $file_kk->move($destinationPath, $file_name_kk);
+
+                $file_kk->storeAs($destinationPath, $file_name_kk, 'public');
+
+                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_kartu_keluarga))) {
+                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_kartu_keluarga));
+                // }
+
+                if (!empty($karyawan_old->path_kartu_keluarga)) {
+                    $oldPath = $destinationPath . '/' . $karyawan_old->path_kartu_keluarga;
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
                 }
             }
 
             if (!is_null($request->file_sk_golongan)) {
                 // File Golongan
                 $destinationPath = 'files/berkas_kepegawaian/' . $request->id;
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_golongan->move($destinationPath, $file_name_golongan);
+                // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                // $file_golongan->move($destinationPath, $file_name_golongan);
 
-                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_golongan))) {
-                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_golongan));
+                $file_golongan->storeAs($destinationPath, $file_name_golongan, 'public');
+
+                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_golongan))) {
+                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_golongan));
+                // }
+
+                if (!empty($karyawan_old->path_dokumen_pendukung_golongan)) {
+                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_golongan;
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
                 }
             }
 
             if (!is_null($request->file_sk_jafung)) {
                 // File Jafung
                 $destinationPath = 'files/berkas_kepegawaian/' . $request->id;
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_jafung->move($destinationPath, $file_name_jafung);
+                // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                // $file_jafung->move($destinationPath, $file_name_jafung);
 
-                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional))) {
-                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional));
+                $file_jafung->storeAs($destinationPath, $file_name_jafung, 'public');
+
+                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional))) {
+                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional));
+                // }
+
+                if (!empty($karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional)) {
+                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional;
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
                 }
             }
 
             if (!is_null($request->file_sk_jastruk)) {
                 // File Jastruk
                 $destinationPath = 'files/berkas_kepegawaian/' . $request->id;
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_jastruk->move($destinationPath, $file_name_jastruk);
+                // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                // $file_jastruk->move($destinationPath, $file_name_jastruk);
 
-                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural))) {
-                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural));
+                $file_jastruk->storeAs($destinationPath, $file_name_jastruk, 'public');
+
+                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural))) {
+                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural));
+                // }
+
+                if (!empty($karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural)) {
+                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural;
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
                 }
             }
 
             if (!is_null($request->file_ijazah)) {
                 // File Ijazah
                 $destinationPath = 'files/berkas_kepegawaian/' . $request->id;
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_ijazah->move($destinationPath, $file_name_ijazah);
+                // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                // $file_ijazah->move($destinationPath, $file_name_ijazah);
 
-                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan))) {
-                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan));
+                $file_ijazah->storeAs($destinationPath, $file_name_ijazah, 'public');
+
+                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan))) {
+                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan));
+                // }
+
+                if (!empty($karyawan_old->path_dokumen_pendukung_pendidikan)) {
+                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan;
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
                 }
             }
 
             if (!is_null($request->file_sertifikat)) {
                 // File Sertifikat Sertifikasi
                 $destinationPath = 'files/berkas_kepegawaian/' . $request->id;
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_sertifikat->move($destinationPath, $file_name_ijazah);
+                // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                // $file_sertifikat->move($destinationPath, $file_name_ijazah);
 
-                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat))) {
-                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat));
+                $file_sertifikat->storeAs($destinationPath, $file_name_sertifikat, 'public');
+
+                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat))) {
+                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat));
+                // }
+
+                if (!empty($karyawan_old->path_dokumen_pendukung_sertifikat)) {
+                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat;
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
                 }
             }
             Session::flash('success_message', $karyawan->keterangan);
@@ -480,7 +535,8 @@ class DataPegawaiController extends Controller
         $file = $request->file('file');
         $file_name = 'photo_profile_' . date("Y_m_d_h_m_s", $t) . '.' . $file->getClientOriginalExtension();
         if (!empty($request->old_path)) {
-            File::delete('files/profil_karyawan/' . $request->id . '/' . $request->old_path);
+            // File::delete('files/profil_karyawan/' . $request->id . '/' . $request->old_path);
+            Storage::disk('public')->delete('files/profil_karyawan/' . $request->id . '/' . $request->old_path);
         }
         $photo_profile = Karyawan::update_path_photo($request->id, $file_name);
         if ($photo_profile->status == 1) {
@@ -489,8 +545,9 @@ class DataPegawaiController extends Controller
             Session::put('karyawan', $karyawan);
             // Proses Upload File
             $destinationPath = 'files/profil_karyawan/' . $request->id;
-            File::makeDirectory($destinationPath, $mode = 0777, true, true);
-            $file->move($destinationPath, $file_name);
+            // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+            // $file->move($destinationPath, $file_name);
+            $file->storeAs($destinationPath, $file_name, 'public');
         }
         return response()->json($photo_profile, 200);
     }

@@ -85,11 +85,14 @@ class AccountController extends Controller
             $fileName = date('YmdHis') . '_' . ($safeBaseName ?: 'foto') . '.' . $photo->getClientOriginalExtension();
 
             $destinationPath = public_path('files/profil_mahasiswa/' . $nim);
-            if (!File::isDirectory($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
-            }
+            // if (!File::isDirectory($destinationPath)) {
+            //     File::makeDirectory($destinationPath, 0755, true);
+            // }
 
-            $photo->move($destinationPath, $fileName);
+            // $photo->move($destinationPath, $fileName);
+
+            $photo->storeAs($destinationPath, $fileName, 'public');
+
             $pathPhoto = $fileName;
         }
 
@@ -119,18 +122,10 @@ class AccountController extends Controller
             $fileName = date('YmdHis') . '_' . ($safeBaseName ?: 'foto') . '.' . $photo->getClientOriginalExtension();
 
             $destinationPath = public_path('files/profil_karyawan/' . $idPersonal);
-            if (!File::isDirectory($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
-            }
 
-            if (!empty($detailKaryawan->path_photo ?? null)) {
-                $oldPhotoPath = $destinationPath . DIRECTORY_SEPARATOR . $detailKaryawan->path_photo;
-                if (File::exists($oldPhotoPath)) {
-                    File::delete($oldPhotoPath);
-                }
-            }
+            // $photo->move($destinationPath, $fileName);
+            $photo->storeAs($destinationPath, $fileName, 'public');
 
-            $photo->move($destinationPath, $fileName);
             $photoResult = Karyawan::update_path_photo($idPersonal, $fileName);
             $photoUpdate = $this->normalizeUpdateResult($photoResult, 'Foto profil berhasil diperbarui.', 'Gagal memperbarui foto profil.');
             if (!$photoUpdate['success']) {

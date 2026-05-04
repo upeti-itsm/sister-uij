@@ -7,6 +7,7 @@ use App\Models\Organisasi\Misi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class ProfilMandalaController extends Controller
 {
@@ -69,16 +70,24 @@ class ProfilMandalaController extends Controller
             $file_name_so = 'struktur_organisasi_' . date("Y_m_d_h_m_s", $t) . '.' . $file_so->getClientOriginalExtension();
         }
 
-        $dokumen = Misi::update_dokumen('files/profil_mandala/'.$file_name_so);
+        $dokumen = Misi::update_dokumen('files/profil_mandala/' . $file_name_so);
         if ($dokumen->status == 1) {
             if (!is_null($request->file_so)) {
                 // File SO
                 $destinationPath = 'files/profil_mandala/';
-                File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                $file_so->move($destinationPath, $file_name_so);
 
-                if (File::exists(public_path($dokumen->nama_struktur_organisasi))) {
-                    File::delete(public_path($dokumen->nama_struktur_organisasi));
+                // File::makeDirectory($destinationPath, $mode = 0777, true, true);
+
+                // $file_so->move($destinationPath, $file_name_so);
+
+                $file_so->storeAs($destinationPath, $file_name_so, 'public');
+
+                // if (File::exists(public_path($dokumen->nama_struktur_organisasi))) {
+                //     File::delete(public_path($dokumen->nama_struktur_organisasi));
+                // }
+
+                if (!empty($dokumen->nama_struktur_organisasi)) {
+                    Storage::disk('public')->delete($dokumen->nama_struktur_organisasi);
                 }
             }
             Session::flash('success_message', $dokumen->keterangan);

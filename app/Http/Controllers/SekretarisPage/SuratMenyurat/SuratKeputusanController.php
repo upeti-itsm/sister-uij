@@ -8,6 +8,7 @@ use App\Models\Organisasi\SuratKeputusan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 
 class SuratKeputusanController extends Controller
@@ -39,8 +40,10 @@ class SuratKeputusanController extends Controller
     public function insert_sk(Request $request)
     {
         $request->validate([
-            'nomor' => 'required', 'tgl' => 'required',
-            'nama_sk' => 'required', 'path' => 'required|max:5000',
+            'nomor' => 'required',
+            'tgl' => 'required',
+            'nama_sk' => 'required',
+            'path' => 'required|max:5000',
         ], [
             'nomor.required' => 'Pastikan Nomor SK Terisi',
             'tgl.required' => 'Pastikan Tanggal SK Terisi',
@@ -56,7 +59,8 @@ class SuratKeputusanController extends Controller
             $SK = SuratKeputusan::insert_sk($request->nomor, $request->tgl, $request->nama_sk, 'files/arsip_surat_menyurat/surat_keputusan/' . $file_name, '00000000-0000-0000-0000-000000000000', $request->pilihan_akses);
         if ($SK->status == 1) {
             $destinationPath = 'files/arsip_surat_menyurat/surat_keputusan/';
-            $dok->move($destinationPath, $file_name);
+            // $dok->move($destinationPath, $file_name);
+            $dok->storeAs($destinationPath, $file_name, 'public');
             Session::flash('success_message', $SK->keterangan);
             return redirect()->back();
         } else {
@@ -72,8 +76,11 @@ class SuratKeputusanController extends Controller
         ]);
         $data = SuratKeputusan::delete_sk($request->id_sk);
         if ($data->status == 1)
-            if (File::exists(public_path($data->path_sk))) {
-                File::delete(public_path($data->path_sk));
+            // if (File::exists(public_path($data->path_sk))) {
+            //     File::delete(public_path($data->path_sk));
+            // }
+            if (Storage::disk('public')->exists($data->path_sk)) {
+                Storage::disk('public')->delete($data->path_sk);
             }
         return response()->json($data, 200);
     }
