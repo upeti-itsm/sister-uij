@@ -204,6 +204,11 @@
 @endsection
 @push('scripts')
     <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
+    
+    <script>
+        const baseStorageUrl = "{{ asset('storage') }}";
+    </script>
+
     <script src="{{asset('adminpage/own-js/mahasiswa_page/akademik/wisuda.js')}}"></script>
     <script>
         $(document).ready(function () {

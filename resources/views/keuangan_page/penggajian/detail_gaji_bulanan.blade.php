@@ -44,10 +44,10 @@
                         <div class="card-body text-center">
                             <a class="avatar avatar-xl card-avatar card-avatar-top mb-5">
                                 <img style="width: 150%!important; height: 150%!important;"
-                                     src="{{asset('/files/profil_karyawan/'.$karyawan->id_personal.'/'.$karyawan->path_photo)}}"
-                                     class="avatar-img rounded-circle border-card"
-                                     onerror="this.src='{{asset('adminpage/assets/dist/img/avatar-1.jpg')}}'"
-                                     alt="...">
+                                    src="{{ asset('storage/files/profil_karyawan/' . $karyawan->id_personal . '/' . $karyawan->path_photo) }}"
+                                    class="avatar-img rounded-circle border-card"
+                                    onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
+                                    alt="...">
                             </a>
                         </div>
                     </div>

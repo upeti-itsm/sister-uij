@@ -41,15 +41,15 @@
                                             if (filter_var($photoUrl, FILTER_VALIDATE_URL)) {
                                                 $avatarProfil = $photoUrl;
                                             } else {
-                                                $avatarProfil = asset('files/profil_mahasiswa/' . $nimMahasiswa . '/' . ltrim($photoUrl, '/'));
+                                                $avatarProfil = asset('storage/profil_mahasiswa/' . $nimMahasiswa . '/' . ltrim($photoUrl, '/'));
                                             }
                                         } elseif (!empty($detail->path_photo ?? null)) {
-                                            $avatarProfil = asset('files/profil_mahasiswa/' . $nimMahasiswa . '/' . $detail->path_photo);
+                                            $avatarProfil = asset('storage/profil_mahasiswa/' . $nimMahasiswa . '/' . $detail->path_photo);
                                         }
                                     } else {
                                         $pathPhotoKaryawan = \Illuminate\Support\Facades\Session::get('karyawan')->path_photo ?? ($detail->path_photo ?? null);
                                         if (!empty($pathPhotoKaryawan)) {
-                                            $avatarProfil = asset('files/profil_karyawan/' . \Illuminate\Support\Facades\Session::get('user')->id_personal . '/' . ltrim($pathPhotoKaryawan, '/'));
+                                            $avatarProfil = asset('storage/profil_karyawan/' . \Illuminate\Support\Facades\Session::get('user')->id_personal . '/' . $pathPhotoKaryawan);
                                         }
                                     }
                                 @endphp

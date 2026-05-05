@@ -28,6 +28,7 @@ class AccountController extends Controller
             $detail = Karyawan::get_detail_karyawan_by_id_personal(Session::get('user')->id_personal);
         }
 
+        // dd(session()->get('user'));
         return view('account.profile', compact('menu', 'detail'));
     }
 
@@ -80,18 +81,9 @@ class AccountController extends Controller
 
         if ($request->hasFile('path_photo')) {
             $photo = $request->file('path_photo');
-            $baseName = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeBaseName = Str::slug($baseName);
-            $fileName = date('YmdHis') . '_' . ($safeBaseName ?: 'foto') . '.' . $photo->getClientOriginalExtension();
 
-            $destinationPath = public_path('files/profil_mahasiswa/' . $nim);
-            // if (!File::isDirectory($destinationPath)) {
-            //     File::makeDirectory($destinationPath, 0755, true);
-            // }
-
-            // $photo->move($destinationPath, $fileName);
-
-            $photo->storeAs($destinationPath, $fileName, 'public');
+            $fileName = $nim . '.jpg';
+            $photo->storeAs('profil_mahasiswa/' . $nim, $fileName, 'public');
 
             $pathPhoto = $fileName;
         }
@@ -117,16 +109,12 @@ class AccountController extends Controller
 
         if ($hasPhotoUpdate) {
             $photo = $request->file('path_photo');
-            $baseName = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeBaseName = Str::slug($baseName);
-            $fileName = date('YmdHis') . '_' . ($safeBaseName ?: 'foto') . '.' . $photo->getClientOriginalExtension();
 
-            $destinationPath = public_path('files/profil_karyawan/' . $idPersonal);
-
-            // $photo->move($destinationPath, $fileName);
-            $photo->storeAs($destinationPath, $fileName, 'public');
+            $fileName = $idPersonal . '.jpg';
+            $photo->storeAs('profil_karyawan/' . $idPersonal, $fileName, 'public');
 
             $photoResult = Karyawan::update_path_photo($idPersonal, $fileName);
+
             $photoUpdate = $this->normalizeUpdateResult($photoResult, 'Foto profil berhasil diperbarui.', 'Gagal memperbarui foto profil.');
             if (!$photoUpdate['success']) {
                 return $photoUpdate;

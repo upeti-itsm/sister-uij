@@ -53,13 +53,13 @@
             </div><!--/.sidebar header-->
             <div class="profile-element d-flex align-items-center flex-shrink-0 bg-dark">
                 <div class="avatar online">
-                    @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
-                        <img src="http://siakad.stie-mandala.ac.id/_report/photo_m/{{ \Illuminate\Support\Facades\Session::get('user')->nim }}.jpg"
-                            class="img-fluid rounded-circle" alt=""
+                    @if (isset(Session::get('user')->id_mhs))
+                        <img src="{{ asset('storage/profil_mahasiswa/' . Session::get('user')->nim . '/' . Session::get('user')->nim . '.jpg') }}"
+                            class="img-fluid rounded-circle"
                             onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'">
                     @else
-                        <img src="/files/profil_karyawan/{{ \Illuminate\Support\Facades\Session::get('user')->id_personal }}/{{ \Illuminate\Support\Facades\Session::get('karyawan')->path_photo }}"
-                            class="img-fluid rounded-circle" alt=""
+                        <img src="{{ asset('storage/profil_karyawan/' . Session::get('user')->id_personal . '/' . Session::get('karyawan')->path_photo) }}"
+                            class="img-fluid rounded-circle"
                             onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'">
                     @endif
                 </div>
@@ -82,11 +82,11 @@
                                     href="{{ route('dashboard.dashboard') }}"><i
                                         class="typcn typcn-th-large mr-2"></i>Dashboard</a></li>
                         @endif
-                        @if (array_key_exists('Profil Mandala', $modul))
+                        {{-- @if (array_key_exists('Profil Mandala', $modul))
                             <li @if ($menu == 'Profil Mandala') class="mm-active" @endif><a
                                     href="{{ route('bpm_page.profil_mandala.profil_mandala.index') }}"><i
                                         class="typcn typcn-home mr-2"></i>Profil Mandala</a></li>
-                        @endif
+                        @endif --}}
                         @if (array_key_exists('Tata Pamong', $modul))
                             <li @if ($menu == 'Tata Pamong') class="mm-active" @endif>
                                 <a class="has-arrow material-ripple" href="#">
@@ -1077,12 +1077,12 @@
                                     <div class="user-header">
                                         <div class="img-user">
                                             @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
-                                                <img src="http://siakad.stie-mandala.ac.id/_report/photo_m/{{ \Illuminate\Support\Facades\Session::get('user')->nim }}.jpg"
-                                                    alt=""
+                                                 <img src="{{ asset('storage/profil_mahasiswa/' . Session::get('user')->nim . '/' . Session::get('user')->nim . '.jpg') }}"
+                                                    class="img-fluid rounded-circle"
                                                     onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'">
                                             @else
-                                                <img src="/files/profil_karyawan/{{ \Illuminate\Support\Facades\Session::get('user')->id_personal }}/{{ \Illuminate\Support\Facades\Session::get('karyawan')->path_photo }}"
-                                                    alt=""
+                                                <img src="{{ asset('storage/profil_karyawan/' . Session::get('user')->id_personal . '/' . Session::get('karyawan')->path_photo) }}"
+                                                    class="img-fluid rounded-circle"
                                                     onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'">
                                             @endif
                                         </div><!-- img-user -->

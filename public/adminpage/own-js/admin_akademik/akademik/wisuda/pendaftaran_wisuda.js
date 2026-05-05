@@ -73,7 +73,10 @@ jQuery.pendaftaran_wisuda = {
                     sClass: 'text-center',
                     width: "15%",
                     render: function (data) {
-                        return "<a href='/files/dokumen_pendukung_wisuda/" + data.nim + "/" + data.path_dokumen_pendaftaran_wisuda + "' target='_blank'><i class='fas fa-file mr-2'></i> Lihat Dokumen Pendukung</a>";
+                        return "<a href='" + baseStorageUrl + "/files/dokumen_pendukung_wisuda/" 
+                            + data.nim + "/" 
+                            + data.path_dokumen_pendaftaran_wisuda + 
+                            "' target='_blank'><i class='fas fa-file mr-2'></i> Lihat Dokumen Pendukung</a>";
                     }
                 },
                 {

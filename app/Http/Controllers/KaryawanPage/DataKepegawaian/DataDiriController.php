@@ -57,9 +57,6 @@ class DataDiriController extends Controller
             // Proses Upload File
             $destinationPath = 'files/profil_karyawan/' . Session::get('user')->id_personal;
 
-            // File::makeDirectory($destinationPath, $mode = 0777, true, true);
-            // $file->move($destinationPath, $file_name);
-
             $file->storeAs($destinationPath, $file_name, 'public');
         }
         return response()->json($photo_profile, 200);

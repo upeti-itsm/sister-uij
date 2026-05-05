@@ -25,9 +25,10 @@
             <div class="card-body text-center">
                 <a class="avatar avatar-xl card-avatar card-avatar-top mb-5">
                     <img style="width: 150%!important; height: 150%!important;"
-                         src="{{asset('/files/profil_karyawan/'.$karyawan->id_personal.'/'.$karyawan->path_photo)}}"
-                         class="avatar-img rounded-circle border-card"
-                         onerror="this.src='{{asset('adminpage/assets/dist/img/avatar-1.jpg')}}'" alt="...">
+                        src="{{ asset('storage/files/profil_karyawan/' . $karyawan->id_personal . '/' . $karyawan->path_photo) }}"
+                        class="avatar-img rounded-circle border-card"
+                        onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
+                        alt="...">
                 </a>
                 <h6 class="card-title font-weight-600 mb-2">
                     <a href="#">{{$karyawan->nama_lengkap}}</a>
@@ -61,7 +62,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_kartu_keluarga)}}"
+                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_kartu_keluarga)}}"
                                            target="_blank">Kartu Keluarga</a>
                                     </h6>
                                 </div>
@@ -80,7 +81,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_pendidikan)}}"
+                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_pendidikan)}}"
                                            target="_blank">Ijazah Terakhir</a>
                                     </h6>
                                 </div>
@@ -99,7 +100,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_golongan)}}"
+                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_golongan)}}"
                                            target="_blank">SK Golongan Terakhir</a>
                                     </h6>
                                 </div>
@@ -118,7 +119,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_riwayat_jabatan_fungsional)}}"
+                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_riwayat_jabatan_fungsional)}}"
                                            target="_blank">SK Jabatan Fungsional Terakhir</a>
                                     </h6>
                                 </div>
@@ -137,7 +138,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_riwayat_jabatan_struktural)}}"
+                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_riwayat_jabatan_struktural)}}"
                                            target="_blank">SK Jabatan Struktural Terakhir</a>
                                     </h6>
                                 </div>
