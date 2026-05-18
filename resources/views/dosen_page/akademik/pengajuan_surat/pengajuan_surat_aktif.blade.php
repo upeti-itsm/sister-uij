@@ -1,0 +1,166 @@
+@extends('sidebar')
+
+@section('head-css')
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
+    <style>
+        .badge-status-dosen {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        .badge-status-dekan {
+            background-color: #9c27b0;
+            color: #fff;
+        }
+
+        .badge-status-disetujui {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        .badge-status-ditolak {
+            background-color: #f44336;
+            color: #fff;
+        }
+    </style>
+@endsection
+
+@section('content-header')
+    <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0">
+        <ol class="breadcrumb d-inline-flex font-weight-600 fs-13 bg-white mb-0 float-sm-right">
+            <li class="breadcrumb-item">Akademik</li>
+            <li class="breadcrumb-item active">Persetujuan Surat</li>
+        </ol>
+    </nav>
+    <div class="col-sm-8 header-title p-0">
+        <div class="media">
+            <div class="header-icon text-success mr-3"><i class="fas fa-file-signature"></i></div>
+            <div class="media-body">
+                <h1 class="font-weight-bold">Persetujuan Surat Aktif (Dosen Pembimbing)</h1>
+                <small>Validasi pengajuan surat aktif dari mahasiswa bimbingan.</small>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('body-content')
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fs-17 font-weight-600 mb-0">
+                            Daftar Pengajuan
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <label class="font-weight-bold">Pencarian</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="cari-pengajuan-dosen"
+                                placeholder="Cari nomor, mahasiswa, atau NIM...">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" id="btn-cari-dosen">
+                                    <i class="fas fa-search mr-1"></i>Cari
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="font-weight-bold">Status</label>
+                        <select class="select2 form-control" id="filter-status-dosen">
+                            <option value="">-- Semua Status --</option>
+                            <option value="1">Diajukan Mahasiswa</option>
+                            <option value="2">Disetujui DPA</option>
+                            <option value="3">Ditolak DPA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered" id="table-pengajuan-surat-dosen">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="text-center">No</th>
+                                <th>No. Pengajuan</th>
+                                <th>Mahasiswa</th>
+                                <th>Keperluan</th>
+                                <th>Tanggal</th>
+                                <th>Status</th>
+                                <th class="text-center"><i class="fas fa-cogs"></i></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('modal')
+    <div class="modal fade" id="modal-detail-dosen" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Pengajuan Surat Aktif</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="35%">No. Pengajuan</th>
+                            <td id="detail-dosen-nomor">-</td>
+                        </tr>
+                        <tr>
+                            <th>Mahasiswa</th>
+                            <td id="detail-dosen-mahasiswa">-</td>
+                        </tr>
+                        <tr>
+                            <th>Keperluan</th>
+                            <td id="detail-dosen-keperluan">-</td>
+                        </tr>
+                        <tr>
+                            <th>Tanggal Ajuan</th>
+                            <td id="detail-dosen-tgl">-</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td id="detail-dosen-status">-</td>
+                        </tr>
+                        <tr id="row-catatan-dosen" style="display:none;">
+                            <th>Catatan</th>
+                            <td id="detail-dosen-catatan">-</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <div id="section-aksi-dosen" style="display:none;">
+                        <button type="button" class="btn btn-success mr-2" id="btn-approve-dosen">
+                            <i class="fas fa-check mr-1"></i>Setujui
+                        </button>
+                        <button type="button" class="btn btn-danger mr-2" id="btn-reject-dosen">
+                            <i class="fas fa-times mr-1"></i>Tolak
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i>Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/dosen_page/akademik/pengajuan_surat/pengajuan_surat_aktif.js') }}"></script>
+@endpush

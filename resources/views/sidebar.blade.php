@@ -454,7 +454,11 @@
                                 array_key_exists('Pengajuan Transkrip Nilai', $modul) ||
                                 array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
                                 array_key_exists('Student Body', $modul) ||
-                                array_key_exists('Hasil Studi Mahasiswa', $modul))
+                                array_key_exists('Hasil Studi Mahasiswa', $modul) ||
+                                array_key_exists('Pengajuan Surat Aktif Dekan', $modul) ||
+                                array_key_exists('Pengajuan Surat Cuti Dekan', $modul) ||
+                                array_key_exists('Pengajuan Surat Aktif Dosen', $modul) ||
+                                array_key_exists('Pengajuan Surat Cuti Dosen', $modul))
                             <li class="nav-label">Akademik</li>
                             <li @if (
                                 $menu == 'Validasi Pengajuan Sertifikat Laboratorium Komputer' ||
@@ -472,7 +476,11 @@
                                     $menu == 'Sinkronisasi Tahun Akademik dengan Siakad' ||
                                     $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
                                     $menu == 'Student Body' ||
-                                    $menu == 'Hasil Studi Mahasiswa') class="mm-active" @endif>
+                                    $menu == 'Hasil Studi Mahasiswa' ||
+                                    $menu == 'Pengajuan Surat Aktif Dekan' ||
+                                    $menu == 'Pengajuan Surat Cuti Dekan' ||
+                                    $menu == 'Pengajuan Surat Aktif Dosen' ||
+                                    $menu == 'Pengajuan Surat Cuti Dosen') class="mm-active" @endif>
                                 <a class="has-arrow material-ripple" href="#">
                                     <i class="fas fa-graduation-cap mr-2"></i>
                                     @if (\Illuminate\Support\Facades\Session::get('peran')['aktif_'] === 'Dosen')
@@ -554,7 +562,9 @@
                                                     array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
                                                     array_key_exists('Mengelola Kartu Rencana Studi', $modul) ||
                                                     array_key_exists('Hasil Studi Mahasiswa', $modul) ||
-                                                    array_key_exists('Pengajuan Transkrip Nilai', $modul)
+                                                    array_key_exists('Pengajuan Transkrip Nilai', $modul) ||
+                                                    array_key_exists('Pengajuan Surat Cuti Mahasiswa', $modul) ||
+                                                    array_key_exists('Pengajuan Surat Aktif Mahasiswa', $modul)
                                                 )
                                             )
                                         <li @if (
@@ -563,7 +573,9 @@
                                                 $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
                                                 $menu == 'Mengelola Rencana Studi' ||
                                                 $menu == 'Hasil Studi Mahasiswa' ||
-                                                $menu == 'Pengajuan Transkrip Nilai') class="mm-active" @endif>
+                                                $menu == 'Pengajuan Transkrip Nilai' ||
+                                                $menu == 'Pengajuan Surat Cuti Mahasiswa' ||
+                                                $menu == 'Pengajuan Surat Aktif Mahasiswa') class="mm-active" @endif>
                                             <a class="has-arrow" href="#" aria-expanded="true">Perkuliahan</a>
                                             <ul class="nav-third-level mm-collapse" style="">
                                                 @if (array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul))
@@ -614,8 +626,22 @@
                                                         @endif
                                                     </li>
                                                 @endif
+                                                @if (array_key_exists('Pengajuan Surat Cuti Mahasiswa', $modul))
+                                                    <li @if ($menu == 'Pengajuan Surat Cuti Mahasiswa') class="mm-active" @endif>
+                                                        <a
+                                                            href="{{ route('mahasiswa.akademik.pengajuan_surat.index') }}">Pengajuan
+                                                            Surat Cuti Mahasiswa</a>
+                                                    </li>
+                                                @endif
+                                                @if (array_key_exists('Pengajuan Surat Aktif Mahasiswa', $modul))
+                                                    <li @if ($menu == 'Pengajuan Surat Aktif Mahasiswa') class="mm-active" @endif>
+                                                        <a
+                                                            href="{{ route('mahasiswa.akademik.pengajuan_surat_aktif.index') }}">Pengajuan
+                                                            Surat Aktif Mahasiswa</a>
+                                                    </li>
+                                                @endif
                                                 @if (array_key_exists('IP Presensi Perkuliahan', $modul))
-                                                    <li @if ($menu == 'IP Presensi Perkuliahan') class="mm-active" @endif>
+                                                    <li @if ($menu == 'IP Presensi Perkuliahan') class="mm-active" @endif>Pengajuan Surat Aktif Mahasiswa
                                                         <a
                                                             href="{{ route('admin_akademik.akademik.jadwal_kuliah.ip_presensi_perkuliahan.index') }}">
                                                             IP Presensi Perkuliahan
@@ -684,6 +710,26 @@
                                     @if (array_key_exists('Validasi KRS DPS', $modul))
                                         <li @if ($menu == 'Validasi KRS DPS') class="mm-active" @endif>
                                             <a href="{{ route('dosen.krs.index') }}">Perwalian</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengajuan Surat Cuti Dosen', $modul))
+                                        <li @if ($menu == 'Pengajuan Surat Cuti Dosen') class="mm-active" @endif>
+                                            <a href="{{ route('dosen.pengajuan_surat.index') }}">Pengajuan Surat Cuti Dosen</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengajuan Surat Aktif Dosen', $modul))
+                                        <li @if ($menu == 'Pengajuan Surat Aktif Dosen') class="mm-active" @endif>
+                                            <a href="{{ route('dosen.akademik.pengajuan_surat_aktif.index') }}">Pengajuan Surat Aktif Dosen</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengajuan Surat Cuti Dekan', $modul))
+                                        <li @if ($menu == 'Pengajuan Surat Cuti Dekan') class="mm-active" @endif>
+                                            <a href="{{ route('dekan.akademik.pengajuan_surat.index') }}">Pengajuan Surat Cuti Dekan</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengajuan Surat Aktif Dekan', $modul))
+                                        <li @if ($menu == 'Pengajuan Surat Aktif Dekan') class="mm-active" @endif>
+                                            <a href="{{ route('dekan.akademik.pengajuan_surat_aktif.index') }}">Pengajuan Surat Aktif Dekan</a>
                                         </li>
                                     @endif
                                     @if (array_key_exists('Persetujuan Transkrip Nilai', $modul))

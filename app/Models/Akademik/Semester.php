@@ -10,6 +10,14 @@ class Semester extends Model
 {
     use HasFactory;
 
+    public static function get_semester_by_mahasiswa($nim)
+    {
+        return DB::select(
+            'SELECT * FROM akademik.get_tahun_akademik_by_mahasiswa_v_koko(:p_nim)',
+            ['p_nim' => $nim]
+        );
+    }
+
     public static function get_semester($offset = -1, $limit = 10, $id_semester = 0)
     {
         return DB::select('SELECT * FROM akademik.get_tahun_akademik(:offset, :limit, :id_semester)', [

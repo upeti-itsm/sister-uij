@@ -468,6 +468,49 @@ Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/synchron', [\App\Http\Co
 Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/presensi', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'set_absensi'])->name('mahasiswa.akademik.jadwal_kuliah.set_absensi')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
 Route::post('/mhs/akademik/perkuliahan/jadwal-mahasiswa/rekap-kehadiran', [\App\Http\Controllers\MahasiswaPage\Akademik\JadwalMahasiswaController::class, 'json_rekap_kehadiran'])->name('mahasiswa.akademik.jadwal_kuliah.json_rekap_kehadiran')->middleware('modul:Sinkronisasi Jadwal Mahasiswa dengan Siakad');
 
+// Pengajuan Surat Cuti Mahasiswa
+Route::get('/mhs/pengajuan-surat-cuti', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratCutiController::class, 'index'])->name('mahasiswa.akademik.pengajuan_surat.index')->middleware('modul:Pengajuan Surat Cuti Mahasiswa');
+Route::post('/mhs/pengajuan-surat-cuti/json', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratCutiController::class, 'json_pengajuan_surat'])->name('mahasiswa.akademik.pengajuan_surat.json_pengajuan_surat')->middleware('modul:Pengajuan Surat Cuti Mahasiswa');
+Route::post('/mhs/pengajuan-surat-cuti/store', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratCutiController::class, 'store_pengajuan_surat'])->name('mahasiswa.akademik.pengajuan_surat.store_pengajuan_surat')->middleware('modul:Pengajuan Surat Cuti Mahasiswa');
+Route::post('/mhs/pengajuan-surat-cuti/delete', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratCutiController::class, 'delete_pengajuan_surat'])->name('mahasiswa.akademik.pengajuan_surat.delete_pengajuan_surat')->middleware('modul:Pengajuan Surat Cuti Mahasiswa');
+Route::post('/mhs/pengajuan-surat-cuti/detail', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratCutiController::class, 'detail_pengajuan_surat'])->name('mahasiswa.akademik.pengajuan_surat.detail_pengajuan_surat')->middleware('modul:Pengajuan Surat Cuti Mahasiswa');
+Route::get('/mhs/pengajuan-surat-cuti/download/{id_pengajuan}', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratCutiController::class, 'download_surat'])->name('mahasiswa.akademik.pengajuan_surat.download_surat')->middleware('modul:Pengajuan Surat Cuti Mahasiswa');
+
+// Pengajuan Surat Cuti Dosen
+Route::get('/dosen/pengajuan-surat-cuti', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratCutiDosenController::class, 'index'])->name('dosen.pengajuan_surat.index')->middleware('modul:Pengajuan Surat Cuti Dosen');
+Route::post('/dosen/pengajuan-surat-cuti/json', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratCutiDosenController::class, 'json'])->name('dosen.pengajuan_surat.json')->middleware('modul:Pengajuan Surat Cuti Dosen');
+Route::post('/dosen/pengajuan-surat-cuti/detail', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratCutiDosenController::class, 'detail'])->name('dosen.pengajuan_surat.detail')->middleware('modul:Pengajuan Surat Cuti Dosen');
+Route::post('/dosen/pengajuan-surat-cuti/approve', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratCutiDosenController::class, 'approve'])->name('dosen.pengajuan_surat.approve')->middleware('modul:Pengajuan Surat Cuti Dosen');
+Route::post('/dosen/pengajuan-surat-cuti/reject', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratCutiDosenController::class, 'reject'])->name('dosen.pengajuan_surat.reject')->middleware('modul:Pengajuan Surat Cuti Dosen');
+
+// Pengajuan Surat Cuti Dekan
+Route::get('/dekan/pengajuan-surat-cuti', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratCutiDekanController::class, 'index'])->name('dekan.akademik.pengajuan_surat.index')->middleware('modul:Pengajuan Surat Cuti Dekan');
+Route::post('/dekan/pengajuan-surat-cuti/json', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratCutiDekanController::class, 'json'])->name('dekan.akademik.pengajuan_surat.json')->middleware('modul:Pengajuan Surat Cuti Dekan');
+Route::post('/dekan/pengajuan-surat-cuti/detail', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratCutiDekanController::class, 'detail'])->name('dekan.akademik.pengajuan_surat.detail')->middleware('modul:Pengajuan Surat Cuti Dekan');
+Route::post('/dekan/pengajuan-surat-cuti/approve', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratCutiDekanController::class, 'approve'])->name('dekan.akademik.pengajuan_surat.approve')->middleware('modul:Pengajuan Surat Cuti Dekan');
+Route::post('/dekan/pengajuan-surat-cuti/reject', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratCutiDekanController::class, 'reject'])->name('dekan.akademik.pengajuan_surat.reject')->middleware('modul:Pengajuan Surat Cuti Dekan');
+
+// Pengajuan Surat Aktif Mahasiswa
+Route::get('/mhs/pengajuan-surat-aktif', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratAktifController::class, 'index'])->name('mahasiswa.akademik.pengajuan_surat_aktif.index')->middleware('modul:Pengajuan Surat Aktif Mahasiswa');
+Route::post('/mhs/pengajuan-surat-aktif/json', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratAktifController::class, 'json_pengajuan_surat'])->name('mahasiswa.akademik.pengajuan_surat_aktif.json_pengajuan_surat')->middleware('modul:Pengajuan Surat Aktif Mahasiswa');
+Route::post('/mhs/pengajuan-surat-aktif/store', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratAktifController::class, 'store_pengajuan_surat'])->name('mahasiswa.akademik.pengajuan_surat_aktif.store_pengajuan_surat')->middleware('modul:Pengajuan Surat Aktif Mahasiswa');
+Route::post('/mhs/pengajuan-surat-aktif/delete', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratAktifController::class, 'delete_pengajuan_surat'])->name('mahasiswa.akademik.pengajuan_surat_aktif.delete_pengajuan_surat')->middleware('modul:Pengajuan Surat Aktif Mahasiswa');
+Route::post('/mhs/pengajuan-surat-aktif/detail', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratAktifController::class, 'detail_pengajuan_surat'])->name('mahasiswa.akademik.pengajuan_surat_aktif.detail_pengajuan_surat')->middleware('modul:Pengajuan Surat Aktif Mahasiswa');
+Route::get('/mhs/pengajuan-surat-aktif/download/{id_pengajuan}', [\App\Http\Controllers\MahasiswaPage\Akademik\PengajuanSuratAktifController::class, 'download_surat'])->name('mahasiswa.akademik.pengajuan_surat_aktif.download_surat')->middleware('modul:Pengajuan Surat Aktif Mahasiswa');
+
+// Pengajuan Surat Aktif Dosen
+Route::get('/dosen/pengajuan-surat-aktif', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratAktifDosenController::class, 'index'])->name('dosen.akademik.pengajuan_surat_aktif.index')->middleware('modul:Pengajuan Surat Aktif Dosen');
+Route::post('/dosen/pengajuan-surat-aktif/json', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratAktifDosenController::class, 'json'])->name('dosen.akademik.pengajuan_surat_aktif.json')->middleware('modul:Pengajuan Surat Aktif Dosen');
+Route::post('/dosen/pengajuan-surat-aktif/detail', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratAktifDosenController::class, 'detail'])->name('dosen.akademik.pengajuan_surat_aktif.detail')->middleware('modul:Pengajuan Surat Aktif Dosen');
+Route::post('/dosen/pengajuan-surat-aktif/approve', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratAktifDosenController::class, 'approve'])->name('dosen.akademik.pengajuan_surat_aktif.approve')->middleware('modul:Pengajuan Surat Aktif Dosen');
+Route::post('/dosen/pengajuan-surat-aktif/reject', [\App\Http\Controllers\DosenPage\Akademik\PengajuanSuratAktifDosenController::class, 'reject'])->name('dosen.akademik.pengajuan_surat_aktif.reject')->middleware('modul:Pengajuan Surat Aktif Dosen');
+
+// Pengajuan Surat Aktif Dekan
+Route::get('/dekan/pengajuan-surat-aktif', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratAktifDekanController::class, 'index'])->name('dekan.akademik.pengajuan_surat_aktif.index')->middleware('modul:Pengajuan Surat Aktif Dekan');
+Route::post('/dekan/pengajuan-surat-aktif/json', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratAktifDekanController::class, 'json'])->name('dekan.akademik.pengajuan_surat_aktif.json')->middleware('modul:Pengajuan Surat Aktif Dekan');
+Route::post('/dekan/pengajuan-surat-aktif/detail', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratAktifDekanController::class, 'detail'])->name('dekan.akademik.pengajuan_surat_aktif.detail')->middleware('modul:Pengajuan Surat Aktif Dekan');
+Route::post('/dekan/pengajuan-surat-aktif/approve', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratAktifDekanController::class, 'approve'])->name('dekan.akademik.pengajuan_surat_aktif.approve')->middleware('modul:Pengajuan Surat Aktif Dekan');
+Route::post('/dekan/pengajuan-surat-aktif/reject', [\App\Http\Controllers\DekanPage\Akademik\PengajuanSuratAktifDekanController::class, 'reject'])->name('dekan.akademik.pengajuan_surat_aktif.reject')->middleware('modul:Pengajuan Surat Aktif Dekan');
 /*
  * ------------------------------------------------------------------------
  * DOSEN PAGE
