@@ -265,6 +265,12 @@
                                                 Keputusan (SK)</a>
                                         </li>
                                     @endif
+                                    @if (array_key_exists('Pengajuan Surat', $modul))
+                                        <li @if ($menu == 'Pengajuan Surat') class="mm-active" @endif>
+                                            <a href="{{ route('sekretaris.surat_menyurat.pengajuan_surat.index') }}">Pengajuan
+                                                Surat</a>
+                                        </li>
+                                    @endif
                                 </ul>
                             </li>
                         @endif
@@ -555,18 +561,15 @@
                                         </li>
                                     @endif
                                     @if (
-                                                \Illuminate\Support\Facades\Session::get('peran')['aktif'] != 71 &&
-                                                (
-                                                    array_key_exists('Sinkronisasi Jadwal Kuliah dengan Siakad', $modul) ||
-                                                    array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul) ||
-                                                    array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
-                                                    array_key_exists('Mengelola Kartu Rencana Studi', $modul) ||
-                                                    array_key_exists('Hasil Studi Mahasiswa', $modul) ||
-                                                    array_key_exists('Pengajuan Transkrip Nilai', $modul) ||
-                                                    array_key_exists('Pengajuan Surat Cuti Mahasiswa', $modul) ||
-                                                    array_key_exists('Pengajuan Surat Aktif Mahasiswa', $modul)
-                                                )
-                                            )
+                                        \Illuminate\Support\Facades\Session::get('peran')['aktif'] != 71 &&
+                                            (array_key_exists('Sinkronisasi Jadwal Kuliah dengan Siakad', $modul) ||
+                                                array_key_exists('Sinkronisasi Tahun Akademik dengan Siakad', $modul) ||
+                                                array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
+                                                array_key_exists('Mengelola Kartu Rencana Studi', $modul) ||
+                                                array_key_exists('Hasil Studi Mahasiswa', $modul) ||
+                                                array_key_exists('Pengajuan Transkrip Nilai', $modul) ||
+                                                array_key_exists('Pengajuan Surat Cuti Mahasiswa', $modul) ||
+                                                array_key_exists('Pengajuan Surat Aktif Mahasiswa', $modul)))
                                         <li @if (
                                             $menu == 'Sinkronisasi Jadwal Kuliah dengan Siakad' ||
                                                 $menu == 'Sinkronisasi Tahun Akademik dengan Siakad' ||
@@ -641,7 +644,8 @@
                                                     </li>
                                                 @endif
                                                 @if (array_key_exists('IP Presensi Perkuliahan', $modul))
-                                                    <li @if ($menu == 'IP Presensi Perkuliahan') class="mm-active" @endif>Pengajuan Surat Aktif Mahasiswa
+                                                    <li @if ($menu == 'IP Presensi Perkuliahan') class="mm-active" @endif>
+                                                        Pengajuan Surat Aktif Mahasiswa
                                                         <a
                                                             href="{{ route('admin_akademik.akademik.jadwal_kuliah.ip_presensi_perkuliahan.index') }}">
                                                             IP Presensi Perkuliahan
@@ -714,22 +718,26 @@
                                     @endif
                                     @if (array_key_exists('Pengajuan Surat Cuti Dosen', $modul))
                                         <li @if ($menu == 'Pengajuan Surat Cuti Dosen') class="mm-active" @endif>
-                                            <a href="{{ route('dosen.pengajuan_surat.index') }}">Pengajuan Surat Cuti Dosen</a>
+                                            <a href="{{ route('dosen.pengajuan_surat.index') }}">Pengajuan Surat Cuti
+                                                Dosen</a>
                                         </li>
                                     @endif
                                     @if (array_key_exists('Pengajuan Surat Aktif Dosen', $modul))
                                         <li @if ($menu == 'Pengajuan Surat Aktif Dosen') class="mm-active" @endif>
-                                            <a href="{{ route('dosen.akademik.pengajuan_surat_aktif.index') }}">Pengajuan Surat Aktif Dosen</a>
+                                            <a href="{{ route('dosen.akademik.pengajuan_surat_aktif.index') }}">Pengajuan
+                                                Surat Aktif Dosen</a>
                                         </li>
                                     @endif
                                     @if (array_key_exists('Pengajuan Surat Cuti Dekan', $modul))
                                         <li @if ($menu == 'Pengajuan Surat Cuti Dekan') class="mm-active" @endif>
-                                            <a href="{{ route('dekan.akademik.pengajuan_surat.index') }}">Pengajuan Surat Cuti Dekan</a>
+                                            <a href="{{ route('dekan.akademik.pengajuan_surat.index') }}">Pengajuan
+                                                Surat Cuti Dekan</a>
                                         </li>
                                     @endif
                                     @if (array_key_exists('Pengajuan Surat Aktif Dekan', $modul))
                                         <li @if ($menu == 'Pengajuan Surat Aktif Dekan') class="mm-active" @endif>
-                                            <a href="{{ route('dekan.akademik.pengajuan_surat_aktif.index') }}">Pengajuan Surat Aktif Dekan</a>
+                                            <a href="{{ route('dekan.akademik.pengajuan_surat_aktif.index') }}">Pengajuan
+                                                Surat Aktif Dekan</a>
                                         </li>
                                     @endif
                                     @if (array_key_exists('Persetujuan Transkrip Nilai', $modul))
@@ -1123,7 +1131,7 @@
                                     <div class="user-header">
                                         <div class="img-user">
                                             @if (isset(\Illuminate\Support\Facades\Session::get('user')->id_mhs))
-                                                 <img src="{{ asset('storage/profil_mahasiswa/' . Session::get('user')->nim . '/' . Session::get('user')->nim . '.jpg') }}"
+                                                <img src="{{ asset('storage/profil_mahasiswa/' . Session::get('user')->nim . '/' . Session::get('user')->nim . '.jpg') }}"
                                                     class="img-fluid rounded-circle"
                                                     onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'">
                                             @else
