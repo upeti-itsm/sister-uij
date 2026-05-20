@@ -1079,3 +1079,13 @@ Route::get('/test-telegram', [\App\Http\Controllers\SuperAdminPage\Moodle\Mahasi
 */
 /* AUTHORS */
 Route::get('/sinta-authors', [\App\Http\Controllers\AdminSinta\AuthorsCont::class, 'index'])->name('admin_sinta.authors.index');
+
+
+/*
+ * ------------------------------------------------------------------------
+ * NEW SEKRETARIS ROUTING
+ * ------------------------------------------------------------------------
+*/
+Route::prefix('sek/surat-menyurat/buat-surat')->middleware('modul:Pengelolaan Surat')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\PengelolaanSuratController::class, 'index'])->name('sek.surat_menyurat.buat_surat.index');
+});
