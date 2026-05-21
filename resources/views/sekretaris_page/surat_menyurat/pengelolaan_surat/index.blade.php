@@ -29,6 +29,81 @@
 @endsection
 
 @section('body-content')
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fs-17 font-weight-600 mb-0">
+                            <i class="fas fa-history mr-2"></i>Riwayat Surat Menyurat
+                        </h6>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-primary"
+                            onclick="window.location='{{ route('sek.surat_menyurat.buat_surat.create') }}'">
+                            <i class="fas fa-plus mr-2"></i>Buat Surat
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Pencarian</label>
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <input type="text" id="cari-data" class="form-control"
+                                                placeholder="Ketik di sini untuk mencari...">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button class="btn btn-block btn-primary" id="btn-cari-data">
+                                                <i class="fas fa-search mr-2"></i>Cari
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Status Pengajuan</label>
+                                    <select class="select2 form-control" id="filter-pengajuan">
+                                        <option></option>
+                                        @foreach ($status as $item)
+                                            <option value="{{ $item->id_status_surat }}">{{ $item->status_surat }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover table-riwayat-pengajuan"
+                                id="table-riwayat-pengajuan">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="text-center fw-bold text-uppercase">No</th>
+                                        <th class="text-left fw-bold text-uppercase">No. Pengajuan</th>
+                                        <th class="text-left fw-bold text-uppercase">Tanggal Pengajuan</th>
+                                        <th class="text-left fw-bold text-uppercase">Tahun Akademik</th>
+                                        <th class="text-left fw-bold text-uppercase">Status</th>
+                                        <th class="text-left fw-bold text-uppercase">Catatan</th>
+                                        <th class="text-center fw-bold text-uppercase">
+                                            <i class="fas fa-cogs"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('modal')
