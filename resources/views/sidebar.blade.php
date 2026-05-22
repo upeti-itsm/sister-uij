@@ -276,7 +276,7 @@
                                     @endif
                                     @if (array_key_exists('Pengajuan Surat', $modul))
                                         <li @if ($menu == 'Pengajuan Surat') class="mm-active" @endif>
-                                            <a href="#">Pengajuan
+                                            <a href="{{ route('sekretaris.surat_menyurat.pengajuan_surat.index') }}">Pengajuan
                                                 Surat</a>
                                         </li>
                                     @endif
