@@ -349,8 +349,6 @@
     <script src="{{ asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.id.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('adminpage/own-js/sekretaris_page/surat_menyurat/pengajuan_surat.js') }}"></script>
-    <script>
-        window.CKEDITOR_BASEPATH = "{{ asset('adminpage/assets/plugins/ckeditor/') }}/";
-    </script>
     <script src="{{ asset('adminpage/assets/plugins/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/sekretaris_page/pengelolaan_surat/create_page.js') }}"></script>
 @endpush
