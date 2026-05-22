@@ -254,7 +254,7 @@
                                     Surat Menyurat
                                 </a>
                                 <ul class="nav-second-level">
-                                    @if (array_key_exists('Surat Keluar Masuk', $modul))
+                                    {{-- @if (array_key_exists('Surat Keluar Masuk', $modul))
                                         <li @if ($menu == 'Surat Keluar Masuk') class="mm-active" @endif>
                                             <a
                                                 href="{{ route('sekretaris.surat_menyurat.surat_keluar_masuk.index') }}">Surat
@@ -266,10 +266,17 @@
                                             <a href="{{ route('sekretaris.surat_menyurat.surat_keputusan.index') }}">Surat
                                                 Keputusan (SK)</a>
                                         </li>
+                                    @endif --}}
+                                    @if (array_key_exists('Pengelolaan Surat', $modul))
+                                        <li @if ($menu == 'Pengelolaan Surat') class="mm-active" @endif>
+                                            <a href="{{ route('sek.surat_menyurat.buat_surat.index') }}">
+                                                Buat Surat
+                                            </a>
+                                        </li>
                                     @endif
                                     @if (array_key_exists('Pengajuan Surat', $modul))
                                         <li @if ($menu == 'Pengajuan Surat') class="mm-active" @endif>
-                                            <a href="{{ route('sekretaris.surat_menyurat.pengajuan_surat.index') }}">Pengajuan
+                                            <a href="#">Pengajuan
                                                 Surat</a>
                                         </li>
                                     @endif
