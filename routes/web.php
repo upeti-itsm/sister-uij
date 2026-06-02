@@ -709,6 +709,34 @@ Route::get('/kary/penggajian/gaji-bulanan/slip-gaji/{id_rekap}', [\App\Http\Cont
 Route::get('/kary/penggajian/gaji-bulanan/detail/{id_rekap}', [\App\Http\Controllers\KaryawanPage\Penggajian\GajiBulananController::class, 'detail'])->name('karyawan.penggajian.gaji_bulanan.detail')->middleware('modul:Melihat Gaji Bulanan');
 Route::post('/kary/penggajian/gaji-bulanan/ajukan-perbaikan', [\App\Http\Controllers\KaryawanPage\Penggajian\GajiBulananController::class, 'ajukan_perbaikan'])->name('karyawan.penggajian.gaji_bulanan.ajukan_perbaikan')->middleware('modul:Melihat Gaji Bulanan');
 
+// Pengajuan Surat Unit Kerja
+Route::prefix('kary/surat-menyurat/pengajuan-surat')
+    ->middleware('modul:Pengelolaan Surat Unit Kerja')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class, 'index',])->name('karyawan.surat_menyurat.pengajuan_surat.index');
+        Route::get('/create', [\App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class, 'create',])->name('karyawan.surat_menyurat.pengajuan_surat.create');
+        Route::get('/edit/{id_log_surat}', [\App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class, 'edit',])->name('karyawan.surat_menyurat.pengajuan_surat.edit');
+        Route::post('/json', [
+            \App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class,
+            'json_daftar_pengajuan_surat',
+        ])->name('karyawan.surat_menyurat.pengajuan_surat.json');
+        Route::post('/insup', [
+            \App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class,
+            'insup_pengajuan_surat',
+        ])->name('karyawan.surat_menyurat.pengajuan_surat.insup');
+        Route::post('/detail', [
+            \App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class,
+            'detail_pengajuan_surat',
+        ])->name('karyawan.surat_menyurat.pengajuan_surat.detail');
+        Route::post('/delete', [
+            \App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class,
+            'delete_pengajuan_surat',
+        ])->name('karyawan.surat_menyurat.pengajuan_surat.delete');
+        Route::post('/teruskan-pimpinan', [
+            \App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class,
+            'teruskan_pimpinan',
+        ])->name('karyawan.surat_menyurat.pengajuan_surat.teruskan_pimpinan');
+    });
 /*
  * ------------------------------------------------------------------------
  * TRACER STUDY
@@ -809,6 +837,13 @@ Route::post('/kui/delete-kerjasama', [\App\Http\Controllers\KuiKerjasama\Kerjasa
  * REKTOR PAGE
  * ------------------------------------------------------------------------
 */
+
+/* Pengelolaan Surat Pengajuan Pimpinan Pengajuan  Rektor*/
+Route::get('/rek/surat-menyurat/pengelolaan-surat-pengajuan', [\App\Http\Controllers\RektorPage\PengelolaanSuratPengajuanController::class, 'index'])->name('rek.surat_menyurat.pengelolaan_surat.index')->middleware('modul:Pengelolaan Surat Pengajuan Pimpinan');
+Route::post('/rek/surat-menyurat/pengelolaan-surat-pengajuan/json', [\App\Http\Controllers\RektorPage\PengelolaanSuratPengajuanController::class, 'json_daftar_pengajuan_surat'])->name('rek.surat_menyurat.pengelolaan_surat.json')->middleware('modul:Pengelolaan Surat Pengajuan Pimpinan');
+Route::post('/rek/surat-menyurat/pengelolaan-surat-pengajuan/detail', [\App\Http\Controllers\RektorPage\PengelolaanSuratPengajuanController::class, 'detail_pengajuan_surat'])->name('rek.surat_menyurat.pengelolaan_surat.detail')->middleware('modul:Pengelolaan Surat Pengajuan Pimpinan');
+Route::post('/rek/surat-menyurat/pengelolaan-surat-pengajuan/set-status', [\App\Http\Controllers\RektorPage\PengelolaanSuratPengajuanController::class, 'set_status_pengajuan_surat'])->name('rek.surat_menyurat.pengelolaan_surat.set_status')->middleware('modul:Pengelolaan Surat Pengajuan Pimpinan');
+
 /* Dashboard */
 Route::post('/rek/dashboard/get-daftar-ulang-tahun', [\App\Http\Controllers\RektorPage\DashboardController::class, 'get_daftar_ulang_tahun'])->name('rektor.dashboard.get_daftar_ulang_tahun')->middleware('modul:Dashboard');
 Route::get('/rek/dashboard/detail-mahasiswa/{status?}', [\App\Http\Controllers\RektorPage\DashboardController::class, 'detail_mahasiswa'])->name('rektor.dashboard.detail_mahasiswa')->middleware('modul:Dashboard - Detail Mahasiswa');

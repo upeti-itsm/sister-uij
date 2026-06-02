@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\SekretarisPage\SuratMenyurat;
+namespace App\Http\Controllers\KaryawanPage\SuratMenyurat;
 
 use App\Http\Controllers\Controller;
-use App\Models\Organisasi\Karyawan;
 use App\Models\Organisasi\PengajuanSurat;
 use App\Models\Organisasi\UnitKerja;
 use Illuminate\Http\Request;
@@ -18,13 +17,83 @@ class PengajuanSuratController extends Controller
         $menu        = 'Pengajuan Surat';
         $jenis_surat = PengajuanSurat::daftar_jenis_surat();
         $status_surat = PengajuanSurat::daftar_status_surat();
-        $pimpinan_rektorat = PengajuanSurat::daftar_pimpinan_rektorat();
-        $karyawan    = Karyawan::get_daftar_karyawan();
         $unit_kerja  = UnitKerja::get_daftar_unit_kerja('');
 
         return view(
-            'sekretaris_page/surat_menyurat/pengajuan_surat',
-            compact('menu', 'jenis_surat', 'status_surat', 'pimpinan_rektorat', 'karyawan', 'unit_kerja')
+            'karyawan_page/surat_menyurat/pengajuan_surat_unit_kerja',
+            compact('menu', 'jenis_surat', 'unit_kerja', 'status_surat')
+        );
+    }
+
+    public function create()
+    {
+        $menu        = 'Pengajuan Surat';
+        $jenis_surat = PengajuanSurat::daftar_jenis_surat();
+
+        $unit_kerja = UnitKerja::get_daftar_unit_kerja('');
+        $user = Session::get('user');
+        $selected_unit = $user->id_unit_bagian ?? $user->id_unit_kerja ?? null;
+        $selected_unit_label = null;
+
+        foreach ($unit_kerja as $unit) {
+            $unit_id = $unit->id_unit_bagian ?? $unit->id_unit_kerja ?? null;
+            if ($selected_unit !== null && (string) $unit_id === (string) $selected_unit) {
+                $selected_unit_label = $unit->unit_kerja ?? ($unit->nama_unit_kerja ?? $unit->nama_unit_bagian ?? null);
+                break;
+            }
+        }
+
+        $is_edit = false;
+        $edit_id = null;
+
+        return view(
+            'karyawan_page/surat_menyurat/pengajuan_surat_unit_kerja_create',
+            compact('menu', 'jenis_surat', 'unit_kerja', 'selected_unit', 'selected_unit_label', 'is_edit', 'edit_id')
+        );
+    }
+
+    public function edit($id_log_surat)
+    {
+        $menu        = 'Pengajuan Surat';
+        $jenis_surat = PengajuanSurat::daftar_jenis_surat();
+        $unit_kerja = UnitKerja::get_daftar_unit_kerja('');
+        $user = Session::get('user');
+        $selected_unit = $user->id_unit_bagian ?? $user->id_unit_kerja ?? null;
+        $selected_unit_label = null;
+
+        foreach ($unit_kerja as $unit) {
+            $unit_id = $unit->id_unit_bagian ?? $unit->id_unit_kerja ?? null;
+            if ($selected_unit !== null && (string) $unit_id === (string) $selected_unit) {
+                $selected_unit_label = $unit->unit_kerja ?? ($unit->nama_unit_kerja ?? $unit->nama_unit_bagian ?? null);
+                break;
+            }
+        }
+
+        $detail = PengajuanSurat::detail_pengajuan_surat($id_log_surat);
+        if (!$detail) {
+            Session::flash('failed_message', 'Pengajuan surat tidak ditemukan.');
+            return redirect()->route('karyawan.surat_menyurat.pengajuan_surat.index');
+        }
+
+        $status = strtoupper((string) ($detail->status_surat ?? $detail->status ?? ''));
+        if (strpos($status, 'REVISI') === false) {
+            Session::flash('failed_message', 'Pengajuan surat ini tidak dalam status revisi.');
+            return redirect()->route('karyawan.surat_menyurat.pengajuan_surat.index');
+        }
+
+        $id_personal_pengaju = $detail->id_personal_pengaju ?? null;
+        $user_personal = $user->id_personal ?? null;
+        if ($id_personal_pengaju && $user_personal && (string) $id_personal_pengaju !== (string) $user_personal) {
+            Session::flash('failed_message', 'Anda tidak memiliki akses untuk mengubah pengajuan ini.');
+            return redirect()->route('karyawan.surat_menyurat.pengajuan_surat.index');
+        }
+
+        $is_edit = true;
+        $edit_id = $id_log_surat;
+
+        return view(
+            'karyawan_page/surat_menyurat/pengajuan_surat_unit_kerja_create',
+            compact('menu', 'jenis_surat', 'unit_kerja', 'selected_unit', 'selected_unit_label', 'is_edit', 'edit_id')
         );
     }
 
@@ -32,14 +101,13 @@ class PengajuanSuratController extends Controller
 
     public function json_daftar_pengajuan_surat(Request $request)
     {
-        $length      = (int) $request->input('length', 10);
-        $start       = (int) $request->input('start', 0);
-        $search      = $request->input('search.value');
-        $user        = Session::get('user');
+        $length = (int) $request->input('length', 10);
+        $start = (int) $request->input('start', 0);
+        $user = Session::get('user');
         $id_personal = $user->id_personal ?? null;
         $id_unit_bagian = $user->id_unit_bagian ?? null;
 
-        $akses_all = $request->input('akses_all', true);
+        $akses_all = filter_var($request->input('akses_all', false), FILTER_VALIDATE_BOOLEAN);
         if ($akses_all) {
             $id_personal = null;
             $id_unit_bagian = null;
@@ -51,6 +119,7 @@ class PengajuanSuratController extends Controller
         $tanggal_dari    = $request->input('tanggal_dari');
         $tanggal_sampai  = $request->input('tanggal_sampai');
         $sts_aktif       = $request->input('sts_aktif', true);
+        $search          = $request->input('search.value');
 
         if (!empty($id_unit_filter)) {
             $id_personal = null;
@@ -112,41 +181,49 @@ class PengajuanSuratController extends Controller
             'tanggal_surat'         => 'required',
             'isi_surat'             => 'required',
             'id_jenis_surat'        => 'required',
-            'pimpinan_penerima'      => 'required',
             'lampiran'              => 'nullable|mimes:pdf|max:5000',
         ], [
             'perihal.required'              => 'Pastikan Perihal Surat terisi',
             'tanggal_surat.required'        => 'Pastikan Tanggal Surat terisi',
             'isi_surat.required'            => 'Pastikan Isi Surat terisi',
             'id_jenis_surat.required'       => 'Pastikan Jenis Surat dipilih',
-            'pimpinan_penerima.required'     => 'Pastikan Pimpinan Rektorat dipilih',
             'lampiran.mimes'                => 'File lampiran harus berformat PDF',
             'lampiran.max'                  => 'Ukuran lampiran tidak boleh lebih dari 5MB',
         ]);
 
         $user = Session::get('user');
         $id_personal_pengaju = $user->id_personal ?? null;
-        $unit_bagian_pengirim = $request->unit_bagian_pengirim ?? ($user->id_unit_bagian ?? null);
+        $unit_bagian_pengirim = $request->input('unit_bagian_pengirim') ?: ($user->id_unit_bagian ?? $user->id_unit_kerja ?? null);
 
         if (empty($id_personal_pengaju) || empty($unit_bagian_pengirim)) {
-            Session::flash('failed_message', 'Data pengaju atau unit pengirim tidak ditemukan');
+            Session::flash('failed_message', 'Data pengaju atau unit kerja tidak ditemukan');
             return redirect()->back();
         }
 
-        // Penerima: bisa unit bagian dan/atau personal
-        $unit_bagian_penerima = $request->unit_bagian_penerima ?? [];
-        $personal_penerima    = $request->personal_penerima    ?? [];
-        $pimpinan_penerima    = $request->pimpinan_penerima;
+        $unit_bagian_penerima = [];
+        $personal_penerima = [];
 
-        if (!empty($pimpinan_penerima)) {
-            $personal_penerima[] = $pimpinan_penerima;
-            $personal_penerima = array_values(array_unique($personal_penerima));
+        $id_log_surat = $request->id_log_surat ?: null;
+        if ($id_log_surat) {
+            $detail = PengajuanSurat::detail_pengajuan_surat($id_log_surat);
+            if (!$detail) {
+                Session::flash('failed_message', 'Pengajuan surat tidak ditemukan.');
+                return redirect()->back();
+            }
+
+            $status = strtoupper((string) ($detail->status_surat ?? $detail->status ?? ''));
+            if (strpos($status, 'REVISI') === false) {
+                Session::flash('failed_message', 'Pengajuan surat ini tidak dalam status revisi.');
+                return redirect()->back();
+            }
+
+            $id_personal_pengaju_db = $detail->id_personal_pengaju ?? null;
+            if ($id_personal_pengaju_db && $id_personal_pengaju && (string) $id_personal_pengaju_db !== (string) $id_personal_pengaju) {
+                Session::flash('failed_message', 'Anda tidak memiliki akses untuk mengubah pengajuan ini.');
+                return redirect()->back();
+            }
         }
 
-        // Jika keduanya kosong anggap kosong (function DB yang validasi)
-        $id_log_surat = $request->id_log_surat ?: (string) Uuid::uuid4();
-
-        // Handle file lampiran
         $lampiran_path = null;
         if ($request->hasFile('lampiran')) {
             $file       = $request->file('lampiran');
@@ -166,13 +243,15 @@ class PengajuanSuratController extends Controller
             $request->id_jenis_surat,
             $id_personal_pengaju,
             $unit_bagian_pengirim,
-            $lampiran_path
+            $lampiran_path,
+            false
         );
 
         if ($result->status) {
             Session::flash('success_message', $result->keterangan);
+
+            return redirect()->route('karyawan.surat_menyurat.pengajuan_surat.index');
         } else {
-            // Hapus file yang sudah terlanjur diupload jika DB gagal
             if ($lampiran_path && Storage::disk('public')->exists($lampiran_path)) {
                 Storage::disk('public')->delete($lampiran_path);
             }
@@ -193,7 +272,6 @@ class PengajuanSuratController extends Controller
         $data = PengajuanSurat::delete_pengajuan_surat($request->id_log_surat);
 
         if ($data->status) {
-            // Hapus file lampiran jika ada
             if (!empty($data->path_lampiran) && Storage::disk('public')->exists($data->path_lampiran)) {
                 Storage::disk('public')->delete($data->path_lampiran);
             }

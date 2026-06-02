@@ -1,8 +1,8 @@
 @extends('sidebar')
 @section('head-css')
-    <link href="{{asset('adminpage/assets/plugins/datatables/datatables.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminpage/assets/plugins/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
 @endsection
 @section('content-header')
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
@@ -16,7 +16,8 @@
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
                 <h1 class="font-weight-bold">Detail Peran Pengguna</h1>
-                <small>Halaman ini digunakan untuk menampilkan detail peran apa saja yang dapat di akses oleh pengguna yang dikelola</small>
+                <small>Halaman ini digunakan untuk menampilkan detail peran apa saja yang dapat di akses oleh pengguna yang
+                    dikelola</small>
             </div>
         </div>
     </div>
@@ -36,70 +37,76 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Nama Karyawan</label>
-                            <input type="hidden" id="id_personal" value="{{$personal->id_personal}}">
-                            <input type="hidden" id="id_aplikasi" value="{{$aplikasi->id_aplikasi}}">
-                            <input type="text" readonly value="{{$personal->nama_lengkap}}" class="form-control" id="nama_personal">
+                            <input type="hidden" id="id_personal" value="{{ $personal->id_personal }}">
+                            <input type="hidden" id="id_aplikasi" value="{{ $aplikasi->id_aplikasi }}">
+                            <input type="text" readonly value="{{ $personal->nama_lengkap }}" class="form-control"
+                                id="nama_personal">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Unit Kerja</label>
-                            <input type="text" readonly value="{{$personal->unit_kerja}}" class="form-control">
+                            <input type="text" readonly value="{{ $personal->unit_kerja }}" class="form-control">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Aplikasi</label>
-                            <input type="text" readonly value="{{$aplikasi->nama_aplikasi}}" class="form-control">
+                            <input type="text" readonly value="{{ $aplikasi->nama_aplikasi }}" class="form-control">
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <hr/>
+                        <hr />
                     </div>
                     <div class="col-md-12 collapse show" id="filter-collapse">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">Pencarian</label>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <input type="text" class="form-control" placeholder="Cari Nama Modul"
-                                                   id="cari-data">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button class="btn btn-block btn-primary" id="btn-cari-data"><i
-                                                    class="fas fa-search mr-2"></i>Cari
-                                            </button>
-                                        </div>
+                        <div class="row align-items-end">
+                            <div class="col-xl-4 col-lg-4 mb-3 mb-lg-0">
+                                <div class="form-group mb-0">
+                                    <label class="font-weight-bold">Cari Peran</label>
+                                    <div class="d-flex align-items-end">
+                                        <input type="text" class="form-control mr-2" placeholder="Cari Nama Peran"
+                                            id="cari-data">
+                                        <button class="btn btn-primary flex-shrink-0" id="btn-cari-data"><i
+                                                class="fas fa-search mr-2"></i>Cari</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-8">
-                                <div class="form-group">
+                            <div class="col-xl-8 col-lg-8">
+                                <div class="form-group mb-0">
                                     <label class="font-weight-bold">Penambahan Data</label>
-                                    <div class="row">
-                                        <div class="col-md-4">
+                                    <div class="row align-items-end">
+                                        <div class="col-12 col-md-3 mb-3 mb-md-0">
                                             <select class="form-control select2" id="peran">
-                                                @foreach($peran AS $item)
-                                                    <option value="{{$item->id_peran}}">{{$item->nama_peran}}</option>
+                                                @foreach ($peran as $item)
+                                                    <option value="{{ $item->id_peran }}">{{ $item->nama_peran }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <select class="form-control select2" id="is_default">
-                                                <option value="0">Non-Default</option>
-                                                <option value="1">Deafult</option>
+                                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                                            <select class="form-control select2" id="unit_kerja">
+                                                @foreach ($unit_kerja as $item)
+                                                    <option value="{{ $item->id_unit_bagian ?? $item->id_unit_kerja }}">
+                                                        {{ $item->unit_kerja ?? ($item->nama_unit_bagian ?? $item->nama_unit_kerja) }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <button class="btn btn-block btn-primary" id="btn-tambah-data"><span class='spinner-border spinner-border-sm mr-2' id='loading-spin-tambah-data' style='display: none' role='status' aria-hidden='true'></span><i
-                                                    class="fas fa-user-plus mr-2"></i>Tambah Peran
-                                            </button>
+                                        <div class="col-12 col-md-2 mb-3 mb-md-0">
+                                            <select class="form-control select2" id="is_default">
+                                                <option value="0">Non-Default</option>
+                                                <option value="1">Default</option>
+                                            </select>
                                         </div>
-                                        <div class="col-md-2">
-                                            <a href="{{route('peran_pengguna.index')}}" class="btn btn-block btn-danger" id="btn-kembali"><i
-                                                    class="fas fa-backward mr-2"></i>
-                                            </a>
+                                        <div class="col-12 col-md-4">
+                                            <div class="d-flex justify-content-md-end">
+                                                <a href="{{ route('peran_pengguna.index') }}" class="btn btn-danger mr-2"
+                                                    id="btn-kembali"><i class="fas fa-backward mr-2"></i>Kembali</a>
+                                                <button class="btn btn-primary" id="btn-tambah-data"><span
+                                                    class='spinner-border spinner-border-sm mr-2'
+                                                    id='loading-spin-tambah-data' style='display: none' role='status'
+                                                    aria-hidden='true'></span><i
+                                                    class="fas fa-user-plus mr-2" id="tambah-icon"></i>Tambah Peran</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -110,11 +117,12 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" id="table">
                                 <thead>
-                                <tr>
-                                    <th class="text-center">Nomor</th>
-                                    <th class="text-left">Nama Peran</th>
-                                    <th class="text-center"><i class="fas fa-th"></i></th>
-                                </tr>
+                                    <tr>
+                                        <th class="text-center">Nomor</th>
+                                        <th class="text-left">Nama Peran</th>
+                                        <th class="text-left">Unit Kerja</th>
+                                        <th class="text-center"><i class="fas fa-th"></i></th>
+                                    </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
@@ -128,7 +136,7 @@
 @section('modal')
 @endsection
 @push('scripts')
-    <script src="{{asset('adminpage/assets/plugins/datatables/datatables.min.js')}}"></script>
-    <script src="{{asset('adminpage/assets/plugins/select2/js/select2.min.js')}}"></script>
-    <script src="{{asset('adminpage/own-js/super_admin/konfigurasi_sistem/detail_peran_pengguna.js')}}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('adminpage/assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/super_admin/konfigurasi_sistem/detail_peran_pengguna.js') }}"></script>
 @endpush

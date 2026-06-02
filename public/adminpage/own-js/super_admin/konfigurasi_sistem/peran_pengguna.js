@@ -59,7 +59,7 @@ jQuery.peran_pengguna = {
                     sClass: 'text-center',
                     width: "20%",
                     render: function (data) {
-                        return "<button title='Edit Peran' class='btn btn-block btn-info btn-edit' data-id='"+data.id_personal+"'><i class='fas fa-edit mr-2'></i>Edit</button>";
+                        return "<button title='Edit Peran' class='btn btn-block btn-info btn-edit' data-id='" + data.id_personal + "'><i class='fas fa-edit mr-2'></i>Edit</button>";
                     }
                 },
                 {
@@ -96,7 +96,7 @@ jQuery.peran_pengguna = {
             }
         });
 
-        $("#table").on('click', 'button.btn-edit', function (){
+        $("#table").on('click', 'button.btn-edit', function () {
             location.href = '/super-admin/peran-pengguna/detail/' + $(this).data('id') + '/' + $("#id_aplikasi").val()
         })
     },

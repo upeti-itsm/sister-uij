@@ -16,16 +16,6 @@
         .select2-container--bootstrap4 .select2-selection__rendered {
             line-height: calc(1.5em + .75rem);
         }
-
-        #table-pengajuan-surat_wrapper {
-            overflow-x: auto;
-            width: 100%;
-        }
-
-        #table-pengajuan-surat {
-            min-width: 700px;
-            width: 100% !important;
-        }
     </style>
 @endsection
 
@@ -33,14 +23,14 @@
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0">
         <ol class="breadcrumb d-inline-flex font-weight-600 fs-13 bg-white mb-0 float-sm-right">
             <li class="breadcrumb-item">Surat Menyurat</li>
-            <li class="breadcrumb-item active">Pengajuan Surat</li>
+            <li class="breadcrumb-item active">Pengelolaan Pengajuan Surat</li>
         </ol>
     </nav>
     <div class="col-sm-8 header-title p-0">
         <div class="media">
             <div class="header-icon text-success mr-3"><i class="fas fa-envelope-open-text"></i></div>
             <div class="media-body">
-                <h1 class="font-weight-bold">Pengajuan Surat</h1>
+                <h1 class="font-weight-bold">Pengelolaan Pengajuan Surat</h1>
                 <small>Halaman ini digunakan untuk mengelola pengajuan surat ke rektorat</small>
             </div>
         </div>
@@ -52,6 +42,24 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
+                    @php
+                        $statusSetuju = null;
+                        $statusRevisi = null;
+                        foreach ($status_surat as $statusItem) {
+                            $label = strtoupper(trim($statusItem->status_surat ?? ''));
+                            if (
+                                !$statusSetuju &&
+                                (str_contains($label, 'DISETUJUI') || str_contains($label, 'SETUJU'))
+                            ) {
+                                $statusSetuju = $statusItem->id_status_surat;
+                            }
+                            if (!$statusRevisi && str_contains($label, 'REVISI')) {
+                                $statusRevisi = $statusItem->id_status_surat;
+                            }
+                        }
+                    @endphp
+                    <input type="hidden" id="status-setuju-id" value="{{ $statusSetuju }}">
+                    <input type="hidden" id="status-revisi-id" value="{{ $statusRevisi }}">
 
                     {{-- ═══════════ FORM TAMBAH / EDIT ═══════════ --}}
                     <div class="col-md-12 collapse" id="form-collapse-surat">
@@ -211,15 +219,15 @@
                             {{-- Filter --}}
                             <div class="col-md-12 collapse show" id="filter-collapse-surat">
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="font-weight-bold">Pencarian</label>
                                             <div class="row">
-                                                <div class="col-md-8 gap-3">
-                                                    <input type="text" class="form-control mb-2"
+                                                <div class="col-md-8">
+                                                    <input type="text" class="form-control"
                                                         placeholder="Cari perihal surat..." id="cari-data">
                                                 </div>
-                                                <div class="col-md-4 gap-3">
+                                                <div class="col-md-4">
                                                     <button class="btn btn-block btn-primary" id="btn-cari-data">
                                                         <i class="fas fa-search mr-2"></i>Cari
                                                     </button>
@@ -231,7 +239,7 @@
                                         <div class="form-group">
                                             <label class="font-weight-bold">Filtering</label>
                                             <div class="row">
-                                                <div class="col-md-4 gap-3 mb-2">
+                                                <div class="col-md-4">
                                                     <select class="select2 form-control" id="filtering-jenis-surat">
                                                         <option value="">Semua Jenis</option>
                                                         @foreach ($jenis_surat as $item)
@@ -241,8 +249,8 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="col-md-4 gap-3 mb-2">
-                                                    <select class="select2 form-control " id="filtering-status-surat">
+                                                <div class="col-md-4">
+                                                    <select class="select2 form-control" id="filtering-status-surat">
                                                         <option value="">Semua Status</option>
                                                         @foreach ($status_surat as $item)
                                                             <option value="{{ $item->id_status_surat }}">
@@ -251,7 +259,7 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="col-md-4 gap-3 mb-2">
+                                                <div class="col-md-4">
                                                     <select class="select2 form-control" id="filtering-unit-kerja">
                                                         <option value="">Semua Unit</option>
                                                         @foreach ($unit_kerja as $item)
@@ -269,9 +277,9 @@
                             </div>
                             {{-- Tabel --}}
                             <div class="col-md-12 mt-3">
-                                <div class="table-responsive" style="overflow-x: auto;">
+                                <div class="table-responsive">
                                     <table class="table table-striped table-bordered table-hover"
-                                        id="table-pengajuan-surat" style="min-width: 700px;">
+                                        id="table-pengajuan-surat">
                                         <thead>
                                             <tr>
                                                 <th style="width:5%">No</th>
@@ -302,7 +310,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
-                    <h5 class="modal-title text-white font-weight-600">Detail Pengajuan Surat</h5>
+                    <h5 class="modal-title text-white font-weight-600">Review Pengajuan Surat</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -344,7 +352,7 @@
                         <tr>
                             <th>Pimpinan Rektorat</th>
                             <td>
-                                <select class="select2 form-control" id="detail-pimpinan-penerima">
+                                <select class="select2 form-control" id="detail-pimpinan-penerima" disabled>
                                     <option value="">-- Pilih Pimpinan Rektorat --</option>
                                     @foreach ($pimpinan_rektorat as $item)
                                         <option value="{{ $item->id_personal }}">
@@ -358,8 +366,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary" id="btn-teruskan-pimpinan">
-                        <i class="fas fa-paper-plane mr-2"></i>Teruskan ke Pimpinan
+                    <button type="button" class="btn btn-warning text-white" id="btn-revisi-surat">
+                        <i class="fas fa-pen mr-2"></i>Revisi
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btn-setujui-surat">
+                        <i class="fas fa-check mr-2"></i>Setujui
                     </button>
                 </div>
             </div>
@@ -373,7 +384,6 @@
     <script src="{{ asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/datepicker/bootstrap-datepicker.id.min.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('adminpage/own-js/sekretaris_page/surat_menyurat/pengajuan_surat.js') }}"></script>
     <script src="{{ asset('adminpage/assets/plugins/ckeditor/ckeditor.js') }}"></script>
-    <script src="{{ asset('adminpage/own-js/sekretaris_page/pengelolaan_surat/create_page.js') }}"></script>
+    <script src="{{ asset('adminpage/own-js/rektor_page/pengelolaan_surat/pengelolaan_surat.js') }}"></script>
 @endpush

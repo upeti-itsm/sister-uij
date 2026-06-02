@@ -124,6 +124,7 @@
                             <li class="nav-label">Kepegawaian</li>
                             @if (array_key_exists('Pengelolaan Data Pribadi Pegawai', $modul) ||
                                     array_key_exists('Pengelolaan Data Kepegawaian', $modul) ||
+                                    array_key_exists('Pengelolaan Surat Unit Kerja', $modul) ||
                                     array_key_exists('Curriculum Vitae', $modul))
                                 <li @if (
                                     $menu == 'Melihat Data Diri' ||
@@ -470,6 +471,8 @@
                                 array_key_exists('Sinkronisasi Jadwal Mahasiswa dengan Siakad', $modul) ||
                                 array_key_exists('Student Body', $modul) ||
                                 array_key_exists('Hasil Studi Mahasiswa', $modul) ||
+                                array_key_exists('Pengelolaan Surat Pengajuan Pimpinan', $modul) ||
+                                array_key_exists('Pengajuan Surat Unit Kerja', $modul) ||
                                 array_key_exists('Pengajuan Surat Aktif Dekan', $modul) ||
                                 array_key_exists('Pengajuan Surat Cuti Dekan', $modul) ||
                                 array_key_exists('Pengajuan Surat Aktif Dosen', $modul) ||
@@ -492,6 +495,8 @@
                                     $menu == 'Sinkronisasi Jadwal Mahasiswa dengan Siakad' ||
                                     $menu == 'Student Body' ||
                                     $menu == 'Hasil Studi Mahasiswa' ||
+                                    $menu == 'Pengelolaan Surat Pengajuan Pimpinan' ||
+                                    $menu == 'Pengajuan Surat Unit Kerja' ||
                                     $menu == 'Pengajuan Surat Aktif Dekan' ||
                                     $menu == 'Pengajuan Surat Cuti Dekan' ||
                                     $menu == 'Pengajuan Surat Aktif Dosen' ||
@@ -542,6 +547,18 @@
                                         <li @if ($menu == 'Pengelolaan Rekap Absensi Mengajar') class="mm-active" @endif>
                                             <a href="{{ route('hrd.akademik.rekapitulasi_absen_mengajar.index') }}">Rekap
                                                 Absensi Mengajar</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengelolaan Surat Pengajuan Pimpinan', $modul))
+                                        <li @if ($menu == 'Pengelolaan Surat Pengajuan Pimpinan') class="mm-active" @endif>
+                                            <a href="{{ route('rek.surat_menyurat.pengelolaan_surat.index') }}">Pengelolaan
+                                                Surat Pengajuan</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengelolaan Surat Unit Kerja', $modul))
+                                        <li @if ($menu == 'Pengelolaan Surat Unit Kerja') class="mm-active" @endif>
+                                            <a href="{{ route('karyawan.surat_menyurat.pengajuan_surat.index') }}">Pengajuan
+                                                Surat</a>
                                         </li>
                                     @endif
                                     @if (array_key_exists('Pengelolaan Mahasiswa LP3I Banyuwangi', $modul) ||

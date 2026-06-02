@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdminPage\KonfigurasiSistem;
 
 use App\Http\Controllers\Controller;
 use App\Models\Organisasi\Karyawan;
+use App\Models\Organisasi\UnitKerja;
 use App\Models\Pengguna\PeranPengguna;
 use App\Models\Sistem\Aplikasi;
 use App\Models\Sistem\Peran;
@@ -39,8 +40,9 @@ class PeranPenggunaController extends Controller
         $menu = 'Pengelolaan Peran Pengguna';
         $personal = Karyawan::get_detail_karyawan_by_id_personal($id);
         $peran = Peran::get_daftar_peran($id_aplikasi);
+        $unit_kerja = UnitKerja::get_daftar_unit_kerja('');
         $aplikasi = Aplikasi::get_detail_aplikasi($id_aplikasi);
-        return view('super_admin_page.konfigurasi_sistem.detail_peran_pengguna', compact('menu', 'peran', 'personal', 'aplikasi'));
+        return view('super_admin_page.konfigurasi_sistem.detail_peran_pengguna', compact('menu', 'peran', 'personal', 'aplikasi', 'unit_kerja'));
     }
 
     public function json_get_daftar_peran_pengguna_by_personal(Request $request)
@@ -69,8 +71,9 @@ class PeranPenggunaController extends Controller
             'id_personal' => 'required',
             'id_peran' => 'required',
             'is_default' => 'required',
+            'unit_kerja' => 'nullable',
         ]);
-        $peran_pengguna = PeranPengguna::add_peran_pengguna($request->id_personal, $request->id_peran, $request->is_default == 1);
+        $peran_pengguna = PeranPengguna::add_peran_pengguna($request->id_personal, $request->id_peran, $request->is_default == 1, $request->unit_kerja ?? null);
         return response()->json($peran_pengguna);
     }
 

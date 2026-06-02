@@ -37,12 +37,21 @@ jQuery.detail_peran_pengguna = {
                     width: "75%",
                 },
                 {
+                    data: 'unit_kerja',
+                    searchable: true,
+                    sClass: 'text-left',
+                    width: "75%",
+                },
+                {
                     data: null,
                     searchable: false,
                     sClass: 'text-center',
                     width: "20%",
                     render: function (data) {
-                        return "<button class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_peran + "' data-nama='" + data.nama_peran + "'><span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_peran + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash'></i></button>";
+                        return "<button class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_peran + "' data-nama='" + data.nama_peran + "'>" +
+                            "<span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_peran + "' style='display: none' role='status' aria-hidden='true'></span>" +
+                            "<i class='fas fa-trash' id='detail-icon-" + data.id_peran + "'></i>" +
+                            "</button>";
                     }
                 }
             ],
@@ -91,10 +100,13 @@ jQuery.detail_peran_pengguna = {
                                 data: {
                                     id_personal: $("#id_personal").val(),
                                     id_peran: $("#peran").val(),
-                                    is_default: $("#is_default").val()
+                                    is_default: $("#is_default").val(),
+                                    unit_kerja: $("#unit_kerja").val()
                                 },
                                 beforeSend: function () {
+                                    $("#btn-tambah-data").prop('disabled', true);
                                     $("#loading-spin-tambah-data").show();
+                                    $("#tambah-icon").hide();
                                 },
                                 success: function (response) {
                                     if (response.status === 1) {
@@ -113,6 +125,8 @@ jQuery.detail_peran_pengguna = {
                                 },
                                 complete: function () {
                                     $("#loading-spin-tambah-data").hide();
+                                    $("#tambah-icon").show();
+                                    $("#btn-tambah-data").prop('disabled', false);
                                     self.data.table.ajax.reload();
                                 }
                             })
@@ -148,7 +162,10 @@ jQuery.detail_peran_pengguna = {
                                     id_peran: id
                                 },
                                 beforeSend: function () {
-                                    $("#detail-loading-spin-" + id).show();
+                                    var $btn = $("button.btn-delete[data-id='" + id + "']");
+                                    $btn.prop('disabled', true);
+                                    $btn.find("#detail-loading-spin-" + id).show();
+                                    $btn.find("#detail-icon-" + id).hide();
                                 },
                                 success: function (response) {
                                     if (response.status === 1) {
@@ -166,7 +183,10 @@ jQuery.detail_peran_pengguna = {
                                     }
                                 },
                                 complete: function () {
-                                    $("#detail-loading-spin-" + id).hide();
+                                    var $btn = $("button.btn-delete[data-id='" + id + "']");
+                                    $btn.find("#detail-loading-spin-" + id).hide();
+                                    $btn.find("#detail-icon-" + id).show();
+                                    $btn.prop('disabled', false);
                                     self.data.table.ajax.reload();
                                 }
                             })

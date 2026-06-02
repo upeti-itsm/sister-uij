@@ -13,14 +13,36 @@ class Pendaftar extends Model
 
     public static function get_informasi_perolehan_pendaftar()
     {
-        return DB::select('SELECT * FROM pmb.get_rekap_informasi_perolehan_mahasiswa()')[0];
+        $rows = DB::select('SELECT * FROM pmb.get_rekap_informasi_perolehan_mahasiswa()');
+
+        if (!empty($rows)) {
+            return $rows[0];
+        }
+
+        return (object) [
+            'tahun_seleksi_now' => '-',
+            'tahun_seleksi_old' => '-',
+            'total_mahasiswa_now' => 0,
+            'besar_trend' => 0,
+            'n_mhs_s2_manajemen' => 0,
+            'n_mhs_s1_manajemen' => 0,
+            'n_mhs_s1_rpl' => 0,
+            'n_mhs_s1_sti' => 0,
+            'n_mhs_s1_akuntansi' => 0,
+            'n_mhs_s1_ekonomi_pembangunan' => 0,
+            'n_mhs_d3_keu' => 0,
+        ];
     }
 
     public static function get_mahasiswa_baru($kd_prodi = 'x', $offset = -1, $limit = 10, $search = '', $tahun_seleksi = 'now')
     {
         if ($tahun_seleksi == 'now') $tahun_seleksi = Carbon::now()->year;
         return DB::select('SELECT * FROM pmb.get_mahasiswa_baru(:kd_prodi, :offset, :limit, :search, :tahun_seleksi)', [
-            'kd_prodi' => $kd_prodi, 'offset' => $offset, 'limit' => $limit, 'search' => $search, 'tahun_seleksi' => $tahun_seleksi
+            'kd_prodi' => $kd_prodi,
+            'offset' => $offset,
+            'limit' => $limit,
+            'search' => $search,
+            'tahun_seleksi' => $tahun_seleksi
         ]);
     }
 

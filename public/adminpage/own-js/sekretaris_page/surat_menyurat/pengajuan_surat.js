@@ -41,6 +41,46 @@ jQuery.pengajuan_surat = {
     setEvents: function () {
         var self = this;
 
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function buildCatatanHtml(raw) {
+            if (!raw) {
+                return "";
+            }
+
+            var text = String(raw);
+            var truncated = text;
+            var isTruncated = text.length > 120;
+            if (isTruncated) {
+                truncated = text.slice(0, 117) + "...";
+            }
+
+            if (!isTruncated) {
+                return "<br/><small class='text-danger'><i class='fas fa-comment-alt mr-1'></i>" + escapeHtml(text) + "</small>";
+            }
+
+            return (
+                "<br/><small class='text-danger catatan-revisi' data-full='" +
+                encodeURIComponent(text) +
+                "' data-short='" +
+                encodeURIComponent(truncated) +
+                "'>" +
+                "<i class='fas fa-comment-alt mr-1'></i>" +
+                "<span class='catatan-text'>" +
+                escapeHtml(truncated) +
+                "</span> " +
+                "<a href='#' class='catatan-toggle'>Lihat selengkapnya</a>" +
+                "</small>"
+            );
+        }
+
         function initFormEditor() {
             if (window.CKEDITOR && !CKEDITOR.instances["form-surat-isi_surat"]) {
                 CKEDITOR.replace("form-surat-isi_surat", {
@@ -78,6 +118,7 @@ jQuery.pengajuan_surat = {
                 data: function (d) {
                     d.jenis_surat = $("#filtering-jenis-surat").val();
                     d.status_surat = $("#filtering-status-surat").val();
+                    d.unit_kerja = $("#filtering-unit-kerja").val();
                 },
             },
             scrollY: "300px",
@@ -107,9 +148,13 @@ jQuery.pengajuan_surat = {
                     className: "text-left",
                     width: "30%",
                     render: function (data) {
+                        var catatan = data.catatan_revisi || data.catatan || "";
+                        var catatanHtml = buildCatatanHtml(catatan);
                         return (
                             "<p><b>" + data.perihal + "</b><br/>" +
-                            "<small class='text-muted'>Jenis: " + (data.jenis_surat || data.nama_jenis_surat || "-") + "</small></p>"
+                            "<small class='text-muted'>Jenis: " + (data.jenis_surat || data.nama_jenis_surat || "-") + "</small>" +
+                            catatanHtml +
+                            "</p>"
                         );
                     },
                 },
@@ -190,7 +235,7 @@ jQuery.pengajuan_surat = {
         });
 
         // ── Filter tahun ─────────────────────────────────────────────────────
-        $("#filtering-jenis-surat, #filtering-status-surat").change(function () {
+        $("#filtering-jenis-surat, #filtering-status-surat, #filtering-unit-kerja").change(function () {
             self.data.table.ajax.reload();
         });
 
@@ -205,6 +250,23 @@ jQuery.pengajuan_surat = {
             .keypress(function (e) {
                 if (e.keyCode === 13) self.data.table.search(this.value).draw();
             });
+
+        $("#table-pengajuan-surat").on("click", "a.catatan-toggle", function (event) {
+            event.preventDefault();
+            var $wrap = $(this).closest(".catatan-revisi");
+            var isExpanded = $wrap.attr("data-expanded") === "true";
+            var fullText = decodeURIComponent($wrap.attr("data-full") || "");
+            var shortText = decodeURIComponent($wrap.attr("data-short") || "");
+            if (isExpanded) {
+                $wrap.find(".catatan-text").text(shortText);
+                $(this).text("Lihat selengkapnya");
+                $wrap.attr("data-expanded", "false");
+            } else {
+                $wrap.find(".catatan-text").text(fullText);
+                $(this).text("Tutup");
+                $wrap.attr("data-expanded", "true");
+            }
+        });
 
         // ── Tombol Tambah ────────────────────────────────────────────────────
         $("#btn-tambah-surat").click(function () {
@@ -269,6 +331,7 @@ jQuery.pengajuan_surat = {
                     $("#detail-perihal").text(res.perihal || "-");
                     $("#detail-tanggal").text(res.tanggal_surat_ || res.tanggal_surat || "-");
                     $("#detail-jenis").text(res.jenis_surat || res.nama_jenis_surat || "-");
+                    $("#detail-catatan-revisi").text(res.catatan_revisi || res.catatan || "-");
                     $("#detail-pengirim-input").val(res.nama_unit_bagian_pengirim || res.unit_bagian_pengirim || "-");
                     var isiSurat = res.isi_surat || "-";
 
@@ -369,6 +432,7 @@ jQuery.pengajuan_surat = {
 
                                     if (res.status === true) {
                                         $("#detail-pimpinan-penerima").prop("disabled", true);
+                                        $("#modal-detail-surat").modal("hide");
                                     }
 
                                     self.data.table.ajax.reload();

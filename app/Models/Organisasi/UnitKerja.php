@@ -10,7 +10,8 @@ class UnitKerja extends Model
 {
     use HasFactory;
 
-    public static function get_daftar_unit_kerja($search = ''){
+    public static function get_daftar_unit_kerja($search = '')
+    {
         return DB::select('SELECT * FROM organisasi.get_daftar_unit_kerja(:search)', [
             'search' => $search
         ]);
