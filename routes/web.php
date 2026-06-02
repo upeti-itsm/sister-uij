@@ -658,6 +658,33 @@ Route::post('/sek/surat-menyurat/surat-keputusan/json/detail-partisipan', [\App\
 Route::post('/sek/surat-menyurat/surat-keputusan/json/add-partisipan', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\SuratKeputusanController::class, 'add_partisipan_sk'])->name('sekretaris.surat_menyurat.surat_keputusan.add_partisipan_sk')->middleware('modul:Pengelolaan Surat Keputusan');
 Route::post('/sek/surat-menyurat/surat-keputusan/json/delete-partisipan', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\SuratKeputusanController::class, 'delete_partisipan_sk'])->name('sekretaris.surat_menyurat.surat_keputusan.delete_partisipan_sk')->middleware('modul:Pengelolaan Surat Keputusan');
 
+// Pengajuan Surat
+Route::prefix('sek/surat-menyurat/pengajuan-surat')
+    ->middleware('modul:Pengajuan Surat')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\PengajuanSuratController::class, 'index',])->name('sekretaris.surat_menyurat.pengajuan_surat.index');
+        Route::post('/json', [
+            \App\Http\Controllers\SekretarisPage\SuratMenyurat\PengajuanSuratController::class,
+            'json_daftar_pengajuan_surat',
+        ])->name('sekretaris.surat_menyurat.pengajuan_surat.json');
+        Route::post('/insup', [
+            \App\Http\Controllers\SekretarisPage\SuratMenyurat\PengajuanSuratController::class,
+            'insup_pengajuan_surat',
+        ])->name('sekretaris.surat_menyurat.pengajuan_surat.insup');
+        Route::post('/detail', [
+            \App\Http\Controllers\SekretarisPage\SuratMenyurat\PengajuanSuratController::class,
+            'detail_pengajuan_surat',
+        ])->name('sekretaris.surat_menyurat.pengajuan_surat.detail');
+        Route::post('/delete', [
+            \App\Http\Controllers\SekretarisPage\SuratMenyurat\PengajuanSuratController::class,
+            'delete_pengajuan_surat',
+        ])->name('sekretaris.surat_menyurat.pengajuan_surat.delete');
+        Route::post('/teruskan-pimpinan', [
+            \App\Http\Controllers\SekretarisPage\SuratMenyurat\PengajuanSuratController::class,
+            'teruskan_pimpinan',
+        ])->name('sekretaris.surat_menyurat.pengajuan_surat.teruskan_pimpinan');
+    });
+
 /*
  * ------------------------------------------------------------------------
  * KARYAWAN PAGE

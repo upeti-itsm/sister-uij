@@ -245,8 +245,10 @@
                                 </ul>
                             </li>
                         @endif
-                        @if (array_key_exists('Surat Keluar Masuk', $modul) || array_key_exists('Pengelolaan Surat Keputusan', $modul) || array_key_exists('Pengelolaan Surat', $modul))
-                            <li @if ($menu == 'Surat Keluar Masuk' || $menu == 'Pengelolaan Surat Keputusan' || $menu == 'Pengelolaan Surat') class="mm-active" @endif>
+                        @if (array_key_exists('Surat Keluar Masuk', $modul) ||
+                                array_key_exists('Pengelolaan Surat Keputusan', $modul) ||
+                                array_key_exists('Pengajuan Surat', $modul))
+                            <li @if ($menu == 'Surat Keluar Masuk' || $menu == 'Pengelolaan Surat Keputusan' || $menu == 'Pengajuan Surat') class="mm-active" @endif>
                                 <a class="has-arrow material-ripple" href="#">
                                     <i class="typcn typcn-th-list mr-2"></i>
                                     Surat Menyurat
@@ -274,7 +276,7 @@
                                     @endif
                                     @if (array_key_exists('Pengajuan Surat', $modul))
                                         <li @if ($menu == 'Pengajuan Surat') class="mm-active" @endif>
-                                            <a href="#">Pengajuan
+                                            <a href="{{ route('sekretaris.surat_menyurat.pengajuan_surat.index') }}">Pengajuan
                                                 Surat</a>
                                         </li>
                                     @endif
