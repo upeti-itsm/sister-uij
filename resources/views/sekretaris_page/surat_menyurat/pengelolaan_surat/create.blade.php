@@ -91,6 +91,10 @@
                     </div>
                 </div>
                 <div class="card-footer text-right">
+                    <a href="{{ route('sek.surat_menyurat.buat_surat.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i> Kembali
+                    </a>
+
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane mr-2"></i> Kirim Surat
                     </button>

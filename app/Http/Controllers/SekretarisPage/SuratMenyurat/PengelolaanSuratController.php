@@ -50,7 +50,7 @@ class PengelolaanSuratController extends Controller
         $personal = session()->get('user')->id_personal;
         $unit_bagian = session()->get('user')->id_unit_kerja;
 
-        $result = PengelolaanSurat::insup_surat(
+        $data = PengelolaanSurat::insup_surat(
             null,
             $request->perihal_surat,
             null,
@@ -64,6 +64,7 @@ class PengelolaanSuratController extends Controller
             true
         );
 
-        dd($result);
+        session()->flash('success_message', $data[0]->keterangan);
+        return back();
     }
 }
