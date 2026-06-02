@@ -24,4 +24,21 @@ class PengelolaanSurat extends Model
     {
         return DB::select('SELECT * FROM organisasi.get_daftar_pimpinan_rektorat()');
     }
+
+    public static function insup_surat($p_id_log_surat, $p_perihal, $p_unit_bagian_penerima, $p_personal_penerima, $p_isi_surat, $p_tanggal_surat, $p_id_jenis_surat, $p_id_personal_pengaju, $p_unit_bagian_pengirim, $p_lampiran, $p_is_sekretaris)
+    {
+        return DB::select('SELECT * FROM akademik.insup_pengajuan_surat_rektorat(:p_id_log_surat, :p_perihal, :p_unit_bagian_penerima, :p_personal_penerima, :p_isi_surat, :p_tanggal_surat, :p_id_jenis_surat, :p_id_personal_pengaju, :p_unit_bagian_pengirim, :p_lampiran, :p_is_sekretaris)', [
+            'p_id_log_surat' => $p_id_log_surat,
+            'p_perihal' => $p_perihal,
+            'p_unit_bagian_penerima' => $p_unit_bagian_penerima,
+            'p_personal_penerima' => $p_personal_penerima,
+            'p_isi_surat' => $p_isi_surat,
+            'p_tanggal_surat' => $p_tanggal_surat,
+            'p_id_jenis_surat' => $p_id_jenis_surat,
+            'p_id_personal_pengaju' => $p_id_personal_pengaju,
+            'p_unit_bagian_pengirim' => $p_unit_bagian_pengirim,
+            'p_lampiran' => $p_lampiran,
+            'p_is_sekretaris' => $p_is_sekretaris
+        ]);
+    }
 }

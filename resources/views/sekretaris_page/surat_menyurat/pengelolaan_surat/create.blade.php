@@ -45,7 +45,8 @@
                     </div>
                 </div>
             </div>
-            <form action="">
+            <form method="POST" action="{{ route('sek.surat_menyurat.buat_surat.insup_surat') }}">
+                @csrf
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 mb-3">
@@ -55,6 +56,14 @@
                                 </label>
                                 <input type="text" name="perihal_surat" id="perihal-surat" class="form-control"
                                     placeholder="Masukkan perihal surat...">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="font-weight-bold">
+                                    Tanggal Surat <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" name="tanggal_surat" id="tanggal-surat" class="form-control">
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -71,36 +80,12 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label class="font-weight-bold">
-                                    Tujuan Surat <span class="text-danger">*</span>
-                                </label>
-                                <select class="select2 form-control" name="tujuan_surat" id="tujuan-surat">
-                                    <option></option>
-                                    @foreach ($pimpinan_rektorat as $item)
-                                        <option value="{{ $item->id_personal }}">
-                                            {{ $item->jabatan_struktural }} - {{ $item->nama_lengkap }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
                         <div class="col-12 mb-3">
                             <div class="form-group">
                                 <label class="font-weight-bold">
                                     Isi Surat <span class="text-danger">*</span>
                                 </label>
                                 <textarea name="isi_surat" id="isi-surat" rows="10" cols="80"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mb-3">
-                            <div class="form-group">
-                                <label class="font-weight-bold">
-                                    Lampiran Surat <small class="text-muted">(opsional)</small>
-                                </label>
-                                <input type="file" name="lampiran_surat" id="lampiran-surat" class="form-control">
                             </div>
                         </div>
                     </div>

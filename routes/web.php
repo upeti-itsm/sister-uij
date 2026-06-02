@@ -1089,4 +1089,5 @@ Route::get('/sinta-authors', [\App\Http\Controllers\AdminSinta\AuthorsCont::clas
 Route::prefix('sek/surat-menyurat/buat-surat')->middleware('modul:Pengelolaan Surat')->group(function () {
     Route::get('/', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\PengelolaanSuratController::class, 'index'])->name('sek.surat_menyurat.buat_surat.index');
     Route::get('create', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\PengelolaanSuratController::class, 'create'])->name('sek.surat_menyurat.buat_surat.create');
+    Route::post('insup-surat', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\PengelolaanSuratController::class, 'insup_surat'])->name('sek.surat_menyurat.buat_surat.insup_surat');
 });
