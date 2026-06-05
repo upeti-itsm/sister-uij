@@ -137,8 +137,17 @@ jQuery.pengajuan_surat_unit_kerja = {
                         var isLocked = !!data.id_personal_pimpinan || data.sudah_disetujui;
                         var status = (data.status_surat || "").toString().toUpperCase();
                         var isRevisi = status.indexOf("REVISI") >= 0;
+                        var isDisetujui = status.indexOf("DISETUJUI") >= 0;  // ← pakai 'status', bukan 'statusCheck'
 
                         btn += "<button title='Detail Surat' class='btn btn-sm btn-info btn-detail mr-1' data-id='" + data.id_log_surat + "'><i class='fas fa-eye'></i></button>";
+
+                        if (isDisetujui) {
+                            btn += "<a title='Download PDF' " +
+                                "class='btn btn-sm btn-success text-white mr-1' " +
+                                "href='/kary/surat-menyurat/pengajuan-surat/download-pdf/" + data.id_log_surat + "' " +
+                                "target='_blank'>" +
+                                "<i class='fas fa-file-pdf'></i></a>";
+                        }
 
                         if (isRevisi) {
                             btn += "<a title='Perbaiki' class='btn btn-sm btn-warning text-white mr-1' href='/kary/surat-menyurat/pengajuan-surat/edit/" + data.id_log_surat + "'><i class='fas fa-edit'></i></a>";

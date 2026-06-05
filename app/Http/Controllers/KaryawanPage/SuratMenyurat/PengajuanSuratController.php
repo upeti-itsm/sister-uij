@@ -5,10 +5,14 @@ namespace App\Http\Controllers\KaryawanPage\SuratMenyurat;
 use App\Http\Controllers\Controller;
 use App\Models\Organisasi\PengajuanSurat;
 use App\Models\Organisasi\UnitKerja;
+use Barryvdh\DomPDF\Facade as DomPDFFacade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
+use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Barryvdh\DomPDF\Facade\Pdf as Facade;
 
 class PengajuanSuratController extends Controller
 {
@@ -355,5 +359,66 @@ class PengajuanSuratController extends Controller
             'id_log_surat' => $detail->id_log_surat,
             'nomor_surat' => $detail->nomor_surat ?? null,
         ], $statusOk ? 200 : 422);
+    }
+
+    public function download_pdf($id_log_surat)
+    {
+        try {
+            $user = Session::get('user');
+            if (!$user) {
+                return response()->json(['status' => '0', 'keterangan' => 'Session user tidak ditemukan'], 401);
+            }
+
+            $detail = PengajuanSurat::detail_pengajuan_surat($id_log_surat);
+            if (!$detail) {
+                return response()->json(['status' => '0', 'keterangan' => 'Pengajuan tidak ditemukan'], 404);
+            }
+
+            $status = strtoupper((string) ($detail->status_surat ?? ''));
+            if (strpos($status, 'DISETUJUI') === false) {
+                return response()->json(['status' => '0', 'keterangan' => 'Surat hanya dapat diunduh jika sudah disetujui pimpinan'], 422);
+            }
+
+            // Logo
+            $logo = null;
+            $logoPath = public_path('image/logo-uij.png');
+            if (file_exists($logoPath)) {
+                $logo = base64_encode(file_get_contents($logoPath));
+            }
+
+            // QR Code Pimpinan (penandatangan)
+            $qrIdPimpinan = $detail->id_tandatangan_dokumen_pimpinan ?? $id_log_surat;
+            $qrCodePimpinan = base64_encode(
+                QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdPimpinan)]))
+            );
+
+            // QR Code Pengaju (unit kerja pengirim)
+            $qrIdPengaju = $detail->id_tandatangan_dokumen_pengaju ?? $id_log_surat;
+            $qrCodePengaju = base64_encode(
+                QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                    ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdPengaju)]))
+            );
+
+            $tanggalCetak = Carbon::now()->translatedFormat('d F Y');
+
+            $pdf = DomPDFFacade::loadView('karyawan_page.surat_menyurat.pdf_pengajuan_surat', [
+                'detail'            => $detail,
+                'logo'              => $logo,
+                'tanggal_cetak'     => $tanggalCetak,
+                'qr_code_pimpinan'  => $qrCodePimpinan,
+                'qr_code_pengaju'   => $qrCodePengaju,
+            ])->setPaper('a4', 'portrait');
+
+            $fileName = 'surat-' . ($detail->nomor_surat
+                ? str_replace('/', '-', $detail->nomor_surat)
+                : $id_log_surat) . '.pdf';
+
+            dd((array) $detail);
+
+            return $pdf->download($fileName);
+        } catch (\Exception $e) {
+            return response()->json(['status' => '0', 'keterangan' => $e->getMessage()], 500);
+        }
     }
 }

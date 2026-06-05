@@ -695,6 +695,7 @@ Route::get('/kary/data-kepegawaian/data-diri', [\App\Http\Controllers\KaryawanPa
 Route::get('/kary/data-kepegawaian/data-diri/ubah', [\App\Http\Controllers\KaryawanPage\DataKepegawaian\DataDiriController::class, 'ubah_data_diri'])->name('karyawan.data_kepegawaian.data_diri.ubah_data_diri')->middleware('modul:Pengelolaan Data Pribadi Pegawai');
 Route::post('/kary/data-kepegawaian/data-diri/update-path-photo', [\App\Http\Controllers\KaryawanPage\DataKepegawaian\DataDiriController::class, 'update_path_photo'])->name('karyawan.data_kepegawaian.data_diri.update_path_photo')->middleware('modul:Pengelolaan Data Pribadi Pegawai');
 Route::post('/kary/data-kepegawaian/data-diri/update-data-personal', [\App\Http\Controllers\KaryawanPage\DataKepegawaian\DataDiriController::class, 'update_data_personal'])->name('karyawan.data_kepegawaian.data_diri.update_data_personal')->middleware('modul:Pengelolaan Data Pribadi Pegawai');
+
 /* Surat Menyurat */
 // Arsip Surat
 Route::get('/kary/surat-menyurat/surat', [\App\Http\Controllers\KaryawanPage\SuratMenyurat\SuratController::class, 'index'])->name('karyawan.surat_menyurat.surat.index')->middleware('modul:Melihat Surat');
@@ -736,6 +737,10 @@ Route::prefix('kary/surat-menyurat/pengajuan-surat')
             \App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class,
             'teruskan_pimpinan',
         ])->name('karyawan.surat_menyurat.pengajuan_surat.teruskan_pimpinan');
+        Route::get('/download-pdf/{id_log_surat}', [
+            \App\Http\Controllers\KaryawanPage\SuratMenyurat\PengajuanSuratController::class,
+            'download_pdf',
+        ])->name('karyawan.surat_menyurat.pengajuan_surat.download_pdf');
     });
 /*
  * ------------------------------------------------------------------------
