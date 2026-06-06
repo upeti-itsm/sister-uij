@@ -292,11 +292,7 @@
                     @endif
                     {{-- Coba semua kemungkinan nama field --}}
                     <div class="sign-name">
-                        {{ $detail->nama_lengkap_pengaju ??
-                            ($detail->nama_personal_pengaju ?? ($detail->nama_pengaju ?? ($detail->nama_lengkap ?? '-'))) }}
-                    </div>
-                    <div class="sign-jabatan">
-                        {{ $detail->jabatan_pengaju ?? ($detail->jabatan_struktural_pengaju ?? '') }}
+                        {{ $detail->nama_personal_pengaju ?? '-' }}
                     </div>
                 </td>
 
@@ -316,9 +312,6 @@
                         {{ $detail->nama_personal_mengetahui ??
                             ($detail->nama_personal_mengetahui ??
                                 ($detail->nama_personal_mengetahui ?? ($detail->nama_personal_mengetahui ?? '-'))) }}
-                    </div>
-                    <div class="sign-jabatan">
-                        {{ $detail->jabatan_pimpinan ?? ($detail->jabatan_struktural_pimpinan ?? '') }}
                     </div>
                 </td>
             </tr>

@@ -414,8 +414,6 @@ class PengajuanSuratController extends Controller
                 ? str_replace('/', '-', $detail->nomor_surat)
                 : $id_log_surat) . '.pdf';
 
-            dd((array) $detail);
-
             return $pdf->download($fileName);
         } catch (\Exception $e) {
             return response()->json(['status' => '0', 'keterangan' => $e->getMessage()], 500);
