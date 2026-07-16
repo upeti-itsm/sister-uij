@@ -71,10 +71,12 @@ class DataPegawaiController extends Controller
             'no_hp' => 'required|min:10|max:13',
             'email' => 'required|email:rfc',
             'jenis_karyawan' => 'required',
+            'list_sertifikasi' => 'required',
             'id_agama' => 'required',
             'alamat' => 'required',
             'unit_kerja' => 'required',
             'status_menikah' => 'required',
+            'file_sk_golongan' => 'required',
             'file_kk' => 'required|max:10000|mimes:pdf',
             'pendidikan_terakhir' => 'required',
             'ip_absensi' => 'required',
@@ -93,6 +95,7 @@ class DataPegawaiController extends Controller
             'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
             'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
             'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
+            'list_sertifikasi.required' => 'Pastikan status sertifikasi sudah terpilih',
             'nama.required' => 'Pastikan nama anda sudah terisi',
             'tempat_lahir.required' => 'Pastikan tempat lahir sudah terisi',
             'tgl_lahir.required' => 'Pastikan tanggal lahir sudah terisi',
@@ -106,6 +109,7 @@ class DataPegawaiController extends Controller
             'alamat.required' => 'Pastikan alamat sudah terisi',
             'unit_kerja.required' => 'Pastikan unit kerja sudah terpilih',
             'status_menikah.required' => 'Pastikan status pernikahan sudah terpilih',
+            'file_sk_golongan.required' => 'Pastikan file SK Golongan sudah di upload',
             'file_kk.required' => 'Pastikan file KK sudah di upload',
             'file_kk.max' => 'Pastikan ukuran file KK tidak lebih dari 10Mb',
             // 'file_sk_golongan.mimes' => 'Pastikan file Golongan dalam format pdf',
@@ -247,7 +251,13 @@ class DataPegawaiController extends Controller
         $jabatan_struktural = JabatanStruktural::get_daftar_jabatan_struktural();
         $jabatan_fungsional = JabatanFungsional::get_daftar_jabatan_fungsional();
         $agama = Agama::list_agama();
-        return view('hrd_page.data_kepegawaian.edit_data_pegawai', compact('menu', 'karyawan', 'unit_kerja', 'pendidikan', 'golongan', 'jabatan_struktural', 'jabatan_fungsional', 'agama', 'prodi'));
+
+        $selected_sertifikasi = old('list_sertifikasi');
+        if (!$selected_sertifikasi) {
+            $selected_sertifikasi = !empty($karyawan->list_sertifikasi) ? explode(',', $karyawan->list_sertifikasi) : ['0'];
+        }
+
+        return view('hrd_page.data_kepegawaian.edit_data_pegawai', compact('menu', 'karyawan', 'unit_kerja', 'pendidikan', 'golongan', 'jabatan_struktural', 'jabatan_fungsional', 'agama', 'prodi', 'selected_sertifikasi'));
     }
 
     public function update(Request $request)
@@ -264,6 +274,7 @@ class DataPegawaiController extends Controller
             'no_hp' => 'required|min:10|max:13',
             'email' => 'required|email:rfc',
             'jenis_karyawan' => 'required',
+            'list_sertifikasi' => 'required',
             'id_agama' => 'required',
             'alamat' => 'required',
             'unit_kerja' => 'required',
@@ -278,6 +289,7 @@ class DataPegawaiController extends Controller
             'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
             'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
             'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
+            'list_sertifikasi.required' => 'Pastikan status sertifikasi sudah terpilih',
             'nama.required' => 'Pastikan nama anda sudah terisi',
             'tempat_lahir.required' => 'Pastikan tempat lahir sudah terisi',
             'tgl_lahir.required' => 'Pastikan tanggal lahir sudah terisi',
@@ -300,14 +312,14 @@ class DataPegawaiController extends Controller
         $karyawan_old = Karyawan::get_detail_karyawan_by_id_personal($request->id);
 
         // KK
-        if ($request->status_menikah != $karyawan_old->id_status_pernikahan)
+        if ($request->status_menikah != $karyawan_old->id_status_pernikahan && empty($karyawan_old->path_kartu_keluarga))
             $request->validate([
                 'file_kk' => 'required|max:10000|mimes:pdf'
             ], [
                 'file_kk.required' => 'Pastikan file KK sudah di upload',
-                'file_kk.max' => 'Pastikan ukuran file KK tidak lebih dari 10Mb',
-                'file_kk.mimes' => 'Pastikan file KK dalam format pdf',
-            ]);
+        'file_kk.max' => 'Pastikan ukuran file KK tidak lebih dari 10Mb',
+        'file_kk.mimes' => 'Pastikan file KK dalam format pdf',
+    ]);
         $file_name_kk = null;
         if (!is_null($request->file_kk)) {
             $t = time();
@@ -317,14 +329,14 @@ class DataPegawaiController extends Controller
         }
 
         // Golongan
-        if ($request->golongan != $karyawan_old->id_golongan)
+        if ($request->golongan != $karyawan_old->id_golongan && empty($karyawan_old->path_dokumen_pendukung_golongan))
             $request->validate([
                 'file_sk_golongan' => 'required|max:10000|mimes:pdf'
             ], [
                 'file_sk_golongan.required' => 'Pastikan file SK Golongan sudah di upload',
                 'file_sk_golongan.max' => 'Pastikan ukuran file SK Golongan tidak lebih dari 10Mb',
-                'file_sk_golongan.mimes' => 'Pastikan file SK Golongan dalam format pdf',
-            ]);
+        'file_sk_golongan.mimes' => 'Pastikan file SK Golongan dalam format pdf',
+    ]);
         $file_name_golongan = null;
         if (!is_null($request->file_sk_golongan)) {
             $t = time();
@@ -334,14 +346,14 @@ class DataPegawaiController extends Controller
         }
 
         // Jafung
-        if ($request->jafung != $karyawan_old->id_jabatan_fungsional)
+        if ($request->jafung != $karyawan_old->id_jabatan_fungsional && empty($karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional))
             $request->validate([
                 'file_sk_jafung' => 'required|max:10000|mimes:pdf'
             ], [
                 'file_sk_jafung.required' => 'Pastikan file SK Jabatan Fungsional sudah di upload',
                 'file_sk_jafung.max' => 'Pastikan ukuran file SK Jabatan Fungsional tidak lebih dari 10Mb',
-                'file_sk_jafung.mimes' => 'Pastikan file SK Jabatan Fungsional dalam format pdf',
-            ]);
+        'file_sk_jafung.mimes' => 'Pastikan file SK Jabatan Fungsional dalam format pdf',
+    ]);
         $file_name_jafung = null;
         if (!is_null($request->file_sk_jafung)) {
             $t = time();
@@ -360,14 +372,14 @@ class DataPegawaiController extends Controller
         }
 
         // Ijazah
-        if ($request->pendidikan != $karyawan_old->kd_pendidikan)
-            $request->validate([
-                'file_ijazah' => 'required|max:10000|mimes:pdf'
-            ], [
-                'file_ijazah.required' => 'Pastikan file Ijazah sudah di upload',
-                'file_ijazah.max' => 'Pastikan ukuran file Ijazah tidak lebih dari 10Mb',
-                'file_ijazah.mimes' => 'Pastikan file Ijazah dalam format pdf',
-            ]);
+       if ($request->pendidikan != $karyawan_old->kd_pendidikan && empty($karyawan_old->path_dokumen_pendukung_pendidikan))
+    $request->validate([
+        'file_ijazah' => 'required|max:10000|mimes:pdf'
+        ], [
+            'file_ijazah.required' => 'Pastikan file Ijazah sudah di upload',
+            'file_ijazah.max' => 'Pastikan ukuran file Ijazah tidak lebih dari 10Mb',
+            'file_ijazah.mimes' => 'Pastikan file Ijazah dalam format pdf',
+    ]);
         $file_name_ijazah = null;
         if (!is_null($request->file_ijazah)) {
             $t = time();
@@ -384,7 +396,8 @@ class DataPegawaiController extends Controller
             $file_name_sertifikat = 'file_sertifikat_' . date("Y_m_d_h_m_s", $t) . '.' . $file_sertifikat->getClientOriginalExtension();
         }
 
-        $karyawan = Karyawan::update_data_pegawai($request->id, $request->nama, $request->gelar_depan, $request->gelar_belakang, $request->nip, $request->nidn, $request->jenis_kelamin, $request->tempat_lahir, $request->tgl_lahir, $request->alamat, $request->no_hp, $request->email, $request->id_agama, $request->no_rekening, $request->tgl_aktif, $request->unit_kerja, $request->no_ktp, $request->nik, $request->jenis_karyawan, $request->status_menikah, $file_name_kk, $request->golongan, $file_name_golongan, $request->tmt_golongan, $request->jafung, $file_name_jafung, $request->tmt_jafung, $request->jastruk, $file_name_jastruk, $request->tmt_jastruk, $request->pendidikan, $file_name_ijazah, $request->tgl_lulus, 'BNI', $request->status_sertifikasi == 0 ? null : implode(',', $request->status_sertifikasi), $request->id_sinta, $file_name_sertifikat, $request->home_base, $request->jenis_bank, $request->ip_absensi, $request->pangkat);
+        $karyawan = Karyawan::update_data_pegawai($request->id, $request->nama, $request->gelar_depan, $request->gelar_belakang, $request->nip, $request->nidn, $request->jenis_kelamin, $request->tempat_lahir, $request->tgl_lahir, $request->alamat, $request->no_hp, $request->email, $request->id_agama, $request->no_rekening, $request->tgl_aktif, $request->unit_kerja, $request->no_ktp, $request->nik, $request->jenis_karyawan, $request->status_menikah, $file_name_kk, $request->golongan, $file_name_golongan, $request->tmt_golongan, $request->jafung, $file_name_jafung, $request->tmt_jafung, $request->jastruk, $file_name_jastruk, $request->tmt_jastruk, $request->pendidikan, $file_name_ijazah, $request->tgl_lulus, 'BNI', $request->list_sertifikasi == 0 ? null : implode(',', $request->list_sertifikasi), $request->id_sinta,
+        $file_name_sertifikat, $request->home_base, $request->jenis_bank, $request->ip_absensi, $request->pangkat);
         if ($karyawan->status == 1) {
             if (!is_null($request->file_kk)) {
                 // File KK
