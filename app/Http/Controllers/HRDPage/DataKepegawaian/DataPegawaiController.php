@@ -262,7 +262,7 @@ class DataPegawaiController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $debug =  $request->validate([
             'id' => 'required',
             'no_ktp' => 'required|max:16|min:16',
             'pangkat' => 'required',
@@ -331,9 +331,9 @@ class DataPegawaiController extends Controller
         // Golongan
         if ($request->golongan != $karyawan_old->id_golongan && empty($karyawan_old->path_dokumen_pendukung_golongan))
             $request->validate([
-                'file_sk_golongan' => 'required|max:10000|mimes:pdf'
+                'file_sk_golongan' => 'max:10000|mimes:pdf'
             ], [
-                'file_sk_golongan.required' => 'Pastikan file SK Golongan sudah di upload',
+                // 'file_sk_golongan.required' => 'Pastikan file SK Golongan sudah di upload',
                 'file_sk_golongan.max' => 'Pastikan ukuran file SK Golongan tidak lebih dari 10Mb',
         'file_sk_golongan.mimes' => 'Pastikan file SK Golongan dalam format pdf',
     ]);
@@ -398,6 +398,7 @@ class DataPegawaiController extends Controller
 
         $karyawan = Karyawan::update_data_pegawai($request->id, $request->nama, $request->gelar_depan, $request->gelar_belakang, $request->nip, $request->nidn, $request->jenis_kelamin, $request->tempat_lahir, $request->tgl_lahir, $request->alamat, $request->no_hp, $request->email, $request->id_agama, $request->no_rekening, $request->tgl_aktif, $request->unit_kerja, $request->no_ktp, $request->nik, $request->jenis_karyawan, $request->status_menikah, $file_name_kk, $request->golongan, $file_name_golongan, $request->tmt_golongan, $request->jafung, $file_name_jafung, $request->tmt_jafung, $request->jastruk, $file_name_jastruk, $request->tmt_jastruk, $request->pendidikan, $file_name_ijazah, $request->tgl_lulus, 'BNI', $request->list_sertifikasi == 0 ? null : implode(',', $request->list_sertifikasi), $request->id_sinta,
         $file_name_sertifikat, $request->home_base, $request->jenis_bank, $request->ip_absensi, $request->pangkat);
+
         if ($karyawan->status == 1) {
             if (!is_null($request->file_kk)) {
                 // File KK

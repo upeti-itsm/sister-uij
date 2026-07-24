@@ -342,7 +342,7 @@
                                         <input type="file" accept=".pdf" class="custom-file-input"
                                             id="file_sertifikat" name="file_sertifikat">
                                         <label class="custom-file-label" for="customFile">
-                                            @if (!empty('file_sertifikat'))
+                                            @if (!empty($karyawan->path_dokumen_pendukung_sertifikat))
                                                 {{ $karyawan->path_dokumen_pendukung_sertifikat }}
                                             @else
                                                 Pilih file
@@ -386,7 +386,7 @@
                                     <input type="file" accept=".pdf" class="custom-file-input" id="file_sk_golongan"
                                         name="file_sk_golongan">
                                     <label class="custom-file-label" for="customFile">
-                                        @if (!empty('file_sk_golongan'))
+                                        @if (!empty($karyawan->path_dokumen_pendukung_golongan))
                                             {{ $karyawan->path_dokumen_pendukung_golongan }}
                                         @else
                                             Pilih file
@@ -427,7 +427,7 @@
                                     <input type="file" accept=".pdf" class="custom-file-input"
                                         id="file_sk_jabatan_struktural" name="file_sk_jastruk">
                                     <label class="custom-file-label" for="customFile">
-                                        @if (!empty('file_sk_jastruk'))
+                                        @if (!empty($karyawan->path_dokumen_pendukung_riwayat_jabatan_struktural))
                                             {{ $karyawan->path_dokumen_pendukung_riwayat_jabatan_struktural }}
                                         @else
                                             Pilih file
@@ -469,7 +469,7 @@
                                     <input type="file" accept=".pdf" class="custom-file-input"
                                         id="file_sk_jabatan_fungsional" name="file_sk_jafung">
                                     <label class="custom-file-label" for="customFile">
-                                        @if (!empty('file_sk_jafung'))
+                                        @if (!empty($karyawan->path_dokumen_pendukung_riwayat_jabatan_fungsional))
                                             {{ $karyawan->path_dokumen_pendukung_riwayat_jabatan_fungsional }}
                                         @else
                                             Pilih file
@@ -510,7 +510,7 @@
                                     <input type="file" accept=".pdf" class="custom-file-input" id="file_ijazah"
                                         name="file_ijazah">
                                     <label class="custom-file-label" for="customFile">
-                                        @if (!empty('file_ijazah'))
+                                        @if (!empty($karyawan->path_dokumen_pendukung_pendidikan))
                                             {{ $karyawan->path_dokumen_pendukung_pendidikan }}
                                         @else
                                             Pilih file
@@ -570,7 +570,7 @@
                                     <input type="file" accept=".pdf" class="custom-file-input" id="file_kk"
                                         name="file_kk">
                                     <label class="custom-file-label" for="customFile">
-                                        @if (!empty('file_kk'))
+                                        @if (!empty($karyawan->path_kartu_keluarga))
                                             {{ $karyawan->path_kartu_keluarga }}
                                         @else
                                             Pilih file

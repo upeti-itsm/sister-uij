@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_pendidikan)}}"
+                                        <a href="{{asset('storage/app/public/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_pendidikan)}}"
                                            target="_blank">Ijazah Terakhir</a>
                                     </h6>
                                 </div>
