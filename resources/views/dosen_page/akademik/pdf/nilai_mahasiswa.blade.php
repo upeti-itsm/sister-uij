@@ -229,6 +229,10 @@
     </style>
 </head>
 <body>
+@php
+    $logoPath = public_path('image/logo-uij.png');
+    $logoBase64 = file_exists($logoPath) ? 'data:' . mime_content_type($logoPath) . ';base64,' . base64_encode(file_get_contents($logoPath)) : '';
+@endphp
 <!-- Header dengan Kop Universitas -->
 <div class="header" style="width: 100%">
     <div class="header-content">
@@ -237,7 +241,7 @@
             <tr>
                 <td style="width: 20%">
                     <div class="logo">
-                        <img src="{{ asset('image/logo-uij.png') }}" alt="Logo UIJ" style="max-height: 100%">
+                        <img src="{{ $logoBase64 }}" alt="Logo UIJ" style="max-height: 100%">
                     </div>
                 </td>
                 <td style="width: 80%">
