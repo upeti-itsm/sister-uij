@@ -246,7 +246,7 @@
             </tr>
         </table>
     @endif
-    <div id="company" style="text-align: right">
+    <div id="company" style="text-align: right; margin-top:10px">
         <div>Jember, {{$data['tgl']['ttd']}}</div>
         <br/>
         @if(!empty($data['qr_code_dosen']))

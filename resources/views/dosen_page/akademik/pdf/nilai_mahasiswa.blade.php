@@ -391,7 +391,7 @@
         <tr>
             <td class="summary-label">Total Mahasiswa:</td>
             <td>{{ $total_mahasiswa }}</td>
-            <td class="summary-label">Lulus (≥2.0):</td>
+            <td class="summary-label">Lulus (>2.0):</td>
             <td style="color: #27ae60; font-weight: bold;">{{ $lulus_count }}</td>
             <td class="summary-label">Tidak Lulus (<2.0):</td>
             <td style="color: #e74c3c; font-weight: bold;">{{ $tidak_lulus_count }}</td>

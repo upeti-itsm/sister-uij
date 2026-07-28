@@ -125,7 +125,7 @@
                                         <input type="text" readonly class="form-control" id="tgl_awal"
                                             style="cursor: pointer" title="Pilih Tanggal Awal Rekap">
                                     </div>
-                                    <div class="col-md-2">Sampai Dengan</div>
+                                    <div class="col-md-2">Sampai dengan</div>
                                     <div class="col-md-5">
                                         <input type="text" readonly class="form-control" id="tgl_akhir"
                                             style="cursor: pointer" title="Pilih Tanggal Akhir Rekap">
