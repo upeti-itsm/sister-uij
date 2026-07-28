@@ -246,15 +246,21 @@
             </tr>
         </table>
     @endif
-    <hr/>
     <div id="company" style="text-align: right">
         <div>Jember, {{$data['tgl']['ttd']}}</div>
         <br/>
+        @if(!empty($data['qr_code_dosen']))
+            <img src="data:image/svg+xml;base64,{{ $data['qr_code_dosen'] }}" alt="QR TTD Dosen" style="width: 130px; height: 130px; display: block; margin-left: auto; margin-right: 0;">
+        @else
+            <br/>
+        @endif
         <br/>
-        <br/>
-        <div>
+        <div style="text-decoration: underline; font-weight: bold;">
             {{$dosen->nama_dosen}}
         </div>
+        @if(!empty($dosen->nidn))
+            <div>NIDN: {{$dosen->nidn}}</div>
+        @endif
     </div>
     <hr/>
 </main>

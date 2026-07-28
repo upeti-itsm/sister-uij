@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class RekapitulasiAbsenMengajarController extends Controller
 {
@@ -54,6 +55,34 @@ class RekapitulasiAbsenMengajarController extends Controller
         $data['tgl']['end'] = $end[2] . ' ' . $bulan[intval($end[1])] . ' ' . $end[0];
         $rekap = RekapitulasiAbsensiMengajarDosen::getRekapitulasiByPersonal($tgl_awal, $tgl_akhir, Session::get('user')->id_personal, $search);
         $dosen = Dosen::get_dosen_by_id_personal(Session::get('user')->id_personal);
+
+        // --- QR Code Section (konsep sama seperti TranskripController) ---
+        $qrCodeDosen    = '';
+        $qrCodeDocument = '';
+
+        if (count($rekap) > 0) {
+            // QR Code Tanda Tangan Dosen
+            $qrIdDosen = $rekap[0]->id_dokumen_penandatanganan ?? null;
+            if (!empty($qrIdDosen)) {
+                $qrCodeDosen = base64_encode(
+                    QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                        ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDosen)]))
+                );
+            }
+
+            // QR Code Dokumen
+            $qrIdDoc = $rekap[0]->id_dokumen_ditandatangani ?? null;
+            if (!empty($qrIdDoc)) {
+                $qrCodeDocument = base64_encode(
+                    QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                        ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDoc)]))
+                );
+            }
+        }
+
+        $data['qr_code_dosen']    = $qrCodeDosen;
+        $data['qr_code_document'] = $qrCodeDocument;
+
         $pdf = Facade::loadView("dosen_page.akademik.pdf.rekapitulasi_absen_mengajar", compact('rekap', 'data', 'dosen'))->setPaper('a4', 'landscape');
         return $pdf->stream('detail_rekap.pdf');
     }

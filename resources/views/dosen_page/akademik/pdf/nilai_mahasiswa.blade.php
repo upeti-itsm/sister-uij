@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4 landscape;
-            margin: 15mm;
+            margin: 12mm;
         }
 
         body {
@@ -15,14 +15,14 @@
             font-size: 14px; /* dinaikkan dari 13px */
             margin: 0;
             padding: 0;
-            line-height: 1.4;
+            line-height: 1.2;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
             border-bottom: 2px solid #000;
-            padding-bottom: 10px;
+            padding-bottom: 6px;
         }
 
         .header-content {
@@ -59,9 +59,9 @@
         }
 
         .course-info {
-            margin-bottom: 20px;
+            margin-bottom: 6px;
             background: #f8f9fa;
-            padding: 12px;
+            padding: 8px;
             border: 1px solid #dee2e6;
         }
 
@@ -85,8 +85,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding: 8px 10px;
+            margin-bottom: 6px;
+            padding: 4px 10px;
             font-size: 12px; /* ukuran font yang lebih besar dari small */
         }
 
@@ -111,7 +111,7 @@
         .nilai-table th,
         .nilai-table td {
             border: 1px solid #000;
-            padding: 4px 5px; /* sedikit diperbesar padding */
+            padding: 2px 4px; /* compact */
             text-align: center;
             vertical-align: middle;
         }
@@ -163,7 +163,7 @@
         .nilai-cell {
             height: auto;
             font-size: 13px; /* dinaikkan dari 12px */
-            padding: 4px 5px;
+            padding: 2px 4px;
         }
 
         .nilai-cell.lulus {
@@ -179,14 +179,16 @@
         }
 
         .footer {
-            margin-top: 30px;
+            margin-top: 10px;
             text-align: right;
+            page-break-inside: avoid;
         }
 
         .signature-section {
             display: inline-block;
             text-align: right;
             margin-left: 50px;
+            page-break-inside: avoid;
         }
 
         .signature-line {
@@ -196,18 +198,18 @@
         }
 
         .summary-info {
-            margin-top: 18px;
+            margin-top: 8px;
             font-size: 12px; /* dinaikkan dari 11px */
         }
 
         .summary-table {
             border-collapse: collapse;
-            margin-top: 12px;
+            margin-top: 4px;
         }
 
         .summary-table td {
             border: 1px solid #ccc;
-            padding: 6px 10px;
+            padding: 3px 8px;
             background-color: #f9f9f9;
             font-size: 12px; /* dinaikkan dari 11px */
         }
@@ -402,14 +404,13 @@
 <!-- Footer dengan Tanda Tangan -->
 <div class="footer">
     <div class="signature-section">
-        <p>Jember, {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d F Y') }}</p>
-        <p>@if(count($dosen_list) == 2) Koordinator @endif Dosen Pengampu,</p>
-        <br/>
-        <br/>
-        <br/>
-        <p><strong>{{ $dosen_list[0] ?? 'Nama Dosen' }}</strong><br/>
-            NIDN: {{ $nidn_list[0] ?? '-' }}
-        </p>
+        <p style="margin-bottom: 4px;">Jember, {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d F Y') }}</p>
+        <p style="margin-bottom: 2px;">@if(count($dosen_list) == 2) Koordinator @endif Dosen Pengampu,</p>
+        @if(!empty($qr_code_dosen))
+            <img src="data:image/svg+xml;base64,{{ $qr_code_dosen }}" alt="QR TTD Dosen" style="width: 125px; height: 125px; display: block; margin-left: auto; margin-right: 0; margin-top: 4px; margin-bottom: 2px;">
+        @endif
+        <p style="margin-top: 2px; margin-bottom: 0;"><strong>{{ $dosen_list[0] ?? 'Nama Dosen' }}</strong></p>
+        <p style="margin-top: 1px;">NIDN: {{ $nidn_list[0] ?? '-' }}</p>
     </div>
 </div>
 </body>

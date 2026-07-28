@@ -7,6 +7,7 @@ use App\Models\SIAKAD_MODEL\JadwalDosen;
 use Barryvdh\DomPDF\Facade;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class NilaiMahasiswaController extends Controller
 {
@@ -224,13 +225,37 @@ class NilaiMahasiswaController extends Controller
                 ], 404);
             }
 
+            // --- QR Code Section (konsep sama seperti TranskripController) ---
+            $qrCodeDosen    = '';
+            $qrCodeDocument = '';
+
+            // QR Code Tanda Tangan Dosen
+            $qrIdDosen = $mahasiswa[0]->id_dokumen_penandatanganan ?? null;
+            if (!empty($qrIdDosen)) {
+                $qrCodeDosen = base64_encode(
+                    QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                        ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDosen)]))
+                );
+            }
+
+            // QR Code Dokumen
+            $qrIdDoc = $mahasiswa[0]->id_dokumen_ditandatangani ?? null;
+            if (!empty($qrIdDoc)) {
+                $qrCodeDocument = base64_encode(
+                    QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                        ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDoc)]))
+                );
+            }
+
             // Prepare data untuk PDF
             $data = [
                 'mahasiswa' => $mahasiswa,
                 'title' => 'Daftar Nilai Mahasiswa',
                 'exported_at' => Carbon::now('Asia/Jakarta'),
                 'semester' => $mahasiswa[0]->semester ?? 'Gasal',
-                'tahun_akademik' => $mahasiswa[0]->tahun_akademik ?? '2025'
+                'tahun_akademik' => $mahasiswa[0]->tahun_akademik ?? '2025',
+                'qr_code_dosen'    => $qrCodeDosen,
+                'qr_code_document' => $qrCodeDocument,
             ];
 
             // Konfigurasi PDF
