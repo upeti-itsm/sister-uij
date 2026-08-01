@@ -178,8 +178,8 @@
                                                 id="cari-data">
                                         </div>
                                         <div class="col-md-3">
-                                            <button class="btn btn-block btn-primary" id="btn-cari-data"><i
-                                                    class="fas fa-search mr-2"></i>Cari Data
+                                            <button class="btn btn-block btn-primary" id="btn-cari-data">
+                                                <i class="fas fa-search mr-2"></i>Cari
                                             </button>
                                         </div>
                                     </div>
@@ -360,7 +360,8 @@
     </div>
 
     <!-- Modal Pengajuan Jurnal -->
-    <div class="modal fade" id="modal_buku" tabindex="-1" role="dialog" aria-labelledby="modalBukuLabel" aria-hidden="true">
+    <div class="modal fade" id="modal_buku" tabindex="-1" role="dialog" aria-labelledby="modalBukuLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
 
@@ -380,18 +381,19 @@
                     <input type="hidden" id="id_jadwal_buku" name="id_jadwal">
                     <input type="hidden" id="status_buku" name="status">
                     <div class="modal-body">
+                        <div id="alertCatatanPenolakan" class="alert alert-warning d-none">
+                            <div class="font-weight-bold mb-1">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>Catatan Revisi dari Kaprodi
+                            </div>
+                            <div id="isiCatatanPenolakan"></div>
+                        </div>
+
                         <div class="form-group">
                             <label for="catatan_pengajuan" class="font-weight-bold">
                                 Catatan Pengajuan Jurnal <span class="text-danger">*</span>
                             </label>
-                            <textarea
-                                name="catatan"
-                                id="catatan_pengajuan"
-                                class="form-control"
-                                rows="4"
-                                placeholder="Masukkan catatan atau jurnal mengajar..."
-                                required
-                            ></textarea>
+                            <textarea name="catatan" id="catatan_pengajuan" class="form-control" rows="4"
+                                placeholder="Masukkan catatan atau jurnal mengajar..." required></textarea>
                             <small class="form-text text-muted">Isi catatan jurnal mengajar untuk mata kuliah ini.</small>
                         </div>
                     </div>

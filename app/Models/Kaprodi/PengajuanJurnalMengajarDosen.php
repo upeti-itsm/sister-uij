@@ -10,11 +10,12 @@ class PengajuanJurnalMengajarDosen extends Model
 {
     use HasFactory;
 
-    public static function get_jurnal_mengajar_dosen($id_personal, $id_pengajuan_jurnal_mengajar_dosen, $sts_pengajuan, $search = '', $offset = 0, $limit = -1)
+    public static function get_jurnal_mengajar_dosen($id_personal, $p_peran, $id_pengajuan_jurnal_mengajar_dosen, $sts_pengajuan, $search = '', $offset = 0, $limit = -1)
     {
         return DB::select(
             'SELECT * FROM akademik.get_pengajuan_jurnal_mengajar_dosen(
                 :p_id_personal,
+                :p_peran,
                 :p_id_pengajuan_jurnal_mengajar_dosen,
                 :p_sts_pengajuan,
                 :p_search,
@@ -23,6 +24,7 @@ class PengajuanJurnalMengajarDosen extends Model
             )',
             [
                 'p_id_personal' => $id_personal,
+                'p_peran' => $p_peran,
                 'p_id_pengajuan_jurnal_mengajar_dosen' => $id_pengajuan_jurnal_mengajar_dosen,
                 'p_sts_pengajuan' => $sts_pengajuan,
                 'p_search' => $search,

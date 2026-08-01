@@ -19,7 +19,7 @@ class PengajuanJurnalMengajarDosenController extends Controller
         $length = $_REQUEST['length'];
         $start = $_REQUEST['start'];
         $search = $_REQUEST['search']["value"];
-        $record = PengajuanJurnalMengajarDosen::get_jurnal_mengajar_dosen(session()->get('user')->id_personal, null, $request->status, $search, $start, $length);
+        $record = PengajuanJurnalMengajarDosen::get_jurnal_mengajar_dosen(session()->get('user')->id_personal, 'kaprodi', null, $request->status, $search, $start, $length);
         $data['draw'] = $_REQUEST['draw'];
         $data['recordsTotal'] = 0;
         if (sizeof($record) > 0)

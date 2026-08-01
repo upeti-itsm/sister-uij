@@ -20,13 +20,12 @@ class PengajuanJurnalDosen extends Model
         ]);
     }
 
-    public static function set_status_ajuan($id_jurnal, $status, $id_personal, $catatan)
+    public static function set_status_ajuan($id_jurnal, $status, $id_personal)
     {
-        return DB::selectOne('SELECT * FROM akademik.set_status_pengajuan_jurnal_mengajar_dosen(?::uuid, ?::integer, ?::uuid, ?::text)', [
+        return DB::selectOne('SELECT * FROM akademik.set_status_pengajuan_jurnal_mengajar_dosen(?::uuid, ?::integer, ?::uuid)', [
             $id_jurnal,
             (int) $status,
-            $id_personal,
-            $catatan
+            $id_personal
         ]);
     }
 

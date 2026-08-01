@@ -172,7 +172,6 @@ class MatakuliahController extends Controller
                 'id_jadwal.required' => 'Mata kuliah / Jadwal kuliah harus dipilih',
             ]);
 
-            // Insert atau update jurnal mengajar
             $id_jurnal = !empty($request->id_jurnal) ? $request->id_jurnal : null;
             $id_jadwal_kuliah = $request->id_jadwal;
             $id_personal = session()->get('user')->id_personal;
@@ -220,17 +219,18 @@ class MatakuliahController extends Controller
                 'id_jurnal.required' => 'Jurnal mengajar harus dipilih',
             ]);
 
-            $current_status = $request->status; // Status saat ini dari frontend (misal 1 / Draft)
-            if ($current_status == 1) {
+            $current_status = $request->status;
+
+            if (in_array($current_status, [1, 4])) {
                 $sts_target = 2;
             } else {
                 $sts_target = $current_status;
             }
+
             $id_personal = session()->get('user')->id_personal;
-            $catatan = $request->catatan ?? null;
 
             // Ajukan jurnal mengajar ke database
-            $pengajuan_jurnal = PengajuanJurnalDosen::set_status_ajuan($request->id_jurnal, $sts_target, $id_personal, $catatan);
+            $pengajuan_jurnal = PengajuanJurnalDosen::set_status_ajuan($request->id_jurnal, $sts_target, $id_personal);
 
             if ($pengajuan_jurnal) {
                 if (isset($pengajuan_jurnal->status)) {
@@ -278,7 +278,6 @@ class MatakuliahController extends Controller
             $search           = $request->search ?? '';
             $tahun_akademik   = $request->tahun_akademik ?? $request->tahun ?? '00000';
 
-            // Ambil data jurnal mengajar
             $jurnal_mengajar = PengajuanJurnalDosen::generate_jurnal_mengajar_dosen(
                 $id_personal,
                 $id_jadwal_kuliah,
@@ -295,7 +294,6 @@ class MatakuliahController extends Controller
                 ], 404);
             }
 
-            // Ambil data dosen
             $dosen = Dosen::get_dosen_by_id_personal($id_personal);
 
             // Data ringkasan dari baris pertama
@@ -322,8 +320,8 @@ class MatakuliahController extends Controller
             $qrCodeKaprodi    = '';
             $qrErrorDosen     = '';
             $qrErrorKaprodi   = '';
-            $qrIdDosen        = $first->id_dokumen_penandatanganan ?? null;
-            $qrIdKaprodi      = $first->id_dokumen_ditandatangani  ?? null;
+            $qrIdDosen        = $first->id_dokumen_ditandatangani_dosen ?? null;
+            $qrIdKaprodi      = $first->id_dokumen_ditandatangani_kaprodi  ?? null;
 
             if (!empty($qrIdDosen)) {
                 try {
@@ -356,8 +354,11 @@ class MatakuliahController extends Controller
             $tanggalCetak = Carbon::now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY');
 
             // Nama Kaprodi dan NIDN dari data yang tersedia (dari dosen jika tidak ada field kaprodi)
-            $nama_kaprodi = $dosen->nama_ketua_program_studi ?? $dosen->nama_kaprodi ?? '';
-            $nidn_kaprodi = $dosen->nidn_ketua_program_studi ?? $dosen->nidn_kaprodi ?? '';
+            $nama_kaprodi = $first->nama_kaprodi;
+            $nidn_kaprodi = $first->nidn_kaprodi;
+
+            $nama_dosen = $first->nama_dosen;
+            $nidn_dosen = $first->nidn_dosen;
 
             $data = [
                 'jurnal'            => $jurnal_mengajar,
@@ -374,7 +375,7 @@ class MatakuliahController extends Controller
                 'jml_tepat_waktu'   => $jml_tepat_waktu,
                 'jml_terlambat'     => $jml_terlambat,
                 'jml_reg_p'         => $jml_reg_p,
-                'rata_kehadiran_mhs'=> $rata_kehadiran_mhs,
+                'rata_kehadiran_mhs' => $rata_kehadiran_mhs,
                 'tanggal_cetak'     => $tanggalCetak,
                 'qr_dosen'          => $qrCodeDosen,
                 'qr_kaprodi'        => $qrCodeKaprodi,
@@ -382,6 +383,8 @@ class MatakuliahController extends Controller
                 'qr_error_kaprodi'  => $qrErrorKaprodi,
                 'nama_kaprodi'      => $nama_kaprodi,
                 'nidn_kaprodi'      => $nidn_kaprodi,
+                'nama_dosen'        => $nama_dosen,
+                'nidn_dosen'        => $nidn_dosen
             ];
 
             $pdf = Facade::loadView('dosen_page.akademik.pdf.jurnal_mengajar_dosen', $data)

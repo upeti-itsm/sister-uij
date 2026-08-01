@@ -113,7 +113,7 @@ jQuery.daftar_matakuliah = {
                         buttons +=
                             "<button class='btn btn-warning-soft btn-sm btn-buku' " +
                             "data-row='" + JSON.stringify(data).replace(/'/g, "&apos;") + "'>" +
-                            "<i class='fas fa-book'></i>" +
+                            "<i class='" + (data.sts_pengajuan == 3 ? "fas fa-download" : "fas fa-book") + "'></i>" +
                             "</button>";
 
                         return buttons;
@@ -684,12 +684,25 @@ jQuery.daftar_matakuliah = {
         var catatan = data.catatan_pengajuan || '';
         $('#catatan_pengajuan').val(catatan);
 
+        var catatanPenolakan = data.catatan_penolakan || '';
+
+        if (catatanPenolakan.trim() !== '') {
+            $('#isiCatatanPenolakan').text(catatanPenolakan);
+            $('#alertCatatanPenolakan')
+                .removeClass('d-none')
+                .show();
+        } else {
+            $('#isiCatatanPenolakan').text('');
+            $('#alertCatatanPenolakan')
+                .addClass('d-none')
+                .hide();
+        }
+
         var titleText = data.nama_matakuliah + (data.nama_kelas ? ' (' + data.nama_kelas + ')' : '');
         $('#modalNamaMatkul').text(titleText);
 
         var status = parseInt(data.sts_pengajuan || 0);
         $('#status_buku').val(status);
-        console.log('Status Pengajuan:', status, 'ID Jurnal:', idJurnal);
 
         var $btn = $('#btnSimpanJurnal');
 
