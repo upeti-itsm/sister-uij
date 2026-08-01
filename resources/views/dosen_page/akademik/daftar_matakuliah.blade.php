@@ -358,6 +358,57 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Pengajuan Jurnal -->
+    <div class="modal fade" id="modal_buku" tabindex="-1" role="dialog" aria-labelledby="modalBukuLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header bg-primary text-white">
+                    <h6 class="modal-title" id="modalBukuLabel">
+                        <i class="fas fa-book mr-2"></i>Pengajuan Jurnal Mengajar -
+                        <span id="modalNamaMatkul"></span>
+                    </h6>
+
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form id="formJurnalMengajar">
+                    <input type="hidden" id="id_jurnal_buku" name="id_jurnal">
+                    <input type="hidden" id="id_jadwal_buku" name="id_jadwal">
+                    <input type="hidden" id="status_buku" name="status">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="catatan_pengajuan" class="font-weight-bold">
+                                Catatan Pengajuan Jurnal <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                name="catatan"
+                                id="catatan_pengajuan"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Masukkan catatan atau jurnal mengajar..."
+                                required
+                            ></textarea>
+                            <small class="form-text text-muted">Isi catatan jurnal mengajar untuk mata kuliah ini.</small>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times mr-2"></i>Tutup
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="btnSimpanJurnal">
+                            <i class="fas fa-paper-plane mr-2"></i>Simpan Jurnal
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 @endsection
 @push('scripts')
     <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>

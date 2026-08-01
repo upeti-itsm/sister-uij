@@ -476,7 +476,8 @@
                                 array_key_exists('Pengajuan Surat Aktif Dekan', $modul) ||
                                 array_key_exists('Pengajuan Surat Cuti Dekan', $modul) ||
                                 array_key_exists('Pengajuan Surat Aktif Dosen', $modul) ||
-                                array_key_exists('Pengajuan Surat Cuti Dosen', $modul))
+                                array_key_exists('Pengajuan Surat Cuti Dosen', $modul) ||
+                                array_key_exists('Pengajuan Jurnal Mengajar Dosen', $modul))
                             <li class="nav-label">Akademik</li>
                             <li @if (
                                 $menu == 'Validasi Pengajuan Sertifikat Laboratorium Komputer' ||
@@ -500,7 +501,8 @@
                                     $menu == 'Pengajuan Surat Aktif Dekan' ||
                                     $menu == 'Pengajuan Surat Cuti Dekan' ||
                                     $menu == 'Pengajuan Surat Aktif Dosen' ||
-                                    $menu == 'Pengajuan Surat Cuti Dosen') class="mm-active" @endif>
+                                    $menu == 'Pengajuan Surat Cuti Dosen' ||
+                                    $menu == 'Pengajuan Jurnal Mengajar Dosen') class="mm-active" @endif>
                                 <a class="has-arrow material-ripple" href="#">
                                     <i class="fas fa-graduation-cap mr-2"></i>
                                     @if (\Illuminate\Support\Facades\Session::get('peran')['aktif_'] === 'Dosen')
@@ -789,6 +791,11 @@
                                     @if (array_key_exists('Validasi KRS Kaprodi', $modul))
                                         <li @if ($menu == 'Validasi KRS Kaprodi') class="mm-active" @endif>
                                             <a href="{{ route('kaprodi.krs.index') }}">KRS Mahasiswa</a>
+                                        </li>
+                                    @endif
+                                    @if (array_key_exists('Pengajuan Jurnal Mengajar Dosen', $modul))
+                                        <li @if ($menu == 'Pengajuan Jurnal Mengajar Dosen') class="mm-active" @endif>
+                                            <a href="{{ route('kaprodi.pengajuan_jurnal_mengajar_dosen.index') }}">Jurnal Mengajar Dosen</a>
                                         </li>
                                     @endif
                                 </ul>

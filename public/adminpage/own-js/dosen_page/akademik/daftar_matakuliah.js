@@ -29,6 +29,7 @@ jQuery.daftar_matakuliah = {
         var self = this;
         self.setEvents();
         self.setKriteriaEvents();
+        self.setJurnalEvents();
     },
     setEvents: function () {
         var self = this;
@@ -36,7 +37,7 @@ jQuery.daftar_matakuliah = {
         $(".select2").select2();
 
         // Handle perubahan dropdown kriteria
-        $('#id_kriteria').change(function() {
+        $('#id_kriteria').change(function () {
             self.handleKriteriaChange();
         });
         // Initialize Select2 untuk dropdown kriteria
@@ -93,7 +94,7 @@ jQuery.daftar_matakuliah = {
                         var buttons = '';
 
                         // Tombol Nilai Mahasiswa
-                        buttons += "<a href='/dosen/akademik/nilai-matakuliah/"+data.id_jadwal+"' class='btn btn-success-soft btn-sm mr-1 mb-1' title='Nilai Mahasiswa'>" +
+                        buttons += "<a href='/dosen/akademik/nilai-matakuliah/" + data.id_jadwal + "' class='btn btn-success-soft btn-sm mr-1 mb-1' title='Nilai Mahasiswa'>" +
                             "<i class='fas fa-clipboard-check'></i>" +
                             "</a>";
                         // Tombol Kelola Kriteria
@@ -105,9 +106,15 @@ jQuery.daftar_matakuliah = {
 
                         // Tombol Export PDF (yang sudah ada)
                         buttons += "<a href='/dosen/akademik/daftar-matakuliah/export-presensi/" + data.id_jadwal + "' " +
-                            "title='Export Presensi Mahasiswa' class='btn btn-danger-soft btn-sm btn-print mb-1' " +
+                            "title='Export Presensi Mahasiswa' class='btn btn-danger-soft btn-sm btn-print mr-1 mb-1' " +
                             "data-id='" + data.id_jadwal + "' target='_blank'>" +
                             "<i class='fas fa-file-pdf'></i></a>";
+
+                        buttons +=
+                            "<button class='btn btn-warning-soft btn-sm btn-buku' " +
+                            "data-row='" + JSON.stringify(data).replace(/'/g, "&apos;") + "'>" +
+                            "<i class='fas fa-book'></i>" +
+                            "</button>";
 
                         return buttons;
                     }
@@ -153,10 +160,52 @@ jQuery.daftar_matakuliah = {
         $("#btn-export-pdf").click(function () {
             window.open('/dosen/akademik/daftar-matakuliah/export-pdf/' + $("#tahun_akademik").val() + '/' + $("#cari-data").val());
         });
+
+        $(document).on("click", ".btn-buku", function () {
+            var data = JSON.parse($(this).attr("data-row"));
+            var status = parseInt(data.sts_pengajuan);
+
+            switch (status) {
+
+                // Belum pernah membuat jurnal
+                case 0:
+                    jQuery.daftar_matakuliah.openModalBuku(data);
+                    break;
+
+                // Draft, masih boleh diedit
+                case 1:
+                    jQuery.daftar_matakuliah.openModalBuku(data);
+                    break;
+
+                // Sedang diproses Kaprodi
+                case 2:
+                    jQuery.daftar_matakuliah.showMessage(
+                        'info',
+                        '<div class="text-center">' +
+                        '<i class="fas fa-hourglass-half fa-3x text-warning mb-3"></i>' +
+                        '<h5>Jurnal Sedang Diproses</h5>' +
+                        '<p class="mb-0">Saat ini jurnal mengajar sedang dalam proses pengajuan ke Kaprodi.</p>' +
+                        '</div>'
+                    );
+                    break;
+
+                case 3:
+                    jQuery.daftar_matakuliah.downloadJurnal(data);
+                    break;
+
+                case 4:
+                    jQuery.daftar_matakuliah.openModalBuku(data);
+                    break;
+
+                case 5:
+                    // alert penolakan
+                    break;
+            }
+        });
     },
 
     // ===== FITUR KRITERIA PENILAIAN (TANPA EDIT & DETAIL) =====
-    handleKriteriaChange: function() {
+    handleKriteriaChange: function () {
         var selectedValue = $('#id_kriteria').val();
         var selectedText = $('#id_kriteria option:selected').text();
 
@@ -167,11 +216,11 @@ jQuery.daftar_matakuliah = {
         }
     },
     // Events untuk fitur kriteria penilaian
-    setKriteriaEvents: function() {
+    setKriteriaEvents: function () {
         var self = this;
 
         // Form submit handler untuk kriteria (hanya tambah)
-        $('#formKriteria').submit(function(e) {
+        $('#formKriteria').submit(function (e) {
             e.preventDefault();
             self.simpanKriteria();
         });
@@ -186,8 +235,37 @@ jQuery.daftar_matakuliah = {
         });
     },
 
+    setJurnalEvents: function () {
+        var self = this;
+
+        // Form submit handler untuk jurnal mengajar (insup)
+        $('#formJurnalMengajar').submit(function (e) {
+            e.preventDefault();
+
+            var action = $('#btnSimpanJurnal').attr('data-action') || $('#btnSimpanJurnal').data('action');
+            var status = $('#btnSimpanJurnal').attr('data-status') || $('#btnSimpanJurnal').data('status') || $('#status_buku').val() || 2;
+
+            if (action === 'submit') {
+                self.ajukanJurnal(status);
+            } else {
+                self.simpanJurnalMengajar();
+            }
+        });
+
+        // Reset form ketika modal ditutup
+        $('#modal_buku').on('hidden.bs.modal', function () {
+            if ($('#formJurnalMengajar').length) {
+                $('#formJurnalMengajar')[0].reset();
+            }
+            $('#id_jurnal_buku').val('');
+            $('#id_jadwal_buku').val('');
+            $('#status_buku').val('');
+            $('#btnSimpanJurnal').removeAttr('data-action').removeAttr('data-status').removeData('action').removeData('status');
+        });
+    },
+
     // Fungsi untuk membuka modal kelola kriteria (dengan loading)
-    kelolaKriteria: function(matkulId, matkulName, prodi) {
+    kelolaKriteria: function (matkulId, matkulName, prodi) {
         var self = this;
 
         // Show loading dialog sebelum modal dibuka
@@ -212,7 +290,7 @@ jQuery.daftar_matakuliah = {
         $('#btnSimpanKriteria').html('<i class="fas fa-plus mr-2"></i>Tambah Kriteria');
 
         // Load kriteria yang sudah ada dengan callback
-        self.loadKriteriaList(matkulId, function(success, message) {
+        self.loadKriteriaList(matkulId, function (success, message) {
             // Close loading dialog
             loadingDialog.close();
 
@@ -227,7 +305,7 @@ jQuery.daftar_matakuliah = {
     },
 
     // Fungsi untuk load daftar kriteria (dengan callback support)
-    loadKriteriaList: function(matkulId, callback) {
+    loadKriteriaList: function (matkulId, callback) {
         var self = this;
         $.ajax({
             url: '/dosen/akademik/daftar-matakuliah/json-kriteria',
@@ -236,7 +314,7 @@ jQuery.daftar_matakuliah = {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     self.updateKriteriaList(response.data);
                     self.updateTotalWeight(response.data);
@@ -257,7 +335,7 @@ jQuery.daftar_matakuliah = {
                     }
                 }
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 console.error('Error loading kriteria list:', xhr);
                 var message = 'Terjadi kesalahan saat memuat daftar kriteria';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -276,7 +354,7 @@ jQuery.daftar_matakuliah = {
     },
 
     // Fungsi untuk update tampilan daftar kriteria (TANPA TOMBOL EDIT)
-    updateKriteriaList: function(kriteriaList) {
+    updateKriteriaList: function (kriteriaList) {
         var html = '';
 
         if (kriteriaList.length === 0) {
@@ -299,7 +377,7 @@ jQuery.daftar_matakuliah = {
                 '</thead>' +
                 '<tbody>';
 
-            kriteriaList.forEach(function(item, index) {
+            kriteriaList.forEach(function (item, index) {
                 var namaKriteria = item.nama_kriteria.replace(/'/g, "\\'");
                 html +=
                     '<tr>' +
@@ -328,8 +406,8 @@ jQuery.daftar_matakuliah = {
     },
 
     // Fungsi untuk update total weight
-    updateTotalWeight: function(kriteriaList) {
-        var totalWeight = kriteriaList.reduce(function(sum, item) {
+    updateTotalWeight: function (kriteriaList) {
+        var totalWeight = kriteriaList.reduce(function (sum, item) {
             return sum + parseFloat(item.bobot);
         }, 0);
 
@@ -343,7 +421,7 @@ jQuery.daftar_matakuliah = {
     },
 
     // Fungsi untuk simpan kriteria (hanya tambah, tidak ada edit)
-    simpanKriteria: function() {
+    simpanKriteria: function () {
         var self = this;
         var formData = $('#formKriteria').serialize();
         var url = '/dosen/akademik/daftar-matakuliah/json-kriteria-store';
@@ -355,7 +433,7 @@ jQuery.daftar_matakuliah = {
             url: url,
             type: 'POST',
             data: formData,
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     // Success message dengan jQuery.Confirm
                     $.alert({
@@ -369,7 +447,7 @@ jQuery.daftar_matakuliah = {
                             ok: {
                                 text: '<i class="fas fa-check mr-2"></i>OK',
                                 btnClass: 'btn-success',
-                                action: function() {
+                                action: function () {
                                     // Dialog akan tertutup otomatis
                                 }
                             }
@@ -390,13 +468,13 @@ jQuery.daftar_matakuliah = {
                     self.showMessage('error', response.message);
                 }
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 var message = 'Terjadi kesalahan sistem';
                 var errors = [];
 
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                     var validationErrors = xhr.responseJSON.errors;
-                    errors = Object.keys(validationErrors).map(function(key) {
+                    errors = Object.keys(validationErrors).map(function (key) {
                         return '• ' + validationErrors[key][0];
                     });
                     message = 'Terdapat kesalahan validasi:<br><br>' + errors.join('<br>');
@@ -416,7 +494,7 @@ jQuery.daftar_matakuliah = {
                         ok: {
                             text: '<i class="fas fa-check mr-2"></i>OK',
                             btnClass: 'btn-danger',
-                            action: function() {
+                            action: function () {
                                 // Focus ke field pertama yang error
                                 if (errors.length > 0) {
                                     var firstErrorField = $('#formKriteria').find('.is-invalid').first();
@@ -431,7 +509,7 @@ jQuery.daftar_matakuliah = {
                     }
                 });
             },
-            complete: function() {
+            complete: function () {
                 // Re-enable button
                 $('#btnSimpanKriteria').prop('disabled', false).html('<i class="fas fa-plus mr-2"></i>Tambah Kriteria');
             }
@@ -439,7 +517,7 @@ jQuery.daftar_matakuliah = {
     },
 
     // Fungsi untuk hapus kriteria dengan jQuery.Confirm
-    hapusKriteria: function(id, nama) {
+    hapusKriteria: function (id, nama) {
         var self = this;
 
         // Menggunakan jQuery.Confirm untuk konfirmasi hapus
@@ -468,7 +546,7 @@ jQuery.daftar_matakuliah = {
                             url: '/dosen/akademik/daftar-matakuliah/json-kriteria-delete',
                             type: 'post',
                             data: { id: id },
-                            success: function(response) {
+                            success: function (response) {
                                 if (response.success) {
                                     jc.close();
                                     self.showMessage('success', response.message);
@@ -483,7 +561,7 @@ jQuery.daftar_matakuliah = {
                                     self.showMessage('error', response.message);
                                 }
                             },
-                            error: function(xhr) {
+                            error: function (xhr) {
                                 var message = xhr.responseJSON && xhr.responseJSON.message ?
                                     xhr.responseJSON.message : 'Terjadi kesalahan sistem';
                                 jc.close();
@@ -505,7 +583,7 @@ jQuery.daftar_matakuliah = {
     },
 
     // Utility function untuk show message menggunakan jQuery.Confirm
-    showMessage: function(type, message) {
+    showMessage: function (type, message) {
         var config = {
             columnClass: 'col-md-6 col-md-offset-3',
             theme: 'modern',
@@ -515,14 +593,14 @@ jQuery.daftar_matakuliah = {
                 ok: {
                     text: '<i class="fas fa-check mr-2"></i>OK',
                     btnClass: 'btn-primary',
-                    action: function() {
+                    action: function () {
                         // Dialog akan tertutup otomatis
                     }
                 }
             }
         };
 
-        switch(type) {
+        switch (type) {
             case 'success':
                 config.title = '<i class="fas fa-check-circle mr-2 text-success"></i>Berhasil';
                 config.type = 'green';
@@ -552,7 +630,7 @@ jQuery.daftar_matakuliah = {
     },
 
     // Utility function untuk konfirmasi umum
-    showConfirm: function(title, message, callback) {
+    showConfirm: function (title, message, callback) {
         $.confirm({
             title: title,
             content: message,
@@ -584,7 +662,7 @@ jQuery.daftar_matakuliah = {
     },
 
     // Utility function untuk loading dialog
-    showLoading: function(message) {
+    showLoading: function (message) {
         return $.dialog({
             title: '<i class="fas fa-spinner fa-spin mr-2"></i>Loading',
             content: message || 'Sedang memproses data...',
@@ -594,6 +672,217 @@ jQuery.daftar_matakuliah = {
             closeIcon: false,
             buttons: {}
         });
+    },
+
+    openModalBuku: function (data) {
+        var self = this;
+        $('#id_jadwal_buku').val(data.id_jadwal || '');
+
+        var idJurnal = data.id_jurnal_mengajar_dosen || data.id_jurnal_mengajar || '';
+        $('#id_jurnal_buku').val(idJurnal);
+
+        var catatan = data.catatan_pengajuan || '';
+        $('#catatan_pengajuan').val(catatan);
+
+        var titleText = data.nama_matakuliah + (data.nama_kelas ? ' (' + data.nama_kelas + ')' : '');
+        $('#modalNamaMatkul').text(titleText);
+
+        var status = parseInt(data.sts_pengajuan || 0);
+        $('#status_buku').val(status);
+        console.log('Status Pengajuan:', status, 'ID Jurnal:', idJurnal);
+
+        var $btn = $('#btnSimpanJurnal');
+
+        if (!idJurnal) {
+            $btn.html('<i class="fas fa-save mr-2"></i>Simpan Jurnal')
+                .attr('data-action', 'save')
+                .attr('data-status', status)
+                .data('action', 'save')
+                .data('status', status);
+        } else {
+            switch (status) {
+                case 1: // Draft
+                    $btn.html('<i class="fas fa-paper-plane mr-2"></i>Ajukan Jurnal')
+                        .attr('data-action', 'submit')
+                        .attr('data-status', status)
+                        .data('action', 'submit')
+                        .data('status', status);
+                    break;
+
+                case 4: // Revisi
+                    $btn.html('<i class="fas fa-paper-plane mr-2"></i>Ajukan Ulang')
+                        .attr('data-action', 'submit')
+                        .attr('data-status', status)
+                        .data('action', 'submit')
+                        .data('status', status);
+                    break;
+
+                default:
+                    $btn.html('<i class="fas fa-save mr-2"></i>Simpan Jurnal')
+                        .attr('data-action', 'save')
+                        .attr('data-status', status)
+                        .data('action', 'save')
+                        .data('status', status);
+                    break;
+            }
+        }
+
+        $('#modal_buku').modal('show');
+    },
+
+    simpanJurnalMengajar: function () {
+        var self = this;
+        var formData = $('#formJurnalMengajar').serialize();
+        var url = '/dosen/akademik/daftar-matakuliah/insup-jurnal-mengajar';
+
+        var $btn = $('#btnSimpanJurnal');
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...');
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    $('#modal_buku').modal('hide');
+                    self.showMessage('success', response.message || 'Jurnal mengajar berhasil disimpan.');
+                    self.data.table.ajax.reload(null, false);
+                } else {
+                    self.showMessage('error', response.message || 'Gagal menyimpan jurnal mengajar.');
+                }
+            },
+            error: function (xhr) {
+                var message = 'Terjadi kesalahan sistem';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                self.showMessage('error', message);
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+            }
+        });
+    },
+
+    ajukanJurnal: function (status) {
+        var self = this;
+        var currentStatus = (status !== undefined && status !== null) ? status : ($('#status_buku').val() || 1);
+
+        $.confirm({
+            title: '<i class="fas fa-paper-plane mr-2 text-primary"></i>Ajukan Jurnal',
+            content: 'Apakah Anda yakin ingin mengajukan jurnal mengajar ini ke Kaprodi?<br><br>Setelah diajukan, jurnal tidak dapat diubah sampai ada keputusan dari Kaprodi.',
+            type: 'blue',
+            theme: 'modern',
+            columnClass: 'col-md-5 col-md-offset-4',
+            buttons: {
+                ajukan: {
+                    text: '<i class="fas fa-paper-plane mr-2"></i>Ya, Ajukan',
+                    btnClass: 'btn-primary',
+                    action: function () {
+                        var jc = this;
+                        var loading = self.showLoading('Mengajukan jurnal...');
+
+                        $.ajax({
+                            url: '/dosen/akademik/daftar-matakuliah/ajukan-jurnal-mengajar',
+                            type: 'POST',
+                            data: {
+                                id_jurnal: $('#id_jurnal_buku').val(),
+                                status: currentStatus,
+                                catatan: $('#catatan_pengajuan').val()
+                            },
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function (response) {
+                                loading.close();
+                                jc.close();
+
+                                if (response.success) {
+                                    $('#modal_buku').modal('hide');
+
+                                    self.showMessage(
+                                        'success',
+                                        response.message || 'Jurnal berhasil diajukan.'
+                                    );
+
+                                    self.data.table.ajax.reload(null, false);
+                                } else {
+                                    self.showMessage(
+                                        'error',
+                                        response.message || 'Gagal mengajukan jurnal.'
+                                    );
+                                }
+                            },
+                            error: function (xhr) {
+                                loading.close();
+                                jc.close();
+
+                                self.showMessage(
+                                    'error',
+                                    xhr.responseJSON?.message || 'Terjadi kesalahan sistem.'
+                                );
+                            }
+                        });
+
+                        return false;
+                    }
+                },
+                batal: {
+                    text: 'Batal'
+                }
+            }
+        });
+    },
+
+    downloadJurnal: function (data) {
+        console.log(data);
+        $.confirm({
+            title: '<i class="fas fa-file-pdf mr-2 text-success"></i>Download Jurnal Mengajar',
+            content:
+                '<p>Jurnal mengajar telah disetujui oleh Kaprodi.</p>' +
+                '<p>Klik <b>Download PDF</b> untuk mengunduh jurnal dalam format PDF.</p>',
+            type: 'green',
+            theme: 'modern',
+            columnClass: 'col-md-5 col-md-offset-4',
+            buttons: {
+                download: {
+                    text: '<i class="fas fa-download mr-2"></i>Download PDF',
+                    btnClass: 'btn-success',
+                    action: function () {
+                        // Gunakan form submit agar browser bisa menerima file biner PDF
+                        var form = $('<form>', {
+                            method: 'POST',
+                            action: '/dosen/akademik/daftar-matakuliah/download-jurnal-mengajar'
+                        });
+                        form.append($('<input>', {
+                            type: 'hidden',
+                            name: '_token',
+                            value: $('meta[name="csrf-token"]').attr('content')
+                        }));
+                        form.append($('<input>', {
+                            type: 'hidden',
+                            name: 'id_jadwal',
+                            value: data.id_jadwal
+                        }));
+                        form.append($('<input>', {
+                            type: 'hidden',
+                            name: 'id_jurnal',
+                            value: data.id_jurnal_mengajar_dosen
+                        }));
+                        $('body').append(form);
+                        form.submit();
+                        form.remove();
+                    }
+                },
+                tutup: {
+                    text: 'Tutup'
+                }
+            }
+        });
+
     }
 };
 

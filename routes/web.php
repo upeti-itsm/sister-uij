@@ -1159,3 +1159,25 @@ Route::prefix('sek/surat-menyurat/buat-surat')->middleware('modul:Pengelolaan Su
     Route::get('create', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\PengelolaanSuratController::class, 'create'])->name('sek.surat_menyurat.buat_surat.create');
     Route::post('insup-surat', [\App\Http\Controllers\SekretarisPage\SuratMenyurat\PengelolaanSuratController::class, 'insup_surat'])->name('sek.surat_menyurat.buat_surat.insup_surat');
 });
+
+/*
+ * ------------------------------------------------------------------------
+ * NEW DOSEN - DAFTAR MATA PELAJARAN (JURNAL MENGAJAR DOSEN)
+ * ------------------------------------------------------------------------
+*/
+Route::prefix('dosen/akademik/daftar-matakuliah')->middleware('modul:Dosen - Daftar Matakuliah')->group(function () {
+    Route::post('insup-jurnal-mengajar', [\App\Http\Controllers\DosenPage\Akadmik\MatakuliahController::class, 'insup_jurnal_mengajar_dosen'])->name('dosen.akademik.daftar_matakuliah.insup_jurnal_mengajar');
+    Route::post('ajukan-jurnal-mengajar', [\App\Http\Controllers\DosenPage\Akadmik\MatakuliahController::class, 'ajukan_jurnal_mengajar_dosen'])->name('dosen.akademik.daftar_matakuliah.ajukan_jurnal_mengajar');
+    Route::post('download-jurnal-mengajar', [\App\Http\Controllers\DosenPage\Akadmik\MatakuliahController::class, 'download_jurnal_mengajar_dosen'])->name('dosen.akademik.daftar_matakuliah.download_jurnal_mengajar');
+});
+
+/*
+ * ------------------------------------------------------------------------
+ * NEW KAPRODI - DAFTAR PENGAJUAN JURNAL MENGAJAR DOSEN
+ * ------------------------------------------------------------------------
+*/
+Route::prefix('kaprodi/pengajuan-jurnal-mengajar-dosen')->middleware('modul:Pengajuan Jurnal Mengajar Dosen')->group(function () {
+    Route::get('/', [\App\Http\Controllers\KaprodiPage\Akademik\PengajuanJurnalMengajarDosenController::class, 'index'])->name('kaprodi.pengajuan_jurnal_mengajar_dosen.index');
+    Route::post('json', [\App\Http\Controllers\KaprodiPage\Akademik\PengajuanJurnalMengajarDosenController::class, 'json'])->name('kaprodi.pengajuan_jurnal_mengajar_dosen.json');
+    Route::post('set-status', [\App\Http\Controllers\KaprodiPage\Akademik\PengajuanJurnalMengajarDosenController::class, 'set_status_ajuan'])->name('kaprodi.pengajuan_jurnal_mengajar_dosen.set_status_ajuan');
+});
