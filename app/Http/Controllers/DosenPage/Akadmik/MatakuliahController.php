@@ -68,19 +68,16 @@ class MatakuliahController extends Controller
         return $pdf->download($matakuliah->nama_mata_kuliah . '_' . $matakuliah->kelas_id . '.pdf');
     }
 
-    public function export_presensi_mahasiswa($id_rekap)
+    public function export_presensi_mahasiswa($id)
     {
-        $rekapRow = \Illuminate\Support\Facades\DB::select(
-            'SELECT jadwal_id, pertemuan_ke FROM absensi.rekapitulasi_absensi_mengajar_dosen WHERE id_rekap = ?',
-            [$id_rekap]
-        );
+        $rekapRow = JadwalDosen::getRekapPertemuan($id);
 
-        if (empty($rekapRow)) {
+        if (!$rekapRow) {
             return response()->json(['success' => false, 'message' => 'Data rekap tidak ditemukan'], 404);
         }
 
-        $jadwal_kuliah_id = $rekapRow[0]->jadwal_id;
-        $pertemuan_ke     = (int) $rekapRow[0]->pertemuan_ke;
+        $jadwal_kuliah_id = $rekapRow->jadwal_id;
+        $pertemuan_ke     = (int) $rekapRow->pertemuan_ke;
 
         $rekap = JadwalDosen::export_presensi($jadwal_kuliah_id);
 

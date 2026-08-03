@@ -105,6 +105,30 @@ class JadwalDosen extends Model
         ]);
     }
 
+    public static function getRekapPertemuan($id)
+    {
+        $row = DB::select(
+            'SELECT jadwal_id, pertemuan_ke FROM absensi.rekapitulasi_absensi_mengajar_dosen WHERE id_rekap = ?',
+            [$id]
+        );
+
+        if (empty($row)) {
+            $row = DB::select(
+                'SELECT jadwal_id, pertemuan_ke FROM absensi.rekapitulasi_absensi_mengajar_dosen WHERE jadwal_id = ? ORDER BY pertemuan_ke DESC LIMIT 1',
+                [$id]
+            );
+        }
+
+        if (empty($row)) {
+            $row = DB::select(
+                'SELECT jadwal_kuliah_id AS jadwal_id, pertemuan_ke FROM absensi.rekapitulasi_absensi_mengajar_dosen WHERE jadwal_kuliah_id = ? ORDER BY pertemuan_ke DESC LIMIT 1',
+                [$id]
+            );
+        }
+
+        return $row[0] ?? null;
+    }
+
     public static function insert_kriteria_penilaian($id_jadwal, $id_kriteria, $kriteria = NULL, $bobot = NULL)
     {
         return DB::selectOne("SELECT * FROM akademik.insert_kriteria_penilaian(?,?,?,?)", [
