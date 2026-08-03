@@ -334,7 +334,7 @@
                 <tr>
                     <td style="text-align:left;border:none;">Dicetak pada {{ $tanggal_cetak }}</td>
                     <td style="text-align:center;border:none;">Presensi Mahasiswa - Sistem Informasi Akademik UIJ</td>
-                    <td style="text-align:right;border:none;">Dokumen sah dilindungi QR Code digital signature</td>
+                    <td style="text-align:right;border:none;"></td>
                 </tr>
             </table>
         </div>

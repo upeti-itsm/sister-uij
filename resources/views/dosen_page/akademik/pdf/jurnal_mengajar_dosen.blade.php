@@ -355,7 +355,7 @@
                 <td>{{ $jml_terlambat }} Kali</td>
             </tr>
             <tr>
-                <td class="rl">Rata-rata Kehadiran Mhs</td>
+                <td class="rl">Rata-rata Kehadiran Mahasiswa</td>
                 <td class="rs">:</td>
                 <td>{{ $rata_kehadiran_mhs }}</td>
             </tr>

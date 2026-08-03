@@ -110,36 +110,6 @@ class MatakuliahController extends Controller
         Carbon::setLocale('id');
         $tanggal_cetak = Carbon::now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY');
 
-        $qrCodeDosen   = '';
-        $qrCodeKaprodi = '';
-        $qrErrorDosen  = '';
-        $qrErrorKaprodi = '';
-
-        $qrIdDosen   = $rekap[0]->id_dokumen_ditandatangani_dosen ?? ($rekap[0]->id_dokumen_penandatanganan ?? null);
-        $qrIdKaprodi = $rekap[0]->id_dokumen_ditandatangani_kaprodi ?? null;
-
-        if (!empty($qrIdDosen)) {
-            try {
-                $qrCodeDosen = base64_encode(
-                    QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
-                        ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDosen)]))
-                );
-            } catch (\Exception $e) {
-                $qrErrorDosen = $e->getMessage();
-            }
-        }
-
-        if (!empty($qrIdKaprodi)) {
-            try {
-                $qrCodeKaprodi = base64_encode(
-                    QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
-                        ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdKaprodi)]))
-                );
-            } catch (\Exception $e) {
-                $qrErrorKaprodi = $e->getMessage();
-            }
-        }
-
         $fakultas      = strtoupper($rekap[0]->fakultas ?? '');
         $program_studi = strtoupper($rekap[0]->nama_program_studi ?? '');
         $nama_kelas    = $rekap[0]->nama_kelas ?? '-';
@@ -158,10 +128,6 @@ class MatakuliahController extends Controller
             'sks'               => $sks,
             'semester'          => $semester,
             'tanggal_cetak'     => $tanggal_cetak,
-            'qr_dosen'          => $qrCodeDosen,
-            'qr_kaprodi'        => $qrCodeKaprodi,
-            'qr_error_dosen'    => $qrErrorDosen,
-            'qr_error_kaprodi'  => $qrErrorKaprodi,
             'nama_kaprodi'      => $rekap[0]->nama_kaprodi ?? null,
             'nidn_kaprodi'      => $rekap[0]->nidn_kaprodi ?? null,
             'rekap_summary'     => $rekap_summary,
@@ -391,16 +357,8 @@ class MatakuliahController extends Controller
             $jml_terlambat   = $first->jml_terlambat  ?? 0;
             $jml_reg_p       = $first->jml_reg_p       ?? 0;
 
-            // Rata-rata kehadiran mahasiswa
-            $total_hadir = array_sum(array_map(function ($r) {
-                return (int)($r->total_mhs_presensi ?? 0);
-            }, $jurnal_mengajar));
-            if ($jml_pertemuan > 0 && $jml_reg_p > 0) {
-                $pct = round(($total_hadir / ($jml_pertemuan * $jml_reg_p)) * 100, 1);
-                $rata_kehadiran_mhs = $pct . '%';
-            } else {
-                $rata_kehadiran_mhs = '-';
-            }
+            // Rata-rata kehadiran mahasiswa (langsung dari stored function)
+            $rata_kehadiran_mhs = $first->rata_rata_kehadiran_mahasiswa ?? '-';
 
             // QR Code — gunakan format SVG sama seperti RekapitulasiAbsenMengajarController (sudah terbukti bekerja)
             $qrCodeDosen      = '';
