@@ -357,10 +357,8 @@ class MatakuliahController extends Controller
             $jml_terlambat   = $first->jml_terlambat  ?? 0;
             $jml_reg_p       = $first->jml_reg_p       ?? 0;
 
-            // Rata-rata kehadiran mahasiswa (langsung dari stored function)
             $rata_kehadiran_mhs = $first->rata_rata_kehadiran_mahasiswa ?? '-';
 
-            // QR Code — gunakan format SVG sama seperti RekapitulasiAbsenMengajarController (sudah terbukti bekerja)
             $qrCodeDosen      = '';
             $qrCodeKaprodi    = '';
             $qrErrorDosen     = '';
