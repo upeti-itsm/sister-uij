@@ -56,7 +56,6 @@ class RekapitulasiAbsenMengajarController extends Controller
         $rekap = RekapitulasiAbsensiMengajarDosen::getRekapitulasiByPersonal($tgl_awal, $tgl_akhir, Session::get('user')->id_personal, $search);
         $dosen = Dosen::get_dosen_by_id_personal(Session::get('user')->id_personal);
 
-        // --- QR Code Section (konsep sama seperti TranskripController) ---
         $qrCodeDosen    = '';
         $qrCodeDocument = '';
 

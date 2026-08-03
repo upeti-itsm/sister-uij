@@ -160,7 +160,7 @@
                             </div>
                             <div class="col-md-2">
                                 <label>Exporting</label>
-                                <button id="export-to-pdf" class="btn btn-sm btn-block mb-2 btn-danger"><i
+                                <button type="button" id="export-to-pdf" class="btn btn-sm btn-block mb-2 btn-danger"><i
                                         class="fas fa-file-pdf mr-2"></i>Export To PDF
                                 </button>
                             </div>

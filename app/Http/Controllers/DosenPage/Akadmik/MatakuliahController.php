@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\DosenPage\Akadmik;
 
 use App\Http\Controllers\Controller;
+use App\Models\Absensi\RekapitulasiAbsensiMengajarDosen;
 use App\Models\Akademik\Dosen;
 use App\Models\Dosen\Akademik\PengajuanJurnalDosen;
 use App\Models\MOODLE_MODEL\CourseMoodle;
@@ -67,27 +68,119 @@ class MatakuliahController extends Controller
         return $pdf->download($matakuliah->nama_mata_kuliah . '_' . $matakuliah->kelas_id . '.pdf');
     }
 
-    public function export_presensi_mahasiswa($id_jadwal_kuliah)
+    public function export_presensi_mahasiswa($id_rekap)
     {
-        $tanggal = [];
-        $rekap = JadwalDosen::export_presensi($id_jadwal_kuliah);
-        if (sizeof($rekap) > 0) {
-            for ($i = 1; $i <= 16; $i++) {
-                $field = "tgl_pertemuan_" . $i;
-                $tanggal[] = $rekap[0]->$field;
+        $rekapRow = \Illuminate\Support\Facades\DB::select(
+            'SELECT jadwal_id, pertemuan_ke FROM absensi.rekapitulasi_absensi_mengajar_dosen WHERE id_rekap = ?',
+            [$id_rekap]
+        );
+
+        if (empty($rekapRow)) {
+            return response()->json(['success' => false, 'message' => 'Data rekap tidak ditemukan'], 404);
+        }
+
+        $jadwal_kuliah_id = $rekapRow[0]->jadwal_id;
+        $pertemuan_ke     = (int) $rekapRow[0]->pertemuan_ke;
+
+        $rekap = JadwalDosen::export_presensi($jadwal_kuliah_id);
+
+        if (sizeof($rekap) == 0) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan'], 404);
+        }
+
+        $tanggal_pertemuan = $rekap[0]->{"tgl_pertemuan_" . $pertemuan_ke} ?? null;
+
+        $rekap_filtered = [];
+        foreach ($rekap as $mhs) {
+            $row = new \stdClass();
+            $row->nim              = $mhs->nim;
+            $row->nama_mahasiswa   = $mhs->nama_mahasiswa;
+            $row->nama_program_studi = $mhs->nama_program_studi;
+            $row->status_pertemuan = $mhs->{"pertemuan_" . $pertemuan_ke} ?? 0;
+            $rekap_filtered[] = $row;
+        }
+
+        $rekap_summary = [
+            'hadir'  => $rekap[0]->{"jml_mhs_hadir_" . $pertemuan_ke} ?? 0,
+            'izin'   => $rekap[0]->{"jml_mhs_izin_" . $pertemuan_ke} ?? 0,
+            'sakit'  => $rekap[0]->{"jml_mhs_sakit_" . $pertemuan_ke} ?? 0,
+            'alpha'  => $rekap[0]->{"jml_mhs_tidak_hadir_" . $pertemuan_ke} ?? 0,
+        ];
+
+        $logoPath = public_path('image/logo-uij.png');
+        $logo     = file_exists($logoPath) ? base64_encode(file_get_contents($logoPath)) : '';
+
+        Carbon::setLocale('id');
+        $tanggal_cetak = Carbon::now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY');
+
+        $qrCodeDosen   = '';
+        $qrCodeKaprodi = '';
+        $qrErrorDosen  = '';
+        $qrErrorKaprodi = '';
+
+        $qrIdDosen   = $rekap[0]->id_dokumen_ditandatangani_dosen ?? ($rekap[0]->id_dokumen_penandatanganan ?? null);
+        $qrIdKaprodi = $rekap[0]->id_dokumen_ditandatangani_kaprodi ?? null;
+
+        if (!empty($qrIdDosen)) {
+            try {
+                $qrCodeDosen = base64_encode(
+                    QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                        ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdDosen)]))
+                );
+            } catch (\Exception $e) {
+                $qrErrorDosen = $e->getMessage();
             }
         }
-        $pdf = Facade::loadView("dosen_page.akademik.pdf.presensi_mahasiswa", compact('tanggal', 'rekap'))->setPaper('a4', 'landscape');
-        return $pdf->download('presensi_mahasiswa_' . $rekap[0]->nama_mata_kuliah . '.pdf');
+
+        if (!empty($qrIdKaprodi)) {
+            try {
+                $qrCodeKaprodi = base64_encode(
+                    QrCode::format('svg')->size(200)->margin(1)->errorCorrection('H')
+                        ->generate(route('frontpage.detail_qr', ['id' => base64_encode($qrIdKaprodi)]))
+                );
+            } catch (\Exception $e) {
+                $qrErrorKaprodi = $e->getMessage();
+            }
+        }
+
+        $fakultas      = strtoupper($rekap[0]->fakultas ?? '');
+        $program_studi = strtoupper($rekap[0]->nama_program_studi ?? '');
+        $nama_kelas    = $rekap[0]->nama_kelas ?? '-';
+        $sks           = $rekap[0]->sks ?? '-';
+        $semester      = $rekap[0]->semester ?? '-';
+
+        $data = [
+            'rekap'             => $rekap_filtered,
+            'rekap_detail'      => $rekap[0],
+            'pertemuan_ke'      => $pertemuan_ke,
+            'tanggal_pertemuan' => $tanggal_pertemuan,
+            'logo'              => $logo,
+            'fakultas'          => 'FAKULTAS ' . $fakultas,
+            'program_studi'     => 'PROGRAM STUDI ' . $program_studi,
+            'nama_kelas'        => $nama_kelas,
+            'sks'               => $sks,
+            'semester'          => $semester,
+            'tanggal_cetak'     => $tanggal_cetak,
+            'qr_dosen'          => $qrCodeDosen,
+            'qr_kaprodi'        => $qrCodeKaprodi,
+            'qr_error_dosen'    => $qrErrorDosen,
+            'qr_error_kaprodi'  => $qrErrorKaprodi,
+            'nama_kaprodi'      => $rekap[0]->nama_kaprodi ?? null,
+            'nidn_kaprodi'      => $rekap[0]->nidn_kaprodi ?? null,
+            'rekap_summary'     => $rekap_summary,
+        ];
+
+        $pdf = Facade::loadView("dosen_page.akademik.pdf.presensi_mahasiswa", $data)->setPaper('a4', 'portrait');
+        return $pdf->download('presensi_mahasiswa_Pertemuan_' . $pertemuan_ke . '_' . $rekap[0]->nama_mata_kuliah . '.pdf');
     }
 
     public function json_kriteria_penilaian(Request $request)
     {
         try {
             $request->validate([
-                'id_jadwal' => 'required', // JavaScript mengirim matkul_id, bukan id_jadwal
+                'id_jadwal' => 'required',
             ]);
-            // Ambil data kriteria berdasarkan matkul_id
+
             $kriteria = JadwalDosen::get_kriteria_penilaian($request->id_jadwal);
             return response()->json([
                 'success' => true,
@@ -101,7 +194,6 @@ class MatakuliahController extends Controller
         }
     }
 
-    // 2. FUNGSI STORE KRITERIA (untuk /dosen/akademik/kriteria-penilaian/store)
     public function json_kriteria_penilaian_store(Request $request)
     {
         try {
@@ -121,7 +213,6 @@ class MatakuliahController extends Controller
                 'bobot.max' => 'Bobot maksimal 100%',
             ]);
 
-            // Simpan kriteria baru
             $kriteria = JadwalDosen::insert_kriteria_penilaian($request->id_jadwal, $request->id_kriteria, $request->nama_kriteria, $request->bobot);
 
             return response()->json([
@@ -229,7 +320,6 @@ class MatakuliahController extends Controller
 
             $id_personal = session()->get('user')->id_personal;
 
-            // Ajukan jurnal mengajar ke database
             $pengajuan_jurnal = PengajuanJurnalDosen::set_status_ajuan($request->id_jurnal, $sts_target, $id_personal);
 
             if ($pengajuan_jurnal) {

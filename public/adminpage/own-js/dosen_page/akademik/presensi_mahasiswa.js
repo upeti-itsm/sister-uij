@@ -166,7 +166,7 @@ jQuery.presensi_mahasiswa = {
         });
 
         $("#export-to-pdf").click(function () {
-            window.open('/dosen/akademik/rekapitulasi-absen-mengajar/export-pdf/' + moment(self.data.tgl_awal.datepicker('getDate')).format('YYYY-MM-DD') + '/' + moment(self.data.tgl_akhir.datepicker('getDate')).format('YYYY-MM-DD') + '/' + $("#cari-data").val());
+            window.open('/dosen/akademik/daftar-matakuliah/export-presensi/' + $("#id_rekap").val());
         });
 
         $("#table").on('click', 'button.btn-delete', function () {
