@@ -14,7 +14,7 @@ class PengajuanSurat extends Model
 
     public static function get_list_mahasiswa($nim, $status = null, $jenis = null, $search = '', $offset = -1, $limit = 10)
     {
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(NULL::uuid, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
             'p_status' => $status,
             'p_tahun_akademik' => null,
             'p_nim' => $nim,
@@ -62,7 +62,8 @@ class PengajuanSurat extends Model
 
     public static function get_detail($idRiwayat)
     {
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(:p_id_riwayat, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+            'p_id_riwayat'          => $idRiwayat,
             'p_status'               => null,
             'p_tahun_akademik'       => null,
             'p_nim'                  => null,
@@ -84,15 +85,16 @@ class PengajuanSurat extends Model
 
     public static function get_detail_with_access($idRiwayat, $idPersonal)
     {
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(:p_id_riwayat, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+            'p_id_riwayat'          => $idRiwayat,
             'p_status'               => null,
             'p_tahun_akademik'       => null,
             'p_nim'                  => null,
-            'p_id_personal_akses'    => $idPersonal,
+            'p_id_personal_akses'    => null,
             'p_peran'                => null,
             'p_param_search'         => '',
             'p_no_page'              => -1,
-            'p_jml_record_perpage'   => 9999,
+            'p_jml_record_perpage'   => 1,
         ]);
 
         foreach ($data as $item) {
@@ -108,7 +110,7 @@ class PengajuanSurat extends Model
     {
         $statusDosenAllowed = ['1', '2', '3'];
 
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(NULL::uuid, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
             'p_status'               => null,
             'p_tahun_akademik'       => null,
             'p_nim'                  => null,
@@ -148,7 +150,7 @@ class PengajuanSurat extends Model
         // Status yang boleh dilihat dekan: 2=menunggu dekan, 4=disetujui dekan, 5=ditolak dekan
         $statusDekanAllowed = ['2', '4', '5'];
 
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_cuti_mahasiswa(NULL::uuid, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
             'p_status'               => null,
             'p_tahun_akademik'       => null,
             'p_nim'                  => null,
@@ -186,7 +188,7 @@ class PengajuanSurat extends Model
     // SURAT AKTIF — LIST MAHASISWA
     public static function get_list_aktif_mahasiswa($nim, $status = null, $jenis = null, $search = '', $offset = -1, $limit = 10)
     {
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_surat_aktif_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_surat_aktif_mahasiswa(NULL::uuid, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
             'p_status'             => $status,
             'p_tahun_akademik'     => null,
             'p_nim'                => $nim,
@@ -208,7 +210,7 @@ class PengajuanSurat extends Model
     {
         $statusDosenAllowed = ['1', '2', '3'];
 
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_surat_aktif_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_surat_aktif_mahasiswa(NULL::uuid, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
             'p_status'             => null,
             'p_tahun_akademik'     => null,
             'p_nim'                => null,
@@ -247,7 +249,7 @@ class PengajuanSurat extends Model
     {
         $statusDekanAllowed = ['2', '4', '5'];
 
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_surat_aktif_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_surat_aktif_mahasiswa(NULL::uuid, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
             'p_status'             => null,
             'p_tahun_akademik'     => null,
             'p_nim'                => null,
@@ -296,7 +298,8 @@ class PengajuanSurat extends Model
     // SURAT AKTIF — GET DETAIL
     public static function get_detail_aktif($id)
     {
-        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_surat_aktif_mahasiswa(:p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+        $data = DB::select('SELECT * FROM akademik.get_list_pengajuan_surat_aktif_mahasiswa(:p_id_riwayat, :p_status, :p_tahun_akademik, :p_nim, :p_id_personal_akses, :p_peran, :p_param_search, :p_no_page, :p_jml_record_perpage)', [
+            'p_id_riwayat'         => $id,
             'p_status'             => null,
             'p_tahun_akademik'     => null,
             'p_nim'                => null,
@@ -304,7 +307,7 @@ class PengajuanSurat extends Model
             'p_peran'              => null,
             'p_param_search'       => '',
             'p_no_page'            => -1,
-            'p_jml_record_perpage' => 9999,
+            'p_jml_record_perpage' => 1,
         ]);
 
         foreach ($data as $item) {

@@ -132,29 +132,35 @@ class PengajuanSuratAktifController extends Controller
     }
 
     public function delete_pengajuan_surat(Request $request)
-    {
-        try {
-            $user = Session::get('user');
-            if (!$user) {
-                return response()->json(['status' => '0', 'keterangan' => 'Session user tidak ditemukan'], 401);
-            }
-
-            $idRiwayat = $request->id_pengajuan;
-            if (!$idRiwayat) {
-                return response()->json(['status' => '0', 'keterangan' => 'ID pengajuan tidak valid'], 422);
-            }
-
-            $result = PengajuanSurat::set_status_aktif($idRiwayat, '0');
-
-            if ($result && (string) $result->status === '1') {
-                return response()->json(['status' => '1', 'keterangan' => $result->keterangan], 200);
-            }
-
-            return response()->json(['status' => '0', 'keterangan' => $result->keterangan], 200);
-        } catch (\Exception $e) {
-            return response()->json(['status' => '0', 'keterangan' => $e->getMessage()], 500);
+{
+    try {
+        $user = Session::get('user');
+        if (!$user) {
+            return response()->json(['status' => '0', 'keterangan' => 'Session user tidak ditemukan'], 401);
         }
+
+        $nim = $user->nim ?? null;
+        $idRiwayat = $request->id_pengajuan;
+        if (!$idRiwayat) {
+            return response()->json(['status' => '0', 'keterangan' => 'ID pengajuan tidak valid'], 422);
+        }
+
+        $detail = PengajuanSurat::get_detail_aktif($idRiwayat);
+        if (!$detail || (string) $detail->nim !== (string) $nim) {
+            return response()->json(['status' => '0', 'keterangan' => 'Pengajuan tidak ditemukan'], 404);
+        }
+
+        $result = PengajuanSurat::set_status_aktif($idRiwayat, "0");
+
+        if ($result && (string) $result->status === '1') {
+            return response()->json(['status' => '1', 'keterangan' => $result->keterangan], 200);
+        }
+
+        return response()->json(['status' => '0', 'keterangan' => $result->keterangan ?? 'Gagal menghapus'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['status' => '0', 'keterangan' => $e->getMessage()], 500);
     }
+}
 
     public function detail_pengajuan_surat(Request $request)
     {
