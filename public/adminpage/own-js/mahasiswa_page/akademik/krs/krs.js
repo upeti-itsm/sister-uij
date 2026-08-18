@@ -1042,7 +1042,7 @@ jQuery.krs_jadwal = {
             success: function(response) {
                 console.log('Response simpan KRS:', response);
 
-                if (response.status === "1" || response.status === 1) {
+                if (response.status === "1" || response.status === 1 || response.status === true) {
                     $.alert({
                         title: "Berhasil",
                         type: "green",
