@@ -15,6 +15,11 @@ class JadwalKuliahMahasiswa extends Model
         return DB::select('SELECT * FROM akademik.get_tahun_akademik_jadwal_kuliah_mahasiswa()');
     }
 
+    public static function get_tahun_akademik_by_nim($nim)
+    {
+        return DB::select('SELECT * FROM akademik.get_tahun_akademik_by_mahasiswa(:nim)', ['nim' => $nim]);
+    }
+
     public static function get_jadwal_matakuliah_mahasiswa($nim = 'all', $prodi = "all", $tahun_akademik = "all", $search = "", $offset = 0, $limit = -1)
     {
         return DB::select('SELECT * FROM akademik.get_daftar_jadwal_kuliah_mahasiswa(:nim, :prodi, :tahun_akademik, :search, :offset, :limit)', [

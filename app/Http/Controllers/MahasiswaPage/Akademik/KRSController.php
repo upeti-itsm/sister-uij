@@ -24,7 +24,7 @@ class KRSController extends Controller
     public function riwayat()
     {
         $menu = "Mengelola Kartu Rencana Studi";
-        $tahun_akademik = JadwalKuliahMahasiswa::get_tahun_akademik();
+        $tahun_akademik = JadwalKuliahMahasiswa::get_tahun_akademik_by_nim(Session::get('user')->nim);
         $is_krs = KRS::cek_periode_krs(Session::get('user')->nim);
         return view('mahasiswa_page.akademik.krs.list_krs', compact('menu', 'tahun_akademik', 'is_krs'));
     }

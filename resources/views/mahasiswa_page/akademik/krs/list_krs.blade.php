@@ -217,7 +217,7 @@
                         <label class="font-weight-bold">Tahun Akademik</label>
                         <select class="form-control select2" id="filter-tahun-akademik">
                             @foreach($tahun_akademik as $item)
-                                <option value="{{$item->tahun_akademik}}">{{$item->tahun_akademik}}</option>
+                                <option value="{{$item->tahun_akademik_}}">{{$item->tahun_akademik_}}</option>
                             @endforeach
                         </select>
                     </div>
