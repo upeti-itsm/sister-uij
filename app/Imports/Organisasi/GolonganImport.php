@@ -8,6 +8,11 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 
 class GolonganImport implements ToCollection
 {
+    public $totalProcessed = 0;
+    public $totalSuccess = 0;
+    public $totalFailed = 0;
+    public $details = [];
+
     /**
     * @param Collection $rows
     */
@@ -16,25 +21,57 @@ class GolonganImport implements ToCollection
         foreach ($rows as $index => $row)
         {
             // Skip header if first row contains 'Golongan' or non-data text
-            if ($index === 0 && (str_contains(strtolower($row[0] ?? ''), 'golongan') || str_contains(strtolower($row[1] ?? ''), 'masa'))) {
+            if ($index === 0 && (str_contains(strtolower((string)($row[0] ?? '')), 'golongan') || str_contains(strtolower((string)($row[1] ?? '')), 'masa'))) {
                 continue;
             }
 
-            $golongan = trim($row[0] ?? '');
+            $golongan = trim((string)($row[0] ?? ''));
             if (empty($golongan)) {
                 continue;
             }
 
             // Clean masa_kerja
-            $masa_kerja = preg_replace('/[^\d]/', '', (string)($row[1] ?? '0'));
-            $masa_kerja = !empty($masa_kerja) ? (int)$masa_kerja : 0;
+            $raw_masa = (string)($row[1] ?? '0');
+            $masa_kerja = preg_replace('/[^\d]/', '', $raw_masa);
+            $masa_kerja = ($masa_kerja !== '') ? (int)$masa_kerja : 0;
 
             // Clean gaji_pokok
-            $gaji_pokok = preg_replace('/[^\d]/', '', (string)($row[2] ?? '0'));
-            $gaji_pokok = !empty($gaji_pokok) ? (int)$gaji_pokok : 0;
+            $raw_gaji = (string)($row[2] ?? '0');
+            $gaji_pokok = preg_replace('/[^\d]/', '', $raw_gaji);
+            $gaji_pokok = ($gaji_pokok !== '') ? (int)$gaji_pokok : 0;
 
-            if ($gaji_pokok > 0) {
-                Golongan::insup_golongan(0, $golongan, $masa_kerja, $gaji_pokok);
+            $this->totalProcessed++;
+            $excelRowNumber = $index + 1;
+
+            try {
+                $res = Golongan::import_golongan($golongan, $masa_kerja, $gaji_pokok);
+                $status = $res->status ?? 0;
+                $keterangan = $res->keterangan ?? ($status == 1 ? 'Import Berhasil' : 'Import Gagal');
+
+                if ($status == 1) {
+                    $this->totalSuccess++;
+                } else {
+                    $this->totalFailed++;
+                }
+
+                $this->details[] = [
+                    'baris' => $excelRowNumber,
+                    'golongan' => $golongan,
+                    'masa_kerja' => $masa_kerja,
+                    'gaji_pokok' => $gaji_pokok,
+                    'status' => $status,
+                    'keterangan' => $keterangan
+                ];
+            } catch (\Exception $e) {
+                $this->totalFailed++;
+                $this->details[] = [
+                    'baris' => $excelRowNumber,
+                    'golongan' => $golongan,
+                    'masa_kerja' => $masa_kerja,
+                    'gaji_pokok' => $gaji_pokok,
+                    'status' => 0,
+                    'keterangan' => 'Error: ' . $e->getMessage()
+                ];
             }
         }
     }

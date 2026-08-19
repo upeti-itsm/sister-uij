@@ -176,6 +176,87 @@
             </div>
         </div>
     </div>
+    @if (session('import_results'))
+        <div class="modal modal-primary fade" id="modal-hasil-import" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title font-weight-600">
+                            <i class="fas fa-file-excel mr-2"></i> Hasil Proses Import Data Gaji Pokok
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body p-3 text-center">
+                                        <h6 class="text-muted mb-1">Total Diproses</h6>
+                                        <h4 class="font-weight-bold mb-0 text-primary">{{ session('import_results')['processed'] }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body p-3 text-center">
+                                        <h6 class="text-muted mb-1">Sukses</h6>
+                                        <h4 class="font-weight-bold mb-0 text-success">{{ session('import_results')['success'] }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body p-3 text-center">
+                                        <h6 class="text-muted mb-1">Gagal</h6>
+                                        <h4 class="font-weight-bold mb-0 text-danger">{{ session('import_results')['failed'] }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="font-weight-bold">Rincian Log Per Baris:</h6>
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-bordered table-striped table-sm mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="text-center" style="width: 10%;">Baris</th>
+                                        <th class="text-center" style="width: 15%;">Golongan</th>
+                                        <th class="text-center" style="width: 15%;">Masa Kerja</th>
+                                        <th class="text-right" style="width: 20%;">Gaji Pokok</th>
+                                        <th class="text-center" style="width: 15%;">Status</th>
+                                        <th style="width: 25%;">Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (session('import_results')['details'] as $item)
+                                        <tr>
+                                            <td class="text-center align-middle">{{ $item['baris'] }}</td>
+                                            <td class="text-center align-middle font-weight-bold">{{ $item['golongan'] }}</td>
+                                            <td class="text-center align-middle">{{ $item['masa_kerja'] }} tahun</td>
+                                            <td class="text-right align-middle">Rp {{ number_format($item['gaji_pokok'], 0, ',', '.') }}</td>
+                                            <td class="text-center align-middle">
+                                                @if ($item['status'] == 1)
+                                                    <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Sukses</span>
+                                                @else
+                                                    <span class="badge badge-danger"><i class="fas fa-times-circle mr-1"></i> Gagal</span>
+                                                @endif
+                                            </td>
+                                            <td class="align-middle fs-13">{{ $item['keterangan'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup Log</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 @push('scripts')
     <script src="{{ asset('adminpage/assets/plugins/datatables/datatables.min.js') }}"></script>
@@ -191,4 +272,11 @@
             $this.value = input.toLocaleString("id-ID");
         }
     </script>
+    @if (session('import_results'))
+        <script>
+            $(document).ready(function() {
+                $('#modal-hasil-import').modal('show');
+            });
+        </script>
+    @endif
 @endpush

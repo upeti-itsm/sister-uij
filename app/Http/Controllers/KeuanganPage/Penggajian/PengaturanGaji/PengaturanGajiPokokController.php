@@ -98,8 +98,19 @@ class PengaturanGajiPokokController extends Controller
         ]);
 
         try {
-            Excel::import(new GolonganImport, $request->file('file_excel'));
-            session()->flash('success_message', 'Import Data Gaji Pokok Berhasil');
+            $importer = new GolonganImport();
+            Excel::import($importer, $request->file('file_excel'));
+
+            $summary = [
+                'processed' => $importer->totalProcessed,
+                'success' => $importer->totalSuccess,
+                'failed' => $importer->totalFailed,
+                'details' => $importer->details
+            ];
+            // dd($importer,$summary);
+
+            session()->flash('import_results', $summary);
+            session()->flash('success_message', "Proses import selesai. Total: {$importer->totalProcessed} data (Sukses: {$importer->totalSuccess}, Gagal: {$importer->totalFailed}).");
         } catch (\Exception $e) {
             session()->flash('failed_message', 'Gagal mengimpor data: ' . $e->getMessage());
         }
