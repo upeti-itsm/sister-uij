@@ -205,7 +205,7 @@
                 <td style="text-align: center;">{{$no}}</td>
                 <td style="text-align: left;">{{strtoupper($item->nama)}}</td>
                 <td style="text-align: center;">{{$item->nomor_rekening}}</td>
-                <td style="text-align: center;">-</td>
+                <td style="text-align: center;">{{$item->nama_bank ?? '-'}}</td>
                 <td style="text-align: center;">{{$item->total_nominal_gaji}}</td>
             </tr>
         @endforeach
