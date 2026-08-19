@@ -256,7 +256,7 @@
         <tr>
             <td class="center" style="width: 5%"><small>6</small></td>
             <td style="width: 50%" colspan="2">
-                <small>Insentif Kelebihan Mengajar S1 - {{$rekap->ket_insentif_kelebihan_mengajar_s1}}</small>
+                <small>Insentif Kelebihan Mengajar S1 - {{$data['rekap']->ket_insentif_kelebihan_mengajar_s1}}</small>
             </td>
             <td style="width: 45%; text-align: right">
                 <small>{{"Rp. " . number_format($data['rekap']->insentif_kelebihan_mengajar_s1,0,',','.').',-'}}</small>
@@ -265,7 +265,7 @@
         <tr>
             <td class="center" style="width: 5%"><small>7</small></td>
             <td style="width: 50%" colspan="2">
-                <small>Insentif Kelebihan Mengajar S2 - {{$rekap->ket_insentif_kelebihan_mengajar_s2}}</small>
+                <small>Insentif Kelebihan Mengajar S2 - {{$data['rekap']->ket_insentif_kelebihan_mengajar_s2}}</small>
             </td>
             <td style="width: 45%; text-align: right">
                 <small>{{"Rp. " . number_format($data['rekap']->insentif_kelebihan_mengajar_s2,0,',','.').',-'}}</small>

@@ -17,7 +17,7 @@ class ManajemenProdiController extends Controller
             'modul' => 'Manajemen Prodi',
         ];
 
-        return view('admin_akademik_page\perkuliahan\manajemen_prodi', $data);
+        return view('admin_akademik_page.perkuliahan.manajemen_prodi', $data);
     }
 
     public function json_get_daftar_fakultas(Request $request)

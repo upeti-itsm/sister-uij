@@ -22,7 +22,7 @@ class PlottingPerkuliahanController extends Controller
      */
     public function index()
     {
-        $menu = 'Plotting Perkuliahan';
+        $menu = 'Ploting Matakuliah';
 
         // Filter data
         $program_studi = ProgramStudi::get_program_studi();

@@ -888,7 +888,7 @@
                             </li>
                         @endif
                         @if (array_key_exists('Manajemen Kelas Perkuliahan', $modul))
-                            <li @if ($menu == 'Manajemen Kelas Perkuliahan') class="mm-active" @endif>
+                            <li @if ($menu == 'Manajemen Kelas Perkuliahan' || $menu == 'Ploting Matakuliah') class="mm-active" @endif>
                                 <a class="has-arrow material-ripple" href="#">
                                     <i class="typcn typcn-edit mr-2"></i>
                                     Plotting

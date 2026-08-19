@@ -24,7 +24,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-6">
-                        <img src="{{asset('image/logo-mandala.png')}}" style="max-height: 100px" class="img-fluid mb-3"
+                        <img src="{{asset('image/logo-uij.png')}}" style="max-height: 100px" class="img-fluid mb-3"
                              alt="">
                     </div>
                     <div class="col-sm-6 text-right">
