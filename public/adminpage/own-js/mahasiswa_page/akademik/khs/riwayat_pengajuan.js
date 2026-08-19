@@ -126,7 +126,7 @@ jQuery.modul = {
                         }
 
                         if (status === "2") {
-                            buttons += "<button class='btn btn-success btn-sm mt-1 btn-download-lhs' data-id_tandatangan='" + data.id_tandatangan_dokumen_wakil_dekan + "' data-nama_wadek='" + data.nama_wakil_dekan + "' data-nidn_wadek='" + data.nidn_wakil_dekan + "' data-tahun='" + tahun + "' data-id='" + id + "'>" +
+                            buttons += "<button class='btn btn-success btn-sm mt-1 btn-download-lhs' data-id_tandatangan='" + data.id_tandatangan_dokumen_wakil_dekan + "' data-nama_wadek='" + data.nama_wakil_dekan + "' data-nidn_wadek='" + data.nidn_wakil_dekan + "' data-tahun='" + tahun + "' data-id='" + id + "' data-nim='" + data.nim + "'>" +
                                 "<i class='fa fa-download mr-2'></i> Download</button>";
                         }
 
@@ -266,7 +266,7 @@ jQuery.modul = {
                 method: 'POST',
                 data: { id_riwayat_pengajuan_khs: id, action: 'detail' },
                 success: function (response) {
-                    if (response.status === true) {
+                    if (response.status === true || response.status === 1) {
                         var d = response.data;
                         $("#detail-nomor-pengajuan").text(d.nomor_pengajuan || '-');
                         $("#detail-nim").text(d.nim || '-');
@@ -290,6 +290,7 @@ jQuery.modul = {
             var id_tandatangan = $(this).data("id_tandatangan");
             var nama_wadek = $(this).data("nama_wadek");
             var nidn_wadek = $(this).data("nidn_wadek");
+            var nim = $(this).data("nim");
             var $button = $(this);
             var originalHtml = $button.html();
 
@@ -335,6 +336,12 @@ jQuery.modul = {
                 type: 'hidden',
                 name: 'nidn_wakil_dekan',
                 value: nidn_wadek
+            }));
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'nim',
+                value: nim
             }));
 
             $('body').append(form);

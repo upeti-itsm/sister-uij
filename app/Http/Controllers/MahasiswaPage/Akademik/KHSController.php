@@ -358,7 +358,7 @@ class KHSController extends Controller
                 return response()->json(['status' => '0', 'keterangan' => 'Session user tidak ditemukan'], 401);
             }
 
-            $nim = $user->nim;
+            $nim = $request->nim;
             $tahun_akademik = $request->tahun_akademik . $request->semester ?? null;
             $id_tandatangan = $request->id_tandatangan ?? null;
             $nama_wadek = $request->nama_wadek ?? null;
