@@ -19,7 +19,9 @@ class JadwalMatakuliahController extends Controller
         $program_studi = ProgramStudi::get_program_studi("0", "0", "", true, -1);
         $tahun_akademik_siakad = Semester::get_semester();
         $tahun_akademik = JadwalMataKuliah::get_tahun_akademik();
-        return view('admin_akademik_page.akademik.matakuliah.jadwal_matakuliah', compact('menu', 'program_studi', 'tahun_akademik', 'tahun_akademik_siakad', 'filter'));
+        $list_ruangan = JadwalMataKuliah::list_ruangan();
+        $list_ploting_matakuliah = JadwalMataKuliah::get_daftar_ploting_matakuliah();
+        return view('admin_akademik_page.akademik.matakuliah.jadwal_matakuliah', compact('menu', 'program_studi', 'tahun_akademik', 'tahun_akademik_siakad', 'list_ruangan', 'list_ploting_matakuliah', 'filter'));
     }
 
     public function json_get_daftar(Request $request)
@@ -82,7 +84,6 @@ class JadwalMatakuliahController extends Controller
             ]);
 
             return response()->json($jadwal, 200);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 'error',
@@ -124,10 +125,25 @@ class JadwalMatakuliahController extends Controller
             'kd_matkul' => 'required'
         ]);
 
-        $data = JadwalMataKuliah::sync_jadwal_matakuliah_with_siakad($request->jadwal_kuliah_id, $request->tahun_akademik, $request->kelas_id.';'.$request->nama_kelas,
-            $request->ruang_id, $request->hari, $request->jam_mulai, $request->jam_selesai, $request->matakuliah_id,
-            $request->nama_mata_kuliah, $request->kapasitas, $request->dosen_id, $request->asisten_id,
-            $request->kd_prodi, $request->jumlah_sks, $request->is_lab, $request->jenis_kelas, $request->kd_matkul);
+        $data = JadwalMataKuliah::sync_jadwal_matakuliah_with_siakad(
+            $request->jadwal_kuliah_id,
+            $request->tahun_akademik,
+            $request->kelas_id . ';' . $request->nama_kelas,
+            $request->ruang_id,
+            $request->hari,
+            $request->jam_mulai,
+            $request->jam_selesai,
+            $request->matakuliah_id,
+            $request->nama_mata_kuliah,
+            $request->kapasitas,
+            $request->dosen_id,
+            $request->asisten_id,
+            $request->kd_prodi,
+            $request->jumlah_sks,
+            $request->is_lab,
+            $request->jenis_kelas,
+            $request->kd_matkul
+        );
 
         if ($data->status)
             return response()->json($data);
@@ -204,7 +220,6 @@ class JadwalMatakuliahController extends Controller
                 ],
                 'timestamp' => now()->toISOString()
             ], $httpStatus);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::warning('Validation error pada generate jadwal', [
                 'errors' => $e->errors(),
@@ -216,7 +231,6 @@ class JadwalMatakuliahController extends Controller
                 'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all()),
                 'errors' => $e->errors()
             ], 422);
-
         } catch (\Exception $e) {
             Log::error('Error pada generate jadwal', [
                 'message' => $e->getMessage(),
@@ -231,7 +245,6 @@ class JadwalMatakuliahController extends Controller
                 'message' => 'Terjadi kesalahan saat generate jadwal: ' . $e->getMessage(),
                 'error_code' => 'GENERATE_JADWAL_ERROR'
             ], 500);
-
         } catch (\Throwable $e) {
             Log::critical('Critical error pada generate jadwal', [
                 'message' => $e->getMessage(),
@@ -244,6 +257,49 @@ class JadwalMatakuliahController extends Controller
                 'status' => 'error',
                 'message' => 'Terjadi kesalahan sistem yang tidak terduga',
                 'error_code' => 'SYSTEM_ERROR'
+            ], 500);
+        }
+    }
+
+    public function insert_jadwal(Request $request)
+    {
+        try {
+            $request->validate([
+                'id_ploting_matakuliah' => 'required',
+                'ruang_id' => 'required',
+                'hari' => 'required',
+                'jam_mulai' => 'required',
+                'jam_selesai' => 'required'
+            ]);
+
+            $result = JadwalMataKuliah::insert_jadwal_kuliah(
+                $request->id_ploting_matakuliah,
+                $request->ruang_id,
+                $request->hari,
+                $request->jam_mulai,
+                $request->jam_selesai,
+                $request->kapasitas,
+                $request->is_lab ?? 0,
+                $request->sts_aktif ?? true
+            );
+
+            $status = ($result->status == 1 || $result->status === true) ? 'success' : 'error';
+
+            return response()->json([
+                'status' => $status,
+                'message' => $result->keterangan
+            ], $status === 'success' ? 200 : 422);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error insert jadwal', ['message' => $e->getMessage()]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat menambahkan jadwal: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -264,7 +320,7 @@ class JadwalMatakuliahController extends Controller
             ]);
 
             // Helper function untuk convert empty string ke null
-            $toNullIfEmpty = function($value) {
+            $toNullIfEmpty = function ($value) {
                 return ($value === '' || $value === 'null') ? null : $value;
             };
 
@@ -292,7 +348,6 @@ class JadwalMatakuliahController extends Controller
                 'status' => $status,
                 'message' => $message
             ], $httpStatus);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 'error',
@@ -338,7 +393,6 @@ class JadwalMatakuliahController extends Controller
                 'status' => $status,
                 'message' => $message
             ], $httpStatus);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 'error',
@@ -389,7 +443,6 @@ class JadwalMatakuliahController extends Controller
                 'status' => $status,
                 'message' => $message
             ], $httpStatus);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 'error',
@@ -440,7 +493,6 @@ class JadwalMatakuliahController extends Controller
                 'status' => $status,
                 'message' => $message
             ], $httpStatus);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 'error',
