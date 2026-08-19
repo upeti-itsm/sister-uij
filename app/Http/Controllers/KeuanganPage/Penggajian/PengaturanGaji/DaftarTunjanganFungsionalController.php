@@ -5,6 +5,7 @@ namespace App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji;
 use App\Http\Controllers\Controller;
 use App\Models\Organisasi\JabatanFungsional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class DaftarTunjanganFungsionalController extends Controller
 {
@@ -40,6 +41,21 @@ class DaftarTunjanganFungsionalController extends Controller
             'nominal_tunjangan.required' => 'Pastikan Nominal Tunjangan Terisi'
         ]);
         $result = JabatanFungsional::insup_tunjangan_fungsional($request->jabatan_fungsional, $request->nominal_tunjangan, $request->id_jabatan_fungsional);
+        Session::flash($result->status == 1 ? 'success_message' : 'failed_message', $result->keterangan);
+        return redirect()->back();
+    }
+
+    public function set_active(Request $request)
+    {
+        $request->validate([
+            'id_jafung' => 'required',
+            'status' => 'required|boolean'
+        ], [
+            'id_jafung.required' => 'Pastikan Jabatan Fungsional Terisi',
+            'status.required' => 'Pastikan Status Terisi',
+            'status.boolean' => 'Pastikan Status Berupa Boolean'
+        ]);
+        $result = JabatanFungsional::set_active_tunjangan_fungsional($request->id_jafung, $request->status);
         return response()->json($result);
     }
 }
