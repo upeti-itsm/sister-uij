@@ -1140,12 +1140,26 @@ Route::prefix('keu/penggajian/pengaturan-gaji/pengaturan-gaji-pokok')
             \App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanGajiPokokController::class,
             'index'
         ])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.index');
-
         Route::post('request', [
             \App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanGajiPokokController::class,
             'get_golongan'
         ])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.request');
-
+        Route::post('insup', [
+            \App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanGajiPokokController::class,
+            'insup_golongan'
+        ])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.insup');
+        Route::post('set-status', [
+            \App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanGajiPokokController::class,
+            'set_status'
+        ])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.set_status');
+        Route::post('import', [
+            \App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanGajiPokokController::class,
+            'import'
+        ])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.import');
+        Route::get('download-template', [
+            \App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanGajiPokokController::class,
+            'download_template'
+        ])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.download_template');
 });
 // SIAKAD
 // Mahasiswa

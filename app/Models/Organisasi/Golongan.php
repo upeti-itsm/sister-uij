@@ -28,4 +28,28 @@ class Golongan extends Model
             ]
         );
     }
+
+    public static function insup_golongan($id_golongan, $golongan, $masa_kerja, $gaji_pokok)
+    {
+        return DB::selectOne(
+            'SELECT * FROM organisasi.insup_golongan(:id_golongan, :golongan, :masa_kerja, :gaji_pokok::money)',
+            [
+                'id_golongan' => (int) $id_golongan,
+                'golongan' => (string) $golongan,
+                'masa_kerja' => (int) $masa_kerja,
+                'gaji_pokok' => $gaji_pokok
+            ]
+        );
+    }
+
+    public static function set_status_golongan($id_golongan, $status)
+    {
+        return DB::selectOne(
+            'SELECT * FROM organisasi.set_status_golongan(:id_golongan, (:status)::boolean)',
+            [
+                'id_golongan' => (int) $id_golongan,
+                'status' => $status ? 'true' : 'false'
+            ]
+        );
+    }
 }

@@ -28,7 +28,6 @@ jQuery.daftar_pegawai = {
     },
     setEvents: function () {
         var self = this;
-        // Option Data
         $(".select2").select2({
             placeholder: "-- Semua Status --",
             width: '100%',
@@ -37,121 +36,6 @@ jQuery.daftar_pegawai = {
         $("#status").change(function () {
             self.data.table.ajax.reload();
         });
-        // $("#btn_export_pdf").click(function () {
-        //     $.confirm({
-        //         type: 'purple',
-        //         title: '',
-        //         columnClass: 'small',
-        //         content: '' +
-        //             '<div class="form-group">' +
-        //             '<label>Pilih Format</label>' +
-        //             '<select class="form-control format">' +
-        //             '<option value="data_bank">Data Bank</option>' +
-        //             '</select>' +
-        //             '</div>',
-        //         buttons: {
-        //             export: {
-        //                 text: 'Export',
-        //                 btnClass: 'btn-blue',
-        //                 action: function () {
-        //                     var format = this.$content.find('.format').val();
-        //                     if (!format) {
-        //                         $.alert('Pilih Format Terlebih Dahulu');
-        //                         return false;
-        //                     }
-        //                 }
-        //             },
-        //             cancel: {
-        //                 text: 'Batal',
-        //                 btnClass: 'btn-red',
-        //             },
-        //         },
-        //         backgroundDismissAnimation: 'glow'
-        //     });
-        // });
-        // $("#btn_permanen").click(function () {
-        //     var dateObj = new Date();
-        //     $.confirm({
-        //         type: 'purple',
-        //         title: '',
-        //         columnClass: 'medium',
-        //         content: '' +
-        //             'Apakah anda yakin tidak ada perubahan data pada gaji periode pembayaran <b>' + self.data.bulan[dateObj.getMonth()] + '</b> tahun <b>' + dateObj.getFullYear() + '</b> ?<hr/>' +
-        //             '<span class="text-danger">Setelah permanen, anda tidak dapat merubah data gaji</span>',
-        //         buttons: {
-        //             yakin: {
-        //                 text: 'Yakin',
-        //                 btnClass: 'btn-blue',
-        //                 action: function () {
-
-        //                 }
-        //             },
-        //             cancel: {
-        //                 text: 'Batal',
-        //                 btnClass: 'btn-red',
-        //             },
-        //         },
-        //         backgroundDismissAnimation: 'glow'
-        //     });
-        // });
-        // $("#btn_buat_gaji").click(function () {
-        //     var dateObj = new Date();
-        //     var bulan_sebelumnya = dateObj.getMonth() - 1;
-        //     var tahun_sebelumnya = dateObj.getFullYear();
-        //     if (bulan_sebelumnya < 0) {
-        //         bulan_sebelumnya = 11
-        //         tahun_sebelumnya = tahun_sebelumnya - 1;
-        //     }
-        //     $.confirm({
-        //         type: 'purple',
-        //         title: '',
-        //         columnClass: 'medium',
-        //         content: 'Apakah anda yakin akan membuat Gaji Bulanan periode <b>' + self.data.bulan[dateObj.getMonth()] + '</b> tahun <b>' + dateObj.getFullYear() + '</b> ?<hr/>' +
-        //             '<span class="text-danger">Perhitungan Gaji akan didasarkan pada data kinerja bulan <b>' + self.data.bulan[bulan_sebelumnya] + '</b> tahun <b>' + tahun_sebelumnya + '</b></span>',
-        //         buttons: {
-        //             export: {
-        //                 text: 'Yakin',
-        //                 btnClass: 'btn-blue',
-        //                 action: function () {
-        //                     $.ajax({
-        //                         url: '/keu/penggajian/gaji-bulanan/set-rekapitulasi',
-        //                         method: 'post',
-        //                         data: {},
-        //                         beforeSend: function () {
-        //                             $("#loading-spin-buat-gaji").show();
-        //                         },
-        //                         success: function (response) {
-        //                             if (response.status === 1) {
-        //                                 $.alert({
-        //                                     title: 'Informasi',
-        //                                     type: 'green',
-        //                                     content: response.keterangan,
-        //                                     backgroundDismissAnimation: 'glow'
-        //                                 });
-        //                             } else {
-        //                                 $.alert({
-        //                                     title: 'Informasi',
-        //                                     type: 'red',
-        //                                     content: response.keterangan,
-        //                                     backgroundDismissAnimation: 'glow'
-        //                                 });
-        //                             }
-        //                         },
-        //                         complete: function () {
-        //                             $("#loading-spin-buat-gaji").hide();
-        //                             self.data.table.ajax.reload();
-        //                         }
-        //                     });
-        //                 }
-        //             },
-        //             cancel: {
-        //                 text: 'Batal',
-        //                 btnClass: 'btn-red',
-        //             },
-        //         },
-        //         backgroundDismissAnimation: 'glow'
-        //     });
-        // });
 
         self.data.table = $("#ohmytable").DataTable({
             serverSide: true,
@@ -181,7 +65,7 @@ jQuery.daftar_pegawai = {
                     width: "30%",
                     render: function (data) {
                         return `
-                            <p class="mb-0 font-weight-bold text-primary">${data.golongan}</p>
+                            <p class="mb-0 font-weight-bold text-primary">${data.golongan || ''}</p>
                             <hr class="my-1"/>
                             <span class="text-muted">
                                 Masa Kerja : ${data.masa_kerja ?? 0} tahun
@@ -197,7 +81,7 @@ jQuery.daftar_pegawai = {
                     render: function (data) {
                         return `
                             <p class="mb-0 font-weight-bold text-primary">
-                                ${data.gaji_pokok_}
+                                ${data.gaji_pokok_ || 'Rp. 0'}
                             </p>
                         `;
                     }
@@ -221,14 +105,17 @@ jQuery.daftar_pegawai = {
                     render: function (data) {
                         return `
                             <div>
-                                <button 
+                                <button
                                     type="button"
                                     class="btn btn-sm btn-primary btn-block mb-1 js-edit-golongan"
-                                    data-id="${data.id_golongan}">
+                                    data-id="${data.id_golongan}"
+                                    data-golongan="${data.golongan || ''}"
+                                    data-masakerja="${data.masa_kerja ?? 0}"
+                                    data-gajipokok="${data.gaji_pokok ?? 0}">
                                     <i class="fas fa-edit mr-1"></i> Ubah Data
                                 </button>
 
-                                <button 
+                                <button
                                     type="button"
                                     class="btn btn-sm ${data.sts_aktif ? 'btn-danger' : 'btn-success'} btn-block js-toggle-status"
                                     data-id="${data.id_golongan}"
@@ -252,190 +139,166 @@ jQuery.daftar_pegawai = {
                 "emptyTable": "Tidak ditemukan data"
             }
         });
-        $("#table").on('click', 'input.asuransi', function () {
+
+        // Custom File Input Label update
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName || "Pilih file Excel...");
+        });
+
+        // Event for Import Button
+        $("#btn-import").click(function () {
+            $("#modal-import-excel").modal("show");
+        });
+
+        // Event for Edit Button
+        $("#ohmytable").on('click', '.js-edit-golongan', function () {
             var id = $(this).data('id');
-            var type = $(this).data('type');
-            var value = $(this).is(':checked');
+            var golongan = $(this).data('golongan');
+            var masaKerja = $(this).data('masakerja');
+            var gajiPokok = $(this).data('gajipokok');
+
+            $("#insup_id_golongan").val(id);
+            $("#insup_golongan").val(golongan);
+            $("#insup_masa_kerja").val(masaKerja);
+
+            var formattedGaji = gajiPokok ? parseInt(gajiPokok, 10).toLocaleString("id-ID") : "0";
+            $("#insup_gaji_pokok").val(formattedGaji);
+
+            $("#modal-insup-golongan").modal("show");
+        });
+
+        // Event for Save Edit Button
+        $("#btn-simpan-golongan").click(function () {
+            var id = $("#insup_id_golongan").val();
+            var golongan = $("#insup_golongan").val();
+            var masaKerja = $("#insup_masa_kerja").val();
+            var gajiPokok = $("#insup_gaji_pokok").val();
+
+            if (!golongan || masaKerja === "" || !gajiPokok) {
+                $.alert({
+                    title: 'Peringatan',
+                    type: 'orange',
+                    content: 'Harap lengkapi semua bidang.',
+                    backgroundDismissAnimation: 'glow'
+                });
+                return;
+            }
+
             $.ajax({
-                url: '/keu/penggajian/pengaturan-gaji/daftar-pegawai/update-asuransi',
-                method: 'post',
+                url: '/keu/penggajian/pengaturan-gaji/pengaturan-gaji-pokok/insup',
+                method: 'POST',
                 data: {
-                    id: id,
-                    status: value,
-                    jenis: type
+                    _token: $('input[name="_token"]').val(),
+                    id_golongan: id,
+                    golongan: golongan,
+                    masa_kerja: masaKerja,
+                    gaji_pokok: gajiPokok
+                },
+                beforeSend: function () {
+                    $("#btn-simpan-golongan").prop('disabled', true);
                 },
                 success: function (response) {
                     if (response.status === 1) {
                         $.alert({
-                            title: 'Informasi',
+                            title: 'Berhasil',
                             type: 'green',
                             content: response.keterangan,
                             backgroundDismissAnimation: 'glow'
                         });
+                        $("#modal-insup-golongan").modal("hide");
+                        self.data.table.ajax.reload();
                     } else {
                         $.alert({
-                            title: 'Informasi',
+                            title: 'Peringatan',
                             type: 'red',
                             content: response.keterangan,
                             backgroundDismissAnimation: 'glow'
                         });
                     }
-                    self.data.table.ajax.reload();
                 },
+                error: function (xhr) {
+                    var msg = 'Terjadi kesalahan sistem';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        msg = xhr.responseJSON.message;
+                    }
+                    $.alert({
+                        title: 'Gagal',
+                        type: 'red',
+                        content: msg,
+                        backgroundDismissAnimation: 'glow'
+                    });
+                },
+                complete: function () {
+                    $("#btn-simpan-golongan").prop('disabled', false);
+                }
             });
         });
-        $("#table").on('click', 'span.kinerja', function () {
+
+        // Event for Toggle Active / Inactive Status
+        $("#ohmytable").on('click', '.js-toggle-status', function () {
             var id = $(this).data('id');
-            var kinerja = $(this).data('kinerja');
-            var nama = $(this).data('nama');
-            $("#nama_karyawan").text(nama);
-            $("#modal-nilai-kinerja").val(kinerja).change();
-            $("#id_karyawan").val(id);
-            $("#modal-update-data-kinerja").modal('show');
-        });
-        $("#modal-nilai-kinerja").change(function () {
-            if ($(this).val() === "-") {
-                $("#btn-simpan-data").removeClass('btn-primary');
-                $("#btn-simpan-data").addClass('btn-secondary disabled');
-            } else {
-                $("#btn-simpan-data").removeClass('btn-secondary disabled');
-                $("#btn-simpan-data").addClass('btn-primary');
-            }
-        });
-        $("#btn-simpan-data").click(function () {
-            if ($("#id_karyawan").val() && $("#modal-nilai-kinerja").val() !== "-") {
-                $("#nilai_kinerja").val($("#modal-nilai-kinerja").val());
-                $("#update_kinerja_form").submit();
-            } else
-                $.alert({
-                    title: 'Peringatan',
-                    type: 'green',
-                    content: 'Pastikan Anda Sudah Memilih Nilai Kinerja',
-                    backgroundDismissAnimation: 'glow'
-                });
-        })
-        $("#table").on('click', 'input.dplk', function () {
-            var id = $(this).data('id');
-            var nominal = $(this).data('dplk');
-            var nama = $(this).data('nama');
-            var value = $(this).is(':checked');
-            if (value) {
-                $.confirm({
-                    title: 'Konfirmasi !',
-                    type: 'orange',
-                    content: '<p>' +
-                        'Isikan Potongan Terbaru Untuk <b>' + nama + '</b>' +
-                        '</p>' +
-                        '<div class="form-group">' +
-                        '<label>Jumlah Potongan</label>' +
-                        '<input type="text" class="form-control potongan" id="changeDPLK" onkeyup="keyUpNumber(\'changeDPLK\')" placeholder="Jumlah Potongan" value="' + numeral(nominal).format('0,-') + '">' +
-                        '</div>',
-                    buttons: {
-                        confirm: {
-                            text: 'Simpan',
-                            btnClass: 'btn-green',
-                            keys: ['enter'],
-                            action: function () {
-                                $.ajax({
-                                    url: '/keu/penggajian/pengaturan-gaji/daftar-pegawai/update-dplk',
-                                    type: 'POST',
-                                    data: {
-                                        id: id,
-                                        nominal: numeral(this.$content.find('.potongan').val()).value(),
-                                        status: value
-                                    },
-                                    success: function (result) {
-                                        if (result.status === 1) {
-                                            $.alert({
-                                                title: "Informasi",
-                                                type: "green",
-                                                content: result.keterangan,
-                                                backgroundDismissAnimation: 'glow',
-                                            });
-                                        } else {
-                                            $.alert({
-                                                title: "Peringatan",
-                                                type: "red",
-                                                content: result.keterangan,
-                                                backgroundDismissAnimation: 'glow',
-                                            });
-                                        }
+            var status = $(this).data('status');
+            var isAktif = (status === true || status === 'true' || status === 1 || status === '1');
+            var nextStatus = !isAktif;
+            var actionText = isAktif ? 'menonaktifkan' : 'mengaktifkan';
+
+            $.confirm({
+                title: 'Konfirmasi !',
+                type: isAktif ? 'red' : 'green',
+                content: 'Apakah Anda yakin ingin <b>' + actionText + '</b> golongan ini?',
+                buttons: {
+                    confirm: {
+                        text: 'Ya, ' + (isAktif ? 'Nonaktifkan' : 'Aktifkan'),
+                        btnClass: isAktif ? 'btn-red' : 'btn-green',
+                        action: function () {
+                            $.ajax({
+                                url: '/keu/penggajian/pengaturan-gaji/pengaturan-gaji-pokok/set-status',
+                                method: 'POST',
+                                data: {
+                                    _token: $('input[name="_token"]').val(),
+                                    id_golongan: id,
+                                    status: nextStatus
+                                },
+                                success: function (response) {
+                                    if (response.status === 1) {
+                                        $.alert({
+                                            title: 'Informasi',
+                                            type: 'green',
+                                            content: response.keterangan,
+                                            backgroundDismissAnimation: 'glow'
+                                        });
                                         self.data.table.ajax.reload();
+                                    } else {
+                                        $.alert({
+                                            title: 'Peringatan',
+                                            type: 'red',
+                                            content: response.keterangan,
+                                            backgroundDismissAnimation: 'glow'
+                                        });
                                     }
-                                });
-                            }
-                        },
-                        cancel: {
-                            text: 'Batal',
-                            btnClass: 'btn-red',
-                            action: function () {
-                                $("#dplk-" + id).prop('checked', false)
-                            }
+                                },
+                                error: function (xhr) {
+                                    $.alert({
+                                        title: 'Gagal',
+                                        type: 'red',
+                                        content: 'Terjadi kesalahan pada server.',
+                                        backgroundDismissAnimation: 'glow'
+                                    });
+                                }
+                            });
                         }
                     },
-                    backgroundDismissAnimation: 'glow',
-                    columnClass: 'small'
-                });
-            } else {
-                $.confirm({
-                    title: 'Konfirmasi !',
-                    type: 'orange',
-                    content: '<p>' +
-                        'Apakah anda yakin mengahapus potongan DPLK sebesar Rp. ' + numeral(nominal).format('0,-') + ' karyawan atas nama <b>' + nama + '</b> ?' +
-                        '</p>',
-                    buttons: {
-                        confirm: {
-                            text: 'Yakin',
-                            btnClass: 'btn-green',
-                            keys: ['enter'],
-                            action: function () {
-                                $.ajax({
-                                    url: '/keu/penggajian/pengaturan-gaji/daftar-pegawai/update-dplk',
-                                    type: 'POST',
-                                    data: {
-                                        id: id,
-                                        status: value
-                                    },
-                                    success: function (result) {
-                                        if (result.status === 1) {
-                                            $.alert({
-                                                title: "Informasi",
-                                                type: "green",
-                                                content: result.keterangan,
-                                                backgroundDismissAnimation: 'glow',
-                                            });
-                                        } else {
-                                            $.alert({
-                                                title: "Peringatan",
-                                                type: "red",
-                                                content: result.keterangan,
-                                                backgroundDismissAnimation: 'glow',
-                                            });
-                                        }
-                                        self.data.table.ajax.reload();
-                                    }
-                                });
-                            }
-                        },
-                        cancel: {
-                            text: 'Batal',
-                            btnClass: 'btn-red',
-                            action: function () {
-                                $("#dplk-" + id).prop('checked', true)
-                            }
-                        }
-                    },
-                    backgroundDismissAnimation: 'glow',
-                    columnClass: 'small'
-                });
-            }
+                    cancel: {
+                        text: 'Batal',
+                        btnClass: 'btn-default'
+                    }
+                },
+                backgroundDismissAnimation: 'glow'
+            });
         });
-        $("#sub-menu").on('click', 'a', function () {
-            location.href = $(this).attr('href');
-        });
-        $("#btn-filter").click(function () {
-            self.data.table.ajax.reload();
-        });
+
+        // Search & Filter Events
         $("#btn-cari-data").click(function () {
             self.data.table.search($("#cari-data").val()).draw();
         });
@@ -448,10 +311,7 @@ jQuery.daftar_pegawai = {
                 self.data.table.search(this.value).draw();
             }
         });
-        $("#filter_bulan").change(function () {
-            self.data.table.ajax.reload();
-        });
-    },
+    }
 };
 
 jQuery(document).ready(function () {
