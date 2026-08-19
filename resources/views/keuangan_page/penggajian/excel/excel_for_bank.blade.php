@@ -41,7 +41,7 @@
                 <td style="text-align: center; border: 1px solid #000000;">{{$no}}</td>
                 <td style="text-align: left; border: 1px solid #000000;">{{strtoupper($item->nama)}}</td>
                 <td style="text-align: left; border: 1px solid #000000;">{{$item->nomor_rekening}}</td>
-                <td style="text-align: left; border: 1px solid #000000;">-</td>
+                <td style="text-align: left; border: 1px solid #000000;">{{$item->nama_bank ?? '-'}}</td>
                 <td style="text-align: center; border: 1px solid #000000;">{{$item->total_nominal_gaji_}}</td>
             </tr>
         @endforeach
@@ -83,7 +83,7 @@
             <th colspan="5" style="text-align: center; border: 1px solid #000000;">LIST GAJI DOSEN DAN KARYAWAN TETAP</th>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: center; border: 1px solid #000000;">SEKOLAH TINGGI ILMU EKONOMI MANDALA</th>
+            <th colspan="5" style="text-align: center; border: 1px solid #000000;">Universitas Islam Jember</th>
         </tr>
         <tr></tr>
         <tr>

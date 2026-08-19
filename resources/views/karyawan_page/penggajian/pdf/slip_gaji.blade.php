@@ -208,7 +208,7 @@
                 <b>{{"Rp. " . number_format($data['rekap']->nominal_total_tunjangan,0,',','.').',-'}}</b>
             </td>
         </tr>
-        <tr style="display: none">
+        <tr>
             <td class="center" style="width: 5%"><small>2</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Tunjangan Fungsional</small>
@@ -218,7 +218,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>2</small></td>
+            <td class="center" style="width: 5%"><small>3</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Tunjangan Jabatan</small>
             </td>
@@ -227,7 +227,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>3</small></td>
+            <td class="center" style="width: 5%"><small>4</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Tunjangan Jamsos</small>
             </td>
@@ -236,7 +236,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>4</small></td>
+            <td class="center" style="width: 5%"><small>5</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Masa Kerja</small>
             </td>
@@ -245,7 +245,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>5</small></td>
+            <td class="center" style="width: 5%"><small>6</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Lembur</small>
             </td>
@@ -254,7 +254,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>6</small></td>
+            <td class="center" style="width: 5%"><small>7</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Kelebihan Mengajar S1 - {{$data['rekap']->ket_insentif_kelebihan_mengajar_s1}}</small>
             </td>
@@ -263,7 +263,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>7</small></td>
+            <td class="center" style="width: 5%"><small>8</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Kelebihan Mengajar S2 - {{$data['rekap']->ket_insentif_kelebihan_mengajar_s2}}</small>
             </td>
@@ -271,8 +271,48 @@
                 <small>{{"Rp. " . number_format($data['rekap']->insentif_kelebihan_mengajar_s2,0,',','.').',-'}}</small>
             </td>
         </tr>
-        <tr>
+        <tr style="display: none">
             <td class="center" style="width: 5%"><small>8</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Tunjangan Pendidikan</small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_tunjangan_pendidikan,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr style="display: none">
+            <td class="center" style="width: 5%"><small>9</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Tunjangan Keluarga
+                    @if($data['rekap']->jml_anak > 0)
+                        ( Jumlah Anak : {{$data['rekap']->jml_anak.' orang'}} )
+                    @endif
+                </small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_tunjangan_keluarga,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr style="display: none">
+            <td class="center" style="width: 5%"><small>10</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Tunjangan Beras ( {{'Diberikan dalam bentuk '.$data['rekap']->total_beras.' beras'}} )</small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->total_harga_beras,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr style="display: none">
+            <td class="center" style="width: 5%"><small>11</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Tunjangan Beras ( {{'Diberikan dalam bentuk '.$data['rekap']->total_beras.' beras'}} )</small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->total_harga_beras,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr>
+            <td class="center" style="width: 5%"><small>9</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Tunjangan Kinerja
                     ({{"Kehadiran: ".$data['rekap']->total_kehadiran." - ".$data['rekap']->transport_harian."/Jam"}})
@@ -283,7 +323,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>9</small></td>
+            <td class="center" style="width: 5%"><small>10</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Insentif Lainnya</small>
             </td>
@@ -299,8 +339,17 @@
                 <b>{{"Rp. " . number_format($data['rekap']->nominal_total_potongan,0,',','.').',-'}}</b>
             </td>
         </tr>
+        <tr style="display: none">
+            <td class="center" style="width: 5%"><small>1</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Potongan Infaq ( 2,5% Gaji Kotor )</small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_infaq,0,',','.').',-'}}</small>
+            </td>
+        </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>10</small></td>
+            <td class="center" style="width: 5%"><small>11</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Potongan Pinjaman</small>
             </td>
@@ -308,8 +357,26 @@
                 <small>{{"Rp. " . number_format($data['rekap']->nominal_koperasi,0,',','.').',-'}}</small>
             </td>
         </tr>
+        <tr style="display: none">
+            <td class="center" style="width: 5%"><small>15</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Potongan Arisan</small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_arisan,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr style="display: none">
+            <td class="center" style="width: 5%"><small>16</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Potongan Qurban</small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_qurban,0,',','.').',-'}}</small>
+            </td>
+        </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>11</small></td>
+            <td class="center" style="width: 5%"><small>12</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Potongan Paguyuban</small>
             </td>
@@ -317,8 +384,26 @@
                 <small>{{"Rp. " . number_format($data['rekap']->nominal_dplk,0,',','.').',-'}}</small>
             </td>
         </tr>
+        <tr style="display: none">
+            <td class="center" style="width: 5%"><small>18</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Potongan Beras</small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->total_harga_beras,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr style="display: none">
+            <td class="center" style="width: 5%"><small>19</small></td>
+            <td style="width: 50%" colspan="2">
+                <small>Potongan Beras</small>
+            </td>
+            <td style="width: 45%; text-align: right">
+                <small>{{"Rp. " . number_format($data['rekap']->total_harga_beras,0,',','.').',-'}}</small>
+            </td>
+        </tr>
         <tr>
-            <td class="center" style="width: 5%" rowspan="2"><small>12</small></td>
+            <td class="center" style="width: 5%" rowspan="2"><small>13</small></td>
             <td style="width: 50%" colspan="2">
                 <small>BPJS Kesehatan</small>
             </td>
@@ -334,6 +419,38 @@
                 <small>{{"Rp. " . number_format($data['rekap']->nominal_ketenagakerjaan,0,',','.').',-'}}</small>
             </td>
         </tr>
+        <tr style="display: none">
+            <td style="width: 25%; background-color: white">
+                <small>Potongan JHT</small>
+            </td>
+            <td style="width: 25%; text-align: left; background-color: white">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_jht,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr style="display: none">
+            <td style="width: 25%">
+                <small>Potongan JKM</small>
+            </td>
+            <td style="width: 25%; text-align: left">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_jkm,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr style="display: none">
+            <td style="width: 25%; background-color: white">
+                <small>Potongan JKK</small>
+            </td>
+            <td style="width: 25%; text-align: left; background-color: white">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_jkk,0,',','.').',-'}}</small>
+            </td>
+        </tr>
+        <tr style="display: none">
+            <td style="width: 25%">
+                <small>Potongan JP</small>
+            </td>
+            <td style="width: 25%; text-align: left">
+                <small>{{"Rp. " . number_format($data['rekap']->nominal_jp,0,',','.').',-'}}</small>
+            </td>
+        </tr>
         <tr>
             <td style="width: 50%" colspan="3">
                 <small><b>TOTAL POTONGAN BPJS</b></small>
@@ -343,7 +460,7 @@
             </td>
         </tr>
         <tr>
-            <td class="center" style="width: 5%"><small>13</small></td>
+            <td class="center" style="width: 5%"><small>14</small></td>
             <td style="width: 50%" colspan="2">
                 <small>Potongan Lainnya</small>
             </td>
@@ -373,8 +490,8 @@
                     </div>
                 </div>
             </td>
-            <td style="background-color: white!important; display: none">
-                <div id="company" style="text-align: right; margin-top: 50px">
+            <td style="background-color: white!important;">
+                <div id="company" style="text-align: right; margin-top: 50px; display: none">
                     <div>Jember, {{$data['tgl']['ttd']}}</div>
                     <div>
                         Penerima

@@ -92,7 +92,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <div>Insentif Masa Kerja</div>
+                                <div>Insentif Lembur</div>
                             </td>
                             <td style="text-align: left">{{"Rp. " . number_format($rekap->nominal_tunjangan_lembur,0,',','.').',-'}}</td>
                         </tr>

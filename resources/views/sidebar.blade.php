@@ -343,7 +343,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
         'Pengaturan Gaji - Potongan BPJS', 'Pengaturan Gaji - Potongan Koperasi', 'Pengaturan Gaji - Potongan Arisan',
         'Pengaturan Gaji - Potongan Qurban', 'Pengaturan Gaji - Potongan Lainnya', 'Melihat Gaji Bulanan',
         'Pengelolaan Honorarium Mengajar', 'Pengelolaan Honorarium Koreksi', 'Pengelolaan Honorarium Pengawas',
-        'Melihat Honorarium Mengajar', 'Melihat Honorarium Koreksi', 'Pengaturan Gaji - Insentif Lainnya'
+        'Melihat Honorarium Mengajar', 'Melihat Honorarium Koreksi', 'Pengaturan Gaji - Insentif Lainnya', 'Pengaturan Gaji - Daftar Tunjangan Fungsional'
     ]) ? 'mm-active' : '' }}">
 
                             <a class="has-arrow material-ripple" href="#">
@@ -403,7 +403,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
 
                                 {{-- Menu: Pengaturan Gaji --}}
                                 @if (array_key_exists('Pengaturan Gaji', $modul))
-                                    <li class="{{ in_array($menu, ['Pengaturan Gaji - Daftar Pegawai', 'Pengaturan Gaji - Gaji Umum', 'Pengaturan Gaji - Potongan Koperasi', 'Pengaturan Gaji - Potongan BPJS', 'Pengaturan Gaji - Insentif Lainnya']) ? 'mm-active' : '' }}">
+                                    <li class="{{ in_array($menu, ['Pengaturan Gaji - Daftar Pegawai', 'Pengaturan Gaji - Gaji Umum', 'Pengaturan Gaji - Potongan Koperasi', 'Pengaturan Gaji - Potongan BPJS', 'Pengaturan Gaji - Insentif Lainnya', 'Pengaturan Gaji - Daftar Tunjangan Fungsional']) ? 'mm-active' : '' }}">
                                         <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index') }}">Pengaturan
                                             Gaji</a>
                                     </li>
@@ -424,13 +424,13 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                             </a>
                             <ul class="nav-second-level">
                                 @if (array_key_exists('Moodle Synchronizer - Suspended Mahasiswa', $modul))
-                                    <li @if ($menu == 'Suspended Mahasiswa | Moodle') class="mm-active" @endif>
+                                    <li @if ($menu == 'Suspended Mahasiswa | Moodle') class="mm-active" @endif style="display: none">
                                         <a href="{{ route('moodle.mahasiswa.suspended') }}"
                                            aria-expanded="false">Suspended</a>
                                     </li>
                                 @endif
                                 @if (array_key_exists('Melihat Data Tanggungan Mahasiswa Siakad', $modul))
-                                    <li @if ($menu == 'Tanggungan Mahasiswa | Siakad') class="mm-active" @endif>
+                                    <li @if ($menu == 'Tanggungan Mahasiswa | Siakad') class="mm-active" @endif style="display: none">
                                         <a
                                                 href="{{ route('siakad.tanggungan_mahasiswa.daftar_tanggungan') }}">Tanggungan</a>
                                     </li>
@@ -445,7 +445,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                         </li>
                     @endif
                     @if (array_key_exists('Daftar Sarana Prasarana', $modul))
-                        <li @if ($menu == 'Daftar Sarana Prasarana') class="mm-active" @endif><a
+                        <li @if ($menu == 'Daftar Sarana Prasarana') class="mm-active" @endif style="display: none"><a
                                     href="{{ route('hrd.sarpras.index') }}"><i
                                         class="typcn typcn-info mr-2"></i>Sarpras</a></li>
                     @endif
@@ -602,7 +602,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                                                 $menu == 'Mengelola Rencana Studi' ||
                                                 $menu == 'Hasil Studi Mahasiswa' ||
                                                 $menu == 'Pengajuan Transkrip Nilai' ||
-                                                $menu == 'Pengajuan Surat Cuti Mahasiswa' ||
+                                                $menu == 'Pengajuan Surat Cuti Mahasiswa' || $menu == 'IP Presensi Perkuliahan' ||
                                                 $menu == 'Pengajuan Surat Aktif Mahasiswa') class="mm-active" @endif>
                                         <a class="has-arrow" href="#" aria-expanded="true">Perkuliahan</a>
                                         <ul class="nav-third-level mm-collapse" style="">
@@ -648,7 +648,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                                                                 href="{{ route('mahasiswa.akademik.jadwal_kuliah.index') }}">Jadwal
                                                             Kuliah</a>
                                                     @else
-                                                        <a
+                                                        <a style="display: none"
                                                                 href="{{ route('admin_akademik.akademik.jadwal_kuliah.sinkronisasi_jadwal_kuliah_mahasiswa.index') }}">Jadwal
                                                             Kuliah Mahasiswa</a>
                                                     @endif
@@ -670,10 +670,9 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                                             @endif
                                             @if (array_key_exists('IP Presensi Perkuliahan', $modul))
                                                 <li @if ($menu == 'IP Presensi Perkuliahan') class="mm-active" @endif>
-                                                    Pengajuan Surat Aktif Mahasiswa
                                                     <a
                                                             href="{{ route('admin_akademik.akademik.jadwal_kuliah.ip_presensi_perkuliahan.index') }}">
-                                                        IP Presensi Perkuliahan
+                                                        IP Presensi
                                                     </a>
                                                 </li>
                                             @endif
@@ -1043,7 +1042,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                             array_key_exists('Moodle Synchronizer - Mahasiswa', $modul) ||
                             array_key_exists('Moodle Synchronizer - Dosen', $modul) ||
                             array_key_exists('Moodle Synchronizer - Jadwal Mahasiswa', $modul))
-                        <li @if (
+                        <li style="display: none" @if (
                                 $menu == 'Jadwal Dosen | Moodle' ||
                                     $menu == 'Mahasiswa | Moodle' ||
                                     $menu == 'Dosen | Moodle' ||
