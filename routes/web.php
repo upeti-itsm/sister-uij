@@ -1131,6 +1131,20 @@ Route::get('/keu/penggajian/honorarium/honorarium-pengawas/detail/{id_honorarium
 Route::get('/keu/penggajian/honorarium/honorarium-pengawas/slip-gaji/{id_honorarium}', [\App\Http\Controllers\KeuanganPage\Penggajian\Honorarium\HonorariumPengawasController::class, 'slip_gaji'])->name('keuangan.penggajian.honorarium.honorarium_pengawas.slip_gaji')->middleware('modul:Pengelolaan Honorarium Pengawas');
 Route::post('/keu/penggajian/honorarium/honorarium-pengawas/json', [\App\Http\Controllers\KeuanganPage\Penggajian\Honorarium\HonorariumPengawasController::class, 'json'])->name('keuangan.penggajian.honorarium.honorarium_pengawas.json')->middleware('modul:Pengelolaan Honorarium Pengawas');
 Route::post('/keu/penggajian/honorarium/honorarium-pengawas/set-honor', [\App\Http\Controllers\KeuanganPage\Penggajian\Honorarium\HonorariumPengawasController::class, 'set_honorarium'])->name('keuangan.penggajian.honorarium.honorarium_pengawas.set_honorarium')->middleware('modul:Pengelolaan Honorarium Pengawas');
+// Pengaturan gaji pokok
+Route::prefix('keu/penggajian/pengaturan-gaji/pengaturan-gaji-pokok')
+    ->middleware('modul:Pengaturan Gaji')->group(function () {
+        Route::get('/', [
+            \App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanGajiPokokController::class,
+            'index'
+        ])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.index');
+
+        Route::post('request', [
+            \App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji\PengaturanGajiPokokController::class,
+            'get_golongan'
+        ])->name('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.request');
+
+});
 // SIAKAD
 // Mahasiswa
 Route::get('/keu/siakad/daftar-mahasiswa', [\App\Http\Controllers\KeuanganPage\Siakad\MahasiswaController::class, 'daftar_mahasiswa'])->name('keu.siakad.mahasiswa.daftar_mahasiswa')->middleware('modul:Keuangan - Melihat Daftar Mahasiswa Siakad');

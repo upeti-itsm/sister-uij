@@ -2,6 +2,7 @@
     <!-- Variabel $title agar nama tombol dinamis -->
     <a href="#" class="action-item">{{ $title ?? 'Pengaturan Gaji' }} <i class="fas fa-bars fa-fw"></i></a>
     <div class="dropdown-menu dropdown-menu-right" id="sub-menu">
+        <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.index') }}" class="dropdown-item">Pengaturan Gaji Pokok</a>
         <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index') }}" class="dropdown-item">Pengaturan Gaji Individu</a>
         <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index') }}" class="dropdown-item">Pengaturan BPJS</a>
         <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index') }}" class="dropdown-item">Pengaturan UMR</a>

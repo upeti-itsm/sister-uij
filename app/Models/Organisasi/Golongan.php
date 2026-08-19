@@ -15,4 +15,17 @@ class Golongan extends Model
             'search' => $search
         ]);
     }
+
+    public static function get_golongan($offset = 0, $limit = 10, $search = '', $status = null)
+    {
+        return DB::select(
+            'SELECT * FROM organisasi.daftar_golongan(:offset, :limit, :search, :status)',
+            [
+                'offset' => (int) $offset,
+                'limit' => (int) $limit,
+                'search' => $search ?? '',
+                'status' => $status,
+            ]
+        );
+    }
 }
