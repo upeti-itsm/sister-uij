@@ -84,6 +84,41 @@ class JadwalMataKuliah extends Model
         ]);
     }
 
+    public static function list_ruangan($search = "", $offset = 0, $limit = -1)
+    {
+        return DB::select('SELECT * FROM akademik.get_daftar_ruang_perkuliahan_(:id_ruang_perkuliahan, :search, :offset, :limit)', [
+            'id_ruang_perkuliahan' => '00000000-0000-0000-0000-000000000000',
+            'search' => $search,
+            'offset' => $offset,
+            'limit' => $limit
+        ]);
+    }
+
+    public static function get_daftar_ploting_matakuliah($kd_prodi = "all", $tahun_akademik = "all", $search = "", $offset = 0, $limit = -1)
+    {
+        return DB::select('SELECT * FROM akademik.get_daftar_ploting_matakuliah(:kd_prodi, :tahun_akademik, :search, :offset, :limit)', [
+            'kd_prodi' => $kd_prodi,
+            'tahun_akademik' => $tahun_akademik,
+            'search' => $search,
+            'offset' => $offset,
+            'limit' => $limit
+        ]);
+    }
+
+    public static function insert_jadwal_kuliah($id_ploting_matakuliah, $ruang_id, $hari, $jam_mulai, $jam_selesai, $kapasitas = null,$is_lab = 0 , $sts_aktif = true)
+    {
+        return DB::selectOne('SELECT * FROM akademik.insert_jadwal_kuliah(:id_ploting_matakuliah, :ruang_id, :hari, :jam_mulai, :jam_selesai, :kapasitas, :is_lab, :sts_aktif)', [
+            'id_ploting_matakuliah' => $id_ploting_matakuliah,
+            'ruang_id' => $ruang_id,
+            'hari' => $hari,
+            'jam_mulai' => $jam_mulai,
+            'jam_selesai' => $jam_selesai,
+            'kapasitas' => $kapasitas,
+            'is_lab' => $is_lab,
+            'sts_aktif' => $sts_aktif
+        ]);
+    }
+
     public static function update_jadwal_kuliah($id, $hari, $jam_mulai, $jam_selesai, $kapasitas, $jenis_jadwal)
     {
         return DB::selectOne('SELECT * FROM akademik.update_jadwal_kuliah(:id, :hari, :jam_mulai, :jam_selesai, :kapasitas, :jenis_jadwal)', [

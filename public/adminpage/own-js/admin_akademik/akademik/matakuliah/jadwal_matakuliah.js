@@ -521,6 +521,77 @@ jQuery.jadwal_matakuliah = {
             });
         });
 
+        $("#btn-tambah-jadwal").click(function () {
+            $("#modal-tambah-jadwal-kuliah").modal('show');
+            $("#tambah_id_ploting_matakuliah").select2({
+                dropdownParent: $("#modal-tambah-jadwal-kuliah")
+            });
+        });
+
+        $("#modal-btn-tambah-jadwal").click(function () {
+            $.confirm({
+                title: 'Konfirmasi !',
+                type: 'orange',
+                content: 'Apakah anda yakin akan menambahkan jadwal kuliah ini ?',
+                buttons: {
+                    confirm: {
+                        text: 'Yakin',
+                        btnClass: 'btn-green',
+                        keys: ['enter'],
+                        action: function () {
+                            var insertData = {
+                                id_ploting_matakuliah: $("#tambah_id_ploting_matakuliah").val(),
+                                ruang_id: $("#tambah_ruang_id").val(),
+                                hari: $("#tambah_hari").val(),
+                                jam_mulai: $("#tambah_jam_mulai").val(),
+                                jam_selesai: $("#tambah_jam_selesai").val(),
+                                kapasitas: $("#tambah_kapasitas").val() || null,
+                                sts_aktif: $("#tambah_sts_aktif").val() === '1' ? true : false
+                            };
+
+                            $.ajax({
+                                url: '/adm-akademik/akademik/perkuliahan/sinkronisasi-jadwal-kuliah-siakad/insert',
+                                method: 'post',
+                                data: insertData,
+                                success: function (result) {
+                                    if (result.status === 'success') {
+                                        $.alert({
+                                            title: 'Berhasil!',
+                                            type: 'green',
+                                            content: result.message
+                                        });
+                                        $("#modal-tambah-jadwal-kuliah").modal('hide');
+                                        self.data.table_jadwal_kuliah.ajax.reload();
+                                    } else {
+                                        $.alert({
+                                            title: 'Gagal!',
+                                            type: 'red',
+                                            content: result.message
+                                        });
+                                    }
+                                },
+                                error: function (xhr) {
+                                    var message = 'Terjadi kesalahan saat menambahkan jadwal';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        message = xhr.responseJSON.message;
+                                    }
+                                    $.alert({
+                                        title: 'Error!',
+                                        type: 'red',
+                                        content: message
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'Batal',
+                        btnClass: 'btn-red'
+                    }
+                }
+            });
+        });
+
         // Event handler untuk Delete Jadwal
         $("#table-jadwal-kuliah").on('click', 'button.btn-delete-jadwal', function () {
             var id = $(this).data("id");
