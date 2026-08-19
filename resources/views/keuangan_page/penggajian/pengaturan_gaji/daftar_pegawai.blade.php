@@ -64,6 +64,7 @@
                                         class="dropdown-item">Pengaturan Transportasi S2</a>
                                     <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_hr.index') }}"
                                         class="dropdown-item">Pengaturan HR Mengajar</a>
+                                    <a href="#" class="dropdown-item">Pengaturan Gaji Pokok</a>
                                 </div>
                             </div>
                         </div>
