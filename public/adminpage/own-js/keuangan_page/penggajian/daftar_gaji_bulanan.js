@@ -61,7 +61,7 @@ jQuery.daftar_gaji_bulanan = {
                     '<label>Pilih Format</label>' +
                     '<select class="form-control format">' +
                     '<option value="data_bank">Data Bank</option>' +
-                    '<option value="rekap_internal">Rekap Internal</option>' +
+                    // '<option value="rekap_internal">Rekap Internal</option>' +
                     '</select>' +
                     '</div>',
                 buttons: {
@@ -126,7 +126,7 @@ jQuery.daftar_gaji_bulanan = {
                     '<label>Pilih Format</label>' +
                     '<select class="form-control format">' +
                     '<option value="data_bank">Data Bank</option>' +
-                    '<option value="rekap_internal">Rekap Internal</option>' +
+                    // '<option value="rekap_internal">Rekap Internal</option>' +
                     '</select>' +
                     '</div>',
                 buttons: {
