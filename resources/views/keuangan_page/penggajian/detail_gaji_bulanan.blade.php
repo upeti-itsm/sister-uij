@@ -44,10 +44,10 @@
                         <div class="card-body text-center">
                             <a class="avatar avatar-xl card-avatar card-avatar-top mb-5">
                                 <img style="width: 150%!important; height: 150%!important;"
-                                    src="{{ asset('storage/files/profil_karyawan/' . $karyawan->id_personal . '/' . $karyawan->path_photo) }}"
-                                    class="avatar-img rounded-circle border-card"
-                                    onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
-                                    alt="...">
+                                     src="{{ asset('storage/files/profil_karyawan/' . $karyawan->id_personal . '/' . $karyawan->path_photo) }}"
+                                     class="avatar-img rounded-circle border-card"
+                                     onerror="this.src='{{ asset('adminpage/assets/dist/img/avatar-1.jpg') }}'"
+                                     alt="...">
                             </a>
                         </div>
                     </div>
@@ -148,6 +148,7 @@
                                                        class="form-control number" id="tunjangan_struktural"
                                                        value="{{$rekap->tunjangan_struktural}}">
                                             </div>
+                                            <small class="text-danger">{{$rekap->jabatan_struktural ?? '-'}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -174,6 +175,7 @@
                                                        class="form-control number" id="tunjangan_fungsional"
                                                        value="{{$rekap->tunjangan_fungsional}}">
                                             </div>
+                                            <small class="text-danger">{{$rekap->jabatan_fungsional ?? '-'}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -187,8 +189,8 @@
                                                        class="form-control number" id="tunjangan_transport"
                                                        value="{{$rekap->tunjangan_transport}}">
                                             </div>
-                                            <small
-                                                class="text-danger">{{$rekap->total_kehadiran}} x {{number_format($rekap->nominal_tunjangan_kinerja,0,',','.')}}</small>
+                                            <small class="text-danger">{{$rekap->total_kehadiran}}
+                                                x {{number_format($rekap->nominal_tunjangan_kinerja,0,',','.')}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6" style="display: none">
@@ -217,7 +219,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6"  style="display: none">
+                                    <div class="col-md-6" style="display: none">
                                         <div class="form-group">
                                             <label>Tunjangan Keluarga</label>
                                             <div class="input-group">
@@ -244,7 +246,7 @@
                                                        id="nominal_insentif_lembur"
                                                        value="{{number_format($rekap->nominal_tunjangan_lembur,0,',','.')}}">
                                             </div>
-{{--                                            <small class="text-danger">{{$rekap->keterangan_tunjangan_keluarga}}</small>--}}
+                                            {{--                                            <small class="text-danger">{{$rekap->keterangan_tunjangan_keluarga}}</small>--}}
                                         </div>
                                     </div>
                                     <div class="col-md-6" style="display: none">
@@ -274,7 +276,8 @@
                                                        id="insentif_kelebihan_mengajar"
                                                        value="{{number_format($rekap->insentif_kelebihan_mengajar_s1,0,',','.')}}">
                                             </div>
-                                            <small class="text-danger">{{$rekap->ket_insentif_kelebihan_mengajar_s1}}</small>
+                                            <small
+                                                class="text-danger">{{$rekap->ket_insentif_kelebihan_mengajar_s1 ?? '-'}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -289,7 +292,7 @@
                                                        id="insentif_kelebihan_mengajar_2"
                                                        value="{{number_format($rekap->insentif_kelebihan_mengajar_s2,0,',','.')}}">
                                             </div>
-                                            <small class="text-danger">{{$rekap->ket_insentif_kelebihan_mengajar_s2}}</small>
+                                            <small class="text-danger">{{$rekap->ket_insentif_kelebihan_mengajar_s2 ?? '-'}}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -401,7 +404,8 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number"
-                                                       value="{{number_format($rekap->nominal_dplk,0,',','.')}}" id="potongan_paguyuban_cooper">
+                                                       value="{{number_format($rekap->nominal_dplk,0,',','.')}}"
+                                                       id="potongan_paguyuban_cooper">
                                             </div>
                                         </div>
                                     </div>
@@ -453,7 +457,8 @@
                                                 </div>
                                                 <input readonly type="text"
                                                        class="form-control number"
-                                                       value="{{$rekap->potongan_nominal_lainnya}}" id="potongan_lainnya">
+                                                       value="{{$rekap->potongan_nominal_lainnya}}"
+                                                       id="potongan_lainnya">
                                             </div>
                                         </div>
                                     </div>
@@ -468,7 +473,8 @@
                     <a href="{{route('keuangan.penggajian.gaji_bulanan.index')}}"
                        class="btn btn-outline-danger">Kembali</a>
                     @if($rekap->is_repair)
-                        <a href="{{route('keuangan.penggajian.gaji_bulanan.generate_ulang_gaji', ['id_karyawan' => $karyawan->id_karyawan])}}" class="btn btn-success">Generate Ulang Gaji</a>
+                        <a href="{{route('keuangan.penggajian.gaji_bulanan.generate_ulang_gaji', ['id_karyawan' => $karyawan->id_karyawan])}}"
+                           class="btn btn-success">Generate Ulang Gaji</a>
                     @endif
                 </div>
             </div>
