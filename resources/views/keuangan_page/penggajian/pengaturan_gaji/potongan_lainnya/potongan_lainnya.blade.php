@@ -32,36 +32,7 @@
                     </div>
                     <div class="text-right">
                         <div class="actions">
-                            <div class="dropdown action-item" data-toggle="dropdown" aria-expanded="true">
-                                <a href="#" class="action-item">Potongan Lainnya <i class="fas fa-bars fa-fw"></i></a>
-                                <div class="dropdown-menu dropdown-menu-right" id="sub-menu">
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.gaji_umum.index') }}"
-                                        class="dropdown-item">Pengaturan Gaji Umum</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index') }}"
-                                        class="dropdown-item">Pengaturan Gaji Individu</a>
-                                    <a style="display: none"
-                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_qurban.index') }}"
-                                        class="dropdown-item">Potongan Qurban</a>
-                                    <a style="display: none"
-                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_arisan.index') }}"
-                                        class="dropdown-item">Potongan Arisan</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_koperasi.index') }}"
-                                        class="dropdown-item">Potongan Pinjaman</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index') }}"
-                                        class="dropdown-item">Pengaturan BPJS</a>
-                                    <a style="display: none"
-                                        href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_fungsional.index') }}"
-                                        class="dropdown-item">Tunjangan Fungsional</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_struktural.index') }}"
-                                        class="dropdown-item">Tunjangan Jabatan</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.index') }}"
-                                        class="dropdown-item">Tunjangan Kinerja</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.insentif_lainnya.index') }}"
-                                        class="dropdown-item">Insentif Lainnya</a>
-                                    <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index') }}"
-                                        class="dropdown-item">Pengaturan UMR</a>
-                                </div>
-                            </div>
+                            @include('partials.pengaturan_gaji_dropdown', ['title' => 'Potongan Lainnya'])
                         </div>
                     </div>
                 </div>
