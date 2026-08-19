@@ -45,7 +45,7 @@
                                 <div class="form-group">
                                     <label class="font-weight-bold">Pencarian</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Cari Nama Karyawan"
+                                        <input type="text" class="form-control" placeholder="Cari Nama Jafung"
                                                id="cari-data">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="button" id="btn-cari-data"><i
@@ -59,9 +59,9 @@
                                 <div class="form-group">
                                     <label class="font-weight-bold">&nbsp;</label><br/>
                                     <div class="float-right">
-                                        <button class="btn btn-primary" title="Tambah Data Tunjangan Struktural"
-                                                id="btn_add_data_struktural"><i class="fas fa-plus-square"></i> Tambah Data
-                                            Tunjangan Struktural
+                                        <button class="btn btn-primary" title="Tambah Data Tunjangan Fungsional"
+                                                id="btn_add_data_fungsional"><i class="fas fa-plus-square"></i> Tambah Data
+                                            Tunjangan Fungsional
                                         </button>
                                     </div>
                                 </div>
@@ -120,9 +120,10 @@
                         </div>
                     </div>
                     <form id="add_form" style="display: none"
-                          action="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_kinerja.insup_kinerja')}}"
+                          action="{{route('keuangan.penggajian.pengaturan_gaji.daftar_tunjangan_fungsional.insup')}}"
                           method="POST">
                         @csrf
+                        <input type="hidden" name="id_jabatan_fungsional" id="id_jabatan_fungsional" value="0">
                         <input type="hidden" name="jabatan_fungsional" id="jabatan_fungsional">
                         <input type="hidden" name="nominal_tunjangan" id="nominal_tunjangan">
                     </form>

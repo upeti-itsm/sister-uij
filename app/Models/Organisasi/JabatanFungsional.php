@@ -17,10 +17,17 @@ class JabatanFungsional extends Model
         ]);
     }
 
-    public static function insup_tunjangan_fungsional($jabatan, $nominal_tunjangan, $id_jabatan_fungsional = null)
+    public static function insup_tunjangan_fungsional($jabatan, $nominal_tunjangan, $id_jabatan_fungsional = 0)
     {
-        return DB::select('SELECT * FROM organisasi.insup_tunjangan_fungsional(:jabatan, :nominal_tunjangan, :id_jafung)', [
+        return DB::selectOne('SELECT * FROM organisasi.insup_jabatan_fungsional(:id_jafung, :jabatan, :nominal_tunjangan)', [
             'jabatan' => $jabatan, 'nominal_tunjangan' => $nominal_tunjangan, 'id_jafung' => $id_jabatan_fungsional
+        ]);
+    }
+
+    public static function set_active_tunjangan_fungsional($id_jabatan_fungsional, $status)
+    {
+        return DB::selectOne('SELECT * FROM organisasi.set_status_jabatan_fungsional(:id_jafung, :status)', [
+            'id_jafung' => $id_jabatan_fungsional, 'status' => $status
         ]);
     }
 }

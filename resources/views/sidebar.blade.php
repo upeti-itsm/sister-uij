@@ -343,7 +343,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
         'Pengaturan Gaji - Potongan BPJS', 'Pengaturan Gaji - Potongan Koperasi', 'Pengaturan Gaji - Potongan Arisan',
         'Pengaturan Gaji - Potongan Qurban', 'Pengaturan Gaji - Potongan Lainnya', 'Melihat Gaji Bulanan',
         'Pengelolaan Honorarium Mengajar', 'Pengelolaan Honorarium Koreksi', 'Pengelolaan Honorarium Pengawas',
-        'Melihat Honorarium Mengajar', 'Melihat Honorarium Koreksi', 'Pengaturan Gaji - Insentif Lainnya'
+        'Melihat Honorarium Mengajar', 'Melihat Honorarium Koreksi', 'Pengaturan Gaji - Insentif Lainnya', 'Pengaturan Gaji - Daftar Tunjangan Fungsional'
     ]) ? 'mm-active' : '' }}">
 
                             <a class="has-arrow material-ripple" href="#">
@@ -403,7 +403,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
 
                                 {{-- Menu: Pengaturan Gaji --}}
                                 @if (array_key_exists('Pengaturan Gaji', $modul))
-                                    <li class="{{ in_array($menu, ['Pengaturan Gaji - Daftar Pegawai', 'Pengaturan Gaji - Gaji Umum', 'Pengaturan Gaji - Potongan Koperasi', 'Pengaturan Gaji - Potongan BPJS', 'Pengaturan Gaji - Insentif Lainnya']) ? 'mm-active' : '' }}">
+                                    <li class="{{ in_array($menu, ['Pengaturan Gaji - Daftar Pegawai', 'Pengaturan Gaji - Gaji Umum', 'Pengaturan Gaji - Potongan Koperasi', 'Pengaturan Gaji - Potongan BPJS', 'Pengaturan Gaji - Insentif Lainnya', 'Pengaturan Gaji - Daftar Tunjangan Fungsional']) ? 'mm-active' : '' }}">
                                         <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index') }}">Pengaturan
                                             Gaji</a>
                                     </li>

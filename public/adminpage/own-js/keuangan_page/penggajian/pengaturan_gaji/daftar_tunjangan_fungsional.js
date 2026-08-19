@@ -78,8 +78,15 @@ jQuery.daftar_tunjangan_fungsional = {
                     sClass: 'text-center',
                     width: "20%",
                     render: function (data) {
-                        return "<button class='btn btn-success btn-edit mr-2' data-id='" + data.id_jabatan_fungsional + "' data-jabatan_fungsional='" + data.jabatan_fungsional + "' title='Ubah Nominal Tunjangan' data-nominal='" + data.tunjangan_fungsional_ + "'><i class='fas fa-edit'></i></button>" +
-                            "<button class='btn btn-danger btn-delete' data-id='" + data.id_jabatan_fungsional + "'  data-jabatan_fungsional='" + data.jabatan_fungsional + "' title='Hapus Jabatan Fungsional' data-nominal='" + data.tunjangan_fungsional + "'><i class='fas fa-trash'></i></button>";
+                        var statusTeks = data.sts_aktif ? 'Non-Aktifkan' : 'Aktifkan';
+                        var statusVal = data.sts_aktif ? 0 : 1;
+                        var btnClass = data.sts_aktif ? 'btn-warning' : 'btn-info';
+
+                        // Tombol hapus telah dihilangkan di sini
+                        var actionButtons = "<button class='btn btn-success btn-edit mr-2' data-id='" + data.id_jabatan_fungsional + "' data-jabatan_fungsional='" + data.jabatan_fungsional + "' title='Ubah Nominal Tunjangan' data-nominal='" + data.tunjangan_fungsional_ + "'><i class='fas fa-edit'></i></button>" +
+                            "<button class='btn " + btnClass + " btn-active mr-2' data-id='" + data.id_jabatan_fungsional + "' data-status='" + statusVal + "' title='" + statusTeks + "'>" + statusTeks + "</button>";
+
+                        return actionButtons;
                     }
                 },
                 {
@@ -123,9 +130,56 @@ jQuery.daftar_tunjangan_fungsional = {
             $("#add_nominal_tunjangan").val("");
             $("#jabatan_fungsional").val("");
             $("#nominal_tunjangan").val("");
+            $("#id_jabatan_fungsional").val("0");
             self.setOffSaveButton();
         });
+        $("#table").on('click', 'button.btn-active', function () {
+            var id_jafung = $(this).data('id');
+            var status = $(this).data('status');
+            var actionText = status === 1 ? 'mengaktifkan' : 'menonaktifkan';
+
+            $.confirm({
+                title: 'Konfirmasi',
+                content: 'Apakah Anda yakin ingin ' + actionText + ' jabatan fungsional ini?',
+                type: status === 1 ? 'blue' : 'orange',
+                buttons: {
+                    ya: {
+                        text: 'Ya, Lanjutkan',
+                        btnClass: 'btn-primary',
+                        action: function () {
+                            $.ajax({
+                                url: '/keu/penggajian/pengaturan-gaji/tunjangan-fungsional/set-active',
+                                type: 'POST',
+                                data: {
+                                    _token: $('meta[name="csrf-token"]').attr('content'),
+                                    id_jafung: id_jafung,
+                                    status: status
+                                },
+                                success: function (response) {
+                                    self.data.table.ajax.reload();
+                                },
+                                error: function(xhr) {
+                                    console.error("Gagal mengubah status: ", xhr.responseText);
+                                    $.alert({
+                                        title: 'Error!',
+                                        content: 'Terjadi kesalahan saat mengubah status.',
+                                        type: 'red'
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    batal: {
+                        text: 'Batal',
+                        action: function () {
+                            // Dialog tertutup tanpa melakukan apa-apa
+                        }
+                    }
+                }
+            });
+        });
         $("#table").on('click', 'button.btn-edit', function () {
+            $("#id_jabatan_fungsional").val($(this).data('id'));
             $("#add_jabatan_fungsional").val($(this).data('jabatan_fungsional'));
             $("#add_nominal_tunjangan").val(numeral($(this).data('nominal')).format('0,-'));
             $("#modal-insup-data-fungsional").modal('show');
