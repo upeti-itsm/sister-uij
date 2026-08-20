@@ -20,10 +20,22 @@ class ManajemenRuangan extends Model
         ]);
     }
 
-    public static function insup_ruangan($ruang_perkuliahan, $kapasitas, $informasi_kelas, $sts_aktif, $id_ruang_perkuliahan)
+    public static function get_daftar_fakultas($search = "", $no_page = -1, $jml_record_perpage = 10, $kd_fakultas = null, $sts_aktif = 2)
     {
-        return DB::selectOne("SELECT * FROM akademik.insup_ruang_perkuliahan(?,?,?,?,?)", [
+        return DB::select("SELECT * FROM akademik.get_daftar_fakultas(?,?,?,?,?)", [
+            $search,
+            $no_page,
+            $jml_record_perpage,
+            $kd_fakultas,
+            $sts_aktif
+        ]);
+    }
+
+    public static function insup_ruangan($ruang_perkuliahan, $kd_fakultas, $kapasitas, $informasi_kelas, $sts_aktif, $id_ruang_perkuliahan)
+    {
+        return DB::selectOne("SELECT * FROM akademik.insup_ruang_perkuliahan(?,?,?,?,?,?)", [
             $ruang_perkuliahan,
+            $kd_fakultas,
             $kapasitas,
             $informasi_kelas,
             $sts_aktif,

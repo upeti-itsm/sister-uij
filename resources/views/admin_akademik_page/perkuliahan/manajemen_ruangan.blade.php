@@ -70,6 +70,15 @@
                                 placeholder="Masukkan Ruang Perkuliahan">
                         </div>
                         <div class="form-group">
+                            <label class="font-weight-bold">Fakultas</label>
+                            <select id="kd_fakultas" name="kd_fakultas" class="select2 form-control">
+                                <option value="">- Pilih Fakultas -</option>
+                                @foreach ($daftar_fakultas as $fakultas)
+                                    <option value="{{ $fakultas->kd_fakultas }}">{{ $fakultas->nama_fakultas }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label class="font-weight-bold">Kapasitas</label>
                             <input type="number" id="kapasitas" name="kapasitas" class="form-control"
                                 placeholder="Masukkan Kapasitas">
@@ -108,6 +117,7 @@
                                         <th>Nomor</th>
                                         <th>Kode</th>
                                         <th>Ruang Perkuliahan</th>
+                                        <th>Fakultas</th>
                                         <th>Kapasitas</th>
                                         <th>Informasi Kelas</th>
                                         <th><i class="fas fa-th-large"></i></th>

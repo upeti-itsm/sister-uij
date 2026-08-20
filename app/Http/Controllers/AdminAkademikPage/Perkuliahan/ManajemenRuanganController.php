@@ -12,7 +12,8 @@ class ManajemenRuanganController extends Controller
     public function index()
     {
         $menu = 'Manajemen Ruangan';
-        return view('admin_akademik_page.perkuliahan.manajemen_ruangan', compact('menu'));
+        $daftar_fakultas = ManajemenRuangan::get_daftar_fakultas('', -1, 10, null, 1);
+        return view('admin_akademik_page.perkuliahan.manajemen_ruangan', compact('menu', 'daftar_fakultas'));
     }
 
     public function json(Request $request)
@@ -36,13 +37,14 @@ class ManajemenRuanganController extends Controller
     {
         $request->validate([
             'ruang_perkuliahan' => 'required',
+            'kd_fakultas' => 'required',
             'kapasitas' => 'required',
             'informasi_kelas' => 'required'
         ]);
 
         $status = ($request->status_ruangan == '1') ? true : false;
 
-        $data = ManajemenRuangan::insup_ruangan($request->ruang_perkuliahan, $request->kapasitas, $request->informasi_kelas, $status, 0);
+        $data = ManajemenRuangan::insup_ruangan($request->ruang_perkuliahan, $request->kd_fakultas, $request->kapasitas, $request->informasi_kelas, $status, 0);
 
         return response()->json($data);
     }
@@ -51,12 +53,13 @@ class ManajemenRuanganController extends Controller
     {
         $request->validate([
             'ruang_perkuliahan' => 'required',
+            'kd_fakultas' => 'required',
             'kapasitas' => 'required',
             'informasi_kelas' => 'required',
             'status_ruangan' => 'required',
             'id' => 'required',
         ]);
-        $data = ManajemenRuangan::insup_ruangan($request->ruang_perkuliahan, $request->kapasitas, $request->informasi_kelas, $request->status_ruangan, $request->id);
+        $data = ManajemenRuangan::insup_ruangan($request->ruang_perkuliahan, $request->kd_fakultas, $request->kapasitas, $request->informasi_kelas, $request->status_ruangan, $request->id);
         return response()->json($data);
     }
 

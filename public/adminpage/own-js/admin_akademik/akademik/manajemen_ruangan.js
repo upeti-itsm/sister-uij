@@ -34,7 +34,7 @@ jQuery.manajemen_ruangan = {
                     data: null,
                     searchable: false,
                     sClass: 'text-left',
-                    width: "15%",
+                    width: "10%",
                     render: function (data) {
                         return "<p>" + data.kd_ruang_perkuliahan + "</p>";
                     }
@@ -46,6 +46,15 @@ jQuery.manajemen_ruangan = {
                     width: "20%",
                     render: function (data) {
                         return "<p>" + data.ruang_perkuliahan + "</p>";
+                    }
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    sClass: 'text-left',
+                    width: "15%",
+                    render: function (data) {
+                        return "<p>" + data.kd_fakultas + "</p>";
                     }
                 },
                 {
@@ -72,7 +81,7 @@ jQuery.manajemen_ruangan = {
                     sClass: 'text-center',
                     width: "20%",
                     render: function (data) {
-                        return "<button title='Edit Ruangan Perkuliahan' class='btn btn-sm btn-primary btn-edit mr-2' data-id='" + data.id_ruang_perkuliahan + "' data-ruang_perkuliahan='" + data.ruang_perkuliahan + "' data-kapasitas='" + data.kapasitas + "' data-informasi_ruangan='" + data.informasi_kelas + "' data-sts_aktif='" + data.sts_aktif + "'><i class='fas fa-edit'></i></button>" +
+                        return "<button title='Edit Ruangan Perkuliahan' class='btn btn-sm btn-primary btn-edit mr-2' data-id='" + data.id_ruang_perkuliahan + "' data-ruang_perkuliahan='" + data.ruang_perkuliahan + "' data-kd_fakultas='" + data.kd_fakultas + "' data-kapasitas='" + data.kapasitas + "' data-informasi_ruangan='" + data.informasi_kelas + "' data-sts_aktif='" + data.sts_aktif + "'><i class='fas fa-edit'></i></button>" +
                             "<button title='Non-Aktifkan Ruangan Perkuliahan' class='btn btn-sm btn-danger btn-delete' data-id='" + data.id_ruang_perkuliahan + "' data-ruang_perkuliahan='" + data.ruang_perkuliahan + "' data-kapasitas='" + data.kapasitas + "' ><span class='spinner-border spinner-border-sm mr-2' id='detail-loading-spin-" + data.id_ruang_perkuliahan + "' style='display: none' role='status' aria-hidden='true'></span><i class='fas fa-trash'></i></button>";
                     }
                 }
@@ -113,6 +122,7 @@ jQuery.manajemen_ruangan = {
         // On Cancel Click
         $("#btn-cancel").click(function () {
             $("#ruang_perkuliahan").val("");
+            $("#kd_fakultas").val(null).trigger("change");
             $("#kapasitas").val("");
             $("#informasi_kelas").val("");
             $("#cari-data").val("");
@@ -127,16 +137,18 @@ jQuery.manajemen_ruangan = {
             $("#btn-tambah-data").trigger("click");
             let sts = $(this).data("sts_aktif");
             $("#status_ruangan").val(sts === true || sts === "true" ? "1" : "0").change();
+            let kdFakultas = $(this).data("kd_fakultas");
+            $("#kd_fakultas").val(kdFakultas != null ? String(kdFakultas) : null).trigger("change");
             $("#id_ruang_perkuliahan").val($(this).data("id"));
         });
 
         // On Save Data
         $("#btn-save").click(function () {
-            if (!$("#ruang_perkuliahan").val() || !$("#kapasitas").val() || !$("#informasi_kelas").val())
+            if (!$("#ruang_perkuliahan").val() || !$("#kd_fakultas").val() || !$("#kapasitas").val() || !$("#informasi_kelas").val())
                 $.alert({
                     title: "Peringatan",
                     type: "orange",
-                    content: "Pastikan Ruang Perkuliahan, Kapasitas dan Informasi Kelas Terisi"
+                    content: "Pastikan Ruang Perkuliahan, Fakultas, Kapasitas dan Informasi Kelas Terisi"
                 });
             else {
                 var operasi = 'store';
@@ -150,6 +162,7 @@ jQuery.manajemen_ruangan = {
                     method: 'POST',
                     data: {
                         ruang_perkuliahan: $("#ruang_perkuliahan").val(),
+                        kd_fakultas: $("#kd_fakultas").val(),
                         kapasitas: $("#kapasitas").val(),
                         informasi_kelas: $("#informasi_kelas").val(),
                         status_ruangan: $("#status_ruangan").val(),
