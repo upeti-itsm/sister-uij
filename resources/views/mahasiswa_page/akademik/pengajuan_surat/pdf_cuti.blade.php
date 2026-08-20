@@ -207,7 +207,7 @@
         <div class="subtitle">NOMOR : {{ $pengajuan->nomor_pengajuan ?? '……………..' }}</div>
 
         <div class="body-text">
-            Dekan Fakultas {{ $mahasiswa->nama_fakultas ?? '………' }} Universitas Islam Jember, setelah membaca surat
+            Dekan {{ $mahasiswa->nama_fakultas ?? '………' }} Universitas Islam Jember, setelah membaca surat
             permohonan Cuti Akademik dengan persetujuan Dosen Wali yang bersangkutan, maka Mahasiswa tersebut di
             bawah ini :
         </div>
@@ -298,7 +298,7 @@
 
         <div class="body-text">
             Kepada Yth<br>
-            Bapak / Ibu Dekan Fakultas {{ $mahasiswa->nama_fakultas ?? '___________________' }}<br>
+            Bapak / Ibu Dekan {{ $mahasiswa->nama_fakultas ?? '___________________' }}<br>
             Universitas Islam Jember<br>
             Di<br>
             Jember

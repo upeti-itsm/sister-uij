@@ -5,24 +5,15 @@ jQuery.daftar_pegawai = {
     },
     init: function () {
         var self = this;
-        numeral.register('locale', 'id', {
-            delimiters: {
-                thousands: '.',
-                decimal: ','
-            },
-            abbreviations: {
-                thousand: 'k',
-                million: 'm',
-                billion: 'b',
-                trillion: 't'
-            },
-            ordinal: function (number) {
-                return number === 1 ? 'er' : 'ème';
-            },
-            currency: {
-                symbol: 'Rp.'
-            }
-        });
+        // Cek apakah locale 'id' belum terdaftar sebelum melakukan register
+        if (numeral.locales['id'] === undefined) {
+            numeral.register('locale', 'id', {
+                delimiters: { thousands: '.', decimal: ',' },
+                abbreviations: { thousand: 'k', million: 'm', billion: 'b', trillion: 't' },
+                ordinal: function (number) { return number === 1 ? 'er' : 'ème'; },
+                currency: { symbol: 'Rp.' }
+            });
+        }
         numeral.locale('id');
         self.setEvents();
     },

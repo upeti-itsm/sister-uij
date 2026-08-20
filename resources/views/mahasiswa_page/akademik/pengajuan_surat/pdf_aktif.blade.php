@@ -196,7 +196,7 @@
         <div class="subtitle">NOMOR : {{ $pengajuan->nomor_pengajuan ?? '……………..' }}</div>
 
         <div class="body-text">
-            Dekan Fakultas {{ $mahasiswa->nama_fakultas ?? '………' }} Universitas Islam Jember,
+            Dekan {{ $mahasiswa->nama_fakultas ?? '………' }} Universitas Islam Jember,
             menerangkan bahwa mahasiswa tersebut di bawah ini :
         </div>
 
@@ -287,7 +287,7 @@
 
         <div class="body-text">
             Kepada Yth<br>
-            Bapak / Ibu Dekan Fakultas {{ $mahasiswa->nama_fakultas ?? '___________________' }}<br>
+            Bapak / Ibu Dekan {{ $mahasiswa->nama_fakultas ?? '___________________' }}<br>
             Universitas Islam Jember<br>
             Di<br>
             Jember
