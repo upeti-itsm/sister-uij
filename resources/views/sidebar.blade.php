@@ -246,10 +246,11 @@
                             </ul>
                         </li>
                     @endif
-                    @if (array_key_exists('Surat Keluar Masuk', $modul) ||
-                            array_key_exists('Pengelolaan Surat Keputusan', $modul) ||
+                    @if (
+//                          array_key_exists('Surat Keluar Masuk', $modul) ||
+                            array_key_exists('Pengelolaan Surat', $modul) ||
                             array_key_exists('Pengajuan Surat', $modul))
-                        <li @if ($menu == 'Surat Keluar Masuk' || $menu == 'Pengelolaan Surat Keputusan' || $menu == 'Pengajuan Surat') class="mm-active" @endif>
+                        <li @if ($menu == 'Surat Keluar Masuk' || $menu == 'Pengelolaan Surat' || $menu == 'Pengajuan Surat') class="mm-active" @endif>
                             <a class="has-arrow material-ripple" href="#">
                                 <i class="typcn typcn-th-list mr-2"></i>
                                 Surat Menyurat
@@ -474,7 +475,8 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                             array_key_exists('Pengajuan Surat Cuti Dekan', $modul) ||
                             array_key_exists('Pengajuan Surat Aktif Dosen', $modul) ||
                             array_key_exists('Pengajuan Surat Cuti Dosen', $modul) ||
-                            array_key_exists('Pengajuan Jurnal Mengajar Dosen', $modul))
+                            array_key_exists('Pengajuan Jurnal Mengajar Dosen', $modul) ||
+                            array_key_exists('Sinkronisasi Mahasiswa dengan Siakad', $modul))
                         <li class="nav-label">Akademik</li>
                         <li @if (
                                 $menu == 'Validasi Pengajuan Sertifikat Laboratorium Komputer' ||
