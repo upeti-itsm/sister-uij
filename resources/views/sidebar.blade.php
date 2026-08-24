@@ -886,7 +886,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                             </ul>
                         </li>
                     @endif
-                    @if (array_key_exists('Manajemen Kelas Perkuliahan', $modul))
+                    @if (array_key_exists('Manajemen Kelas Perkuliahan', $modul) || array_key_exists('Ploting Matakuliah', $modul))
                         <li @if ($menu == 'Manajemen Kelas Perkuliahan' || $menu == 'Ploting Matakuliah') class="mm-active" @endif>
                             <a class="has-arrow material-ripple" href="#">
                                 <i class="typcn typcn-edit mr-2"></i>
@@ -895,8 +895,7 @@ array_key_exists('Melihat Honorarium Koreksi', $modul)
                             <ul class="nav-second-level">
                                 @if (array_key_exists('Manajemen Kelas Perkuliahan', $modul))
                                     <li @if ($menu == 'Manajemen Kelas Perkuliahan') class="mm-active" @endif>
-                                        <a href="{{ route('manajemen_kelas_perkuliahan.index') }}">Manajemen
-                                            Kelas</a>
+                                        <a href="{{ route('manajemen_kelas_perkuliahan.index') }}">Manajemen Kelas</a>
                                     </li>
                                 @endif
                                 @if (array_key_exists('Ploting Matakuliah', $modul))

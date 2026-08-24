@@ -12,6 +12,7 @@ use App\Models\Akademik\ProgramStudi;
 use App\Models\Akademik\Semester;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Session;
 
 class PlottingPerkuliahanController extends Controller
 {
@@ -25,7 +26,11 @@ class PlottingPerkuliahanController extends Controller
         $menu = 'Ploting Matakuliah';
 
         // Filter data
-        $program_studi = ProgramStudi::get_program_studi();
+        $kd_fakultas = Session::get('user')->kd_fakultas ?? '0';
+        if (in_array(Session::get('peran')['aktif'], [39])) {
+            $kd_fakultas = "0";
+        }
+        $program_studi = ProgramStudi::get_program_studi("0", $kd_fakultas);
         $tahun_akademik = Semester::get_semester();
 
         // Form data - Initialize with first available data
