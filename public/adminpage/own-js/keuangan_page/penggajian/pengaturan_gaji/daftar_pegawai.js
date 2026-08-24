@@ -218,11 +218,11 @@ jQuery.daftar_pegawai = {
                         if (data.is_dplk)
                             dplk = 'checked';
 
-                        return "<div class='custom-control custom-switch'>" +
+                        return "<div class='custom-control custom-switch' style='display: none'>" +
                             "<input type='checkbox' class='asuransi custom-switch custom-control-input' data-type='sehat' id='kesehatan-" + data.id_karyawan + "' data-id='" + data.id_karyawan + "' " + kesehatan + ">" +
                             "<label class='custom-control-label' for='kesehatan-" + data.id_karyawan + "'>Kesehatan</label>" +
                             "</div>" +
-                            "<div class='custom-control custom-switch'>" +
+                            "<div class='custom-control custom-switch' style='display: none'>" +
                             "<input type='checkbox' class='asuransi custom-switch custom-control-input' data-type='kerja'  id='ketenagakerjaan-" + data.id_karyawan + "' data-id='" + data.id_karyawan + "' " + ketenaga_kerjaan + ">" +
                             "<label class='custom-control-label' for='ketenagakerjaan-" + data.id_karyawan + "'>Ketenagakerjaan</label>" +
                             "</div>" +

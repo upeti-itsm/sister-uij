@@ -8,16 +8,16 @@
     <nav aria-label="breadcrumb" class="col-sm-4 order-sm-last mb-3 mb-sm-0 p-0 ">
         <ol class="breadcrumb d-inline-flex font-weight-600 fs-13 bg-white mb-0 float-sm-right">
             <li class="breadcrumb-item">Penggajian</li>
-            <li class="breadcrumb-item active">Pengaturan Gaji Pokok</li>
+            <li class="breadcrumb-item active">Pengaturan Insentif Masa Kerja</li>
         </ol>
     </nav>
     <div class="col-sm-8 header-title p-0">
         <div class="media">
             <div class="header-icon text-success mr-3"><i class="fas fa-graduation-cap"></i></div>
             <div class="media-body">
-                <h1 class="font-weight-bold">Pengaturan Gaji Pokok</h1>
+                <h1 class="font-weight-bold">Pengaturan Insentif Masa Kerja</h1>
                 <small>
-                    Halaman ini digunakan untuk melakukan pengaturan konfigurasi gaji pokok pada masing-masing golongan
+                    Halaman ini digunakan untuk melakukan pengaturan konfigurasi Insentif Masa Kerja pada masing-masing golongan
                 </small>
             </div>
         </div>
@@ -29,11 +29,11 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="fs-17 font-weight-600 mb-0">Pengaturan Gaji Pokok</h6>
+                        <h6 class="fs-17 font-weight-600 mb-0">Pengaturan Insentif Masa Kerja</h6>
                     </div>
                     <div class="text-right">
                         <div class="actions">
-                            @include('partials.pengaturan_gaji_dropdown', ['title' => 'Pengaturan Gaji Pokok'])
+                            @include('partials.pengaturan_gaji_dropdown', ['title' => 'Pengaturan Insentif Masa Kerja'])
                         </div>
                     </div>
                 </div>
@@ -67,8 +67,8 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group mb-md-0">
-                                    <button class="btn btn-success btn-block" title="Import Gaji Pokok" id="btn-import" type="button">
-                                        <i class="fas fa-file-excel mr-1"></i> Import Gaji Pokok
+                                    <button class="btn btn-success btn-block" title="Import IMK" id="btn-import" type="button">
+                                        <i class="fas fa-file-excel mr-1"></i> Import IMK
                                     </button>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@
                                 <tr>
                                     <th class="text-center align-middle">#</th>
                                     <th class="text-center align-middle">INFORMASI GOLONGAN</th>
-                                    <th class="text-left align-middle">GAJI POKOK</th>
+                                    <th class="text-left align-middle">IMK</th>
                                     <th class="text-left align-middle">STATUS</th>
                                     <th class="text-center">AKSI</th>
                                 </tr>
@@ -118,7 +118,7 @@
                             <input type="number" class="form-control" name="masa_kerja" id="insup_masa_kerja" min="0" placeholder="Contoh: 4" required>
                         </div>
                         <div class="form-group">
-                            <label class="font-weight-bold">Gaji Pokok (Rp)</label>
+                            <label class="font-weight-bold">IMK (Rp)</label>
                             <input type="text" class="form-control" name="gaji_pokok" id="insup_gaji_pokok" onkeyup="keyUpNumber('insup_gaji_pokok')" placeholder="Contoh: 3.500.000" required>
                         </div>
                     </form>
@@ -137,7 +137,7 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title font-weight-600">Import Data Gaji Pokok</h5>
+                    <h5 class="modal-title font-weight-600">Import Data IMK</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -155,7 +155,7 @@
                             <ul class="mb-0 pl-3 mt-1">
                                 <li><strong>Kolom A:</strong> Golongan (contoh: <code>III/A</code>)</li>
                                 <li><strong>Kolom B:</strong> Masa Kerja dalam Tahun (contoh: <code>4</code>)</li>
-                                <li><strong>Kolom C:</strong> Gaji Pokok (contoh: <code>3500000</code>)</li>
+                                <li><strong>Kolom C:</strong> IMK (contoh: <code>3500000</code>)</li>
                             </ul>
                         </div>
                         <div class="form-group">
@@ -182,7 +182,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title font-weight-600">
-                            <i class="fas fa-file-excel mr-2"></i> Hasil Proses Import Data Gaji Pokok
+                            <i class="fas fa-file-excel mr-2"></i> Hasil Proses Import Data IMK
                         </h5>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -224,7 +224,7 @@
                                         <th class="text-center" style="width: 10%;">Baris</th>
                                         <th class="text-center" style="width: 15%;">Golongan</th>
                                         <th class="text-center" style="width: 15%;">Masa Kerja</th>
-                                        <th class="text-right" style="width: 20%;">Gaji Pokok</th>
+                                        <th class="text-right" style="width: 20%;">IMK</th>
                                         <th class="text-center" style="width: 15%;">Status</th>
                                         <th style="width: 25%;">Keterangan</th>
                                     </tr>
