@@ -19,9 +19,9 @@ class Mahasiswa extends Model
     ];
     protected $keyType = 'string';
 
-    public static function get_mahasiswa($kd_prodi = '0', $jenjang_didik = '0', $offset = 0, $limit = 10, $search = "", $jenis_pendanaan = 'x', $angkatan = "0", $is_lp3i = -1, $status = '1')
+    public static function get_mahasiswa($kd_prodi = '0', $jenjang_didik = '0', $offset = 0, $limit = 10, $search = "", $jenis_pendanaan = 'x', $angkatan = "0", $is_lp3i = -1, $status = '1', $kd_fakultas = null, $tahun_akademik = null)
     {
-        return DB::select('SELECT * FROM akademik.get_mahasiswa(:kd_prodi, :id_jenjang_didik, :offset, :limit, :search, :jenis_pendanaan, :angkatan, :is_lp3i, :status)', [
+        return DB::select('SELECT * FROM akademik.get_mahasiswa(:kd_prodi, :id_jenjang_didik, :offset, :limit, :search, :jenis_pendanaan, :angkatan, :is_lp3i, :status, :kd_fakultas, :tahun_akademik)', [
             'kd_prodi' => $kd_prodi,
             'id_jenjang_didik' => $jenjang_didik,
             'search' => $search,
@@ -30,7 +30,9 @@ class Mahasiswa extends Model
             'jenis_pendanaan' => $jenis_pendanaan,
             'angkatan' => $angkatan,
             'is_lp3i' => $is_lp3i,
-            'status' => $status
+            'status' => $status,
+            'kd_fakultas' => $kd_fakultas,
+            'tahun_akademik' => $tahun_akademik,
         ]);
     }
 

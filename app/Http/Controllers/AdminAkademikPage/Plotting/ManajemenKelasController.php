@@ -8,6 +8,7 @@ use App\Models\Akademik\ProgramStudi;
 use App\Models\Akademik\Semester;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Session;
 
 class ManajemenKelasController extends Controller
 {
@@ -19,7 +20,11 @@ class ManajemenKelasController extends Controller
     public function index()
     {
         $menu = 'Manajemen Kelas Perkuliahan';
-        $program_studi = ProgramStudi::get_program_studi();
+        $kd_fakultas = Session::get('user')->kd_fakultas ?? '0';
+        if (in_array(Session::get('peran')['aktif'], [39])) {
+            $kd_fakultas = "0";
+        }
+        $program_studi = ProgramStudi::get_program_studi("0", $kd_fakultas);
         $tahun_akademik = Semester::get_semester();
         return view('admin_akademik_page.plotting.kelas_perkuliahan', compact('menu', 'program_studi', 'tahun_akademik'));
     }
