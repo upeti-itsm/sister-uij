@@ -433,12 +433,12 @@
                                     @endif
 
                                     {{-- Menu: Gaji Pokok --}}
-                                    @if (array_key_exists('Gaji Pokok', $modul))
+                                    {{-- @if (array_key_exists('Gaji Pokok', $modul))
                                         <li class="{{ in_array($menu, ['Pengaturan Gaji Pokok']) ? 'mm-active' : '' }}">
                                             <a href="{{ route('keuangan.penggajian.pengaturan_gaji.gaji_pokok.index') }}">Gaji
                                                 Pokok</a>
                                         </li>
-                                    @endif
+                                    @endif --}}
                                 </ul>
                             </li>
                         @endif
