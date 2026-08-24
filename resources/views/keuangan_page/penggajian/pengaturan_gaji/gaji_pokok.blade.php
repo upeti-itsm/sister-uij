@@ -27,14 +27,16 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="fs-17 font-weight-600 mb-0">Pengaturan Gaji Pokok</h6>
-                    <button type="button" class="btn btn-primary" id="btn-tambah-data">
-                        <i class="fas fa-plus mr-1"></i> Tambah Data
-                    </button>
+                    <div class="text-right">
+                        <div class="actions">
+                            @include('partials.pengaturan_gaji_dropdown', ['title' => 'Pengaturan Gaji Pokok'])
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <div class="form-group">
                             <label class="font-weight-bold">Pencarian</label>
                             <div class="row">
@@ -43,15 +45,24 @@
                                 </div>
                                 <div class="col-md-4">
                                     <button class="btn btn-block btn-primary" id="btn-cari-data"><i
-                                            class="fas fa-search mr-2"></i>Cari</button>
+                                            class="fas fa-search mr-2"></i>Cari
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <div class="form-group">
                             <label class="font-weight-bold">Jenis Karyawan</label>
                             <select class="form-control" id="id_jenis_karyawan" style="width: 100%;"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Aksi</label>
+                            <button type="button" class="btn btn-primary" id="btn-tambah-data">
+                                <i class="fas fa-plus mr-1"></i> Tambah Data
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -59,13 +70,13 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="table">
                             <thead>
-                                <tr>
-                                    <th class="text-center align-middle">Nomor</th>
-                                    <th class="text-left align-middle">Jenis Pendidikan</th>
-                                    <th class="text-left align-middle">Nominal Tunjangan</th>
-                                    <th class="text-center align-middle">Status</th>
-                                    <th class="text-center align-middle">Pengaturan</th>
-                                </tr>
+                            <tr>
+                                <th class="text-center align-middle">Nomor</th>
+                                <th class="text-left align-middle">Jenis Pendidikan</th>
+                                <th class="text-left align-middle">Nominal Tunjangan</th>
+                                <th class="text-center align-middle">Status</th>
+                                <th class="text-center align-middle">Pengaturan</th>
+                            </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -97,7 +108,7 @@
                     <div class="form-group">
                         <label class="font-weight-bold">Nominal Tunjangan</label>
                         <input type="text" class="form-control" id="insert_nominal_tunjangan"
-                            onkeyup="keyUpNumber('insert_nominal_tunjangan')">
+                               onkeyup="keyUpNumber('insert_nominal_tunjangan')">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -119,13 +130,13 @@
                 </div>
                 <div class="modal-body">
                     <p>Silahkan Masukkan Nominal Tunjangan Untuk <span id="nama_jenis_karyawan"
-                            class="font-weight-bold"></span></p>
+                                                                       class="font-weight-bold"></span></p>
                     <input type="hidden" id="update_id_config_tunjangan_pendidikan">
                     <input type="hidden" id="update_sts_aktif">
                     <div class="form-group">
                         <label class="font-weight-bold">Nominal Tunjangan</label>
                         <input type="text" class="form-control" id="update_nominal_tunjangan"
-                            onkeyup="keyUpNumber('update_nominal_tunjangan')">
+                               onkeyup="keyUpNumber('update_nominal_tunjangan')">
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -28,7 +28,9 @@ jQuery.gaji_pokok = {
     },
     setEvents: function () {
         var self = this;
-
+        $("#sub-menu").on('click', 'a', function () {
+            location.href = $(this).attr('href');
+        });
         self.loadJenisKaryawan(function (results) {
             var $filterSelect = $("#id_jenis_karyawan");
             $filterSelect.empty();
