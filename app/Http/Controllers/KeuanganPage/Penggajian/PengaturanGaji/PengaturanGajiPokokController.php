@@ -2,32 +2,32 @@
 
 namespace App\Http\Controllers\KeuanganPage\Penggajian\PengaturanGaji;
 
-use App\Exports\Organisasi\TemplateGolonganExport;
 use App\Http\Controllers\Controller;
-use App\Imports\Organisasi\GolonganImport;
-use App\Models\Organisasi\Golongan;
+use App\Models\Keuangan\GajiPokok;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 
 class PengaturanGajiPokokController extends Controller
 {
     public function index()
     {
-        $menu = 'Pengaturan Gaji - IMK';
-        return view('keuangan_page.penggajian.pengaturan_gaji.imk', compact('menu'));
+        $menu = 'Pengaturan Gaji Pokok';
+        return view('keuangan_page.penggajian.pengaturan_gaji.gaji_pokok', compact('menu'));
     }
 
-    public function get_golongan(Request $request)
+    public function get_data(Request $request)
     {
         $length = $_REQUEST['length'];
         $start = $_REQUEST['start'];
         $search = $_REQUEST['search']["value"];
-        $data_ = Golongan::get_golongan(
-            $start,
-            $length,
+
+        $data_ = GajiPokok::get_tunjangan_pendidikans(
+            null,
+            $request->id_jenis_karyawan ? $request->id_jenis_karyawan : null,
             $search,
-            $request->status ? $request->status : null
+            $start,
+            $length
         );
+
         $data['draw'] = $_REQUEST['draw'];
         $data['recordsTotal'] = 0;
         if (sizeof($data_) > 0)
@@ -38,31 +38,96 @@ class PengaturanGajiPokokController extends Controller
         return response()->json($data, 200);
     }
 
-    public function insup_golongan(Request $request)
+    public function get_jenis_karyawan(Request $request)
+    {
+        try {
+            $data_ = GajiPokok::list_jenis_karyawan();
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengambil list jenis karyawan: ' . $e->getMessage());
+            return response()->json(['results' => [], 'error' => $e->getMessage()], 500);
+        }
+
+        $results = collect($data_)->map(function ($item) {
+            return [
+                'id' => $item->id_jenis_karyawan,
+                'text' => $item->jenis_karyawan
+            ];
+        });
+
+        return response()->json(['results' => $results]);
+    }
+
+    public function get_pendidikan(Request $request)
+    {
+        $search = $request->search ?? '';
+
+        try {
+            $data_ = GajiPokok::list_pendidikan($search);
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengambil list pendidikan: ' . $e->getMessage());
+            return response()->json(['results' => [], 'error' => $e->getMessage()], 500);
+        }
+
+        $results = collect($data_)->map(function ($item) {
+            return [
+                'id' => $item->kd_pendidikan_terakhir,
+                'text' => $item->pendidikan
+            ];
+        });
+
+        return response()->json(['results' => $results]);
+    }
+
+    public function insert_nominal(Request $request)
     {
         $request->validate([
-            'id_golongan' => 'required',
-            'golongan' => 'required',
-            'masa_kerja' => 'required|numeric',
-            'gaji_pokok' => 'required'
+            'id_jenis_karyawan' => 'required',
+            'kd_pendidikan' => 'required',
+            'nominal_tunjangan' => 'required'
         ], [
-            'golongan.required' => 'Golongan Wajib Diisi',
-            'masa_kerja.required' => 'Masa Kerja Wajib Diisi',
-            'gaji_pokok.required' => 'Gaji Pokok Wajib Diisi'
+            'id_jenis_karyawan.required' => 'Jenis Karyawan Wajib Dipilih',
+            'kd_pendidikan.required' => 'Jenis Pendidikan Wajib Dipilih',
+            'nominal_tunjangan.required' => 'Nominal Tunjangan Wajib Diisi'
         ]);
 
-        $gaji_pokok = preg_replace('/[^\d]/', '', (string)$request->gaji_pokok);
-        $gaji_pokok = !empty($gaji_pokok) ? (int)$gaji_pokok : 0;
+        $nominal = preg_replace('/[^\d]/', '', (string)$request->nominal_tunjangan);
+        $nominal = !empty($nominal) ? (int)$nominal : 0;
 
-        $res = Golongan::insup_golongan(
-            $request->id_golongan,
-            $request->golongan,
-            $request->masa_kerja,
-            $gaji_pokok
+        $res = GajiPokok::insert_tunjangan_pendidikan(
+            $request->id_jenis_karyawan,
+            $request->kd_pendidikan,
+            $nominal,
+            true // data baru selalu aktif
         );
 
         return response()->json([
-            'status' => $res->status ?? 0,
+            'status' => isset($res->status) ? (int)$res->status : 0,
+            'keterangan' => $res->keterangan ?? 'Terjadi kesalahan sistem'
+        ]);
+    }
+
+    public function update_nominal(Request $request)
+    {
+        $request->validate([
+            'id_config_tunjangan_pendidikan' => 'required',
+            'nominal_tunjangan' => 'required',
+            'sts_aktif' => 'required'
+        ], [
+            'nominal_tunjangan.required' => 'Nominal Tunjangan Wajib Diisi'
+        ]);
+
+        $nominal = preg_replace('/[^\d]/', '', (string)$request->nominal_tunjangan);
+        $nominal = !empty($nominal) ? (int)$nominal : 0;
+        $statusBool = filter_var($request->sts_aktif, FILTER_VALIDATE_BOOLEAN);
+
+        $res = GajiPokok::update_tunjangan_pendidikan(
+            $request->id_config_tunjangan_pendidikan,
+            $nominal,
+            $statusBool
+        );
+
+        return response()->json([
+            'status' => isset($res->status) ? (int)$res->status : 0,
             'keterangan' => $res->keterangan ?? 'Terjadi kesalahan sistem'
         ]);
     }
@@ -70,56 +135,22 @@ class PengaturanGajiPokokController extends Controller
     public function set_status(Request $request)
     {
         $request->validate([
-            'id_golongan' => 'required',
-            'status' => 'required'
+            'id_config_tunjangan_pendidikan' => 'required',
+            'nominal_tunjangan' => 'required',
+            'sts_aktif' => 'required'
         ]);
 
-        $statusBool = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
+        $statusBool = filter_var($request->sts_aktif, FILTER_VALIDATE_BOOLEAN);
 
-        $res = Golongan::set_status_golongan(
-            $request->id_golongan,
+        $res = GajiPokok::update_tunjangan_pendidikan(
+            $request->id_config_tunjangan_pendidikan,
+            $request->nominal_tunjangan,
             $statusBool
         );
 
         return response()->json([
-            'status' => $res->status ?? 0,
+            'status' => isset($res->status) ? (int)$res->status : 0,
             'keterangan' => $res->keterangan ?? 'Terjadi kesalahan sistem'
         ]);
-    }
-
-    public function import(Request $request)
-    {
-        $request->validate([
-            'file_excel' => 'required|mimes:xlsx,xls,csv|max:2048'
-        ], [
-            'file_excel.required' => 'Pilih file excel terlebih dahulu',
-            'file_excel.mimes' => 'Format file harus berupa xlsx, xls, atau csv',
-            'file_excel.max' => 'Ukuran file maksimal 2MB'
-        ]);
-
-        try {
-            $importer = new GolonganImport();
-            Excel::import($importer, $request->file('file_excel'));
-
-            $summary = [
-                'processed' => $importer->totalProcessed,
-                'success' => $importer->totalSuccess,
-                'failed' => $importer->totalFailed,
-                'details' => $importer->details
-            ];
-            // dd($importer,$summary);
-
-            session()->flash('import_results', $summary);
-            session()->flash('success_message', "Proses import selesai. Total: {$importer->totalProcessed} data (Sukses: {$importer->totalSuccess}, Gagal: {$importer->totalFailed}).");
-        } catch (\Exception $e) {
-            session()->flash('failed_message', 'Gagal mengimpor data: ' . $e->getMessage());
-        }
-
-        return redirect()->back();
-    }
-
-    public function download_template()
-    {
-        return Excel::download(new TemplateGolonganExport, 'Template_Import_IMK.xlsx');
     }
 }

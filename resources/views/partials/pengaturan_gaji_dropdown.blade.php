@@ -7,6 +7,7 @@
             <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_gaji_pokok.index') }}" class="dropdown-item">Pengaturan Insentif Masa Kerja</a>
             <a href="{{ route('keuangan.penggajian.pengaturan_gaji.daftar_pegawai.index') }}" class="dropdown-item">Pengaturan Gaji Individu</a>
             <a href="{{ route('keuangan.penggajian.pengaturan_gaji.potongan_bpjs.index') }}" class="dropdown-item">Pengaturan BPJS</a>
+            <a href="{{ route('keuangan.penggajian.pengaturan_gaji.gaji_pokok.index') }}" class="dropdown-item">Pengaturan Gaji Pokok</a>
             <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_umr.index') }}" class="dropdown-item">Pengaturan UMR</a>
             <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_hr.index') }}" class="dropdown-item">Pengaturan HR Mengajar</a>
             <a href="{{ route('keuangan.penggajian.pengaturan_gaji.pengaturan_transportasi.index') }}" class="dropdown-item">Pengaturan Transportasi S2</a>
