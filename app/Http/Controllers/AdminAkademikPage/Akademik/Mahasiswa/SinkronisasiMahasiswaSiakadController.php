@@ -16,13 +16,18 @@ use App\Models\Referensi\Pendidikan;
 use App\Models\Referensi\Penghasilan;
 use App\Models\SIAKAD_MODEL\tblMahasiswa;
 use Illuminate\Http\Request;
+use \Illuminate\Support\Facades\Session;
 
 class SinkronisasiMahasiswaSiakadController extends Controller
 {
     public function index()
     {
         $menu = 'Sinkronisasi Mahasiswa dengan Siakad';
-        $program_studi = ProgramStudi::get_program_studi("0", "0", "", true, -1);
+        $kd_fakultas = Session::get('user')->kd_fakultas ?? '0';
+        if (in_array(Session::get('peran')['aktif'], [39])) {
+            $kd_fakultas = "0";
+        }
+        $program_studi = ProgramStudi::get_program_studi("0", $kd_fakultas, "", true, -1);
         $angkatan = Mahasiswa::get_list_angkatan();
         $angkatan_siakad = tblMahasiswa::getAngkatan();
         $tahun_pmb = Pendaftar::get_tahun_seleksi();
@@ -37,10 +42,14 @@ class SinkronisasiMahasiswaSiakadController extends Controller
             'angkatan' => 'required',
             'status' => 'required',
         ]);
+        $kd_fakultas = Session::get('user')->kd_fakultas ?? null;
+        if (in_array(Session::get('peran')['aktif'], [39])) {
+            $kd_fakultas = null;
+        }
         $length = $_REQUEST['length'];
         $start = $_REQUEST['start'];
         $search = $_REQUEST['search']["value"];
-        $record = Mahasiswa::get_mahasiswa($request->prodi, "0", $start, $length, $search, 'x', $request->angkatan, -1, $request->status);
+        $record = Mahasiswa::get_mahasiswa($request->prodi, "0", $start, $length, $search, 'x', $request->angkatan, -1, $request->status, $kd_fakultas);
         $data['draw'] = $_REQUEST['draw'];
         $data['recordsTotal'] = 0;
         if (sizeof($record) > 0)
@@ -89,6 +98,7 @@ class SinkronisasiMahasiswaSiakadController extends Controller
         else
             return response()->json($data, 500);
     }
+
     public function json_syncron_data_pmb(Request $request)
     {
         $request->validate([
@@ -101,7 +111,7 @@ class SinkronisasiMahasiswaSiakadController extends Controller
                 return response()->json([
                     'is_success' => true,
                     'result' => $result->result,
-                    'total_processed' => $result->total_processed ??  0,
+                    'total_processed' => $result->total_processed ?? 0,
                     'total_inserted' => $result->total_inserted ?? 0,
                     'total_updated' => $result->total_updated ?? 0,
                     'total_failed' => $result->total_failed ?? 0,
@@ -109,7 +119,7 @@ class SinkronisasiMahasiswaSiakadController extends Controller
             } else {
                 return response()->json([
                     'is_success' => false,
-                    'result' => $result->result ??  'Gagal melakukan sinkronisasi'
+                    'result' => $result->result ?? 'Gagal melakukan sinkronisasi'
                 ]);
             }
         } catch (\Exception $e) {
@@ -131,13 +141,13 @@ class SinkronisasiMahasiswaSiakadController extends Controller
             $result = Mahasiswa::update_status_mahasiswa(
                 $request->nim,
                 $request->status,
-                $request->alasan ??  ''
+                $request->alasan ?? ''
             );
 
             if ($result->status) {
                 return response()->json([
                     'is_success' => true,
-                    'result' => $result->result ??  'Status mahasiswa berhasil diubah'
+                    'result' => $result->result ?? 'Status mahasiswa berhasil diubah'
                 ]);
             } else {
                 return response()->json([
@@ -277,7 +287,7 @@ class SinkronisasiMahasiswaSiakadController extends Controller
             if ($result->is_success) {
                 return response()->json([
                     'is_success' => true,
-                    'result' => $result->result ??  'Data mahasiswa berhasil diperbarui'
+                    'result' => $result->result ?? 'Data mahasiswa berhasil diperbarui'
                 ]);
             } else {
                 return response()->json([

@@ -27,7 +27,6 @@ jQuery.daftar_pegawai = {
         $("#status").change(function () {
             self.data.table.ajax.reload();
         });
-
         self.data.table = $("#ohmytable").DataTable({
             serverSide: true,
             ajax: {
@@ -301,6 +300,10 @@ jQuery.daftar_pegawai = {
             if (event.keyCode === 13) {
                 self.data.table.search(this.value).draw();
             }
+        });
+
+        $("#sub-menu").on('click', 'a', function () {
+            location.href = $(this).attr('href');
         });
     }
 };

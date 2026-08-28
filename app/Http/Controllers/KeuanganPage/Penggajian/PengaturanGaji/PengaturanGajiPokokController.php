@@ -13,8 +13,8 @@ class PengaturanGajiPokokController extends Controller
 {
     public function index()
     {
-        $menu = 'Pengaturan Gaji - Gaji Pokok';
-        return view('keuangan_page.penggajian.pengaturan_gaji.gaji_pokok', compact('menu'));
+        $menu = 'Pengaturan Gaji - IMK';
+        return view('keuangan_page.penggajian.pengaturan_gaji.imk', compact('menu'));
     }
 
     public function get_golongan(Request $request)
@@ -120,6 +120,6 @@ class PengaturanGajiPokokController extends Controller
 
     public function download_template()
     {
-        return Excel::download(new TemplateGolonganExport, 'Template_Import_Gaji_Pokok.xlsx');
+        return Excel::download(new TemplateGolonganExport, 'Template_Import_IMK.xlsx');
     }
 }

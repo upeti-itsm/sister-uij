@@ -34,17 +34,20 @@
                     </div>
                     <div class="text-right">
                         <div class="actions">
-                            <button class="btn btn-danger-soft btn-sync-ulang-data-center mr-2"
-                                    id="btn-sync-ulang-data-center"
-                                    title="Syncron Dengan Siakad"><i
-                                    class="fas fa-cloud-download-alt"></i> Synchron Dengan Siakad
-                            </button>
-                            <!-- TAMBAHAN: Tombol Sinkronisasi PMB -->
-                            <button class="btn btn-info-soft btn-sync-pmb mr-2"
-                                    id="btn-sync-pmb"
-                                    title="Syncron Dengan PMB"><i
-                                    class="fas fa-user-graduate"></i> Synchron Dengan PMB
-                            </button>
+                            @php($peran = Session::get('peran')['aktif'])
+                            @if(in_array($peran, [39]))
+                                <button class="btn btn-danger-soft btn-sync-ulang-data-center mr-2"
+                                        id="btn-sync-ulang-data-center"
+                                        title="Syncron Dengan Siakad"><i
+                                        class="fas fa-cloud-download-alt"></i> Synchron Dengan Siakad
+                                </button>
+                                <!-- TAMBAHAN: Tombol Sinkronisasi PMB -->
+                                <button class="btn btn-info-soft btn-sync-pmb mr-2"
+                                        id="btn-sync-pmb"
+                                        title="Syncron Dengan PMB"><i
+                                        class="fas fa-user-graduate"></i> Synchron Dengan PMB
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -279,7 +282,8 @@
                                         <div class="col-md-3">
                                             <select class="select2 form-control" id="status">
                                                 @foreach($status_mahasiswa AS $item)
-                                                    <option value="{{$item->kd_status_mahasiswa}}">{{$item->status_mahasiswa}}</option>
+                                                    <option
+                                                        value="{{$item->kd_status_mahasiswa}}">{{$item->status_mahasiswa}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
