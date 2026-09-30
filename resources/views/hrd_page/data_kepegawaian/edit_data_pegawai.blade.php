@@ -354,7 +354,7 @@
                         @endif
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="text-muted">Pangkat <span class="text-danger">*</span></label>
+                                <label class="text-muted">Pangkat</label>
                                 <select class="form-control select2" name="pangkat">
                                     <option value="0">-- Pilih Pangkat --</option>
                                     <option value="1" @if (old('pangkat') == 1 || $karyawan->id_pangkat == 1) selected @endif>Pengatur
@@ -381,7 +381,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group" style="text-align: left">
-                                <label class="text-muted">Unggah SK Golongan <span class="text-danger">*</span></label>
+                                <label class="text-muted">Unggah SK Golongan</label>
                                 <div class="custom-file">
                                     <input type="file" accept=".pdf" class="custom-file-input" id="file_sk_golongan"
                                         name="file_sk_golongan">
@@ -397,7 +397,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="text-muted">TMT Golongan <span class="text-danger">*</span></label>
+                                <label class="text-muted">TMT Golongan</label>
                                 <input type="text" class="form-control" id="tgl_tmt_golongan"
                                     placeholder="TMT Golongan" readonly>
                                 <input type="hidden" class="form-control" id="tmt_golongan" required

@@ -62,7 +62,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_kartu_keluarga)}}"
+                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_kartu_keluarga)}}"
                                            target="_blank">Kartu Keluarga</a>
                                     </h6>
                                 </div>
@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('storage/app/public/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_pendidikan)}}"
+                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_pendidikan)}}"
                                            target="_blank">Ijazah Terakhir</a>
                                     </h6>
                                 </div>
@@ -100,7 +100,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_golongan)}}"
+                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_golongan)}}"
                                            target="_blank">SK Golongan Terakhir</a>
                                     </h6>
                                 </div>
@@ -119,7 +119,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_riwayat_jabatan_fungsional)}}"
+                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_riwayat_jabatan_fungsional)}}"
                                            target="_blank">SK Jabatan Fungsional Terakhir</a>
                                     </h6>
                                 </div>
@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="col ml-n2">
                                     <h6 class="mb-0">
-                                        <a href="{{asset('storage/files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_riwayat_jabatan_struktural)}}"
+                                        <a href="{{asset('files/berkas_kepegawaian/'.$karyawan->id_personal.'/'.$karyawan->path_dokumen_pendukung_riwayat_jabatan_struktural)}}"
                                            target="_blank">SK Jabatan Struktural Terakhir</a>
                                     </h6>
                                 </div>

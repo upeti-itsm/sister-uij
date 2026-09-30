@@ -84,7 +84,7 @@ class DataPegawaiController extends Controller
             // 'file_sk_golongan' => 'required|max:10000|mimes:pdf',
             'tgl_aktif' => 'required|date_format:Y-m-d',
             'tgl_lulus' => 'required|date_format:Y-m-d',
-            'tmt_golongan' => 'required|date_format:Y-m-d',
+            'tmt_golongan' => 'date_format:Y-m-d',
         ], [
             'file_photo_profile.required' => 'Pastikan anda sudah memilih foto profil',
             'file_photo_profile.max' => 'Pastikan ukuran foto profile tidak lebih dari 10Mb',
@@ -109,6 +109,7 @@ class DataPegawaiController extends Controller
             'alamat.required' => 'Pastikan alamat sudah terisi',
             'unit_kerja.required' => 'Pastikan unit kerja sudah terpilih',
             'status_menikah.required' => 'Pastikan status pernikahan sudah terpilih',
+            'tmt_golongan.date_format' => 'Pastikan format tanggal TMT Golongan benar',
             'file_sk_golongan.required' => 'Pastikan file SK Golongan sudah di upload',
             'file_kk.required' => 'Pastikan file KK sudah di upload',
             'file_kk.max' => 'Pastikan ukuran file KK tidak lebih dari 10Mb',
@@ -265,7 +266,6 @@ class DataPegawaiController extends Controller
         $debug =  $request->validate([
             'id' => 'required',
             'no_ktp' => 'required|max:16|min:16',
-            'pangkat' => 'required',
             'jenis_kelamin' => 'required',
             'jenis_bank' => 'required',
             'nama' => 'required',
@@ -286,7 +286,6 @@ class DataPegawaiController extends Controller
             'no_ktp.required' => 'Pastikan anda sudah mengisi Nomor KTP',
             'no_ktp.max' => 'Pastikan Nomor KTP tidak lebih dari 16 karakter',
             'no_ktp.min' => 'Pastikan Nomor KTP tidak kurang dari 16 karakter',
-            'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
             'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
             'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
             'list_sertifikasi.required' => 'Pastikan status sertifikasi sudah terpilih',
@@ -409,17 +408,17 @@ class DataPegawaiController extends Controller
 
                 $file_kk->storeAs($destinationPath, $file_name_kk, 'public');
 
-                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_kartu_keluarga))) {
-                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_kartu_keluarga));
-                // }
-
-                if (!empty($karyawan_old->path_kartu_keluarga)) {
-                    $oldPath = $destinationPath . '/' . $karyawan_old->path_kartu_keluarga;
-
-                    if (Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->delete($oldPath);
-                    }
+                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_kartu_keluarga))) {
+                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_kartu_keluarga));
                 }
+
+                // if (!empty($karyawan_old->path_kartu_keluarga)) {
+                //     $oldPath = $destinationPath . '/' . $karyawan_old->path_kartu_keluarga;
+
+                //     if (Storage::disk('public')->exists($oldPath)) {
+                //         Storage::disk('public')->delete($oldPath);
+                //     }
+                // }
             }
 
             if (!is_null($request->file_sk_golongan)) {
@@ -430,17 +429,17 @@ class DataPegawaiController extends Controller
 
                 $file_golongan->storeAs($destinationPath, $file_name_golongan, 'public');
 
-                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_golongan))) {
-                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_golongan));
-                // }
-
-                if (!empty($karyawan_old->path_dokumen_pendukung_golongan)) {
-                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_golongan;
-
-                    if (Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->delete($oldPath);
-                    }
+                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_golongan))) {
+                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_golongan));
                 }
+
+                // if (!empty($karyawan_old->path_dokumen_pendukung_golongan)) {
+                //     $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_golongan;
+
+                //     if (Storage::disk('public')->exists($oldPath)) {
+                //         Storage::disk('public')->delete($oldPath);
+                //     }
+                // }
             }
 
             if (!is_null($request->file_sk_jafung)) {
@@ -451,17 +450,17 @@ class DataPegawaiController extends Controller
 
                 $file_jafung->storeAs($destinationPath, $file_name_jafung, 'public');
 
-                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional))) {
-                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional));
-                // }
-
-                if (!empty($karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional)) {
-                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional;
-
-                    if (Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->delete($oldPath);
-                    }
+                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional))) {
+                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional));
                 }
+
+                // if (!empty($karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional)) {
+                //     $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional;
+
+                //     if (Storage::disk('public')->exists($oldPath)) {
+                //         Storage::disk('public')->delete($oldPath);
+                //     }
+                // }
             }
 
             if (!is_null($request->file_sk_jastruk)) {
@@ -472,17 +471,17 @@ class DataPegawaiController extends Controller
 
                 $file_jastruk->storeAs($destinationPath, $file_name_jastruk, 'public');
 
-                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural))) {
-                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural));
-                // }
-
-                if (!empty($karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural)) {
-                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural;
-
-                    if (Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->delete($oldPath);
-                    }
+                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural))) {
+                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural));
                 }
+
+                // if (!empty($karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural)) {
+                //     $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_riwayat_jabatan_struktural;
+
+                //     if (Storage::disk('public')->exists($oldPath)) {
+                //         Storage::disk('public')->delete($oldPath);
+                //     }
+                // }
             }
 
             if (!is_null($request->file_ijazah)) {
@@ -493,17 +492,17 @@ class DataPegawaiController extends Controller
 
                 $file_ijazah->storeAs($destinationPath, $file_name_ijazah, 'public');
 
-                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan))) {
-                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan));
-                // }
-
-                if (!empty($karyawan_old->path_dokumen_pendukung_pendidikan)) {
-                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan;
-
-                    if (Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->delete($oldPath);
-                    }
+                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan))) {
+                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan));
                 }
+
+                // if (!empty($karyawan_old->path_dokumen_pendukung_pendidikan)) {
+                //     $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_pendidikan;
+
+                //     if (Storage::disk('public')->exists($oldPath)) {
+                //         Storage::disk('public')->delete($oldPath);
+                //     }
+                // }
             }
 
             if (!is_null($request->file_sertifikat)) {
@@ -514,17 +513,17 @@ class DataPegawaiController extends Controller
 
                 $file_sertifikat->storeAs($destinationPath, $file_name_sertifikat, 'public');
 
-                // if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat))) {
-                //     File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat));
-                // }
-
-                if (!empty($karyawan_old->path_dokumen_pendukung_sertifikat)) {
-                    $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat;
-
-                    if (Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->delete($oldPath);
-                    }
+                if (File::exists(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat))) {
+                    File::delete(public_path('files/berkas_kepegawaian/' . $request->id . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat));
                 }
+
+                // if (!empty($karyawan_old->path_dokumen_pendukung_sertifikat)) {
+                //     $oldPath = $destinationPath . '/' . $karyawan_old->path_dokumen_pendukung_sertifikat;
+
+                //     if (Storage::disk('public')->exists($oldPath)) {
+                //         Storage::disk('public')->delete($oldPath);
+                //     }
+                // }
             }
             Session::flash('success_message', $karyawan->keterangan);
             return redirect()->back();
@@ -549,8 +548,8 @@ class DataPegawaiController extends Controller
         $file = $request->file('file');
         $file_name = 'photo_profile_' . date("Y_m_d_h_m_s", $t) . '.' . $file->getClientOriginalExtension();
         if (!empty($request->old_path)) {
-            // File::delete('files/profil_karyawan/' . $request->id . '/' . $request->old_path);
-            Storage::disk('public')->delete('files/profil_karyawan/' . $request->id . '/' . $request->old_path);
+            File::delete('files/profil_karyawan/' . $request->id . '/' . $request->old_path);
+            // Storage::disk('public')->delete('files/profil_karyawan/' . $request->id . '/' . $request->old_path);
         }
         $photo_profile = Karyawan::update_path_photo($request->id, $file_name);
         if ($photo_profile->status == 1) {
