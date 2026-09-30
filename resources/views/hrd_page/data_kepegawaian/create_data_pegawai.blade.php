@@ -340,7 +340,7 @@
                         @endif
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="text-muted">Pangkat <span class="text-danger">*</span></label>
+                                <label class="text-muted">Pangkat</label>
                                 <select class="form-control select2" name="pangkat">
                                     <option value="0">-- Pilih Pangkat --</option>
                                     <option value="1" @if(old('pangkat') == 1) selected @endif>Pengatur</option>
@@ -374,10 +374,10 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="text-muted">TMT Golongan <span class="text-danger">*</span></label>
+                                <label class="text-muted">TMT Golongan</label>
                                 <input type="text" class="form-control" id="tgl_tmt_golongan"
                                        placeholder="TMT Golongan" readonly>
-                                <input type="hidden" class="form-control" id="tmt_golongan" required
+                                <input type="hidden" class="form-control" id="tmt_golongan"
                                        placeholder="Tanggal Lahir" name="tmt_golongan">
                             </div>
                         </div>
@@ -406,11 +406,10 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="text-muted">TMT Jabatan Struktural <span
-                                        class="text-danger">*</span></label>
+                                <label class="text-muted">TMT Jabatan Struktural</label>
                                 <input type="text" class="form-control" id="tgl_tmt_jabatan_struktural"
                                        placeholder="TMT Golongan" readonly>
-                                <input type="hidden" class="form-control" id="tmt_jabatan_struktural" required
+                                <input type="hidden" class="form-control" id="tmt_jabatan_struktural"
                                        placeholder="Tanggal Lahir" name="tmt_jabatan_struktural">
                             </div>
                         </div>
@@ -439,11 +438,10 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="text-muted">TMT Jabatan Fungsional <span
-                                        class="text-danger">*</span></label>
+                                <label class="text-muted">TMT Jabatan Fungsional</label>
                                 <input type="text" class="form-control" id="tgl_tmt_jabatan_fungsional"
                                        placeholder="TMT Jabatan Fungsional" readonly>
-                                <input type="hidden" class="form-control" id="tmt_jabatan_fungsional" required
+                                <input type="hidden" class="form-control" id="tmt_jabatan_fungsional"
                                        placeholder="Tanggal Lahir" name="tmt_jabatan_fungsional">
                             </div>
                         </div>

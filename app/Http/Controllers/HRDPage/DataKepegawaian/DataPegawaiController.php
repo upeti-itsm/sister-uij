@@ -62,7 +62,7 @@ class DataPegawaiController extends Controller
         $request->validate([
             'file_photo_profile' => 'required|max:10000|mimes:jpg,jpeg,png',
             'no_ktp' => 'required|max:16|min:16',
-            'pangkat' => 'required',
+            // 'pangkat' => 'required',
             'jenis_kelamin' => 'required',
             'jenis_bank' => 'required',
             'nama' => 'required',
@@ -76,7 +76,7 @@ class DataPegawaiController extends Controller
             'alamat' => 'required',
             'unit_kerja' => 'required',
             'status_menikah' => 'required',
-            'file_sk_golongan' => 'required',
+            // 'file_sk_golongan' => 'required',
             'file_kk' => 'required|max:10000|mimes:pdf',
             'pendidikan_terakhir' => 'required',
             'ip_absensi' => 'required',
@@ -92,7 +92,7 @@ class DataPegawaiController extends Controller
             'no_ktp.required' => 'Pastikan anda sudah mengisi Nomor KTP',
             'no_ktp.max' => 'Pastikan Nomor KTP tidak lebih dari 16 karakter',
             'no_ktp.min' => 'Pastikan Nomor KTP tidak kurang dari 16 karakter',
-            'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
+            // 'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
             'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
             'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
             'list_sertifikasi.required' => 'Pastikan status sertifikasi sudah terpilih',
@@ -110,7 +110,7 @@ class DataPegawaiController extends Controller
             'unit_kerja.required' => 'Pastikan unit kerja sudah terpilih',
             'status_menikah.required' => 'Pastikan status pernikahan sudah terpilih',
             'tmt_golongan.date_format' => 'Pastikan format tanggal TMT Golongan benar',
-            'file_sk_golongan.required' => 'Pastikan file SK Golongan sudah di upload',
+            // 'file_sk_golongan.required' => 'Pastikan file SK Golongan sudah di upload',
             'file_kk.required' => 'Pastikan file KK sudah di upload',
             'file_kk.max' => 'Pastikan ukuran file KK tidak lebih dari 10Mb',
             // 'file_sk_golongan.mimes' => 'Pastikan file Golongan dalam format pdf',
@@ -347,10 +347,10 @@ class DataPegawaiController extends Controller
         // Jafung
         if ($request->jafung != $karyawan_old->id_jabatan_fungsional && empty($karyawan_old->path_dokumen_pendukung_riwayat_jabatan_fungsional))
             $request->validate([
-                'file_sk_jafung' => 'required|max:10000|mimes:pdf'
+            'file_sk_jafung' => 'max:10000|mimes:pdf'
             ], [
-                'file_sk_jafung.required' => 'Pastikan file SK Jabatan Fungsional sudah di upload',
-                'file_sk_jafung.max' => 'Pastikan ukuran file SK Jabatan Fungsional tidak lebih dari 10Mb',
+            // 'file_sk_jafung.required' => 'Pastikan file SK Jabatan Fungsional sudah di upload',
+            'file_sk_jafung.max' => 'Pastikan ukuran file SK Jabatan Fungsional tidak lebih dari 10Mb',
         'file_sk_jafung.mimes' => 'Pastikan file SK Jabatan Fungsional dalam format pdf',
     ]);
         $file_name_jafung = null;

@@ -421,8 +421,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group" style="text-align: left">
-                                <label class="text-muted">Unggah SK Jabatan Struktural <span
-                                        class="text-danger">*</span></label>
+                                <label class="text-muted">Unggah SK Jabatan Struktural</label>
                                 <div class="custom-file">
                                     <input type="file" accept=".pdf" class="custom-file-input"
                                         id="file_sk_jabatan_struktural" name="file_sk_jastruk">
@@ -438,11 +437,10 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="text-muted">TMT Jabatan Struktural <span
-                                        class="text-danger">*</span></label>
+                                <label class="text-muted">TMT Jabatan Struktural</label>
                                 <input type="text" class="form-control" id="tgl_tmt_jabatan_struktural"
                                     placeholder="TMT Golongan" readonly>
-                                <input type="hidden" class="form-control" id="tmt_jabatan_struktural" required
+                                <input type="hidden" class="form-control" id="tmt_jabatan_struktural"
                                     placeholder="Tanggal Lahir" name="tmt_jastruk"
                                     value="{{ old('tmt_jastruk') ? old('tmt_jastruk') : $karyawan->tmt_jabatan_struktural }}">
                             </div>
@@ -463,8 +461,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group" style="text-align: left">
-                                <label class="text-muted">Unggah SK Jabatan Fungsional <span
-                                        class="text-danger">*</span></label>
+                                <label class="text-muted">Unggah SK Jabatan Fungsional</label>
                                 <div class="custom-file">
                                     <input type="file" accept=".pdf" class="custom-file-input"
                                         id="file_sk_jabatan_fungsional" name="file_sk_jafung">
@@ -480,8 +477,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="text-muted">TMT Jabatan Fungsional <span
-                                        class="text-danger">*</span></label>
+                                <label class="text-muted">TMT Jabatan Fungsional</label>
                                 <input type="text" class="form-control" id="tgl_tmt_jabatan_fungsional"
                                     placeholder="TMT Jabatan Fungsional" readonly>
                                 <input type="hidden" class="form-control" id="tmt_jabatan_fungsional" required
