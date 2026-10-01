@@ -73,7 +73,7 @@ class DataPegawaiController extends Controller
                 'no_hp' => 'required|min:10|max:13',
                 'email' => 'required|email:rfc',
                 'jenis_karyawan' => 'required',
-                'list_sertifikasi' => 'required_unless:jenis_karyawan,4,5',
+                'list_sertifikasi' => 'required_if:jenis_karyawan,1,2,3,6',
                 'id_agama' => 'required',
                 'alamat' => 'required',
                 'unit_kerja' => 'required',
@@ -98,7 +98,7 @@ class DataPegawaiController extends Controller
                 // 'pangkat.required' => 'Pastikan anda sudah memilih pangkat',
                 'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
                 'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
-                'list_sertifikasi.required' => 'Pastikan status sertifikasi sudah terpilih',
+                'list_sertifikasi.required_if' => 'Pastikan status sertifikasi sudah terpilih',
                 'nama.required' => 'Pastikan nama anda sudah terisi',
                 'tempat_lahir.required' => 'Pastikan tempat lahir sudah terisi',
                 'tgl_lahir.required' => 'Pastikan tanggal lahir sudah terisi',
@@ -329,7 +329,7 @@ class DataPegawaiController extends Controller
                 'no_hp' => 'required|min:10|max:13',
                 'email' => 'required|email:rfc',
                 'jenis_karyawan' => 'required',
-                'list_sertifikasi' => 'required_unless:jenis_karyawan,4,5',
+                'list_sertifikasi' => 'required_if:jenis_karyawan,1,2,3,6',
                 'id_agama' => 'required',
                 'alamat' => 'required',
                 'unit_kerja' => 'required',
@@ -344,7 +344,7 @@ class DataPegawaiController extends Controller
                 'no_ktp.min' => 'Pastikan Nomor KTP tidak kurang dari 16 karakter',
                 'jenis_kelamin.required' => 'Pastikan anda sudah memilih jenis kelamin',
                 'jenis_bank.required' => 'Pastikan anda sudah memilih jenis bank',
-                'list_sertifikasi.required' => 'Pastikan status sertifikasi sudah terpilih',
+                'list_sertifikasi.required_if' => 'Pastikan status sertifikasi sudah terpilih',
                 'nama.required' => 'Pastikan nama anda sudah terisi',
                 'tempat_lahir.required' => 'Pastikan tempat lahir sudah terisi',
                 'tgl_lahir.required' => 'Pastikan tanggal lahir sudah terisi',
@@ -443,7 +443,7 @@ class DataPegawaiController extends Controller
         if ($request->pendidikan != $karyawan_old->kd_pendidikan && empty($karyawan_old->path_dokumen_pendukung_pendidikan)) {
             $request->validate(
                 [
-                    'file_ijazah' => 'required|max:10000|mimes:pdf',
+                    'file_ijazah' => 'max:10000|mimes:pdf',
                 ],
                 [
                     'file_ijazah.required' => 'Pastikan file Ijazah sudah di upload',

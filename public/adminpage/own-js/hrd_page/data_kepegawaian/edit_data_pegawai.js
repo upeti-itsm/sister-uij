@@ -18,12 +18,21 @@ jQuery.edit_data_pegawai = {
         $("#btn_pilih_foto").click(function () {
             $("#photo_profile").click();
         });
+
+        // $("#status_sertifikasi").change(function () {
+        //     if ($(this).val() != "0")
+        //         $("#unggah_sertifikat_area").show()
+        //     else
+        //         $("#unggah_sertifikat_area").hide()
+        // });
+
         $("#status_sertifikasi").change(function () {
-            if ($(this).val() != "0")
-                $("#unggah_sertifikat_area").show()
-            else
-                $("#unggah_sertifikat_area").hide()
+            var v = $(this).val() || [];
+            var adaSertifikasi = v.some(function (x) { return x != "0"; });
+            $("#unggah_sertifikat_area").toggle(adaSertifikasi);
         });
+
+
         $(".custom-file-input").on("change", function () {
             var fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").text(fileName).attr("title", fileName);

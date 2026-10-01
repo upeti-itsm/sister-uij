@@ -328,10 +328,10 @@
                                             class="text-danger">*</small></label>
                                     <select class="form-control select2" name="jenis_karyawan">
                                         <option value="">-- Pilih Jenis Karyawan --</option>
-                                        <option value="1" @if(old('jenis_karyawan') == 4) selected @endif>Karyawan
+                                        <option value="4" @if(old('jenis_karyawan') == 4) selected @endif>Karyawan
                                             Tetap
                                         </option>
-                                        <option value="2" @if(old('jenis_karyawan') == 5) selected @endif>Karyawan
+                                        <option value="5" @if(old('jenis_karyawan') == 5) selected @endif>Karyawan
                                             Kontrak
                                         </option>
                                     </select>

@@ -26,11 +26,17 @@ jQuery.create_data_pegawai = {
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         });
 
+        // $("#status_sertifikasi").change(function () {
+        //     if ($(this).val() != "0")
+        //         $("#unggah_sertifikat_area").show()
+        //     else
+        //         $("#unggah_sertifikat_area").hide()
+        // });
+
         $("#status_sertifikasi").change(function () {
-            if ($(this).val() != "0")
-                $("#unggah_sertifikat_area").show()
-            else
-                $("#unggah_sertifikat_area").hide()
+            var v = $(this).val() || [];
+            var adaSertifikasi = v.some(function (x) { return x != "0"; });
+            $("#unggah_sertifikat_area").toggle(adaSertifikasi);
         });
 
         self.data.tgl_aktif = $("#tanggal_aktif").datepicker({
