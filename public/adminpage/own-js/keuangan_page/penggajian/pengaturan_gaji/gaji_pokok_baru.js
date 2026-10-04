@@ -120,8 +120,8 @@ jQuery.gaji_pokok = {
                     searchable: true,
                     sClass: 'text-left',
                     render: function (data) {
-                        var label = data.kd_pendidikan.toUpperCase();
-                        return `<span class="font-weight-bold">${label}</span>`;
+                        var label = data.kd_pendidikan.trim().toUpperCase();
+                        return `<span class="font-weight-bold">${data.jenis_karyawan} (${label})</span>`;
                     }
                 },
                 {
