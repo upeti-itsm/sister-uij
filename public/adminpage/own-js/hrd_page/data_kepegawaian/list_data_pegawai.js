@@ -50,8 +50,9 @@ jQuery.list_data_pegawai = {
                     sClass: 'text-left',
                     width: "45%",
                     render: function (data) {
-                        return "<label>Jabatan Struktural: <b>" + data.jabatan_struktural + "</b> </label> <br\> <label>Unit Kerja: </label> <b>" + data.unit_kerja + "</b><br/>" +
-                            "<small>" + data.pendidikan_terakhir + "</small>";
+                        return "<label>Jabatan Struktural: <b>" + (data.jabatan_struktural || "-") + "</b></label><br/>" +
+                            "<label>Unit Kerja: <b>" + (data.unit_kerja || "-") + "</b></label><br/>" +
+                            "<small>" + (data.pendidikan_terakhir || "-") + "</small>";
                     }
                 },
                 {
